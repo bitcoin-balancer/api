@@ -1,0 +1,51 @@
+{
+  "name": "api",
+  "description": "Balancer API is a RESTful API that can be interacted with through the HTTPS Protocol. It is responsible for running the Value Averaging Strategy and can be managed from the GUI.",
+  "private": false,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "npm run build && node dist/index.js",
+    "build": "ts-lib-builder --tsconfig=tsconfig.build.json",
+    "test": "echo \"Error: tests are executed with  npm run test:(integration|unit)\" && exit 1",
+    "test:integration": "vitest run --config vitest.test-integration.config.ts",
+    "test:unit": "vitest run --config vitest.test-unit.config.ts",
+    "test:bench": "vitest bench",
+    "watch-test:e2e": "vitest --config=vitest.test-e2e.config.ts",
+    "watch-test:integration": "vitest --config vitest.test-integration.config.ts",
+    "watch-test:unit": "vitest --config vitest.test-unit.config.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitcoin-balancer/api.git"
+  },
+  "keywords": [
+    "bitcoin",
+    "trading",
+    "bitcoin-trading",
+    "strategy",
+    "trading-strategy",
+    "bitcoin-trading-strategy",
+    "spot",
+    "spot-market",
+    "bitcoin-spot-market",
+    "automated",
+    "self-hosted"
+  ],
+  "author": "Jesus Graterol",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bitcoin-balancer/api/issues"
+  },
+  "homepage": "https://github.com/bitcoin-balancer/api#readme",
+  "devDependencies": {
+    "@types/node": "^20.14.8",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "ts-lib-builder": "^1.0.3",
+    "typescript": "^5.5.2",
+    "vitest": "^1.6.0"
+  }
+}
