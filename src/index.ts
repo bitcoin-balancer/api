@@ -1,4 +1,5 @@
 import express from 'express';
+import { buildResponse } from 'api-response-utils';
 
 /**
  * Express Application
@@ -13,7 +14,7 @@ const app = express();
  * ...
  */
 app.get('/', (req, res) => {
-  res.send('hello world');
+  res.json(buildResponse('Welcome to Balancer API!'));
 });
 
 
