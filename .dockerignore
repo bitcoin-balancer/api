@@ -1,9 +1,11 @@
-.dockerignore
+dist
 node_modules
-npm-debug.log
+.dockerignore
+.eslintrc.json
 .git
 .gitignore
 Dockerfile
+LICENSE
 README.md
+npm-debug.log
 .npmrc
-dist
