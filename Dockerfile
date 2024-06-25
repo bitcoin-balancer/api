@@ -14,14 +14,11 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci
 
-# copy the source code and assign the ownership to the user 'node'
-COPY --chown=node:node . .
+# copy the source code
+COPY . .
 
 # build the API
 RUN npm run build
-
-# activate the non-root user
-USER node
 
 # expose the port
 EXPOSE 5075
