@@ -53,6 +53,7 @@
     "api-response-utils": "^1.0.0",
     "bignumber-utils": "^1.0.1",
     "error-message-utils": "^1.1.0",
-    "express": "^5.0.0-beta.3"
+    "express": "^5.0.0-beta.3",
+    "uuid": "^10.0.0"
   }
 }
