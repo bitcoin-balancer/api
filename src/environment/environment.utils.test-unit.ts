@@ -1,5 +1,5 @@
 import { describe, beforeAll, afterAll, beforeEach, afterEach, test, expect, vi } from 'vitest';
-import { getString } from './environment.utils.js';
+import { getBoolean, getString } from './environment.utils.js';
 
 describe('Environment Utilities', () => {
   beforeAll(() => { });
@@ -41,7 +41,21 @@ describe('Environment Utilities', () => {
 
 
   describe('getBoolean', () => {
-    test.todo('');
+    test('can extract a boolean value', () => {
+      vi.stubEnv('SOME_KEY', 'true');
+      expect(getBoolean('SOME_KEY')).toBe(true);
+      vi.stubEnv('SOME_KEY', 'false');
+      expect(getBoolean('SOME_KEY')).toBe(false);
+    });
+
+    test('throws if the value is not in the env vars', () => {
+      expect(() => getBoolean('SOME_KEY')).toThrowError('1');
+    });
+
+    test('throws if the value is not true or false', () => {
+      vi.stubEnv('SOME_KEY', 'something');
+      expect(() => getBoolean('SOME_KEY')).toThrowError('2');
+    });
   });
 
 
