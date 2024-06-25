@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { encodeError } from 'error-message-utils';
+import { encodeError, extractMessage } from 'error-message-utils';
 import { isInteger } from 'bignumber-utils';
 
 /* ************************************************************************************************
@@ -62,9 +62,13 @@ const getInteger = (key: string): number => {
 const getObject = (key: string): NonNullable<object> => {
   const val = getString(key);
   try {
-    return JSON.parse(val);
+    const parsedVal = JSON.parse(val);
+    if (!parsedVal || typeof parsedVal !== 'object') {
+      throw new Error(`The parsed value is not a valid object. Received: ${parsedVal}`);
+    }
+    return parsedVal;
   } catch (e) {
-    throw new Error(encodeError(`The environment property '${key}' is not an object and could not be parsed. Received: ${val}`, 4));
+    throw new Error(encodeError(`The environment property '${key}' is not an object and could not be parsed. Received: ${val}. Error: ${extractMessage(e)}`, 4));
   }
 };
 

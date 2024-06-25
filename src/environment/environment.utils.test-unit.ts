@@ -1,5 +1,5 @@
 import { describe, beforeAll, afterAll, beforeEach, afterEach, test, expect, vi } from 'vitest';
-import { getBoolean, getString } from './environment.utils.js';
+import { getBoolean, getInteger, getObject, getString } from './environment.utils.js';
 
 describe('Environment Utilities', () => {
   beforeAll(() => { });
@@ -61,12 +61,37 @@ describe('Environment Utilities', () => {
 
 
   describe('getInteger', () => {
-    test.todo('');
+    test('can extract a boolean value', () => {
+      vi.stubEnv('SOME_KEY', '5075');
+      expect(getInteger('SOME_KEY')).toBe(5075);
+    });
+
+    test('throws if the value is not in the env vars', () => {
+      expect(() => getInteger('SOME_KEY')).toThrowError('1');
+    });
+
+    test('throws if the value is not an integer', () => {
+      vi.stubEnv('SOME_KEY', '100.55');
+      expect(() => getInteger('SOME_KEY')).toThrowError('3');
+    });
   });
 
 
 
   describe('getObject', () => {
-    test.todo('');
+    test('can extract an object value', () => {
+      const obj = { id: 12, secret: 'asdasjk1231' };
+      vi.stubEnv('SOME_KEY', JSON.stringify(obj));
+      expect(getObject('SOME_KEY')).toStrictEqual(obj);
+    });
+
+    test('throws if the value is not in the env vars', () => {
+      expect(() => getObject('SOME_KEY')).toThrowError('1');
+    });
+
+    test('throws if the value is not an object', () => {
+      vi.stubEnv('SOME_KEY', '100.55');
+      expect(() => getObject('SOME_KEY')).toThrowError('4');
+    });
   });
 });
