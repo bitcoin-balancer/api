@@ -53,7 +53,7 @@ const getInteger = (key: string): number => {
 
 /**
  * Extracts a non-nullable object value from the global environment object.
- * @param key 
+ * @param key
  * @returns NonNullable<object>
  * @throws
  * - 1: if the property does not exist or is an empty string
