@@ -1,4 +1,4 @@
-import { describe, beforeAll, afterAll, beforeEach, afterEach, test, expect, vi } from 'vitest';
+import { describe, beforeAll, afterAll, test, expect, vi } from 'vitest';
 import { toSeconds, toMilliseconds, delay } from './utils.js';
 
 /* ************************************************************************************************
@@ -36,10 +36,6 @@ describe('Misc Helpers', () => {
     afterAll(() => {
       vi.useRealTimers();
     });
-
-    beforeEach(() => { });
-
-    afterEach(() => { });
 
     test('can delay the execution of a function for any number of seconds', async () => {
       const mockFn = vi.fn();
