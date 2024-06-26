@@ -69,13 +69,17 @@ const serverFactory = async (app: Express): Promise<IServer> => {
     // log the termination signal (if any)
     if (typeof signal === 'string' && signal.length) console.log(`Signal: ${signal}`);
 
+    // set the initialization state on the RequestGuard to reject incoming requests
+    // RequestGuard.serverInitialized = false; @TODO
+    console.log('1/3) Reject Incoming Requests: done');
+
     // teardown all the modules
     await __teardownModules();
-    console.log('1/2) Teardown Modules: done');
+    console.log('2/3) Teardown Modules: done');
 
     // close the server
     await __closeServer();
-    console.log('2/2) Close the HTTP Server: done');
+    console.log('3/3) Close the HTTP Server: done');
   };
 
 
@@ -112,7 +116,7 @@ const serverFactory = async (app: Express): Promise<IServer> => {
     // setup the modules
     await __initializeModules();
 
-    // enable
+    // set the initialization state on the RequestGuard to allow incoming requests
     // RequestGuard.serverInitialized = true; @TODO
 
     // print the setup footer
