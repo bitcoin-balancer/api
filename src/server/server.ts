@@ -9,6 +9,13 @@ import { IServer, ITerminationSignal } from './types.js';
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
+
+/**
+ * Module in charge of managing the initialization and teardown of API modules as well as the
+ * Node.js HTTP Server.
+ * @param app
+ * @returns Promise<IServer>
+ */
 const serverFactory = async (app: Express): Promise<IServer> => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
