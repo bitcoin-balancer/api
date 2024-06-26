@@ -18,8 +18,14 @@ type IEnvironment = {
   // the kind of environment the API was started with
   environment: IEnvironmentName;
 
-  // the port that will be exposed by the server
-  port: number;
+  // if enabled, the server will be setup with the sole purpose of running unit & integration tests
+  testMode: boolean,
+
+  // if enabled, the server will be setup with the sole purpose of restoring the database
+  restoreMode: boolean,
+
+  // the port that will be exposed publicly by the server
+  serverPort: number;
 };
 
 

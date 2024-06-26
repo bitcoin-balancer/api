@@ -1,4 +1,4 @@
-
+import { setTimeout } from 'node:timers';
 
 /* ************************************************************************************************
  *                                        TIME CONVERTERS                                         *
@@ -32,7 +32,7 @@ const toMilliseconds = (seconds: number) => Math.round(seconds * 1000);
  * @returns Promise<void>
  */
 const delay = (seconds: number): Promise<void> => new Promise((resolve) => {
-  setTimeout(resolve, seconds * 1000);
+  setTimeout(resolve, toMilliseconds(seconds));
 });
 
 

@@ -1,6 +1,6 @@
-import process from 'node:process';
 import express from 'express';
 import { buildResponse } from 'api-response-utils';
+import { serverFactory } from './server/server.js';
 
 /**
  * Express Application
@@ -20,15 +20,28 @@ app.get('/', (req, res) => {
 
 
 
+
+
+/* ************************************************************************************************
+ *                                          SERVER SETUP                                          *
+ ************************************************************************************************ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+serverFactory(app).then((server) => {
+  console.log(server);
+  // ...
+});
+
+
+
 /**
  * Server Initialization
  * ...
  */
-const server = app.listen(5075);
+/* const server = app.listen(5075);
 console.log('Balancer API Initialized');
 console.log('Running: v1.0.0');
 console.log('Port: 5075');
-console.log('Production: false');
+console.log('Production: false'); */
 
 
 
@@ -36,7 +49,7 @@ console.log('Production: false');
 /*
  * TEARDOWN
  */
-const asyncTearDown = async () => new Promise((resolve) => {
+/* const asyncTearDown = async () => new Promise((resolve) => {
   setTimeout(resolve, 1000);
 });
 const closeServer = (): Promise<void> => new Promise((resolve, reject) => {
@@ -55,4 +68,4 @@ async function closeGracefully(signal: 'SIGINT' | 'SIGTERM') {
   process.kill(process.pid, signal);
 }
 process.once('SIGINT', closeGracefully);
-process.once('SIGTERM', closeGracefully);
+process.once('SIGTERM', closeGracefully); */

@@ -11,15 +11,14 @@ import { Server, IncomingMessage, ServerResponse } from 'http';
 type ITerminationSignal = 'SIGINT' | 'SIGTERM';
 
 /**
- * Bootstrap
- * The API Bootstrap instance that is initialized on start up.
+ * Server
+ * The HTTP Server Module that is instantiated on start up.
  */
-type IBootstrap = {
+type IServer = {
   // properties
-  server: Server<typeof IncomingMessage, typeof ServerResponse>,
+  instance: Server<typeof IncomingMessage, typeof ServerResponse>,
 
-  // setup
-  // @TODO
+  // ...
 };
 
 
@@ -31,5 +30,5 @@ type IBootstrap = {
  ************************************************************************************************ */
 export type {
   ITerminationSignal,
-  IBootstrap,
+  IServer,
 };
