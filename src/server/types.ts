@@ -12,7 +12,8 @@ type ITerminationSignal = 'SIGINT' | 'SIGTERM';
 
 /**
  * Server
- * The HTTP Server Module that is instantiated on start up.
+ * The Server Module that is instantiated on start up and is in charge of managing the API's
+ * setup and teardown of modules as well as the Node.js HTTP Server.
  */
 type IServer = {
   // properties

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import process from 'node:process';
 import { Express } from 'express';
 import { extractMessage } from 'error-message-utils';
@@ -26,6 +27,8 @@ const serverFactory = async (app: Express): Promise<IServer> => {
 
   /**
    * Calls the teardown method for all the modules that are initialized on setup.
+   * IMPORTANT: when implementing this method in the modules, make sure to wrap the code inside of a
+   * try...catch statement.
    * @returns Promise<void>
    */
   const __teardownModules = async (): Promise<void> => {
@@ -53,17 +56,19 @@ const serverFactory = async (app: Express): Promise<IServer> => {
    * @returns Promise<void>
    */
   const __teardown = async (signal?: ITerminationSignal): Promise<void> => {
+    // print the header
+    console.log('\n\n\nBalancer API Teardown:');
+
     // log the termination signal (if any)
-    if (typeof signal === 'string' && signal.length) console.log(`Received signal to terminate: ${signal}`);
+    if (typeof signal === 'string' && signal.length) console.log(`Signal: ${signal}`);
 
     // teardown all the modules
     await __teardownModules();
+    console.log('1/2) Teardown Modules: done');
 
     // close the server
     await __closeServer();
-
-    // finally, kill the process
-    // process.kill(process.pid, signal);
+    console.log('2/2) Close the HTTP Server: done');
   };
 
 
@@ -71,21 +76,37 @@ const serverFactory = async (app: Express): Promise<IServer> => {
 
 
   /* **********************************************************************************************
-   *                                        SETUP HELPERS                                         *
+   *                                    INITIALIZATION HELPERS                                    *
    ********************************************************************************************** */
 
-  const __setupModules = async (): Promise<void> => {
-    console.log('1/10) Database Module: done\n');
-    console.log('2/10) Auth Module: done\n');
+  /**
+   * Attempts to initialize all modules sequentially. Will throw if any of the modules fail to
+   * initialize. This process is influenced by running mode (if any).
+   * @returns Promise<void>
+   */
+  const __initializeModules = async (): Promise<void> => {
+    console.log('1/10) Database Module: done');
+    await delay(1);
+    console.log('2/10) Auth Module: done');
+    await delay(1);
+    console.log('3/10) Notification Module: done');
+    await delay(1);
+    console.log('4/10) Market State Module: done');
   };
 
-  const __setup = async (): Promise<void> => {
+  /**
+   * Handles the entire initialization process and notifies users once the process completes.
+   * @returns Promise<void>
+   */
+  const __initialize = async (): Promise<void> => {
     // print the setup header
-    console.log('\n\n\nBalancer API Setup\n\n');
-    console.log('Initializing Modules:\n');
+    console.log('\n\n\nBalancer API Initialization:');
 
     // setup the modules
-    await __setupModules();
+    await __initializeModules();
+
+    // enable
+    // RequestGuard.serverInitialized = true; @TODO
 
     // print the setup footer
     console.log('\n\n\nBalancer API Running');
@@ -102,63 +123,60 @@ const serverFactory = async (app: Express): Promise<IServer> => {
 
 
   /* **********************************************************************************************
-   *                                        SETUP PROCESS                                         *
+   *                                    INITIALIZATION PROCESS                                    *
    ********************************************************************************************** */
 
   /**
    * Ensure the proper environment and modes have been set prior to setting up the server.
    */
   if (ENVIRONMENT.environment === 'production' && ENVIRONMENT.testMode) {
-    const msg = 'The server could not be setup because testMode cannot be enabled when running in a production environment.';
-    console.error(msg);
-    throw new Error(msg);
+    throw new Error('The server could not be setup because testMode cannot be enabled when running in a production environment.');
   }
   if (ENVIRONMENT.testMode && ENVIRONMENT.restoreMode) {
-    const msg = 'The server could not be setup because testMode and restoreMode cannot be enabled simultaneously.';
-    console.error(msg);
-    throw new Error(msg);
+    throw new Error('The server could not be setup because testMode and restoreMode cannot be enabled simultaneously.');
   }
 
   /**
-   * Attempts to setup the server so it can be consumed from external sources. When bootstraping the
-   * server, many modules are initialized and it is possible for them to experience issues
-   * that may be caused by temporary network interruptions. Therefore, the process is executed
-   * persistently, allowing a small (incremental) delay before retrying.
+   * Attempts to initialize the server so it can be consumed from external sources. When
+   * bootstraping the server, many modules are initialized and it is possible for them to experience
+   * issues that may be caused by temporary network interruptions. Therefore, the process is
+   * executed persistently, allowing a small (incremental) delay before retrying.
    *
-   * In case of failure, it will combine all the errors, display them and teardown the server.
+   * In case of failure, it will teardown the server and throw the last error.
    */
-  const setupErrors: string[] = [];
   try {
-    await __setup();
+    await __initialize();
   } catch (e1) {
-    setupErrors.push(extractMessage(e1));
+    console.log(extractMessage(e1));
+    console.log('Retrying in ~5 seconds...');
     await __teardownModules();
     await delay(5);
     try {
-      await __setup();
+      await __initialize();
     } catch (e2) {
-      setupErrors.push(extractMessage(e2));
+      console.log(extractMessage(e2));
+      console.log('Retrying in ~15 seconds...');
       await __teardownModules();
-      await delay(10);
+      await delay(15);
       try {
-        await __setup();
+        await __initialize();
       } catch (e3) {
-        setupErrors.push(extractMessage(e3));
+        console.log(extractMessage(e3));
+        console.log('Retrying in ~45 seconds...');
         await __teardownModules();
-        await delay(40);
+        await delay(45);
         try {
-          await __setup();
+          await __initialize();
         } catch (e4) {
-          setupErrors.push(extractMessage(e4));
+          console.log(extractMessage(e4));
+          console.log('Retrying in ~120 seconds...');
           await __teardownModules();
           await delay(120);
           try {
-            await __setup();
+            await __initialize();
           } catch (e5) {
-            setupErrors.push(extractMessage(e5));
-            const msg = setupErrors.join(' | ');
-            console.error(msg);
-            // await Notification.serverSetupError(errorMessage); @TODO
+            const msg = extractMessage(e5);
+            // await Notification.serverSetupError(msg); @TODO
             await __teardown();
             throw new Error(msg);
           }
