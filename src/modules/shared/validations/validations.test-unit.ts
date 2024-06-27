@@ -90,17 +90,37 @@ describe('usernameValid', () => {
 
 describe('passwordValid', () => {
   test.each([
-    'aaaaaA7!', 'aA1!aaaaK', 'Jes15-Graterol_.', 'Herassio-.5', 'PythonWiz333@', 'restAPI12.-_',
-  ])('passwordValid(%s) -> true', (a) => {
-    expect(passwordValid(a)).toBe(true);
-  });
+    // valid
+    ['aaaaaA7!', true],
+    ['aA1!aaaaK', true],
+    ['Jes15-Graterol_.', true],
+    ['Herassio-.5', true],
+    ['PythonWiz333@', true],
+    ['restAPI12.-_', true],
 
-  test.each([
-    undefined, null, {}, [], 'a', 'JESUSGRATEROL@', 'Jes15-G', '@@', 'jes15-gratero_.as',
-    'jesu()', 'asdjkhxaslkdj546512asdkasd', '', '          ', '12345678', 'jesSS-gratero_.as',
-    'aaaaaaaa', 'aaaa1111', '!!!!!!!!', 'AAAAAAAA', 'AAAAAA665',
-  ])('passwordValid(%s) -> false', (a) => {
-    expect(passwordValid(<string>a)).toBe(false);
+    // invalid
+    [undefined, false],
+    [null, false],
+    [{}, false],
+    [[], false],
+    ['a', false],
+    ['JESUSGRATEROL@', false],
+    ['Jes15-G', false],
+    ['@@', false],
+    ['jes15-gratero_.as', false],
+    ['jesu()', false],
+    ['asdjkhxaslkdj546512asdkasd', false],
+    ['', false],
+    ['          ', false],
+    ['12345678', false],
+    ['jesSS-gratero_.as', false],
+    ['aaaaaaaa', false],
+    ['aaaa1111', false],
+    ['!!!!!!!!', false],
+    ['AAAAAAAA', false],
+    ['AAAAAA665', false],
+  ])('passwordValid(%s) -> %s', (a, expected) => {
+    expect(passwordValid(<string>a)).toBe(expected);
   });
 });
 
