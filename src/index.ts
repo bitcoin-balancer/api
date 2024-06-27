@@ -1,10 +1,8 @@
+/* eslint-disable import/first */
 import express from 'express';
+import morgan from 'morgan';
 import { buildResponse } from 'api-response-utils';
 import { serverFactory } from './server/server.js';
-
-// routers
-import { PingRouter } from './modules/ping/ping.router.js';
-
 
 /* ************************************************************************************************
  *                                       APPLICATION SETUP                                        *
@@ -23,6 +21,15 @@ const app = express();
  */
 app.disable('x-powered-by');
 
+/**
+ * HTTP Logger
+ * Morgan handles the logging of HTTP Request details as well as the senders'
+ */
+app.use(morgan('combined'));
+// Even though the Balancer API sits behind a reverse proxy, Morgan has issues when it comes to
+// displaying the sender's IP. More info: https://github.com/expressjs/morgan/issues/214
+// app.set("trust proxy", true);
+
 
 
 
@@ -30,6 +37,8 @@ app.disable('x-powered-by');
 /* ************************************************************************************************
  *                                            ROUTERS                                             *
  ************************************************************************************************ */
+import { PingRouter } from './modules/ping/ping.router.js';
+
 app.use('/ping', PingRouter);
 
 // custom 404
