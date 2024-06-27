@@ -76,6 +76,17 @@ const otpTokenValid = (value: string): boolean => (
   && /^[0-9]{6}$/.test(value)
 );
 
+/**
+ * Verifies if a JWT has the correct format:
+ * [Base64-URL Encoded Header].[Base64-URL Encoded Payload].[Signature]
+ * @param value
+ * @returns boolean
+ */
+const jwtValid = (value: string): boolean => (
+  typeof value === 'string'
+  && /^[A-Za-z0-9-_]{2,1000}\.[A-Za-z0-9-_]{2,1000}\.[A-Za-z0-9-_]{2,1000}$/.test(value)
+);
+
 
 
 
@@ -91,4 +102,5 @@ export {
   passwordValid,
   authorityValid,
   otpTokenValid,
+  jwtValid,
 };
