@@ -44,6 +44,15 @@ const authorityValid = (authority: IAuthority): authority is IAuthority => (
   && authority <= 5
 );
 
+/**
+ * Verifies if a value has the correct OTP Token Format.
+ * @param token
+ * @returns boolean
+ */
+const otpTokenValid = (token: string): boolean => (
+  typeof token === 'string'
+  && /^[0-9]{6}$/.test(token)
+);
 
 
 
@@ -56,4 +65,5 @@ export {
   usernameValid,
   passwordValid,
   authorityValid,
+  otpTokenValid,
 };

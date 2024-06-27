@@ -4,6 +4,7 @@ import {
   usernameValid,
   passwordValid,
   authorityValid,
+  otpTokenValid,
 } from './validations.js';
 
 /* ************************************************************************************************
@@ -71,5 +72,34 @@ describe('authorityValid', () => {
     [true, false],
   ])('authorityValid(%s) -> %s', (a, expected) => {
     expect(authorityValid(<IAuthority>a)).toBe(expected);
+  });
+});
+
+
+
+
+
+describe('otpTokenValid', () => {
+  test.each([
+    // essential
+    ['123456', true],
+    ['000000', true],
+    ['987654', true],
+
+    // bad data types
+    [undefined, false],
+    [null, false],
+    [{}, false],
+    [[{}], false],
+    ['', false],
+    ['5', false],
+    ['......', false],
+    ['45654A', false],
+    ['1234567', false],
+    [true, false],
+    [123456, false],
+    [6541, false],
+  ])('otpTokenValid(%s) -> %s', (a, expected) => {
+    expect(otpTokenValid(<string>a)).toBe(expected);
   });
 });
