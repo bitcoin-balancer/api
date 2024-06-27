@@ -77,7 +77,7 @@ const otpTokenValid = (value: string): boolean => (
 );
 
 /**
- * Verifies if a JWT has the correct format:
+ * Verifies if a value has a correct JWT Format:
  * [Base64-URL Encoded Header].[Base64-URL Encoded Payload].[Signature]
  * @param value
  * @returns boolean
@@ -87,7 +87,12 @@ const jwtValid = (value: string): boolean => (
   && /^[A-Za-z0-9-_]{2,1000}\.[A-Za-z0-9-_]{2,1000}\.[A-Za-z0-9-_]{2,1000}$/.test(value)
 );
 
-
+/**
+ * Verifies if a value is (or could be) an IP Address.
+ * @param value
+ * @returns boolean
+ */
+const ipValid = (value: string) => typeof value === 'string' && stringValid(value, 5, 300);
 
 
 
@@ -103,4 +108,5 @@ export {
   authorityValid,
   otpTokenValid,
   jwtValid,
+  ipValid,
 };
