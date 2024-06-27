@@ -12,7 +12,7 @@ import { setTimeout } from 'node:timers';
 const toSeconds = (milliseconds: number) => Math.round(milliseconds / 1000);
 
 /**
- * Converts a number of seconds into milliseconds.
+ * Converts a number of seconds into milliseconds (ms).
  * @param seconds
  * @returns number
  */

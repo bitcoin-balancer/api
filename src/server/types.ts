@@ -17,7 +17,7 @@ type ITerminationSignal = 'SIGINT' | 'SIGTERM';
  */
 type IServer = {
   // properties
-  instance: Server<typeof IncomingMessage, typeof ServerResponse>,
+  instance: Server<typeof IncomingMessage, typeof ServerResponse>;
 
   // ...
 };

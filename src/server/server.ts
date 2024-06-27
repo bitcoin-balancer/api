@@ -120,7 +120,7 @@ const serverFactory = async (app: Express): Promise<IServer> => {
     // RequestGuard.serverInitialized = true; @TODO
 
     // print the setup footer
-    console.log('\n\n\nBalancer API Running');
+    console.log('\n\n\nBalancer API Running:');
     console.log('Version: v1.0.0');
     console.log(`Port: ${ENVIRONMENT.serverPort}`);
     console.log(`Environment: ${ENVIRONMENT.environment}`);
