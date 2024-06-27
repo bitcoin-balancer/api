@@ -1,4 +1,4 @@
-
+import { IAuthority } from '../../auth/types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -33,6 +33,18 @@ const passwordValid = (password: string): boolean => (
   && /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,2048}$/.test(password)
 );
 
+/**
+ * Verifies if a value is a valid authority level.
+ * @param authority
+ * @returns boolean
+ */
+const authorityValid = (authority: IAuthority): authority is IAuthority => (
+  typeof authority === 'number'
+  && authority >= 1
+  && authority <= 5
+);
+
+
 
 
 
@@ -43,4 +55,5 @@ export {
   // implementation
   usernameValid,
   passwordValid,
+  authorityValid,
 };

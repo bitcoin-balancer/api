@@ -1,7 +1,9 @@
 import { describe, test, expect } from 'vitest';
+import { IAuthority } from '../../auth/types.js';
 import {
   usernameValid,
   passwordValid,
+  authorityValid,
 } from './validations.js';
 
 /* ************************************************************************************************
@@ -24,6 +26,10 @@ describe('usernameValid', () => {
   });
 });
 
+
+
+
+
 describe('passwordValid', () => {
   test.each([
     'aaaaaA7!', 'aA1!aaaaK', 'Jes15-Graterol_.', 'Herassio-.5', 'PythonWiz333@', 'restAPI12.-_',
@@ -37,5 +43,33 @@ describe('passwordValid', () => {
     'aaaaaaaa', 'aaaa1111', '!!!!!!!!', 'AAAAAAAA', 'AAAAAA665',
   ])('passwordValid(%s) -> false', (a) => {
     expect(passwordValid(<string>a)).toBe(false);
+  });
+});
+
+
+
+
+
+describe('authorityValid', () => {
+  test.each([
+    // essential
+    [0, false],
+    [1, true],
+    [2, true],
+    [3, true],
+    [4, true],
+    [5, true],
+    [6, false],
+
+    // bad data types
+    [undefined, false],
+    [null, false],
+    [{}, false],
+    [[{}], false],
+    ['', false],
+    ['5', false],
+    [true, false],
+  ])('authorityValid(%s) -> %s', (a, expected) => {
+    expect(authorityValid(<IAuthority>a)).toBe(expected);
   });
 });
