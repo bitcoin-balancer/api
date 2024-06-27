@@ -5,6 +5,19 @@ import { IAuthority } from '../../auth/types.js';
  ************************************************************************************************ */
 
 /**
+ * Verifies if a value is a valid string and its length is within a range (optional)
+ * @param value
+ * @param minLength?
+ * @param maxLength?
+ * @returns boolean
+ */
+const stringValid = (value: string, minLength?: number, maxLength?: number): boolean => (
+  typeof value === 'string'
+  && (minLength === undefined || value.length >= minLength)
+  && (maxLength === undefined || value.length <= maxLength)
+);
+
+/**
  * Verifies if a value is a valid number and is within a range (optional).
  * @param value
  * @param min?
@@ -72,6 +85,7 @@ const otpTokenValid = (value: string): boolean => (
  ************************************************************************************************ */
 export {
   // implementation
+  stringValid,
   numberValid,
   usernameValid,
   passwordValid,

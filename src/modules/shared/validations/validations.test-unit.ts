@@ -1,16 +1,47 @@
 import { describe, test, expect } from 'vitest';
 import { IAuthority } from '../../auth/types.js';
 import {
+  stringValid,
+  numberValid,
   usernameValid,
   passwordValid,
   authorityValid,
   otpTokenValid,
-  numberValid,
 } from './validations.js';
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
  ************************************************************************************************ */
+
+describe('stringValid', () => {
+  test.each([
+    // essential
+    ['', undefined, undefined, true],
+    [' ', undefined, undefined, true],
+    ['Hello World!', undefined, undefined, true],
+
+    // ranges
+    ['', 1, undefined, false],
+    ['A', 1, undefined, true],
+    ['ABCDE', undefined, 5, true],
+    ['ABCDEF', undefined, 5, false],
+    ['ABCDEF', 1, 5, false],
+
+    // bad data types
+    [undefined, undefined, undefined, false],
+    [null, undefined, undefined, false],
+    [{}, undefined, undefined, false],
+    [[], undefined, undefined, false],
+    [1, undefined, undefined, false],
+    [true, undefined, undefined, false],
+  ])('stringValid(%s, %s, %s) -> %s', (a, b, c, expected) => {
+    expect(stringValid(<string>a, b, c)).toBe(expected);
+  });
+});
+
+
+
+
 
 describe('numberValid', () => {
   test.each([
