@@ -42,7 +42,7 @@ describe('Misc Helpers', () => {
       delay(10).then(mockFn);
       expect(mockFn).not.toHaveBeenCalled();
 
-      await vi.advanceTimersByTimeAsync(11 * 1000);
+      await vi.advanceTimersByTimeAsync(toMilliseconds(11));
 
       expect(mockFn).toHaveBeenCalledOnce();
     });

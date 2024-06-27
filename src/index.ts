@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 import express from 'express';
 import morgan from 'morgan';
 import { buildResponse } from 'api-response-utils';
@@ -37,6 +36,7 @@ app.use(morgan('combined'));
 /* ************************************************************************************************
  *                                            ROUTERS                                             *
  ************************************************************************************************ */
+/* eslint-disable import/first */
 import { PingRouter } from './modules/ping/ping.router.js';
 
 app.use('/ping', PingRouter);
