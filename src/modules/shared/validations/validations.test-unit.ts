@@ -52,17 +52,35 @@ describe('numberValid', () => {
 
 describe('usernameValid', () => {
   test.each([
-    'jesusgraterol', 'JESUSGRATEROL', 'Jes15-Graterol_.', 'je', '15', 'xD', '__', 'Herassio-.',
-    'PythonWiz333', 'restAPI12.-_',
-  ])('usernameValid(%s) -> true', (a) => {
-    expect(usernameValid(a)).toBe(true);
-  });
+    // valid
+    ['jesusgraterol', true],
+    ['JESUSGRATEROL', true],
+    ['Jes15-Graterol_.', true],
+    ['je', true],
+    ['15', true],
+    ['xD', true],
+    ['Herassio-.', true],
+    ['PythonWiz333', true],
+    ['restAPI12.-_', true],
+    ['__', true],
 
-  test.each([
-    undefined, null, {}, [], 'a', 'JESUSGRATEROL@', 'Jes15-Gratero_.!', '@@', 'Jes15-Gratero_.as',
-    'jesu()', 'asdjkhxaslkdj546512asdkasd', '', ' ', '   ',
-  ])('usernameValid(%s) -> false', (a) => {
-    expect(usernameValid(<string>a)).toBe(false);
+    // invalid
+    [undefined, false],
+    [null, false],
+    [{}, false],
+    [[], false],
+    ['a', false],
+    ['JESUSGRATEROL@', false],
+    ['Jes15-Gratero_.!', false],
+    ['@@', false],
+    ['Jes15-Gratero_.as', false],
+    ['jesu()', false],
+    ['asdjkhxaslkdj546512asdkasd', false],
+    ['', false],
+    [' ', false],
+    ['   ', false],
+  ])('usernameValid(%s) -> %s', (a, expected) => {
+    expect(usernameValid(<string>a)).toBe(expected);
   });
 });
 
