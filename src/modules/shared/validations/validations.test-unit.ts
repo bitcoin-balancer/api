@@ -5,11 +5,50 @@ import {
   passwordValid,
   authorityValid,
   otpTokenValid,
+  numberValid,
 } from './validations.js';
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
  ************************************************************************************************ */
+
+describe('numberValid', () => {
+  test.each([
+    // essential
+    [1, undefined, undefined, true],
+    [0, undefined, undefined, true],
+    [-1, undefined, undefined, true],
+    [Infinity, undefined, undefined, true],
+    [-Infinity, undefined, undefined, true],
+    [NaN, undefined, undefined, true],
+
+    // ranges
+    [0, 1, 5, false],
+    [1, 1, 5, true],
+    [2, 1, 5, true],
+    [3, 1, 5, true],
+    [4, 1, 5, true],
+    [5, 1, 5, true],
+    [6, 1, 5, false],
+    [NaN, 0, undefined, false],
+    [-Infinity, 0, undefined, false],
+    [Infinity, undefined, 1, false],
+
+    // bad data types
+    [undefined, undefined, undefined, false],
+    [null, undefined, undefined, false],
+    [{}, undefined, undefined, false],
+    [[], undefined, undefined, false],
+    ['', undefined, undefined, false],
+    ['1', undefined, undefined, false],
+  ])('numberValid(%s, %s, %s) -> %s', (a, b, c, expected) => {
+    expect(numberValid(<number>a, b, c)).toBe(expected);
+  });
+});
+
+
+
+
 
 describe('usernameValid', () => {
   test.each([

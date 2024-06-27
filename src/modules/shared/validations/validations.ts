@@ -5,6 +5,19 @@ import { IAuthority } from '../../auth/types.js';
  ************************************************************************************************ */
 
 /**
+ * Verifies if a value is a valid number and is within a range (optional).
+ * @param value
+ * @param min?
+ * @param max?
+ * @returns boolean
+ */
+const numberValid = (value: number, min?: number, max?: number): boolean => (
+  typeof value === 'number'
+  && (min === undefined || value >= min)
+  && (max === undefined || value <= max)
+);
+
+/**
  * Verifies if a username meets the following requirements:
  * - Accepts any Alpha Characters (lower and upper case)
  * - Accepts any digits
@@ -57,11 +70,13 @@ const otpTokenValid = (token: string): boolean => (
 
 
 
+
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
   // implementation
+  numberValid,
   usernameValid,
   passwordValid,
   authorityValid,
