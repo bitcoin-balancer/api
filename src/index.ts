@@ -5,11 +5,26 @@ import { serverFactory } from './server/server.js';
 // routers
 import { PingRouter } from './modules/ping/ping.router.js';
 
+
+/* ************************************************************************************************
+ *                                       APPLICATION SETUP                                        *
+ ************************************************************************************************ */
+
 /**
  * Express Application
- * ...
+ * Initialize the main instance of the Express Application that will be used to start the server.
  */
 const app = express();
+
+/**
+ * Powered By Header
+ * By default, Express sends the 'X-Powered-By' Header in every response. This allows anybody to
+ * fingerprint the API and can become a vulnerability.
+ */
+app.disable('x-powered-by');
+
+
+
 
 
 /* ************************************************************************************************
