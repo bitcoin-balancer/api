@@ -3,28 +3,34 @@ import process from 'node:process';
 import { Express } from 'express';
 import { extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../environment/environment.js';
-import { delay } from '../modules/shared/utils/utils.js';
-import { IServer, ITerminationSignal } from './types.js';
+import { delay } from '../utils/utils.js';
+import { canBeInitialized } from './api.validations.js';
+import { IHTTPServer, ITerminationSignal, IAPI } from './types.js';
+
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
 /**
+ * API
  * Module in charge of managing the initialization and teardown of API modules as well as the
  * Node.js HTTP Server.
- * @param app
- * @returns Promise<IServer>
+ * @returns IServer
  */
-const serverFactory = async (app: Express): Promise<IServer> => {
+const apiFactory = (): IAPI => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
   // the instance of the HTTP Server
-  const __instance = app.listen(ENVIRONMENT.serverPort);
+  let __server: IHTTPServer;
 
+  // the current state of the initialization
+  let __initialized: boolean = false;
 
+  // the current version of the API
+  let __version: string;
 
 
 
@@ -47,7 +53,7 @@ const serverFactory = async (app: Express): Promise<IServer> => {
    * @returns Promise<void>
    */
   const __closeServer = (): Promise<void> => new Promise((resolve, reject) => {
-    __instance.close((error: Error | undefined) => {
+    __server.close((error: Error | undefined) => {
       if (error) {
         reject(error);
       } else {
@@ -57,8 +63,8 @@ const serverFactory = async (app: Express): Promise<IServer> => {
   });
 
   /**
-   * Kills the running modules, the server and the process itself. This function is invoked when
-   * a termination signal is emitted or the API fails to setup.
+   * Kills the running modules and the server. This function is invoked when a termination signal
+   * is emitted or the API fails to initialize.
    * @param signal?
    * @returns Promise<void>
    */
@@ -69,8 +75,8 @@ const serverFactory = async (app: Express): Promise<IServer> => {
     // log the termination signal (if any)
     if (typeof signal === 'string' && signal.length) console.log(`Signal: ${signal}`);
 
-    // set the initialization state on the RequestGuard to reject incoming requests
-    // RequestGuard.serverInitialized = false; @TODO
+    // set the initialization state in order to reject incoming requests
+    __initialized = false;
     console.log('1/3) Reject Incoming Requests: done');
 
     // teardown all the modules
@@ -87,7 +93,7 @@ const serverFactory = async (app: Express): Promise<IServer> => {
 
 
   /* **********************************************************************************************
-   *                                    INITIALIZATION HELPERS                                    *
+   *                                        INITIALIZATION                                        *
    ********************************************************************************************** */
 
   /**
@@ -103,21 +109,26 @@ const serverFactory = async (app: Express): Promise<IServer> => {
     console.log('3/10) Notification Module: done');
     await delay(1);
     console.log('4/10) Market State Module: done');
+    // throw new Error('Error when initializing the Notification module');
   };
 
   /**
-   * Handles the entire initialization process and notifies users once the process completes.
+   * Attempts to initialize the Node.js HTTP Server as well as the modules in sequential order based
+   * on the running mode.
    * @returns Promise<void>
    */
-  const __initialize = async (): Promise<void> => {
-    // print the setup header
+  const __runInitialize = async (app: Express): Promise<void> => {
+    // print the initialization header
     console.log('\n\n\nBalancer API Initialization:');
+
+    // initialize the HTTP Server
+    if (__server === undefined) __server = app.listen(ENVIRONMENT.serverPort);
 
     // setup the modules
     await __initializeModules();
 
-    // set the initialization state on the RequestGuard to allow incoming requests
-    // RequestGuard.serverInitialized = true; @TODO
+    // set the initialization state in order to allow incoming requests
+    __initialized = true;
 
     // print the setup footer
     console.log('\n\n\nBalancer API Running:');
@@ -129,24 +140,6 @@ const serverFactory = async (app: Express): Promise<IServer> => {
     // Notification.serverSetupCompleted(); @TODO
   };
 
-
-
-
-
-  /* **********************************************************************************************
-   *                                    INITIALIZATION PROCESS                                    *
-   ********************************************************************************************** */
-
-  /**
-   * Ensure the proper environment and modes have been set prior to setting up the server.
-   */
-  if (ENVIRONMENT.environment === 'production' && ENVIRONMENT.testMode) {
-    throw new Error('The server could not be setup because testMode cannot be enabled when running in a production environment.');
-  }
-  if (ENVIRONMENT.testMode && ENVIRONMENT.restoreMode) {
-    throw new Error('The server could not be setup because testMode and restoreMode cannot be enabled simultaneously.');
-  }
-
   /**
    * Attempts to initialize the server so it can be consumed from external sources. When
    * bootstraping the server, many modules are initialized and it is possible for them to experience
@@ -154,47 +147,39 @@ const serverFactory = async (app: Express): Promise<IServer> => {
    * executed persistently, allowing a small (incremental) delay before retrying.
    *
    * In case of failure, it will teardown the server and throw the last error.
+   * @param app
+   * @returns Promise<void>
+   * @throws
+   * - If the environment is set to 'production' and the server is being initialized on 'testMode'
+   * - If both, 'testMode' and 'restoreMode' are enabled
+   * - If any of the modules or the HTTP Server cannot be initialized
    */
-  try {
-    await __initialize();
-  } catch (e1) {
-    console.log(extractMessage(e1));
-    console.log('Retrying in ~5 seconds...');
-    await __teardownModules();
-    await delay(5);
+  const initialize = async (
+    app: Express,
+    retryDelaySchedule: number[] = [5, 15, 45, 120],
+  ): Promise<void> => {
+    // validate the request
+    canBeInitialized();
+
+    // attempt to initialize the server
     try {
-      await __initialize();
-    } catch (e2) {
-      console.log(extractMessage(e2));
-      console.log('Retrying in ~15 seconds...');
-      await __teardownModules();
-      await delay(15);
-      try {
-        await __initialize();
-      } catch (e3) {
-        console.log(extractMessage(e3));
-        console.log('Retrying in ~45 seconds...');
-        await __teardownModules();
-        await delay(45);
-        try {
-          await __initialize();
-        } catch (e4) {
-          console.log(extractMessage(e4));
-          console.log('Retrying in ~120 seconds...');
-          await __teardownModules();
-          await delay(120);
-          try {
-            await __initialize();
-          } catch (e5) {
-            const msg = extractMessage(e5);
-            // await Notification.serverSetupError(msg); @TODO
-            await __teardown();
-            throw new Error(msg);
-          }
-        }
+      return await __runInitialize(app);
+    } catch (e) {
+      const msg = extractMessage(e);
+      console.error(msg);
+
+      // throw an error if there no attempts left. Otherwise, try again
+      if (retryDelaySchedule.length === 0) {
+        // await Notification.serverSetupError(msg); @TODO
+        await __teardown();
+        throw new Error(msg);
       }
+      console.log(`Retrying in ~${retryDelaySchedule[0]} seconds...`);
+      await __teardownModules();
+      await delay(retryDelaySchedule[0]);
+      return initialize(app, retryDelaySchedule.slice(1));
     }
-  }
+  };
 
 
 
@@ -219,13 +204,29 @@ const serverFactory = async (app: Express): Promise<IServer> => {
    ********************************************************************************************** */
   return Object.freeze({
     // properties
-    get instance() {
-      return __instance;
+    get server() {
+      return __server;
+    },
+    get initialized() {
+      return __initialized;
+    },
+    get version() {
+      return __version;
     },
 
-    // ...
+    // initialization
+    initialize,
   });
 };
+
+
+
+
+
+/* ************************************************************************************************
+ *                                        GLOBAL INSTANCE                                         *
+ ************************************************************************************************ */
+const API = apiFactory();
 
 
 
@@ -235,5 +236,5 @@ const serverFactory = async (app: Express): Promise<IServer> => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  serverFactory,
+  API,
 };

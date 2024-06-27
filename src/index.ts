@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import { buildResponse } from 'api-response-utils';
-import { serverFactory } from './server/server.js';
+import { API } from './modules/shared/api/api.js';
 
 /* ************************************************************************************************
  *                                       APPLICATION SETUP                                        *
@@ -51,9 +51,8 @@ app.use((req, res) => {
 
 
 /* ************************************************************************************************
- *                                     SERVER INITIALIZATION                                      *
+ *                                       API INITIALIZATION                                       *
  ************************************************************************************************ */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-serverFactory(app).then((server) => {
+API.initialize(app).then(() => {
   // ...
 });

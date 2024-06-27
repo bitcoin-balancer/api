@@ -1,8 +1,15 @@
 import { Server, IncomingMessage, ServerResponse } from 'http';
+import { Express } from 'express';
 
 /* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
+
+/**
+ * HTTP Server
+ * The instanec of a Node.js HTTP Server.
+ */
+type IHTTPServer = Server<typeof IncomingMessage, typeof ServerResponse>;
 
 /**
  * Termination Signal
@@ -11,15 +18,18 @@ import { Server, IncomingMessage, ServerResponse } from 'http';
 type ITerminationSignal = 'SIGINT' | 'SIGTERM';
 
 /**
- * Server
- * The Server Module that is instantiated on start up and is in charge of managing the
+ * API
+ * The API Module that is instantiated on start up and is in charge of managing the
  * initialization and teardown of API modules as well as the Node.js HTTP Server.
  */
-type IServer = {
+type IAPI = {
   // properties
-  instance: Server<typeof IncomingMessage, typeof ServerResponse>;
+  server: IHTTPServer;
+  initialized: boolean,
+  version: string,
 
-  // ...
+  // initialization
+  initialize: (app: Express, retryDelaySchedule?: number[]) => Promise<void>,
 };
 
 
@@ -30,6 +40,7 @@ type IServer = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
+  IHTTPServer,
   ITerminationSignal,
-  IServer,
+  IAPI,
 };
