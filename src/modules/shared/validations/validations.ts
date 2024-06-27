@@ -23,12 +23,12 @@ const numberValid = (value: number, min?: number, max?: number): boolean => (
  * - Accepts any digits
  * - Accepts - , . and/or _
  * - Can range between 2 and 16 characters in length
- * @param username
+ * @param value
  * @returns boolean
  */
-const usernameValid = (username: string): boolean => (
-  typeof username === 'string'
-  && /^[a-zA-Z0-9\-._]{2,16}$/.test(username)
+const usernameValid = (value: string): boolean => (
+  typeof value === 'string'
+  && /^[a-zA-Z0-9\-._]{2,16}$/.test(value)
 );
 
 /**
@@ -38,33 +38,29 @@ const usernameValid = (username: string): boolean => (
  * - At least one lowercase letter
  * - At least one number
  * - At least one special character
- * @param password
+ * @param value
  * @returns boolean
  */
-const passwordValid = (password: string): boolean => (
-  typeof password === 'string'
-  && /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,2048}$/.test(password)
+const passwordValid = (value: string): boolean => (
+  typeof value === 'string'
+  && /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,2048}$/.test(value)
 );
 
 /**
  * Verifies if a value is a valid authority level.
- * @param authority
+ * @param value
  * @returns boolean
  */
-const authorityValid = (authority: IAuthority): authority is IAuthority => (
-  typeof authority === 'number'
-  && authority >= 1
-  && authority <= 5
-);
+const authorityValid = (value: IAuthority): value is IAuthority => numberValid(value, 1, 5);
 
 /**
  * Verifies if a value has the correct OTP Token Format.
- * @param token
+ * @param value
  * @returns boolean
  */
-const otpTokenValid = (token: string): boolean => (
-  typeof token === 'string'
-  && /^[0-9]{6}$/.test(token)
+const otpTokenValid = (value: string): boolean => (
+  typeof value === 'string'
+  && /^[0-9]{6}$/.test(value)
 );
 
 
