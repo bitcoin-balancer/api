@@ -92,7 +92,16 @@ const jwtValid = (value: string): boolean => (
  * @param value
  * @returns boolean
  */
-const ipValid = (value: string) => typeof value === 'string' && stringValid(value, 5, 300);
+const ipValid = (value: string) => stringValid(value, 5, 300);
+
+/**
+ * Verifies if a value is (or could be) notes to be attached to an IP Address.
+ * @param value
+ * @returns boolean
+ */
+const ipNotesValid = (value: string) => stringValid(value, 5, 3000);
+
+
 
 
 
@@ -109,4 +118,5 @@ export {
   otpTokenValid,
   jwtValid,
   ipValid,
+  ipNotesValid,
 };
