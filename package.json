@@ -55,6 +55,7 @@
   "dependencies": {
     "api-response-utils": "^1.0.0",
     "bignumber-utils": "^1.0.1",
+    "body-parser": "^2.0.0-beta.2",
     "error-message-utils": "^1.1.0",
     "express": "^5.0.0-beta.3",
     "helmet": "^7.1.0",

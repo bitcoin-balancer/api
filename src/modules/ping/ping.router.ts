@@ -17,10 +17,13 @@ const PingRouter = Router();
  * @returns IAPIResponse<string>
  */
 PingRouter.route('/').get((req: Request, res: Response) => {
-  console.log(req.clientIp);
+  console.log(typeof req.query, req.query);
   res.json(buildResponse('pong'));
 });
-
+PingRouter.route('/').post((req: Request, res: Response) => {
+  console.log(typeof req.body, req.body);
+  res.json(buildResponse('pong'));
+});
 
 
 

@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import requestIp from 'request-ip';
+import bodyParser from 'body-parser';
 import { buildResponse } from 'api-response-utils';
 import { API } from './modules/shared/api/api.js';
 
@@ -56,6 +57,16 @@ app.use(morgan('combined'));
  * https://github.com/pbojinov/request-ip
  */
 app.use(requestIp.mw());
+
+
+
+/**
+ * Body Parser
+ * Parses the request bodies in a middleware before it touches the handlers. The data is available
+ * under the req.body property. For security reasons, it controls the request's body size.
+ * https://github.com/expressjs/body-parser
+ */
+app.use(bodyParser.json({ type: 'application/json', limit: '100kb' }));
 
 
 
