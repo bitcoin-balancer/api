@@ -326,6 +326,9 @@ describe('semverValid', () => {
     [123456, false],
     [6541, false],
     ['v1.0.0', false],
+    ['..', false],
+    ['...', false],
+    ['a.a.a', false],
   ])('semverValid(%s) -> %s', (a, expected) => {
     expect(semverValid(<string>a)).toBe(expected);
   });
