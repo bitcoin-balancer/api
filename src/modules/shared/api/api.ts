@@ -156,6 +156,7 @@ const apiFactory = (): IAPI => {
    *
    * In case of failure, it will teardown the server and throw the last error.
    * @param app
+   * @param retryDelaySchedule?
    * @returns Promise<void>
    * @throws
    * - If the environment is set to 'production' and the server is being initialized on 'testMode'
