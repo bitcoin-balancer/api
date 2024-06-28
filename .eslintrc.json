@@ -5,7 +5,7 @@
   },
   "overrides": [
     {
-      "files": [ "*.test-*.ts", "*.bench.ts" ],
+      "files": [ "*.test-*.ts", "*.bench.ts", "vitest-setup.ts" ],
       "rules": {
         "object-curly-newline": "off",
         "import/no-extraneous-dependencies": [ "error", { "devDependencies": true } ]
