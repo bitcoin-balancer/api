@@ -4,7 +4,12 @@ import { Express } from 'express';
 import { extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../environment/environment.js';
 import { delay } from '../utils/utils.js';
-import { readPackageFile } from './api.utils.js';
+import {
+  readPackageFile,
+  printInitializationHeader,
+  printInitializationFooter,
+  printTeardownHeader,
+} from './api.utils.js';
 import { canBeInitialized } from './api.validations.js';
 import {
   IHTTPServer,
@@ -78,10 +83,7 @@ const apiFactory = (): IAPI => {
    */
   const __teardown = async (signal?: ITerminationSignal): Promise<void> => {
     // print the header
-    console.log('\n\n\nBalancer API Teardown:');
-
-    // log the termination signal (if any)
-    if (typeof signal === 'string' && signal.length) console.log(`Signal: ${signal}`);
+    printTeardownHeader(signal);
 
     // set the initialization state in order to reject incoming requests
     __initialized = false;
@@ -127,7 +129,7 @@ const apiFactory = (): IAPI => {
    */
   const __runInitialize = async (app: Express): Promise<void> => {
     // print the initialization header
-    console.log('\n\n\nBalancer API Initialization:');
+    printInitializationHeader(__server !== undefined);
 
     // initialize the content of the package.json file if it hadn't been
     if (__packageFile === undefined) __packageFile = await readPackageFile();
@@ -141,14 +143,9 @@ const apiFactory = (): IAPI => {
     // set the initialization state in order to allow incoming requests
     __initialized = true;
 
-    // print the setup footer
-    console.log('\n\n\nBalancer API Running:');
-    console.log(`Version: v${__packageFile.version}`);
-    console.log(`Port: ${ENVIRONMENT.serverPort}`);
-    console.log(`Environment: ${ENVIRONMENT.environment}`);
-    if (ENVIRONMENT.testMode) console.log('Test Mode: true');
-    if (ENVIRONMENT.restoreMode) console.log('Restore Mode: true');
-    // Notification.serverSetupCompleted(); @TODO
+    // print the initialization footer
+    printInitializationFooter(__packageFile.version);
+    // Notification.apiInitializationCompleted(); @TODO
   };
 
   /**
@@ -181,7 +178,7 @@ const apiFactory = (): IAPI => {
 
       // throw an error if there no attempts left. Otherwise, try again
       if (retryDelaySchedule.length === 0) {
-        // await Notification.serverSetupError(msg); @TODO
+        // await Notification.apiInitializationFailed(msg); @TODO
         await __teardown();
         throw new Error(msg);
       }
