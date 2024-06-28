@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { buildResponse } from 'api-response-utils';
+import { veryHighRiskLimit } from '../../middlewares/rate-limit/rate-limit.js';
 
 // init the route
 const PingRouter = Router();
@@ -16,7 +17,7 @@ const PingRouter = Router();
  * Sends back the string 'pong' in the response. This route is used to ensure the API is running.
  * @returns IAPIResponse<string>
  */
-PingRouter.route('/').get((req: Request, res: Response) => {
+PingRouter.route('/').get(veryHighRiskLimit, (req: Request, res: Response) => {
   res.json(buildResponse('pong'));
 });
 

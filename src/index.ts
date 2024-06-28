@@ -4,7 +4,6 @@ import morgan from 'morgan';
 import requestIp from 'request-ip';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { buildResponse } from 'api-response-utils';
 import { API } from './modules/shared/api/api.js';
 
 /* ************************************************************************************************
@@ -98,7 +97,7 @@ app.use('/ping', PingRouter);
 
 // custom 404
 app.use((req, res) => {
-  res.status(404).json(buildResponse(undefined, 'The route you are looking for could not be matched. Please review the docs before trying again.'));
+  res.status(404).send('The route you are looking for could not be matched. Please review the docs before trying again.');
 });
 
 
