@@ -1,5 +1,7 @@
 import express from 'express';
+import helmet from 'helmet';
 import morgan from 'morgan';
+import requestIp from 'request-ip';
 import { buildResponse } from 'api-response-utils';
 import { API } from './modules/shared/api/api.js';
 
@@ -12,6 +14,15 @@ import { API } from './modules/shared/api/api.js';
  * Initialize the main instance of the Express Application that will be used to start the server.
  */
 const app = express();
+
+
+
+/**
+ * Helmet
+ * Improves the security of the API by setting a series of HTTP Response Headers.
+ * https://github.com/helmetjs/helmet
+ */
+app.use(helmet());
 
 
 
@@ -45,6 +56,8 @@ app.use(morgan('combined'));
  * https://github.com/pbojinov/request-ip
  */
 app.use(requestIp.mw());
+
+
 
 
 
