@@ -101,7 +101,15 @@ const ipValid = (value: string) => stringValid(value, 5, 300);
  */
 const ipNotesValid = (value: string) => stringValid(value, 5, 3000);
 
-
+/**
+ * Verifies if a value is a value that complies with semantic versioning.
+ * @param value
+ * @returns boolean
+ */
+const semverValid = (value: string): boolean => (
+  typeof value === 'string'
+  && /^[0-9]{1,5}\.[0-9]{1,5}\.[0-9]{1,5}$/.test(value)
+);
 
 
 
@@ -119,4 +127,5 @@ export {
   jwtValid,
   ipValid,
   ipNotesValid,
+  semverValid,
 };
