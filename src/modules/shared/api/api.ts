@@ -5,7 +5,12 @@ import { extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../environment/environment.js';
 import { delay } from '../utils/utils.js';
 import { canBeInitialized } from './api.validations.js';
-import { IHTTPServer, ITerminationSignal, IAPI } from './types.js';
+import {
+  IHTTPServer,
+  ITerminationSignal,
+  IPackageFile,
+  IAPI,
+} from './types.js';
 
 
 /* ************************************************************************************************
@@ -29,8 +34,8 @@ const apiFactory = (): IAPI => {
   // the current state of the initialization
   let __initialized: boolean = false;
 
-  // the current version of the API
-  let __version: string;
+  // the package file's contents
+  let __packageFile: IPackageFile;
 
 
 
@@ -190,7 +195,7 @@ const apiFactory = (): IAPI => {
    ********************************************************************************************** */
 
   /**
-   * Subscribe to the interrupt signals and teardown the server if emitted.
+   * Subscribes to the interrupt signals and triggers a teardown if emitted.
    */
   process.once('SIGINT', __teardown);
   process.once('SIGTERM', __teardown);
@@ -210,8 +215,8 @@ const apiFactory = (): IAPI => {
     get initialized() {
       return __initialized;
     },
-    get version() {
-      return __version;
+    get packageFile() {
+      return __packageFile;
     },
 
     // initialization
