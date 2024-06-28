@@ -4,6 +4,7 @@ import { Express } from 'express';
 import { extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../environment/environment.js';
 import { delay } from '../utils/utils.js';
+import { readPackageFile } from './api.utils.js';
 import { canBeInitialized } from './api.validations.js';
 import {
   IHTTPServer,
@@ -36,6 +37,8 @@ const apiFactory = (): IAPI => {
 
   // the package file's contents
   let __packageFile: IPackageFile;
+
+
 
 
 
@@ -126,7 +129,10 @@ const apiFactory = (): IAPI => {
     // print the initialization header
     console.log('\n\n\nBalancer API Initialization:');
 
-    // initialize the HTTP Server
+    // initialize the content of the package.json file if it hadn't been
+    if (__packageFile === undefined) __packageFile = await readPackageFile();
+
+    // initialize the HTTP Server if it hadn't been
     if (__server === undefined) __server = app.listen(ENVIRONMENT.serverPort);
 
     // setup the modules
@@ -137,7 +143,7 @@ const apiFactory = (): IAPI => {
 
     // print the setup footer
     console.log('\n\n\nBalancer API Running:');
-    console.log('Version: v1.0.0');
+    console.log(`Version: v${__packageFile.version}`);
     console.log(`Port: ${ENVIRONMENT.serverPort}`);
     console.log(`Environment: ${ENVIRONMENT.environment}`);
     if (ENVIRONMENT.testMode) console.log('Test Mode: true');
