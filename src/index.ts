@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import requestIp from 'request-ip';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import { buildResponse } from 'api-response-utils';
 import { API } from './modules/shared/api/api.js';
 
@@ -67,6 +68,21 @@ app.use(requestIp.mw());
  * https://github.com/expressjs/body-parser
  */
 app.use(bodyParser.json({ type: 'application/json', limit: '100kb' }));
+
+
+
+/**
+ * CORS
+ * Enables Cross Origin Resource Sharing so the API's resources can be accessed and/or managed from
+ * any origin.
+ * https://github.com/expressjs/cors
+ */
+app.use(cors({
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+}));
 
 
 
