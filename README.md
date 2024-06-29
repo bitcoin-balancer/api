@@ -58,16 +58,16 @@ npm run build
 **Important:** these tests are to be executed from [Balancer CLI](https://github.com/bitcoin-balancer/cli) as they must run in a containerized environment.
 
 ```bash
-# Run the e2e tests
+# run the e2e tests
 npm run test:e2e
 
-# Run the integration tests
+# run the integration tests
 npm run test:integration
 
-# Run the unit tests
+# run the unit tests
 npm run test:unit
 
-# Run the benchmarks
+# run the benchmarks
 npm run test:bench
 ```
 
