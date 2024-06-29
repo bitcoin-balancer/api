@@ -13,6 +13,14 @@ With the Balancer API, you can confidently implement a proven investment strateg
 
 <br/>
 
+## Docs
+
+- [ERRORS.md](./docs/ERRORS.md)
+
+
+
+<br/>
+
 ## Docker Image
 
 [jesusgraterol/balancer-api](https://hub.docker.com/r/jesusgraterol/balancer-api)
