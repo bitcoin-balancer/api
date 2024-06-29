@@ -1,20 +1,16 @@
 {
   "name": "api",
-  "description": "Balancer API is a RESTful API that can be interacted with through the HTTPS Protocol. It is responsible for running the Value Averaging Strategy and can be managed from the GUI.",
+  "description": "The Balancer API is a user-friendly RESTful interface designed to simplify the implementation of Value Averaging Strategies on any Bitcoin Spot Market.",
   "private": false,
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "start": "npm run build && node dist/index.js",
     "build": "ts-lib-builder --tsconfig=tsconfig.build.json",
-    "test": "echo \"Error: tests are executed with  npm run test:(integration|unit)\" && exit 1",
+    "test": "echo \"Error: tests are executed with  npm run test:(integration|unit|bench)\" && exit 1",
     "test:integration": "vitest run --config vitest.test-integration.config.ts",
     "test:unit": "vitest run --config vitest.test-unit.config.ts",
-    "test:bench": "vitest bench",
-    "watch-test:e2e": "vitest --config=vitest.test-e2e.config.ts",
-    "watch-test:integration": "vitest --config vitest.test-integration.config.ts",
-    "watch-test:unit": "vitest --config vitest.test-unit.config.ts"
+    "test:bench": "vitest bench"
   },
   "repository": {
     "type": "git",
