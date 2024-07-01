@@ -5,17 +5,17 @@ import { ENVIRONMENT } from '../environment/environment.js';
  ************************************************************************************************ */
 
 /**
- * Ensures the configurations meet all the requirements for the server to be initialized.
+ * Ensures the configurations meet all the requirements for the API to be initialized.
  * @throws
- * - If the environment is set to 'production' and the server is being initialized on 'testMode'
- * - If both, 'testMode' and 'restoreMode' are enabled
+ * - If the environment is set to 'production' and the server is being initialized on 'TEST_MODE'
+ * - If both, 'TEST_MODE' and 'RESTORE_MODE' are enabled
  */
 const canBeInitialized = (): void => {
-  if (ENVIRONMENT.environment === 'production' && ENVIRONMENT.testMode) {
-    throw new Error('The server could not be setup because testMode cannot be enabled when running in a production environment.');
+  if (ENVIRONMENT.NODE_ENV === 'production' && ENVIRONMENT.TEST_MODE) {
+    throw new Error('The API could not be initialized because TEST_MODE cannot be enabled when running in a production environment.');
   }
-  if (ENVIRONMENT.testMode && ENVIRONMENT.restoreMode) {
-    throw new Error('The server could not be setup because testMode and restoreMode cannot be enabled simultaneously.');
+  if (ENVIRONMENT.TEST_MODE && ENVIRONMENT.RESTORE_MODE) {
+    throw new Error('The API could not be initialized because TEST_MODE and RESTORE_MODE cannot be enabled simultaneously.');
   }
 };
 

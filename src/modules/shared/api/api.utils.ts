@@ -40,10 +40,10 @@ const printInitializationHeader = (isRetry: boolean): void => {
 const printInitializationFooter = (version: string): void => {
   console.log('\n\n\nBalancer API Running:');
   console.log(`Version: v${version}`);
-  console.log(`Port: ${ENVIRONMENT.serverPort}`);
-  console.log(`Environment: ${ENVIRONMENT.environment}`);
-  if (ENVIRONMENT.testMode) console.log('Test Mode: true');
-  if (ENVIRONMENT.restoreMode) console.log('Restore Mode: true');
+  console.log(`Port: ${ENVIRONMENT.API_PORT}`);
+  console.log(`Environment: ${ENVIRONMENT.NODE_ENV}`);
+  if (ENVIRONMENT.TEST_MODE) console.log('Test Mode: true');
+  if (ENVIRONMENT.RESTORE_MODE) console.log('Restore Mode: true');
 };
 
 /**

@@ -135,7 +135,7 @@ const apiFactory = (): IAPI => {
     if (__packageFile === undefined) __packageFile = await readPackageFile();
 
     // initialize the HTTP Server if it hadn't been
-    if (__server === undefined) __server = app.listen(ENVIRONMENT.serverPort);
+    if (__server === undefined) __server = app.listen(ENVIRONMENT.API_PORT);
 
     // setup the modules
     await __initializeModules();
