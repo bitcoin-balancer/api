@@ -4,7 +4,8 @@ import {
   getString,
   getInteger,
   getBoolean,
-  getObject,
+  getSecretString,
+  getSecretObject,
 } from './environment.utils.js';
 
 /* ************************************************************************************************
@@ -19,10 +20,10 @@ const ENVIRONMENT = EnvironmentSchema.parse(<IEnvironment>{
   POSTGRES_USER: getString('POSTGRES_USER'),
   POSTGRES_DB: getString('POSTGRES_DB'),
   POSTGRES_PORT: getInteger('POSTGRES_PORT'),
-  POSTGRES_PASSWORD_FILE: getString('POSTGRES_PASSWORD_FILE'),
-  ROOT_ACCOUNT: getObject('ROOT_ACCOUNT'),
+  POSTGRES_PASSWORD_FILE: getSecretString('POSTGRES_PASSWORD_FILE'),
+  ROOT_ACCOUNT: getSecretObject('ROOT_ACCOUNT'),
   TELEGRAM: typeof process.env.TELEGRAM === 'string' && process.env.TELEGRAM.length
-    ? getObject('TELEGRAM')
+    ? getSecretObject('TELEGRAM')
     : undefined,
 });
 

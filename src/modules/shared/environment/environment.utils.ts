@@ -1,9 +1,10 @@
 import process from 'node:process';
-import { encodeError, extractMessage } from 'error-message-utils';
+import { readFileSync } from 'node:fs';
+import { encodeError, extractMessage, isEncodedError } from 'error-message-utils';
 import { isInteger } from 'bignumber-utils';
 
 /* ************************************************************************************************
- *                                         IMPLEMENTATION                                         *
+ *                                        READABLE VALUES                                         *
  ************************************************************************************************ */
 
 /**
@@ -64,11 +65,69 @@ const getObject = (key: string): NonNullable<object> => {
   try {
     const parsedVal = JSON.parse(val);
     if (!parsedVal || typeof parsedVal !== 'object') {
-      throw new Error(`The parsed value is not a valid object. Received: ${parsedVal}`);
+      throw new Error(encodeError(`The parsed value is not a valid object. Received: ${parsedVal}`, 7));
     }
     return parsedVal;
   } catch (e) {
+    if (isEncodedError(e)) {
+      throw e;
+    }
     throw new Error(encodeError(`The environment property '${key}' is not an object and could not be parsed. Received: ${val}. Error: ${extractMessage(e)}`, 4));
+  }
+};
+
+
+
+
+
+/* ************************************************************************************************
+ *                                         SECRET VALUES                                          *
+ ************************************************************************************************ */
+
+/**
+ * Extracts a string value stored in a secret's file.
+ * @param key
+ * @returns string
+ * @throws
+ * - 5, 7: if it fails to extract content from a secret's path
+ */
+const getSecretString = (key: string): string => {
+  const srcPath = getString(key);
+  try {
+    const content = readFileSync(srcPath, { encoding: 'utf8' });
+    if (typeof content !== 'string' || !content.length) {
+      throw new Error(encodeError(`The secret '${srcPath}' has no content. Received: ${content}`, 7));
+    }
+    return content;
+  } catch (e) {
+    if (isEncodedError(e)) {
+      throw e;
+    }
+    throw new Error(encodeError(`The secret '${srcPath}' could not be read. ${extractMessage(e)}`, 5));
+  }
+};
+
+/**
+ * Extracts an object value stored in a secret's file.
+ * @param key
+ * @returns NonNullable<object>
+ * @throws
+ * - 5, 7: if it fails to extract content from a secret's path
+ * - 8: if the value cannot be parsed
+ */
+const getSecretObject = (key: string): NonNullable<object> => {
+  const val = getSecretString(key);
+  try {
+    const parsedVal = JSON.parse(val);
+    if (!parsedVal || typeof parsedVal !== 'object') {
+      throw new Error(encodeError(`The secret parsed value is not a valid object. Received: ${parsedVal}`, 8));
+    }
+    return parsedVal;
+  } catch (e) {
+    if (isEncodedError(e)) {
+      throw e;
+    }
+    throw new Error(encodeError(`The secret '${key}' could not be read. ${extractMessage(e)}`, 5));
   }
 };
 
@@ -80,8 +139,13 @@ const getObject = (key: string): NonNullable<object> => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // readable values
   getString,
   getBoolean,
   getInteger,
   getObject,
+
+  // secret values
+  getSecretString,
+  getSecretObject,
 };
