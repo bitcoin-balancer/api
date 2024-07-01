@@ -23,15 +23,15 @@ const options: Partial<Options> = {
 
 /**
  * Very Low Risk
- * Limit each IP to 550 requests per window (every 15 minutes)
+ * Limit each IP to 400 requests per window (every 15 minutes)
  */
-const veryLowRiskLimit = rateLimit({ ...options, limit: 550 });
+const veryLowRiskLimit = rateLimit({ ...options, limit: 400 });
 
 /**
  * Low Risk
- * Limit each IP to 300 requests per window (every 15 minutes)
+ * Limit each IP to 200 requests per window (every 15 minutes)
  */
-const lowRiskLimit = rateLimit({ ...options, limit: 300 });
+const lowRiskLimit = rateLimit({ ...options, limit: 200 });
 
 /**
  * Medium Risk
