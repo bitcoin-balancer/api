@@ -15,7 +15,9 @@ With the Balancer API, you can confidently implement a proven investment strateg
 
 ## Docs
 
-- [ERRORS.md](./docs/ERRORS.md)
+- [Errors](./docs/errors/index.md)
+
+
 
 
 
