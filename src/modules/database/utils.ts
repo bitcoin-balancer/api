@@ -1,5 +1,11 @@
 import { ENVIRONMENT } from '../shared/environment/index.js';
-import { ITableName, ITestTableName } from './types.js';
+import {
+  ITableName,
+  ITestTableName,
+  ITable,
+  IRawTable,
+  ITableNames,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                       TABLE NAME HELPERS                                       *
@@ -36,6 +42,38 @@ const getTableName = (name: ITableName | ITestTableName): ITableName | ITestTabl
 
 
 /* ************************************************************************************************
+ *                                         TABLE BUILDERS                                         *
+ ************************************************************************************************ */
+
+/**
+ * Processes a series of raw tables and returns the output.
+ * @param rawTables
+ * @returns ITable[]
+ */
+const buildTables = (rawTables: IRawTable[]): ITable[] => rawTables.map((raw) => [
+  { name: raw.name, sql: raw.sql(raw.name) },
+  { name: toTestTableName(raw.name), sql: raw.sql(toTestTableName(raw.name)) },
+]).flat();
+
+/**
+ * Builds the table names based on the TEST_MODE. The names stored in this object are the ones to
+ * be used to perform database queries.
+ * @param rawTables
+ * @returns ITableNames
+ */
+const buildTableNames = (rawTables: IRawTable[]): ITableNames => <ITableNames>rawTables.reduce(
+  (previous, current) => ({
+    ...previous,
+    [current.name]: getTableName(current.name),
+  }),
+  {},
+);
+
+
+
+
+
+/* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
@@ -43,4 +81,8 @@ export {
   isTestTableName,
   toTestTableName,
   getTableName,
+
+  // table builders
+  buildTables,
+  buildTableNames,
 };

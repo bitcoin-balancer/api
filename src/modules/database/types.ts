@@ -1,11 +1,4 @@
-import {
-  Pool,
-  PoolClient,
-  PoolConfig,
-  QueryConfig,
-  QueryResult,
-  Client,
-} from 'pg';
+import { Pool } from 'pg';
 
 /* ************************************************************************************************
  *                                            POSTGRES                                            *
@@ -15,12 +8,12 @@ import {
  * Postgres Types
  * The types for the main postgres modules that will be used in the API.
  */
-type IPool = Pool;
+/* type IPool = Pool;
 type IPoolConfig = PoolConfig;
 type IPoolClient = PoolClient;
 type IQueryConfig = QueryConfig;
 type IQueryResult = QueryResult;
-type IClient = Client;
+type IClient = Client; */
 
 
 
@@ -35,7 +28,8 @@ type IClient = Client;
  * The service in charge of interacting with PostgreSQL.
  */
 type IDatabaseService = {
-
+  // properties
+  pool: Pool
 };
 
 
@@ -132,14 +126,6 @@ type IDatabaseSummary = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
-  // postgres
-  IPool,
-  IPoolConfig,
-  IPoolClient,
-  IQueryConfig,
-  IQueryResult,
-  IClient,
-
   // database service
   IDatabaseService,
 

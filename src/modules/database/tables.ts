@@ -34,7 +34,7 @@ export const TABLES: IRawTable[] = [
     sql: (tableName: string) => (
       `CREATE TABLE IF NOT EXIST ${tableName} (
         uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
-        token       VARCHAR(3000) NOT NULL,
+        token       VARCHAR(3000) NOT NULL UNIQUE,
         event_time  BIGINT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS ${tableName}_uid ON ${tableName}(uid);
