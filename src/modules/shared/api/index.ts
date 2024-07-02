@@ -53,8 +53,6 @@ const apiFactory = (): IAPI => {
 
   /**
    * Calls the teardown method for all the modules that are initialized on setup.
-   * IMPORTANT: when implementing this method in the modules, make sure to wrap the code inside of a
-   * try...catch statement.
    * @returns Promise<void>
    */
   const __teardownModules = async (): Promise<void> => {

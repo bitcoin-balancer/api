@@ -1,7 +1,7 @@
 import { IRawTable } from './types.js';
 import { getTableName } from './utils.js';
 
-export const TABLES: IRawTable[] = [
+export const RAW_TABLES: IRawTable[] = [
   /* **********************************************************************************************
    *                                             AUTH                                             *
    ********************************************************************************************** */
@@ -12,7 +12,7 @@ export const TABLES: IRawTable[] = [
    */
   {
     name: 'users',
-    sql: (tableName: string) => (
+    createSQL: (tableName: string) => (
       `CREATE TABLE IF NOT EXIST ${tableName} (
         uid             UUID PRIMARY KEY,
         nickname        VARCHAR(20) NOT NULL UNIQUE,
@@ -23,6 +23,10 @@ export const TABLES: IRawTable[] = [
       );
       CREATE INDEX IF NOT EXISTS ${tableName}_nickname ON ${tableName}(nickname);`
     ),
+    dropSQL: (tableName: string) => (
+      `DROP TABLE IF EXISTS ${tableName};
+      DROP INDEX IF EXISTS ${tableName}_nickname;`
+    ),
   },
 
   /**
@@ -31,7 +35,7 @@ export const TABLES: IRawTable[] = [
    */
   {
     name: 'refresh_tokens',
-    sql: (tableName: string) => (
+    createSQL: (tableName: string) => (
       `CREATE TABLE IF NOT EXIST ${tableName} (
         uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
         token       VARCHAR(3000) NOT NULL UNIQUE,
@@ -39,6 +43,11 @@ export const TABLES: IRawTable[] = [
       );
       CREATE INDEX IF NOT EXISTS ${tableName}_uid ON ${tableName}(uid);
       CREATE INDEX IF NOT EXISTS ${tableName}_token ON ${tableName}(token);`
+    ),
+    dropSQL: (tableName: string) => (
+      `DROP TABLE IF EXISTS ${tableName};
+      DROP INDEX IF EXISTS ${tableName}_uid;
+      DROP INDEX IF EXISTS ${tableName}_token;`
     ),
   },
 
@@ -48,12 +57,16 @@ export const TABLES: IRawTable[] = [
    */
   {
     name: 'password_updates',
-    sql: (tableName: string) => (
+    createSQL: (tableName: string) => (
       `CREATE TABLE IF NOT EXIST ${tableName} (
         uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
         event_time  BIGINT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS ${tableName}_uid ON ${tableName}(uid);`
+    ),
+    dropSQL: (tableName: string) => (
+      `DROP TABLE IF EXISTS ${tableName};
+      DROP INDEX IF EXISTS ${tableName}_uid;`
     ),
   },
 ];

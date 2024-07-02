@@ -1,25 +1,6 @@
 import { Pool } from 'pg';
 
 /* ************************************************************************************************
- *                                            POSTGRES                                            *
- ************************************************************************************************ */
-
-/**
- * Postgres Types
- * The types for the main postgres modules that will be used in the API.
- */
-/* type IPool = Pool;
-type IPoolConfig = PoolConfig;
-type IPoolClient = PoolClient;
-type IQueryConfig = QueryConfig;
-type IQueryResult = QueryResult;
-type IClient = Client; */
-
-
-
-
-
-/* ************************************************************************************************
  *                                        DATABASE SERVICE                                        *
  ************************************************************************************************ */
 
@@ -29,7 +10,16 @@ type IClient = Client; */
  */
 type IDatabaseService = {
   // properties
-  pool: Pool
+  pool: Pool;
+  tn: ITableNames;
+
+  // database management
+  createTables: () => Promise<void>;
+  dropTables: () => Promise<void>;
+
+  // initializer
+  initialize: () => Promise<void>;
+  teardown: () => Promise<void>;
 };
 
 
@@ -60,8 +50,9 @@ type IRawTable = {
   // the raw name of the table
   name: ITableName;
 
-  // the function that will generate the sql needed to create the table
-  sql: (tableName: string) => string;
+  // the functions that will generate the SQL to create or drop the table
+  createSQL: (tableName: string) => string;
+  dropSQL: (tableName: string) => string;
 };
 
 /**
@@ -73,8 +64,9 @@ type ITable = {
   // the name of the table
   name: ITableName | ITestTableName;
 
-  // the result of invoking the sql function in a raw table
-  sql: string;
+  // the SQL that will create or drop the table
+  createSQL: string;
+  dropSQL: string;
 };
 
 

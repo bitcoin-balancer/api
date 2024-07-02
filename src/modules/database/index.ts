@@ -1,10 +1,8 @@
-import { Pool, PoolConfig, types } from 'pg';
+import { types, Pool, PoolConfig } from 'pg';
 import { ENVIRONMENT } from '../shared/environment/index.js';
-import { IDatabaseService, ITable } from './types.js';
-import { buildTables } from './utils.js';
-import { TABLES } from './tables.js';
-
-
+import { IDatabaseService, ITable, ITableNames } from './types.js';
+import { buildTableNames, buildTables } from './utils.js';
+import { RAW_TABLES } from './raw-tables.js';
 
 /* ************************************************************************************************
  *                                          DATA PARSERS                                          *
@@ -35,33 +33,73 @@ const databaseServiceFactory = (): IDatabaseService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // the pool's configuration
+  // the pool's configuration -> https://node-postgres.com/apis/pool
   const __CONFIG: PoolConfig = {
     host: ENVIRONMENT.POSTGRES_HOST,
     user: ENVIRONMENT.POSTGRES_USER,
     password: ENVIRONMENT.POSTGRES_PASSWORD_FILE,
     database: ENVIRONMENT.POSTGRES_DB,
+    port: ENVIRONMENT.POSTGRES_PORT,
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
-    port: ENVIRONMENT.POSTGRES_PORT,
   };
 
   // the instance of the pool
   const __pool = new Pool(__CONFIG);
 
   // the list of existing tables
-  const __tables: ITable[] = buildTables(TABLES);
+  const __tables: ITable[] = buildTables(RAW_TABLES);
+
+  // the table names object
+  const __tn: ITableNames = buildTableNames(RAW_TABLES);
+
+
 
 
 
   /* **********************************************************************************************
-   *                                            ACTIONS                                           *
+   *                                      DATABASE MANAGEMENT                                     *
    ********************************************************************************************** */
 
-  const someAction = () => {
+  const createTables = async (): Promise<void> => {
+
+  };
+
+  const dropTables = async (): Promise<void> => {
+
+  };
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                          INITIALIZER                                         *
+   ********************************************************************************************** */
+
+  /**
+   * Initializes the Database Module.
+   * @returns Promise<void>
+   */
+  const initialize = async (): Promise<void> => {
+    // create the tables
+    await createTables();
+
     // ...
   };
+
+  /**
+   * Tears down the Database Module.
+   * @returns Promise<void>
+   */
+  const teardown = async () => {
+    // end the pool connection
+    await __pool.end();
+
+    // ...
+  };
+
 
 
 
@@ -74,9 +112,17 @@ const databaseServiceFactory = (): IDatabaseService => {
     get pool() {
       return __pool;
     },
+    get tn() {
+      return __tn;
+    },
 
-    // actions
-    someAction,
+    // database management
+    createTables,
+    dropTables,
+
+    // initializer
+    initialize,
+    teardown,
   });
 };
 

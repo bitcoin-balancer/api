@@ -82,16 +82,16 @@ describe('Table Builders', () => {
   describe('buildTables', () => {
     test('can process a list of raw tables', () => {
       expect(buildTables([
-        { name: 'users', sql: () => 'some sql query xD' },
-        { name: 'refresh_tokens', sql: () => 'some sql query xD' },
-        { name: 'password_updates', sql: () => 'some sql query xD' },
+        { name: 'users', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
+        { name: 'refresh_tokens', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
+        { name: 'password_updates', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
       ])).toStrictEqual([
-        { name: 'users', sql: 'some sql query xD' },
-        { name: 'test_users', sql: 'some sql query xD' },
-        { name: 'refresh_tokens', sql: 'some sql query xD' },
-        { name: 'test_refresh_tokens', sql: 'some sql query xD' },
-        { name: 'password_updates', sql: 'some sql query xD' },
-        { name: 'test_password_updates', sql: 'some sql query xD' },
+        { name: 'users', createSQL: 'createSQL', dropSQL: 'dropSQL' },
+        { name: 'test_users', createSQL: 'createSQL', dropSQL: 'dropSQL' },
+        { name: 'refresh_tokens', createSQL: 'createSQL', dropSQL: 'dropSQL' },
+        { name: 'test_refresh_tokens', createSQL: 'createSQL', dropSQL: 'dropSQL' },
+        { name: 'password_updates', createSQL: 'createSQL', dropSQL: 'dropSQL' },
+        { name: 'test_password_updates', createSQL: 'createSQL', dropSQL: 'dropSQL' },
       ]);
     });
   });
@@ -106,9 +106,9 @@ describe('Table Builders', () => {
     test('can build the table names when TEST_MODE is disabled', () => {
       const spy = mockEnvironment({ TEST_MODE: false });
       expect(buildTableNames([
-        { name: 'users', sql: () => 'some sql query xD' },
-        { name: 'refresh_tokens', sql: () => 'some sql query xD' },
-        { name: 'password_updates', sql: () => 'some sql query xD' },
+        { name: 'users', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
+        { name: 'refresh_tokens', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
+        { name: 'password_updates', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
       ])).toStrictEqual({
         users: 'users',
         refresh_tokens: 'refresh_tokens',
@@ -119,9 +119,9 @@ describe('Table Builders', () => {
     test('can build the table names when TEST_MODE is enabled', () => {
       const spy = mockEnvironment({ TEST_MODE: true });
       expect(buildTableNames([
-        { name: 'users', sql: () => 'some sql query xD' },
-        { name: 'refresh_tokens', sql: () => 'some sql query xD' },
-        { name: 'password_updates', sql: () => 'some sql query xD' },
+        { name: 'users', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
+        { name: 'refresh_tokens', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
+        { name: 'password_updates', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
       ])).toStrictEqual({
         users: 'test_users',
         refresh_tokens: 'test_refresh_tokens',

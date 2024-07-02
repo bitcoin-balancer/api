@@ -46,13 +46,24 @@ const getTableName = (name: ITableName | ITestTableName): ITableName | ITestTabl
  ************************************************************************************************ */
 
 /**
+ * Converts a raw table into a processed table.
+ * @param raw
+ * @param testMode
+ * @returns ITable
+ */
+const __processRawTable = (raw: IRawTable, testMode: boolean): ITable => {
+  const name = testMode ? toTestTableName(raw.name) : raw.name;
+  return { name, createSQL: raw.createSQL(name), dropSQL: raw.dropSQL(name) };
+};
+
+/**
  * Processes a series of raw tables and returns the output.
  * @param rawTables
  * @returns ITable[]
  */
 const buildTables = (rawTables: IRawTable[]): ITable[] => rawTables.map((raw) => [
-  { name: raw.name, sql: raw.sql(raw.name) },
-  { name: toTestTableName(raw.name), sql: raw.sql(toTestTableName(raw.name)) },
+  __processRawTable(raw, false),
+  __processRawTable(raw, true),
 ]).flat();
 
 /**
