@@ -62,13 +62,36 @@ const databaseServiceFactory = (): IDatabaseService => {
    *                                      DATABASE MANAGEMENT                                     *
    ********************************************************************************************** */
 
-  const createTables = async (): Promise<void> => {
-
+  /**
+   * Executes an action on all existing tables.
+   * @param action
+   * @returns Promise<void>
+   */
+  const __executeActionOnTables = async (action: 'createSQL' | 'dropSQL'): Promise<void> => {
+    const client = await __pool.connect();
+    try {
+      await client.query('BEGIN');
+      await Promise.all(__tables.map((table) => client.query(table[action])));
+      await client.query('COMMIT');
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
   };
 
-  const dropTables = async (): Promise<void> => {
+  /**
+   * Creates all the tables and indexes in a transaction.
+   * @returns Promise<void>
+   */
+  const createTables = (): Promise<void> => __executeActionOnTables('createSQL');
 
-  };
+  /**
+   * Drops all the tables and indexes in a transaction.
+   * @returns Promise<void>
+   */
+  const dropTables = (): Promise<void> => __executeActionOnTables('dropSQL');
 
 
 

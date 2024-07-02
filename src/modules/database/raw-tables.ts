@@ -24,8 +24,8 @@ export const RAW_TABLES: IRawTable[] = [
       CREATE INDEX IF NOT EXISTS ${tableName}_nickname ON ${tableName}(nickname);`
     ),
     dropSQL: (tableName: string) => (
-      `DROP TABLE IF EXISTS ${tableName};
-      DROP INDEX IF EXISTS ${tableName}_nickname;`
+      `DROP INDEX IF EXISTS ${tableName}_nickname;
+      DROP TABLE IF EXISTS ${tableName};`
     ),
   },
 
@@ -45,9 +45,9 @@ export const RAW_TABLES: IRawTable[] = [
       CREATE INDEX IF NOT EXISTS ${tableName}_token ON ${tableName}(token);`
     ),
     dropSQL: (tableName: string) => (
-      `DROP TABLE IF EXISTS ${tableName};
-      DROP INDEX IF EXISTS ${tableName}_uid;
-      DROP INDEX IF EXISTS ${tableName}_token;`
+      `DROP INDEX IF EXISTS ${tableName}_uid;
+      DROP INDEX IF EXISTS ${tableName}_token;
+      DROP TABLE IF EXISTS ${tableName};`
     ),
   },
 
@@ -65,8 +65,8 @@ export const RAW_TABLES: IRawTable[] = [
       CREATE INDEX IF NOT EXISTS ${tableName}_uid ON ${tableName}(uid);`
     ),
     dropSQL: (tableName: string) => (
-      `DROP TABLE IF EXISTS ${tableName};
-      DROP INDEX IF EXISTS ${tableName}_uid;`
+      `DROP INDEX IF EXISTS ${tableName}_uid;
+      DROP TABLE IF EXISTS ${tableName};`
     ),
   },
 ];
