@@ -30,7 +30,7 @@ const readPackageFile = async (): Promise<IPackageFile> => {
  * @param isRetry
  */
 const printInitializationHeader = (isRetry: boolean): void => {
-  console.log(`${isRetry ? '\n\n\n' : ''}Balancer API Initialization:`);
+  console.log(`${isRetry ? '\n\n\n\n' : ''}Balancer API Initialization:\n`);
 };
 
 /**
@@ -38,7 +38,7 @@ const printInitializationHeader = (isRetry: boolean): void => {
  * @param version
  */
 const printInitializationFooter = (version: string): void => {
-  console.log('\n\n\nBalancer API Running:');
+  console.log('\n\n\n\nBalancer API Running:\n');
   console.log(`Version: v${version}`);
   console.log(`Port: ${ENVIRONMENT.API_PORT}`);
   console.log(`Environment: ${ENVIRONMENT.NODE_ENV}`);
@@ -51,7 +51,7 @@ const printInitializationFooter = (version: string): void => {
  * @param signal
  */
 const printTeardownHeader = (signal: ITerminationSignal | undefined): void => {
-  console.log(`\n\n\nBalancer API Teardown${typeof signal === 'string' ? ` (${signal})` : ''}:`);
+  console.log(`\n\n\n\nBalancer API Teardown${typeof signal === 'string' ? ` (${signal})` : ''}:\n`);
 };
 
 

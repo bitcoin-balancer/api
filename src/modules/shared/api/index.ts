@@ -4,6 +4,7 @@ import { Express } from 'express';
 import { extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../environment/index.js';
 import { delay } from '../utils/index.js';
+import { DatabaseService } from '../../database/index.js';
 import {
   IHTTPServer,
   ITerminationSignal,
@@ -56,7 +57,14 @@ const apiFactory = (): IAPI => {
    * @returns Promise<void>
    */
   const __teardownModules = async (): Promise<void> => {
-    // @TODO
+    // Database Module
+    try {
+      await DatabaseService.teardown();
+    } catch (e) {
+      console.error('DatabaseService.teardown()', e);
+    }
+
+    // ...
   };
 
   /**
@@ -85,13 +93,16 @@ const apiFactory = (): IAPI => {
 
     // set the initialization state in order to reject incoming requests
     __initialized = false;
-    console.log('1/3) Reject Incoming Requests: done');
+    console.log('1/3) Reject Incoming Requests: started');
+    console.log('1/3) Reject Incoming Requests: done\n');
 
     // teardown all the modules
+    console.log('2/3) Teardown Modules: started');
     await __teardownModules();
-    console.log('2/3) Teardown Modules: done');
+    console.log('2/3) Teardown Modules: done\n');
 
     // close the server
+    console.log('3/3) Close the HTTP Server: started');
     await __closeServer();
     console.log('3/3) Close the HTTP Server: done');
   };
@@ -110,14 +121,16 @@ const apiFactory = (): IAPI => {
    * @returns Promise<void>
    */
   const __initializeModules = async (): Promise<void> => {
+    // Database Module
+    console.log('1/10) Database Module: started');
+    try {
+      await DatabaseService.initialize();
+    } catch (e) {
+      throw new Error(`DatabaseService.initialize() -> ${extractMessage(e)}`);
+    }
     console.log('1/10) Database Module: done');
-    await delay(1);
-    console.log('2/10) Auth Module: done');
-    await delay(1);
-    console.log('3/10) Notification Module: done');
-    await delay(1);
-    console.log('4/10) Market State Module: done');
-    // throw new Error('Error when initializing the Notification module');
+
+    // ...
   };
 
   /**

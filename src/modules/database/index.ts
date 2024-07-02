@@ -1,4 +1,4 @@
-import { types, Pool, PoolConfig } from 'pg';
+import pg from 'pg';
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { IDatabaseService, ITable, ITableNames } from './types.js';
 import { buildTableNames, buildTables } from './utils.js';
@@ -16,10 +16,10 @@ import { RAW_TABLES } from './raw-tables.js';
  */
 
 // Bigint Parsing
-types.setTypeParser(20, (val) => parseInt(val, 10));
+pg.types.setTypeParser(20, (val) => parseInt(val, 10));
 
 // Numeric Parsing
-types.setTypeParser(1700, (val) => parseFloat(val));
+pg.types.setTypeParser(1700, (val) => parseFloat(val));
 
 
 
@@ -34,7 +34,7 @@ const databaseServiceFactory = (): IDatabaseService => {
    ********************************************************************************************** */
 
   // the pool's configuration -> https://node-postgres.com/apis/pool
-  const __CONFIG: PoolConfig = {
+  const __CONFIG: pg.PoolConfig = {
     host: ENVIRONMENT.POSTGRES_HOST,
     user: ENVIRONMENT.POSTGRES_USER,
     password: ENVIRONMENT.POSTGRES_PASSWORD_FILE,
@@ -46,7 +46,7 @@ const databaseServiceFactory = (): IDatabaseService => {
   };
 
   // the instance of the pool
-  const __pool = new Pool(__CONFIG);
+  let __pool: pg.Pool;
 
   // the list of existing tables
   const __tables: ITable[] = buildTables(RAW_TABLES);
@@ -106,6 +106,9 @@ const databaseServiceFactory = (): IDatabaseService => {
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
+    // initialize the pool
+    __pool = new pg.Pool(__CONFIG);
+
     // create the tables
     await createTables();
 
