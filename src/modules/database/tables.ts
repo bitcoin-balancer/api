@@ -1,4 +1,5 @@
 import { IRawTable } from './types.js';
+import { getTableName } from './utils.js';
 
 export const TABLES: IRawTable[] = [
   /* **********************************************************************************************
@@ -26,29 +27,33 @@ export const TABLES: IRawTable[] = [
 
   /**
    * refresh_tokens
-   * 
+   * every record corresponds to a user's auth session.
    */
-/*   {
+  {
     name: 'refresh_tokens',
-    sql: (name: string) => (
-      ``
+    sql: (tableName: string) => (
+      `CREATE TABLE IF NOT EXIST ${tableName} (
+        uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
+        token       VARCHAR(3000) NOT NULL,
+        event_time  BIGINT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ${tableName}_uid ON ${tableName}(uid);
+      CREATE INDEX IF NOT EXISTS ${tableName}_token ON ${tableName}(token);`
     ),
-  }, */
+  },
 
   /**
    * password_updates
    * every record corresponds to a time the user updated their password.
    */
-  /* THE SQL FUNC NEEDS ACCESS TO ALL DYNAMIC TABLE NAMES SO THE IMPLEMENTATION BELOW CAN BE:
-        uid UUID REFERENCES ${tableNames.users}(uid) ON DELETE CASCADE,
-  { 
+  {
     name: 'password_updates',
     sql: (tableName: string) => (
       `CREATE TABLE IF NOT EXIST ${tableName} (
-        uid         UUID REFERENCES users(uid) ON DELETE CASCADE,
+        uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
         event_time  BIGINT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS ${tableName}_uid ON ${tableName}(uid);`
     ),
-  },*/
+  },
 ];

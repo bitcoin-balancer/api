@@ -5,18 +5,18 @@ import { extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../environment/index.js';
 import { delay } from '../utils/index.js';
 import {
+  IHTTPServer,
+  ITerminationSignal,
+  IPackageFile,
+  IAPI,
+} from './types.js';
+import {
   readPackageFile,
   printInitializationHeader,
   printInitializationFooter,
   printTeardownHeader,
 } from './utils.js';
 import { canBeInitialized } from './validations.js';
-import {
-  IHTTPServer,
-  ITerminationSignal,
-  IPackageFile,
-  IAPI,
-} from './types.js';
 
 
 /* ************************************************************************************************
