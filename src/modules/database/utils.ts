@@ -1,3 +1,4 @@
+import { ENVIRONMENT } from '../shared/environment/index.js';
 import { ITableName, ITestTableName } from './types.js';
 
 /* ************************************************************************************************
@@ -17,7 +18,7 @@ const isTestTableName = (name: any): name is ITestTableName => (
 );
 
 /**
- * Converts a table name into the test version.
+ * Converts a table name into the test version. For example: 'my_table' -> 'test_my_table'.
  * @param name
  * @returns ITestTableName
  */
