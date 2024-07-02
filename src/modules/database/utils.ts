@@ -5,8 +5,6 @@ import { ITableName, ITestTableName } from './types.js';
  *                                       TABLE NAME HELPERS                                       *
  ************************************************************************************************ */
 
-// const getTableName = (): ITableName | ITestTableName => {};
-
 /**
  * Verifies if a value is a test table name.
  * @param name
@@ -22,7 +20,17 @@ const isTestTableName = (name: any): name is ITestTableName => (
  * @param name
  * @returns ITestTableName
  */
-const getTestTableName = (name: ITableName): ITestTableName => `test_${name}`;
+const toTestTableName = (name: ITableName): ITestTableName => `test_${name}`;
+
+/**
+ * Returns the name of a table that will be used in database queries based on the TEST_MODE.
+ * @param name
+ * @returns ITableName | ITestTableName
+ */
+const getTableName = (name: ITableName | ITestTableName): ITableName | ITestTableName => (
+  ENVIRONMENT.TEST_MODE && !isTestTableName(name) ? toTestTableName(name) : name
+);
+
 
 
 
@@ -33,5 +41,6 @@ const getTestTableName = (name: ITableName): ITestTableName => `test_${name}`;
 export {
   // table name helpers
   isTestTableName,
-  getTestTableName,
+  toTestTableName,
+  getTableName,
 };
