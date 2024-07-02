@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import pg from 'pg';
 
 /* ************************************************************************************************
  *                                        DATABASE SERVICE                                        *
@@ -10,12 +10,12 @@ import { Pool } from 'pg';
  */
 type IDatabaseService = {
   // properties
-  pool: Pool;
+  pool: pg.Pool;
   tn: ITableNames;
 
   // database management
   createTables: () => Promise<void>;
-  dropTables: () => Promise<void>;
+  dropTables: () => Promise<pg.QueryResult>;
 
   // initializer
   initialize: () => Promise<void>;
@@ -50,9 +50,8 @@ type IRawTable = {
   // the raw name of the table
   name: ITableName;
 
-  // the functions that will generate the SQL to create or drop the table
-  createSQL: (tableName: string) => string;
-  dropSQL: (tableName: string) => string;
+  // the function that will generate the SQL to create the table
+  sql: (tableName: string) => string;
 };
 
 /**
@@ -64,9 +63,8 @@ type ITable = {
   // the name of the table
   name: ITableName | ITestTableName;
 
-  // the SQL that will create or drop the table
-  createSQL: string;
-  dropSQL: string;
+  // the SQL that will create the table
+  sql: string;
 };
 
 

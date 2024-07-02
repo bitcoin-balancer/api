@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, afterEach, test, expect, vi } from 'vitest';
 import * as ENVIRONMENT from '../shared/environment/index.js';
-import { buildTableNames, buildTables, getTableName, isTestTableName, toTestTableName } from './utils.js';
+import {
+  buildTableNames,
+  buildTables,
+  getTableName,
+  getTableNamesForQuery,
+  isTestTableName,
+  toTestTableName,
+} from './utils.js';
 import { ITableName } from './types.js';
 import { IEnvironment } from '../shared/environment/types.js';
 
@@ -46,6 +53,7 @@ describe('Table Name Helpers', () => {
       ['refresh_tokens', 'test_refresh_tokens'],
       ['password_updates', 'test_password_updates'],
       ['refresh_tokens_and_more', 'test_refresh_tokens_and_more'],
+      ['test_users', 'test_users'],
     ])('toTestTableName(%s) -> %s', (a, expected) => {
       expect(toTestTableName(<ITableName>a)).toBe(expected);
     });
@@ -65,12 +73,23 @@ describe('Table Name Helpers', () => {
 
     test('it doesnt add a second prefix if a test table name is passed', () => {
       const spy = mockEnvironment({ TEST_MODE: true });
-      expect(getTableName('test_users')).toBe('test_users');
+      expect(getTableName(<ITableName>'test_users')).toBe('test_users');
     });
 
     test('if TEST_MODE is enabled, it converts a table name into the test variant', () => {
       const spy = mockEnvironment({ TEST_MODE: true });
       expect(getTableName('users')).toBe('test_users');
+    });
+  });
+
+
+  describe('getTableNamesForQuery', () => {
+    test('can prepare all the table names to be included in a query', () => {
+      expect(getTableNamesForQuery([
+        { name: 'users', sql: '' },
+        { name: 'refresh_tokens', sql: '' },
+        { name: 'password_updates', sql: '' },
+      ])).toBe('users, refresh_tokens, password_updates');
     });
   });
 });
@@ -79,19 +98,34 @@ describe('Table Name Helpers', () => {
 
 
 describe('Table Builders', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   describe('buildTables', () => {
-    test('can process a list of raw tables', () => {
+    test('can process a list of raw tables when TEST_MODE is not enabled', () => {
+      const spy = mockEnvironment({ TEST_MODE: false });
       expect(buildTables([
-        { name: 'users', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
-        { name: 'refresh_tokens', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
-        { name: 'password_updates', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
+        { name: 'users', sql: (n) => 'CREATE ...' },
+        { name: 'refresh_tokens', sql: (n) => 'CREATE ...' },
+        { name: 'password_updates', sql: (n) => 'CREATE ...' },
       ])).toStrictEqual([
-        { name: 'users', createSQL: 'createSQL', dropSQL: 'dropSQL' },
-        { name: 'test_users', createSQL: 'createSQL', dropSQL: 'dropSQL' },
-        { name: 'refresh_tokens', createSQL: 'createSQL', dropSQL: 'dropSQL' },
-        { name: 'test_refresh_tokens', createSQL: 'createSQL', dropSQL: 'dropSQL' },
-        { name: 'password_updates', createSQL: 'createSQL', dropSQL: 'dropSQL' },
-        { name: 'test_password_updates', createSQL: 'createSQL', dropSQL: 'dropSQL' },
+        { name: 'users', sql: 'CREATE ...' },
+        { name: 'refresh_tokens', sql: 'CREATE ...' },
+        { name: 'password_updates', sql: 'CREATE ...' },
+      ]);
+    });
+
+    test('can process a list of raw tables when TEST_MODE is enabled', () => {
+      const spy = mockEnvironment({ TEST_MODE: true });
+      expect(buildTables([
+        { name: 'users', sql: (n) => 'CREATE ...' },
+        { name: 'refresh_tokens', sql: (n) => 'CREATE ...' },
+        { name: 'password_updates', sql: (n) => 'CREATE ...' },
+      ])).toStrictEqual([
+        { name: 'test_users', sql: 'CREATE ...' },
+        { name: 'test_refresh_tokens', sql: 'CREATE ...' },
+        { name: 'test_password_updates', sql: 'CREATE ...' },
       ]);
     });
   });
@@ -99,16 +133,12 @@ describe('Table Builders', () => {
 
 
   describe('buildTableNames', () => {
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
-
     test('can build the table names when TEST_MODE is disabled', () => {
       const spy = mockEnvironment({ TEST_MODE: false });
       expect(buildTableNames([
-        { name: 'users', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
-        { name: 'refresh_tokens', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
-        { name: 'password_updates', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
+        { name: 'users', sql: (n) => 'CREATE ...' },
+        { name: 'refresh_tokens', sql: (n) => 'CREATE ...' },
+        { name: 'password_updates', sql: (n) => 'CREATE ...' },
       ])).toStrictEqual({
         users: 'users',
         refresh_tokens: 'refresh_tokens',
@@ -119,9 +149,9 @@ describe('Table Builders', () => {
     test('can build the table names when TEST_MODE is enabled', () => {
       const spy = mockEnvironment({ TEST_MODE: true });
       expect(buildTableNames([
-        { name: 'users', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
-        { name: 'refresh_tokens', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
-        { name: 'password_updates', createSQL: (n) => 'createSQL', dropSQL: (n) => 'dropSQL' },
+        { name: 'users', sql: (n) => 'CREATE ...' },
+        { name: 'refresh_tokens', sql: (n) => 'CREATE ...' },
+        { name: 'password_updates', sql: (n) => 'CREATE ...' },
       ])).toStrictEqual({
         users: 'test_users',
         refresh_tokens: 'test_refresh_tokens',

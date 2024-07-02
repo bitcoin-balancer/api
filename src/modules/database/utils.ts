@@ -26,15 +26,30 @@ const isTestTableName = (name: any): name is ITestTableName => (
  * @param name
  * @returns ITestTableName
  */
-const toTestTableName = (name: ITableName): ITestTableName => `test_${name}`;
+const toTestTableName = (name: ITableName): ITestTableName => (
+  isTestTableName(name) ? name : `test_${name}`
+);
 
 /**
  * Returns the name of a table that will be used in database queries based on the TEST_MODE.
  * @param name
  * @returns ITableName | ITestTableName
  */
-const getTableName = (name: ITableName | ITestTableName): ITableName | ITestTableName => (
-  ENVIRONMENT.TEST_MODE && !isTestTableName(name) ? toTestTableName(name) : name
+const getTableName = (name: ITableName): ITableName | ITestTableName => (
+  ENVIRONMENT.TEST_MODE ? toTestTableName(name) : name
+);
+
+/**
+ * Joins all of the table names so they can be placed in a SQL Query (e.g. DROP ...)).
+ * For example: users, refresh_tokens, password_updates
+ * @param tables
+ * @returns string
+ */
+const getTableNamesForQuery = (tables: ITable[]): string => tables.reduce(
+  (previous, current, index) => (
+    previous + (index === tables.length - 1 ? `${current.name}` : `${current.name}, `)
+  ),
+  '',
 );
 
 
@@ -48,12 +63,14 @@ const getTableName = (name: ITableName | ITestTableName): ITableName | ITestTabl
 /**
  * Converts a raw table into a processed table.
  * @param raw
- * @param testMode
  * @returns ITable
  */
-const __processRawTable = (raw: IRawTable, testMode: boolean): ITable => {
-  const name = testMode ? toTestTableName(raw.name) : raw.name;
-  return { name, createSQL: raw.createSQL(name), dropSQL: raw.dropSQL(name) };
+const __processRawTable = (raw: IRawTable): ITable => {
+  const name = getTableName(raw.name);
+  return {
+    name,
+    sql: raw.sql(name),
+  };
 };
 
 /**
@@ -61,10 +78,7 @@ const __processRawTable = (raw: IRawTable, testMode: boolean): ITable => {
  * @param rawTables
  * @returns ITable[]
  */
-const buildTables = (rawTables: IRawTable[]): ITable[] => rawTables.map((raw) => [
-  __processRawTable(raw, false),
-  __processRawTable(raw, true),
-]).flat();
+const buildTables = (rawTables: IRawTable[]): ITable[] => rawTables.map(__processRawTable);
 
 /**
  * Builds the table names based on the TEST_MODE. The names stored in this object are the ones to
@@ -92,6 +106,7 @@ export {
   isTestTableName,
   toTestTableName,
   getTableName,
+  getTableNamesForQuery,
 
   // table builders
   buildTables,

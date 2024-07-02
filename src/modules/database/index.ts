@@ -1,7 +1,7 @@
 import pg from 'pg';
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { IDatabaseService, ITable, ITableNames } from './types.js';
-import { buildTableNames, buildTables } from './utils.js';
+import { buildTableNames, buildTables, getTableNamesForQuery } from './utils.js';
 import { RAW_TABLES } from './raw-tables.js';
 
 /* ************************************************************************************************
@@ -63,15 +63,14 @@ const databaseServiceFactory = (): IDatabaseService => {
    ********************************************************************************************** */
 
   /**
-   * Executes an action on all existing tables.
-   * @param action
+   * Creates all the tables and indexes in a transaction.
    * @returns Promise<void>
    */
-  const __executeActionOnTables = async (action: 'createSQL' | 'dropSQL'): Promise<void> => {
+  const createTables = async (): Promise<void> => {
     const client = await __pool.connect();
     try {
       await client.query('BEGIN');
-      await Promise.all(__tables.map((table) => client.query(table[action])));
+      await Promise.all(__tables.map((table) => client.query(table.sql)));
       await client.query('COMMIT');
     } catch (e) {
       await client.query('ROLLBACK');
@@ -82,16 +81,12 @@ const databaseServiceFactory = (): IDatabaseService => {
   };
 
   /**
-   * Creates all the tables and indexes in a transaction.
-   * @returns Promise<void>
+   * Drops all the tables and indexes in a single query execution.
+   * @returns Promise<pg.QueryResult>
    */
-  const createTables = (): Promise<void> => __executeActionOnTables('createSQL');
-
-  /**
-   * Drops all the tables and indexes in a transaction.
-   * @returns Promise<void>
-   */
-  const dropTables = (): Promise<void> => __executeActionOnTables('dropSQL');
+  const dropTables = (): Promise<pg.QueryResult> => (
+    __pool.query(`DROP TABLE IF EXISTS ${getTableNamesForQuery(__tables)};`)
+  );
 
 
 
@@ -120,12 +115,26 @@ const databaseServiceFactory = (): IDatabaseService => {
    * @returns Promise<void>
    */
   const teardown = async () => {
+    // if TEST_MODE is enabled, drop all the test tables
+    if (ENVIRONMENT.TEST_MODE) {
+      await dropTables();
+    }
+
     // end the pool connection
     await __pool.end();
 
     // ...
   };
 
+
+
+
+
+  /* **********************************************************************************************
+   *                                       DATABASE SUMMARY                                       *
+   ********************************************************************************************** */
+
+  // ...
 
 
 

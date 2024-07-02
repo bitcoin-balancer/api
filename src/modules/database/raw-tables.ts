@@ -12,7 +12,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'users',
-    createSQL: (tableName: string) => (
+    sql: (tableName: string) => (
       `CREATE TABLE IF NOT EXISTS ${tableName} (
         uid             UUID PRIMARY KEY,
         nickname        VARCHAR(20) NOT NULL UNIQUE,
@@ -23,7 +23,6 @@ export const RAW_TABLES: IRawTable[] = [
       );
       CREATE INDEX IF NOT EXISTS ${tableName}_nickname ON ${tableName}(nickname);`
     ),
-    dropSQL: (tableName: string) => `DROP TABLE IF EXISTS ${tableName};`,
   },
 
   /**
@@ -32,7 +31,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'refresh_tokens',
-    createSQL: (tableName: string) => (
+    sql: (tableName: string) => (
       `CREATE TABLE IF NOT EXISTS ${tableName} (
         uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
         token       VARCHAR(3000) NOT NULL UNIQUE,
@@ -41,7 +40,6 @@ export const RAW_TABLES: IRawTable[] = [
       CREATE INDEX IF NOT EXISTS ${tableName}_uid ON ${tableName}(uid);
       CREATE INDEX IF NOT EXISTS ${tableName}_token ON ${tableName}(token);`
     ),
-    dropSQL: (tableName: string) => `DROP TABLE IF EXISTS ${tableName};`,
   },
 
   /**
@@ -50,13 +48,12 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'password_updates',
-    createSQL: (tableName: string) => (
+    sql: (tableName: string) => (
       `CREATE TABLE IF NOT EXISTS ${tableName} (
         uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
         event_time  BIGINT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS ${tableName}_uid ON ${tableName}(uid);`
     ),
-    dropSQL: (tableName: string) => `DROP TABLE IF EXISTS ${tableName};`,
   },
 ];
