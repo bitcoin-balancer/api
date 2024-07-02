@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { generateUUID, validateUUID } from './uuid.js';
+import { generateUUID, validateUUID } from './index.js';
 
 describe('generateUUID', () => {
   test('can generate a valid uuid v4', () => {

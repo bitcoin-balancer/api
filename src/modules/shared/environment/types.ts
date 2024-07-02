@@ -18,7 +18,7 @@ type INodeEnv = z.infer<typeof NodeEnvSchema>;
  */
 const RootAccountSchema = z.object({
   uid: z.string().min(1).max(100),
-  username: z.string().min(1).max(100),
+  nickname: z.string().min(1).max(100),
   password: z.string().min(1).max(100000),
   otpSecret: z.string().min(1).max(100),
 });

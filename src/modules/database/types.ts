@@ -51,10 +51,10 @@ type IDatabaseService = {
  * Each table has a unique name. However, the API creates a test version of each table to be used in
  * unit and integration tests.
  */
-type ITableName = 'users' | 'password_hashes' | 'refresh_tokens' | 'password_updates';
+type ITableName = 'users' | 'refresh_tokens' | 'password_updates';
 type ITestTableName = `test_${ITableName}`;
 type ITableNames = {
-  [key in ITableName]: string;
+  [key in ITableName]: ITableName | ITestTableName;
 };
 
 /**
@@ -146,6 +146,8 @@ export type {
   // tables
   IRawTable,
   ITable,
+  ITableName,
+  ITestTableName,
   ITableNames,
 
   // database summary

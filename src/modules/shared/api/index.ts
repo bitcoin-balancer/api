@@ -2,15 +2,15 @@
 import process from 'node:process';
 import { Express } from 'express';
 import { extractMessage } from 'error-message-utils';
-import { ENVIRONMENT } from '../environment/environment.js';
-import { delay } from '../utils/utils.js';
+import { ENVIRONMENT } from '../environment/index.js';
+import { delay } from '../utils/index.js';
 import {
   readPackageFile,
   printInitializationHeader,
   printInitializationFooter,
   printTeardownHeader,
-} from './api.utils.js';
-import { canBeInitialized } from './api.validations.js';
+} from './utils.js';
+import { canBeInitialized } from './validations.js';
 import {
   IHTTPServer,
   ITerminationSignal,

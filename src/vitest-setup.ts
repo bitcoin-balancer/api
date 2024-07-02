@@ -1,5 +1,5 @@
 import { beforeAll } from 'vitest';
-import { ENVIRONMENT } from './modules/shared/environment/environment.js';
+import { ENVIRONMENT } from './modules/shared/environment/index.js';
 
 beforeAll(() => {
   // ensure the API is running on testMode

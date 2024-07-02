@@ -6,7 +6,7 @@ import {
   getBoolean,
   getSecretString,
   getSecretObject,
-} from './environment.utils.js';
+} from './utils.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *

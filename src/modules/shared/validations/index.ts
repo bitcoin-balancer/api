@@ -1,4 +1,4 @@
-import { IAuthority } from '../../auth/types.js';
+import { IAuthority } from '../../auth/user/types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -31,7 +31,7 @@ const numberValid = (value: number, min?: number, max?: number): boolean => (
 );
 
 /**
- * Verifies if a username meets the following requirements:
+ * Verifies if a nickname meets the following requirements:
  * - Accepts any Alpha Characters (lower and upper case)
  * - Accepts any digits
  * - Accepts - , . and/or _
@@ -39,7 +39,7 @@ const numberValid = (value: number, min?: number, max?: number): boolean => (
  * @param value
  * @returns boolean
  */
-const usernameValid = (value: string): boolean => (
+const nicknameValid = (value: string): boolean => (
   typeof value === 'string'
   && /^[a-zA-Z0-9\-._]{2,16}$/.test(value)
 );
@@ -120,7 +120,7 @@ export {
   // implementation
   stringValid,
   numberValid,
-  usernameValid,
+  nicknameValid,
   passwordValid,
   authorityValid,
   otpTokenValid,

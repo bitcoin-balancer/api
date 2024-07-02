@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { readFile } from 'node:fs/promises';
-import { ENVIRONMENT } from '../environment/environment.js';
+import { ENVIRONMENT } from '../environment/index.js';
 import { ITerminationSignal, PackageFileSchema, IPackageFile } from './types.js';
 
 /* ************************************************************************************************

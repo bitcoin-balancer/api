@@ -1,4 +1,4 @@
-import { ENVIRONMENT } from '../environment/environment.js';
+import { ENVIRONMENT } from '../environment/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *

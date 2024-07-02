@@ -1,9 +1,9 @@
 import { describe, test, expect } from 'vitest';
-import { IAuthority } from '../../auth/types.js';
+import { IAuthority } from '../../auth/user/types.js';
 import {
   stringValid,
   numberValid,
-  usernameValid,
+  nicknameValid,
   passwordValid,
   authorityValid,
   otpTokenValid,
@@ -11,7 +11,7 @@ import {
   ipValid,
   ipNotesValid,
   semverValid,
-} from './validations.js';
+} from './index.js';
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
@@ -85,7 +85,7 @@ describe('numberValid', () => {
 
 
 
-describe('usernameValid', () => {
+describe('nicknameValid', () => {
   test.each([
     // valid
     ['jesusgraterol', true],
@@ -114,8 +114,8 @@ describe('usernameValid', () => {
     ['', false],
     [' ', false],
     ['   ', false],
-  ])('usernameValid(%s) -> %s', (a, expected) => {
-    expect(usernameValid(<string>a)).toBe(expected);
+  ])('nicknameValid(%s) -> %s', (a, expected) => {
+    expect(nicknameValid(<string>a)).toBe(expected);
   });
 });
 

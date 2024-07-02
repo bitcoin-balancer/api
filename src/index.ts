@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import requestIp from 'request-ip';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { API } from './modules/shared/api/api.js';
+import { API } from './modules/shared/api/index.js';
 
 /* ************************************************************************************************
  *                                       APPLICATION SETUP                                        *

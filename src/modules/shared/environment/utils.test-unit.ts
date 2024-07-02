@@ -1,5 +1,5 @@
 import { describe, beforeAll, afterAll, beforeEach, afterEach, test, expect, vi } from 'vitest';
-import { getBoolean, getInteger, getObject, getString } from './environment.utils.js';
+import { getBoolean, getInteger, getObject, getString } from './utils.js';
 
 describe('Environment Utilities', () => {
   beforeAll(() => { });
@@ -91,7 +91,7 @@ describe('Environment Utilities', () => {
 
     test('throws if the value is not an object', () => {
       vi.stubEnv('SOME_KEY', '100.55');
-      expect(() => getObject('SOME_KEY')).toThrowError('4');
+      expect(() => getObject('SOME_KEY')).toThrowError('7');
     });
   });
 });

@@ -1,5 +1,5 @@
 import { describe, beforeAll, afterAll, test, expect, vi } from 'vitest';
-import { toSeconds, toMilliseconds, delay } from './utils.js';
+import { toSeconds, toMilliseconds, delay } from './index.js';
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
