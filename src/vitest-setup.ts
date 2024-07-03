@@ -12,7 +12,6 @@ beforeAll(async () => {
   }
 
   // initialize the Database Module
-  console.log('in beforeAll');
   if (!DatabaseService.pool) await DatabaseService.initialize();
 
   // ...
@@ -25,7 +24,6 @@ beforeAll(async () => {
  */
 afterAll(async () => {
   // teardown the Database Module
-  console.log('in afterAll');
   if (DatabaseService.pool) await DatabaseService.teardown();
 
   // ...

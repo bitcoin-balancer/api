@@ -78,21 +78,7 @@ const databaseServiceFactory = (): IDatabaseService => {
     const client = await __pool!.connect();
     try {
       await client.query('BEGIN');
-      /**
-       * The parallel approach had to be deprecated as the tables must be created in order to avoid
-       * a series of errors, such as:
-       * - error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-       * - a table is created before another table it relies on, leading to errors like:
-       * relation "test_users" does not exist
-       */
       await Promise.all(__tables.map((table) => client.query(table.sql)));
-      // eslint-disable-next-line no-restricted-syntax
-      /*       for (const table of __tables) {
-        // eslint-disable-next-line no-await-in-loop
-        await client.query(table.sql);
-        // eslint-disable-next-line no-await-in-loop
-        await delay(2);
-      } */
       await client.query('COMMIT');
     } catch (e) {
       await client.query('ROLLBACK');
@@ -101,16 +87,6 @@ const databaseServiceFactory = (): IDatabaseService => {
       client.release();
     }
   };
-  /* const createTables = (): Promise<any> => Promise.all(
-    __tables.map((table) => __pool!.query(table.sql)),
-  ); */
-  /* const createTables = async (): Promise<any> => {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const table of __tables) {
-      // eslint-disable-next-line no-await-in-loop
-      await __pool!.query(table.sql);
-    }
-  }; */
 
   /**
    * Drops all the tables and indexes in a single query execution.
@@ -240,7 +216,7 @@ const databaseServiceFactory = (): IDatabaseService => {
   return Object.freeze({
     // properties
     get pool() {
-      return __pool;
+      return <pg.Pool>__pool;
     },
     get tn() {
       return __tn;

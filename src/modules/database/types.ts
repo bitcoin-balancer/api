@@ -10,7 +10,7 @@ import pg from 'pg';
  */
 type IDatabaseService = {
   // properties
-  pool: pg.Pool | undefined;
+  pool: pg.Pool;
   tn: ITableNames;
 
   // database management
