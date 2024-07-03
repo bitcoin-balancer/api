@@ -1,8 +1,16 @@
 import pg from 'pg';
 import { ENVIRONMENT } from '../shared/environment/index.js';
-import { IDatabaseService, ITable, ITableNames } from './types.js';
-import { buildTableNames, buildTables, getTableNamesForQuery } from './utils.js';
+import {
+  IDatabaseService,
+  IDatabaseSummary,
+  IDatabaseSummaryTable,
+  ITable,
+  ITableName,
+  ITableNames,
+  ITestTableName,
+} from './types.js';
 import { RAW_TABLES } from './raw-tables.js';
+import { buildTableNames, buildTables, getTableNamesForQuery } from './utils.js';
 
 /* ************************************************************************************************
  *                                          DATA PARSERS                                          *
@@ -34,7 +42,7 @@ const databaseServiceFactory = (): IDatabaseService => {
    ********************************************************************************************** */
 
   // the pool's configuration -> https://node-postgres.com/apis/pool
-  const __CONFIG: pg.PoolConfig = {
+  const __POOL_CONFIG: pg.PoolConfig = {
     host: ENVIRONMENT.POSTGRES_HOST,
     user: ENVIRONMENT.POSTGRES_USER,
     password: ENVIRONMENT.POSTGRES_PASSWORD_FILE,
@@ -46,7 +54,7 @@ const databaseServiceFactory = (): IDatabaseService => {
   };
 
   // the instance of the pool
-  let __pool: pg.Pool;
+  let __pool: pg.Pool | undefined;
 
   // the list of existing tables
   const __tables: ITable[] = buildTables(RAW_TABLES);
@@ -67,10 +75,24 @@ const databaseServiceFactory = (): IDatabaseService => {
    * @returns Promise<void>
    */
   const createTables = async (): Promise<void> => {
-    const client = await __pool.connect();
+    const client = await __pool!.connect();
     try {
       await client.query('BEGIN');
+      /**
+       * The parallel approach had to be deprecated as the tables must be created in order to avoid
+       * a series of errors, such as:
+       * - error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
+       * - a table is created before another table it relies on, leading to errors like:
+       * relation "test_users" does not exist
+       */
       await Promise.all(__tables.map((table) => client.query(table.sql)));
+      // eslint-disable-next-line no-restricted-syntax
+      /*       for (const table of __tables) {
+        // eslint-disable-next-line no-await-in-loop
+        await client.query(table.sql);
+        // eslint-disable-next-line no-await-in-loop
+        await delay(2);
+      } */
       await client.query('COMMIT');
     } catch (e) {
       await client.query('ROLLBACK');
@@ -79,13 +101,23 @@ const databaseServiceFactory = (): IDatabaseService => {
       client.release();
     }
   };
+  /* const createTables = (): Promise<any> => Promise.all(
+    __tables.map((table) => __pool!.query(table.sql)),
+  ); */
+  /* const createTables = async (): Promise<any> => {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const table of __tables) {
+      // eslint-disable-next-line no-await-in-loop
+      await __pool!.query(table.sql);
+    }
+  }; */
 
   /**
    * Drops all the tables and indexes in a single query execution.
    * @returns Promise<pg.QueryResult>
    */
   const dropTables = (): Promise<pg.QueryResult> => (
-    __pool.query(`DROP TABLE IF EXISTS ${getTableNamesForQuery(__tables)};`)
+    __pool!.query(`DROP TABLE IF EXISTS ${getTableNamesForQuery(__tables)};`)
   );
 
 
@@ -102,7 +134,7 @@ const databaseServiceFactory = (): IDatabaseService => {
    */
   const initialize = async (): Promise<void> => {
     // initialize the pool
-    __pool = new pg.Pool(__CONFIG);
+    __pool = new pg.Pool(__POOL_CONFIG);
 
     // create the tables
     await createTables();
@@ -121,7 +153,8 @@ const databaseServiceFactory = (): IDatabaseService => {
     }
 
     // end the pool connection
-    await __pool.end();
+    await __pool!.end();
+    __pool = undefined;
 
     // ...
   };
@@ -134,7 +167,69 @@ const databaseServiceFactory = (): IDatabaseService => {
    *                                       DATABASE SUMMARY                                       *
    ********************************************************************************************** */
 
-  // ...
+  /**
+   * Retrieves the version of the database being used.
+   * @returns Promise<string>
+   */
+  const __getDatabaseVersion = async (): Promise<string> => {
+    const { rows } = await __pool!.query('SELECT version();');
+    return rows[0].version;
+  };
+
+  /**
+   * Retrieves the size of the database in bytes.
+   * @returns Promise<number>
+   */
+  const __getDatabaseSize = async (): Promise<number> => {
+    const { rows } = await __pool!.query(`SELECT pg_database_size('${__POOL_CONFIG.database}');`);
+    return rows[0].pg_database_size;
+  };
+
+  /**
+   * Retrieves the summary for a table.
+   * @param name
+   * @returns Promise<IDatabaseSummaryTable>
+   */
+  const __getSummaryTable = async (
+    name: ITableName | ITestTableName,
+  ): Promise<IDatabaseSummaryTable> => {
+    const { rows } = await __pool!.query(`SELECT pg_total_relation_size('${name}');`);
+    return {
+      name,
+      size: rows[0].pg_total_relation_size,
+    };
+  };
+
+  /**
+   * Retrieves the summary for all existing tables.
+   * @returns Promise<IDatabaseSummaryTable[]>
+   */
+  const __getAllSummaryTables = (): Promise<IDatabaseSummaryTable[]> => Promise.all(
+    __tables.map((table) => __getSummaryTable(table.name)),
+  );
+
+  /**
+   * Retrieves the essential database info to get an idea of how things are going from the GUI.
+   * @returns Promise<IDatabaseSummary>
+   */
+  const getDatabaseSummary = async (): Promise<IDatabaseSummary> => {
+    // retrieve all the data simultaneously
+    const values = await Promise.all([
+      __getDatabaseVersion(),
+      __getDatabaseSize(),
+      __getAllSummaryTables(),
+    ]);
+
+    // finally, return the data
+    return {
+      name: <string>__POOL_CONFIG.database,
+      version: values[0],
+      size: values[1],
+      port: <number>__POOL_CONFIG.port,
+      tables: values[2],
+    };
+  };
+
 
 
 
@@ -158,6 +253,9 @@ const databaseServiceFactory = (): IDatabaseService => {
     // initializer
     initialize,
     teardown,
+
+    // database summary
+    getDatabaseSummary,
   });
 };
 

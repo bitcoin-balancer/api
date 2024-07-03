@@ -54,17 +54,21 @@ const apiFactory = (): IAPI => {
 
   /**
    * Calls the teardown method for all the modules that are initialized on setup.
+   * Keep in mind the modules are only initialized if TEST_MODE is disabled as the automated tests
+   * initialize and teardown the modules it needs in the vitest-setup.ts file.
    * @returns Promise<void>
    */
   const __teardownModules = async (): Promise<void> => {
-    // Database Module
-    try {
-      await DatabaseService.teardown();
-    } catch (e) {
-      console.error('DatabaseService.teardown()', e);
-    }
+    if (!ENVIRONMENT.TEST_MODE) {
+      // Database Module
+      try {
+        await DatabaseService.teardown();
+      } catch (e) {
+        console.error('DatabaseService.teardown()', e);
+      }
 
-    // ...
+      // ...
+    }
   };
 
   /**
@@ -117,20 +121,24 @@ const apiFactory = (): IAPI => {
 
   /**
    * Attempts to initialize all modules sequentially. Will throw if any of the modules fail to
-   * initialize. This process is influenced by running mode (if any).
+   * initialize.
+   * Keep in mind the modules are only initialized if TEST_MODE is disabled as the automated tests
+   * initialize the modules it needs in the vitest-setup.ts file.
    * @returns Promise<void>
    */
   const __initializeModules = async (): Promise<void> => {
-    // Database Module
-    console.log('1/10) Database Module: started');
-    try {
-      await DatabaseService.initialize();
-    } catch (e) {
-      throw new Error(`DatabaseService.initialize() -> ${extractMessage(e)}`);
-    }
-    console.log('1/10) Database Module: done');
+    if (!ENVIRONMENT.TEST_MODE) {
+      // Database Module
+      console.log('1/10) Database Module: started');
+      try {
+        await DatabaseService.initialize();
+      } catch (e) {
+        throw new Error(`DatabaseService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('1/10) Database Module: done\n');
 
-    // ...
+      // ...
+    }
   };
 
   /**
@@ -143,10 +151,14 @@ const apiFactory = (): IAPI => {
     printInitializationHeader(__server !== undefined);
 
     // initialize the content of the package.json file if it hadn't been
+    console.log('Read Package File: started');
     if (__packageFile === undefined) __packageFile = await readPackageFile();
+    console.log('Read Package File: done\n');
 
     // initialize the HTTP Server if it hadn't been
+    console.log('Initialize HTTP Server: started');
     if (__server === undefined) __server = app.listen(ENVIRONMENT.API_PORT);
+    console.log('Initialize HTTP Server: done\n');
 
     // setup the modules
     await __initializeModules();

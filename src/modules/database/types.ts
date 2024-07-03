@@ -10,16 +10,20 @@ import pg from 'pg';
  */
 type IDatabaseService = {
   // properties
-  pool: pg.Pool;
+  pool: pg.Pool | undefined;
   tn: ITableNames;
 
   // database management
+  // createTables: () => Promise<pg.QueryResult[]>;
   createTables: () => Promise<void>;
   dropTables: () => Promise<pg.QueryResult>;
 
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;
+
+  // database summary
+  getDatabaseSummary: () => Promise<IDatabaseSummary>;
 };
 
 
@@ -81,7 +85,7 @@ type ITable = {
  */
 type IDatabaseSummaryTable = {
   // the name of the table
-  name: string;
+  name: ITableName | ITestTableName;
 
   // the total size of the table in bytes
   size: number;
