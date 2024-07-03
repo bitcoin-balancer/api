@@ -135,7 +135,7 @@ const apiFactory = (): IAPI => {
       } catch (e) {
         throw new Error(`DatabaseService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('1/10) Database Module: done\n');
+      console.log('1/10) Database Module: done');
 
       // ...
     }
@@ -161,7 +161,9 @@ const apiFactory = (): IAPI => {
     console.log('Initialize HTTP Server: done\n');
 
     // setup the modules
+    console.log('Initialize Modules: started');
     await __initializeModules();
+    console.log('Initialize Modules: done');
 
     // set the initialization state in order to allow incoming requests
     __initialized = true;

@@ -3,6 +3,9 @@ import { ENVIRONMENT } from '../shared/environment/index.js';
 import { IDatabaseSummary, IDatabaseSummaryTable, ITableName, ITestTableName } from './types.js';
 import { DatabaseService } from './index.js';
 
+/**
+ * Mock getDatabaseSummary to find the best implementation approach;
+ */
 const __getSummaryTable = async (
   name: ITableName | ITestTableName,
 ): Promise<IDatabaseSummaryTable> => {
