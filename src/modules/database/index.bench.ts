@@ -41,11 +41,11 @@ const getDatabaseSummaryAlt = async (): Promise<IDatabaseSummary> => {
 
 
 describe('Database Summary', () => {
-  bench('using getDatabaseSummary()', () => {
-    DatabaseService.getDatabaseSummary();
+  bench('using getDatabaseSummary()', async () => {
+    await Promise.resolve(DatabaseService.getDatabaseSummary());
   });
 
-  bench('using a single pool connection ', () => {
-    getDatabaseSummaryAlt();
+  bench('using a single pool connection ', async () => {
+    await Promise.resolve(getDatabaseSummaryAlt());
   });
 });
