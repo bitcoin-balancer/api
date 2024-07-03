@@ -145,31 +145,35 @@ const databaseServiceFactory = (): IDatabaseService => {
 
   /**
    * Retrieves the version of the database being used.
+   * @param client
    * @returns Promise<string>
    */
-  const __getDatabaseVersion = async (): Promise<string> => {
-    const { rows } = await __pool!.query('SELECT version();');
+  const __getDatabaseVersion = async (client: pg.PoolClient): Promise<string> => {
+    const { rows } = await client.query('SELECT version();');
     return rows[0].version;
   };
 
   /**
    * Retrieves the size of the database in bytes.
+   * @param client
    * @returns Promise<number>
    */
-  const __getDatabaseSize = async (): Promise<number> => {
-    const { rows } = await __pool!.query(`SELECT pg_database_size('${__POOL_CONFIG.database}');`);
+  const __getDatabaseSize = async (client: pg.PoolClient): Promise<number> => {
+    const { rows } = await client.query(`SELECT pg_database_size('${__POOL_CONFIG.database}');`);
     return rows[0].pg_database_size;
   };
 
   /**
    * Retrieves the summary for a table.
    * @param name
+   * @param client
    * @returns Promise<IDatabaseSummaryTable>
    */
   const __getSummaryTable = async (
     name: ITableName | ITestTableName,
+    client: pg.PoolClient,
   ): Promise<IDatabaseSummaryTable> => {
-    const { rows } = await __pool!.query(`SELECT pg_total_relation_size('${name}');`);
+    const { rows } = await client.query(`SELECT pg_total_relation_size('${name}');`);
     return {
       name,
       size: rows[0].pg_total_relation_size,
@@ -178,10 +182,13 @@ const databaseServiceFactory = (): IDatabaseService => {
 
   /**
    * Retrieves the summary for all existing tables.
+   * @param client
    * @returns Promise<IDatabaseSummaryTable[]>
    */
-  const __getAllSummaryTables = (): Promise<IDatabaseSummaryTable[]> => Promise.all(
-    __tables.map((table) => __getSummaryTable(table.name)),
+  const __getAllSummaryTables = (
+    client: pg.PoolClient,
+  ): Promise<IDatabaseSummaryTable[]> => Promise.all(
+    Object.values(__tn).map((name) => __getSummaryTable(name, client)),
   );
 
   /**
@@ -189,21 +196,28 @@ const databaseServiceFactory = (): IDatabaseService => {
    * @returns Promise<IDatabaseSummary>
    */
   const getDatabaseSummary = async (): Promise<IDatabaseSummary> => {
-    // retrieve all the data simultaneously
-    const values = await Promise.all([
-      __getDatabaseVersion(),
-      __getDatabaseSize(),
-      __getAllSummaryTables(),
-    ]);
+    // Init the client
+    const client = await __pool!.connect();
 
-    // finally, return the data
-    return {
-      name: <string>__POOL_CONFIG.database,
-      version: values[0],
-      size: values[1],
-      port: <number>__POOL_CONFIG.port,
-      tables: values[2],
-    };
+    // retrieve all the data simultaneously
+    try {
+      const values = await Promise.all([
+        __getDatabaseVersion(client),
+        __getDatabaseSize(client),
+        __getAllSummaryTables(client),
+      ]);
+
+      // finally, return the data
+      return {
+        name: <string>__POOL_CONFIG.database,
+        version: values[0],
+        size: values[1],
+        port: <number>__POOL_CONFIG.port,
+        tables: values[2],
+      };
+    } finally {
+      client.release();
+    }
   };
 
 

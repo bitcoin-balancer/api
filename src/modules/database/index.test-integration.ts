@@ -9,7 +9,9 @@ import { DatabaseService } from './index.js';
 describe('Database Summary', () => {
   describe('getDatabaseSummary', () => {
     test('can retrieve the summary of the database', async () => {
-      await expect(DatabaseService.getDatabaseSummary()).resolves.toStrictEqual({
+      const summary = await DatabaseService.getDatabaseSummary();
+      console.log(summary);
+      expect(summary).toStrictEqual({
         name: ENVIRONMENT.POSTGRES_DB,
         version: expect.any(String),
         size: expect.any(Number),

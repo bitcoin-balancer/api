@@ -10,7 +10,7 @@
     "test": "echo \"Error: tests are executed with  npm run test:(integration|unit|bench)\" && exit 1",
     "test:integration": "vitest run --config vitest.test-integration.config.ts",
     "test:unit": "vitest run --config vitest.test-unit.config.ts",
-    "test:bench": "vitest bench"
+    "test:bench": "vitest --config vitest.test-bench.config.ts bench"
   },
   "repository": {
     "type": "git",
