@@ -10,7 +10,6 @@ describe('Database Summary', () => {
   describe('getDatabaseSummary', () => {
     test('can retrieve the summary of the database', async () => {
       const summary = await DatabaseService.getDatabaseSummary();
-      console.log(summary);
       expect(summary).toStrictEqual({
         name: ENVIRONMENT.POSTGRES_DB,
         version: expect.any(String),
