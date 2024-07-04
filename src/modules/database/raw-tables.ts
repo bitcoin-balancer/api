@@ -18,7 +18,7 @@ export const RAW_TABLES: IRawTable[] = [
         nickname        VARCHAR(20) NOT NULL UNIQUE,
         authority       SMALLINT NOT NULL,
         password_hash   VARCHAR(100) NULL,
-        otp_secret      VARCHAR(100) NOT NULL,
+        otp_secret      VARCHAR(100) NOT NULL UNIQUE,
         event_time      BIGINT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS ${getTableName('users')}_nickname ON ${getTableName('users')}(nickname);`,
