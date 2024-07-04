@@ -4,9 +4,7 @@ import {
   IDatabaseService,
   IDatabaseSummary,
   IDatabaseSummaryTable,
-  ITable,
   ITableName,
-  ITableNames,
   ITestTableName,
 } from './types.js';
 import { RAW_TABLES } from './raw-tables.js';
@@ -57,10 +55,10 @@ const databaseServiceFactory = (): IDatabaseService => {
   let __pool: pg.Pool | undefined;
 
   // the list of existing tables
-  const __tables: ITable[] = buildTables(RAW_TABLES);
+  const __tables = buildTables(RAW_TABLES);
 
   // the table names object
-  const __tn: ITableNames = buildTableNames(RAW_TABLES);
+  const __tn = buildTableNames(RAW_TABLES);
 
 
 
@@ -188,7 +186,7 @@ const databaseServiceFactory = (): IDatabaseService => {
   const __getAllSummaryTables = (
     client: pg.PoolClient,
   ): Promise<IDatabaseSummaryTable[]> => Promise.all(
-    Object.values(__tn).map((name) => __getSummaryTable(name, client)),
+    __tables.map((table) => __getSummaryTable(table.name, client)),
   );
 
   /**

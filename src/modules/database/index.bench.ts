@@ -43,7 +43,7 @@ const getDatabaseSummaryAlt = async (): Promise<IDatabaseSummary> => {
 };
 
 
-describe('Database Summary', () => {
+describe.skip('Database Summary', () => {
   bench('using getDatabaseSummary()', async () => {
     await Promise.resolve(DatabaseService.getDatabaseSummary());
   });

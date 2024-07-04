@@ -12,8 +12,8 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'users',
-    sql: (tableName: string) => (
-      `CREATE TABLE IF NOT EXISTS ${tableName} (
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('users')} (
         uid             UUID PRIMARY KEY,
         nickname        VARCHAR(20) NOT NULL UNIQUE,
         authority       SMALLINT NOT NULL,
@@ -21,8 +21,7 @@ export const RAW_TABLES: IRawTable[] = [
         otp_secret      VARCHAR(100) NOT NULL,
         event_time      BIGINT NOT NULL
       );
-      CREATE INDEX IF NOT EXISTS ${tableName}_nickname ON ${tableName}(nickname);`
-    ),
+      CREATE INDEX IF NOT EXISTS ${getTableName('users')}_nickname ON ${getTableName('users')}(nickname);`,
   },
 
   /**
@@ -31,15 +30,14 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'refresh_tokens',
-    sql: (tableName: string) => (
-      `CREATE TABLE IF NOT EXISTS ${tableName} (
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('refresh_tokens')} (
         uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
         token       VARCHAR(3000) NOT NULL UNIQUE,
         event_time  BIGINT NOT NULL
       );
-      CREATE INDEX IF NOT EXISTS ${tableName}_uid ON ${tableName}(uid);
-      CREATE INDEX IF NOT EXISTS ${tableName}_token ON ${tableName}(token);`
-    ),
+      CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_uid ON ${getTableName('refresh_tokens')}(uid);
+      CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_token ON ${getTableName('refresh_tokens')}(token);`,
   },
 
   /**
@@ -48,12 +46,11 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'password_updates',
-    sql: (tableName: string) => (
-      `CREATE TABLE IF NOT EXISTS ${tableName} (
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('password_updates')} (
         uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
         event_time  BIGINT NOT NULL
       );
-      CREATE INDEX IF NOT EXISTS ${tableName}_uid ON ${tableName}(uid);`
-    ),
+      CREATE INDEX IF NOT EXISTS ${getTableName('password_updates')}_uid ON ${getTableName('password_updates')}(uid);`,
   },
 ];

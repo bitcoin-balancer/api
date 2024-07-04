@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, afterEach, test, expect, vi } from 'vitest';
+import { IEnvironment } from '../shared/environment/types.js';
 import * as ENVIRONMENT from '../shared/environment/index.js';
 import {
   buildTableNames,
@@ -10,7 +11,6 @@ import {
   toTestTableName,
 } from './utils.js';
 import { ITableName } from './types.js';
-import { IEnvironment } from '../shared/environment/types.js';
 
 /* ************************************************************************************************
  *                                             MOCKS                                              *
@@ -106,9 +106,9 @@ describe('Table Builders', () => {
     test('can process a list of raw tables when TEST_MODE is not enabled', () => {
       const spy = mockEnvironment({ TEST_MODE: false });
       expect(buildTables([
-        { name: 'users', sql: (n) => 'CREATE ...' },
-        { name: 'refresh_tokens', sql: (n) => 'CREATE ...' },
-        { name: 'password_updates', sql: (n) => 'CREATE ...' },
+        { name: 'users', sql: 'CREATE ...' },
+        { name: 'refresh_tokens', sql: 'CREATE ...' },
+        { name: 'password_updates', sql: 'CREATE ...' },
       ])).toStrictEqual([
         { name: 'users', sql: 'CREATE ...' },
         { name: 'refresh_tokens', sql: 'CREATE ...' },
@@ -119,9 +119,9 @@ describe('Table Builders', () => {
     test('can process a list of raw tables when TEST_MODE is enabled', () => {
       const spy = mockEnvironment({ TEST_MODE: true });
       expect(buildTables([
-        { name: 'users', sql: (n) => 'CREATE ...' },
-        { name: 'refresh_tokens', sql: (n) => 'CREATE ...' },
-        { name: 'password_updates', sql: (n) => 'CREATE ...' },
+        { name: 'users', sql: 'CREATE ...' },
+        { name: 'refresh_tokens', sql: 'CREATE ...' },
+        { name: 'password_updates', sql: 'CREATE ...' },
       ])).toStrictEqual([
         { name: 'test_users', sql: 'CREATE ...' },
         { name: 'test_refresh_tokens', sql: 'CREATE ...' },
@@ -136,9 +136,9 @@ describe('Table Builders', () => {
     test('can build the table names when TEST_MODE is disabled', () => {
       const spy = mockEnvironment({ TEST_MODE: false });
       expect(buildTableNames([
-        { name: 'users', sql: (n) => 'CREATE ...' },
-        { name: 'refresh_tokens', sql: (n) => 'CREATE ...' },
-        { name: 'password_updates', sql: (n) => 'CREATE ...' },
+        { name: 'users', sql: 'CREATE ...' },
+        { name: 'refresh_tokens', sql: 'CREATE ...' },
+        { name: 'password_updates', sql: 'CREATE ...' },
       ])).toStrictEqual({
         users: 'users',
         refresh_tokens: 'refresh_tokens',
@@ -149,9 +149,9 @@ describe('Table Builders', () => {
     test('can build the table names when TEST_MODE is enabled', () => {
       const spy = mockEnvironment({ TEST_MODE: true });
       expect(buildTableNames([
-        { name: 'users', sql: (n) => 'CREATE ...' },
-        { name: 'refresh_tokens', sql: (n) => 'CREATE ...' },
-        { name: 'password_updates', sql: (n) => 'CREATE ...' },
+        { name: 'users', sql: 'CREATE ...' },
+        { name: 'refresh_tokens', sql: 'CREATE ...' },
+        { name: 'password_updates', sql: 'CREATE ...' },
       ])).toStrictEqual({
         users: 'test_users',
         refresh_tokens: 'test_refresh_tokens',

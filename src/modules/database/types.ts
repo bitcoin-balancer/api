@@ -14,7 +14,6 @@ type IDatabaseService = {
   tn: ITableNames;
 
   // database management
-  // createTables: () => Promise<pg.QueryResult[]>;
   createTables: () => Promise<void>;
   dropTables: () => Promise<pg.QueryResult>;
 
@@ -55,7 +54,7 @@ type IRawTable = {
   name: ITableName;
 
   // the function that will generate the SQL to create the table
-  sql: (tableName: string) => string;
+  sql: string;
 };
 
 /**

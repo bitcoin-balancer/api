@@ -65,13 +65,10 @@ const getTableNamesForQuery = (tables: ITable[]): string => tables.reduce(
  * @param raw
  * @returns ITable
  */
-const __processRawTable = (raw: IRawTable): ITable => {
-  const name = getTableName(raw.name);
-  return {
-    name,
-    sql: raw.sql(name),
-  };
-};
+const __processRawTable = (raw: IRawTable): ITable => ({
+  name: getTableName(raw.name),
+  sql: raw.sql,
+});
 
 /**
  * Processes a series of raw tables and returns the output.
