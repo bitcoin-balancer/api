@@ -17,23 +17,47 @@ type INodeEnv = z.infer<typeof NodeEnvSchema>;
  * with the Auth Module.
  */
 const RootAccountSchema = z.object({
+  // the universally unique identifier (v4) that belongs to the root account
   uid: z.string().min(1).max(100),
+
+  // the root's nickname
   nickname: z.string().min(1).max(100),
+
+  // the password to authenticate the root account. This password cannot be changed
   password: z.string().min(1).max(100000),
+
+  // the secret that will be used to generate OTP tokens for the root account
   otpSecret: z.string().min(1).max(100),
 });
-type IRootAccount = z.infer<typeof RootAccountSchema>;
+type IRootAccountConfig = z.infer<typeof RootAccountSchema>;
 
 /**
  * Telegram
  * The configuration that will be used to initialize the Telegram instance in order to be able to
- * send messages. If Telegram is not integrated, the env property should be an empty string.
+ * send messages. If Telegram is not integrated, the token property will be an empty string while
+ * the chatID will be equals to 0.
  */
 const TelegramSchema = z.optional(z.object({
-  token: z.string().min(1).max(200),
+  // the token used to managed BalancerBot via HTTP
+  token: z.string(),
+
+  // the id of the group in which all notifications will be broadcasted to
   chatID: z.number(),
 }));
-type ITelegramSchema = z.infer<typeof TelegramSchema>;
+type ITelegramConfig = z.infer<typeof TelegramSchema>;
+
+/**
+ * JWT Secret
+ * The secrets that will be used to generate Access and Refresh Tokens.
+ */
+const JWTSecretSchema = z.object({
+  // the secret that will be used to generate refresh tokens
+  refresh: z.string().min(1).max(100000),
+
+  // the secret that will be used to generate access tokens
+  access: z.string().min(1).max(100000),
+});
+type IJWTSecretConfig = z.infer<typeof JWTSecretSchema>;
 
 /**
  * Environment
@@ -64,6 +88,12 @@ const EnvironmentSchema = z.object({
 
   // the configuration that will be used to initialize telegram (optionally)
   TELEGRAM: TelegramSchema,
+
+  // the secret that will be used to sign Altcha Challenges with HMAC
+  ALTCHA_SECRET: z.string().min(1).max(100000),
+
+  // the secrets that will be used to generate access and refresh auth tokens
+  JWT_SECRET: JWTSecretSchema,
 });
 type IEnvironment = z.infer<typeof EnvironmentSchema>;
 
@@ -76,8 +106,9 @@ type IEnvironment = z.infer<typeof EnvironmentSchema>;
  ************************************************************************************************ */
 export {
   type INodeEnv,
-  type IRootAccount,
-  type ITelegramSchema,
+  type IRootAccountConfig,
+  type ITelegramConfig,
+  type IJWTSecretConfig,
   EnvironmentSchema,
   type IEnvironment,
 };

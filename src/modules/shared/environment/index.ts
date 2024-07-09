@@ -1,4 +1,3 @@
-import process from 'node:process';
 import { EnvironmentSchema, IEnvironment, INodeEnv } from './types.js';
 import {
   getString,
@@ -22,9 +21,9 @@ const ENVIRONMENT = EnvironmentSchema.parse(<IEnvironment>{
   POSTGRES_PORT: getInteger('POSTGRES_PORT'),
   POSTGRES_PASSWORD_FILE: getSecretString('POSTGRES_PASSWORD_FILE'),
   ROOT_ACCOUNT: getSecretObject('ROOT_ACCOUNT'),
-  TELEGRAM: typeof process.env.TELEGRAM === 'string' && process.env.TELEGRAM.length
-    ? getSecretObject('TELEGRAM')
-    : undefined,
+  TELEGRAM: getSecretObject('TELEGRAM'),
+  ALTCHA_SECRET: getSecretString('ALTCHA_SECRET'),
+  JWT_SECRET: getSecretObject('JWT_SECRET'),
 });
 
 
@@ -35,5 +34,9 @@ const ENVIRONMENT = EnvironmentSchema.parse(<IEnvironment>{
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // types
+  // ...
+
+  // implementation
   ENVIRONMENT,
 };
