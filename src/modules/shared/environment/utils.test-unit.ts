@@ -24,17 +24,17 @@ describe('Environment Utilities', () => {
     });
 
     test('throws if the value is not in the env vars', () => {
-      expect(() => getString('SOME_KEY')).toThrowError('1');
+      expect(() => getString('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
     });
 
     test('throws if the value is an empty string', () => {
       vi.stubEnv('SOME_KEY', '');
-      expect(() => getString('SOME_KEY')).toThrowError('1');
+      expect(() => getString('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
     });
 
     test('throws if the value is not accepted', () => {
       vi.stubEnv('SOME_KEY', 'staging');
-      expect(() => getString('SOME_KEY', ['development', 'production'])).toThrowError('2');
+      expect(() => getString('SOME_KEY', ['development', 'production'])).toThrowError('The environment property \'SOME_KEY\'');
     });
   });
 
@@ -49,12 +49,12 @@ describe('Environment Utilities', () => {
     });
 
     test('throws if the value is not in the env vars', () => {
-      expect(() => getBoolean('SOME_KEY')).toThrowError('1');
+      expect(() => getBoolean('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
     });
 
     test('throws if the value is not true or false', () => {
       vi.stubEnv('SOME_KEY', 'something');
-      expect(() => getBoolean('SOME_KEY')).toThrowError('2');
+      expect(() => getBoolean('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
     });
   });
 
@@ -67,12 +67,12 @@ describe('Environment Utilities', () => {
     });
 
     test('throws if the value is not in the env vars', () => {
-      expect(() => getInteger('SOME_KEY')).toThrowError('1');
+      expect(() => getInteger('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
     });
 
     test('throws if the value is not an integer', () => {
       vi.stubEnv('SOME_KEY', '100.55');
-      expect(() => getInteger('SOME_KEY')).toThrowError('3');
+      expect(() => getInteger('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
     });
   });
 
@@ -86,12 +86,17 @@ describe('Environment Utilities', () => {
     });
 
     test('throws if the value is not in the env vars', () => {
-      expect(() => getObject('SOME_KEY')).toThrowError('1');
+      expect(() => getObject('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
     });
 
-    test('throws if the value is not an object', () => {
+    test('throws if the value is not an object (1)', () => {
       vi.stubEnv('SOME_KEY', '100.55');
-      expect(() => getObject('SOME_KEY')).toThrowError('7');
+      expect(() => getObject('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
+    });
+
+    test('throws if the value is not an object (2)', () => {
+      vi.stubEnv('SOME_KEY', '[1,2,3]');
+      expect(() => getObject('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
     });
   });
 });

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { readFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { ENVIRONMENT } from '../environment/index.js';
 import { validatePackageFile } from './validations.js';
 import { ITerminationSignal, IPackageFile } from './types.js';
@@ -10,10 +10,10 @@ import { ITerminationSignal, IPackageFile } from './types.js';
 
 /**
  * Reads and returns the parsed contents of the package.json file.
- * @returns Promise<IPackageFile>
+ * @returns IPackageFile
  */
-const readPackageFile = async (): Promise<IPackageFile> => {
-  const packageFile: IPackageFile = JSON.parse(await readFile('package.json', { encoding: 'utf8' }));
+const readPackageFile = (): IPackageFile => {
+  const packageFile: IPackageFile = JSON.parse(readFileSync('package.json', { encoding: 'utf8' }));
   validatePackageFile(packageFile);
   return packageFile;
 };

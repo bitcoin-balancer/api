@@ -152,7 +152,7 @@ const apiFactory = (): IAPI => {
 
     // initialize the content of the package.json file if it hadn't been
     console.log('Read Package File: started');
-    if (__packageFile === undefined) __packageFile = await readPackageFile();
+    if (__packageFile === undefined) __packageFile = readPackageFile();
     console.log('Read Package File: done\n');
 
     // initialize the HTTP Server if it hadn't been

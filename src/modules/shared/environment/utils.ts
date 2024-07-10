@@ -1,7 +1,9 @@
 import process from 'node:process';
 import { readFileSync } from 'node:fs';
-import { encodeError, extractMessage, isEncodedError } from 'error-message-utils';
+import { extractMessage } from 'error-message-utils';
 import { isInteger } from 'bignumber-utils';
+import { IObject } from '../types.js';
+import { stringValid, objectValid } from '../validations/index.js';
 
 /* ************************************************************************************************
  *                                        READABLE VALUES                                         *
@@ -13,16 +15,16 @@ import { isInteger } from 'bignumber-utils';
  * @param allowedValues?
  * @returns string
  * @throws
- * - 1: if the property does not exist or is an empty string
- * - 2: if the allowedValues array is provided and the value is not included in it
+ * - if the property does not exist or is an empty string
+ * - if the allowedValues array is provided and the value is not included in it
  */
 const getString = (key: string, allowedValues?: string[]): string => {
   const val: string | undefined = process.env[key];
-  if (typeof val !== 'string' || !val.length) {
-    throw new Error(encodeError(`The environment property '${key}' has not been properly set. Received: ${val}`, 1));
+  if (!stringValid(val, 1)) {
+    throw new Error(`The environment property '${key}' has not been properly set. Received: ${val}`);
   }
   if (Array.isArray(allowedValues) && !allowedValues.includes(val)) {
-    throw new Error(encodeError(`The environment property '${key}' has a value of ${val} which is not in the list of allowed values: ${allowedValues}.`, 2));
+    throw new Error(`The environment property '${key}' has a value of ${val} which is not in the list of allowed values: ${allowedValues}.`);
   }
   return val;
 };
@@ -32,8 +34,8 @@ const getString = (key: string, allowedValues?: string[]): string => {
  * @param key
  * @returns boolean
  * @throws
- * - 1: if the property does not exist or is an empty string
- * - 2: if the value is different to 'true' and 'false'
+ * - if the property does not exist or is an empty string
+ * - if the value is different to 'true' and 'false'
  */
 const getBoolean = (key: string): boolean => getString(key, ['true', 'false']) === 'true';
 
@@ -42,37 +44,34 @@ const getBoolean = (key: string): boolean => getString(key, ['true', 'false']) =
  * @param key
  * @returns number
  * @throws
- * - 1: if the property does not exist or is an empty string
+ * - if the property does not exist or is an empty string
  */
 const getInteger = (key: string): number => {
   const val = getString(key);
   if (!isInteger(val)) {
-    throw new Error(encodeError(`The environment property '${key}' is not an integer. Received: ${val}`, 3));
+    throw new Error(`The environment property '${key}' is not an integer. Received: ${val}`);
   }
   return Number(val);
 };
 
 /**
- * Extracts a non-nullable object value from the global environment object.
+ * Extracts an object value from the global environment object.
  * @param key
- * @returns NonNullable<object>
+ * @returns IObject
  * @throws
- * - 1: if the property does not exist or is an empty string
- * - 4: if the property is not a valid object
+ * - if the property does not exist or is an empty string
+ * - if the property is not a valid object
  */
-const getObject = (key: string): NonNullable<object> => {
+const getObject = (key: string): IObject => {
   const val = getString(key);
   try {
     const parsedVal = JSON.parse(val);
-    if (!parsedVal || typeof parsedVal !== 'object') {
-      throw new Error(encodeError(`The parsed value is not a valid object. Received: ${parsedVal}`, 7));
+    if (!objectValid(parsedVal)) {
+      throw new Error(`The parsed value is not a valid object. Received: ${JSON.stringify(parsedVal)}`);
     }
     return parsedVal;
   } catch (e) {
-    if (isEncodedError(e)) {
-      throw e;
-    }
-    throw new Error(encodeError(`The environment property '${key}' is not an object and could not be parsed. Received: ${val}. Error: ${extractMessage(e)}`, 4));
+    throw new Error(`The environment property '${key}' could not be processed: ${extractMessage(e)}. Received: ${val}`);
   }
 };
 
@@ -89,45 +88,39 @@ const getObject = (key: string): NonNullable<object> => {
  * @param key
  * @returns string
  * @throws
- * - 5, 7: if it fails to extract content from a secret's path
+ * - if it fails to extract content from a secret's path
  */
 const getSecretString = (key: string): string => {
   const srcPath = getString(key);
   try {
     const content = readFileSync(srcPath, { encoding: 'utf8' });
-    if (typeof content !== 'string' || !content.length) {
-      throw new Error(encodeError(`The secret '${srcPath}' has no content. Received: ${content}`, 7));
+    if (!stringValid(content, 1)) {
+      throw new Error(`The secret '${key}' has no content. Received: ${content}`);
     }
     return content;
   } catch (e) {
-    if (isEncodedError(e)) {
-      throw e;
-    }
-    throw new Error(encodeError(`The secret '${srcPath}' could not be read. ${extractMessage(e)}`, 5));
+    throw new Error(`The secret '${srcPath}' could not be processed: ${extractMessage(e)}`);
   }
 };
 
 /**
  * Extracts an object value stored in a secret's file.
  * @param key
- * @returns NonNullable<object>
+ * @returns IObject
  * @throws
- * - 5, 7: if it fails to extract content from a secret's path
- * - 8: if the value cannot be parsed
+ * - if it fails to extract content from a secret's path
+ * - if the value cannot be parsed
  */
-const getSecretObject = (key: string): NonNullable<object> => {
+const getSecretObject = (key: string): IObject => {
   const val = getSecretString(key);
   try {
     const parsedVal = JSON.parse(val);
-    if (!parsedVal || typeof parsedVal !== 'object') {
-      throw new Error(encodeError(`The secret parsed value is not a valid object. Received: ${parsedVal}`, 8));
+    if (!objectValid(parsedVal)) {
+      throw new Error(`The secret parsed value is not a valid object. Received: ${JSON.stringify(parsedVal)}`);
     }
     return parsedVal;
   } catch (e) {
-    if (isEncodedError(e)) {
-      throw e;
-    }
-    throw new Error(encodeError(`The secret '${key}' could not be read. ${extractMessage(e)}`, 5));
+    throw new Error(`The secret '${key}' could not be processed: ${extractMessage(e)}. Received: ${val}`);
   }
 };
 

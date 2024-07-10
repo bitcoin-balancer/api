@@ -14,7 +14,7 @@ import { IAuthority } from '../../auth/user/types.js';
  * @param maxLength?
  * @returns boolean
  */
-const stringValid = (value: string, minLength?: number, maxLength?: number): boolean => (
+const stringValid = (value: any, minLength?: number, maxLength?: number): value is string => (
   typeof value === 'string'
   && (minLength === undefined || value.length >= minLength)
   && (maxLength === undefined || value.length <= maxLength)
@@ -27,7 +27,7 @@ const stringValid = (value: string, minLength?: number, maxLength?: number): boo
  * @param max?
  * @returns boolean
  */
-const numberValid = (value: number, min?: number, max?: number): boolean => (
+const numberValid = (value: any, min?: number, max?: number): value is number => (
   typeof value === 'number'
   && (min === undefined || value >= min)
   && (max === undefined || value <= max)
@@ -39,7 +39,7 @@ const numberValid = (value: number, min?: number, max?: number): boolean => (
  * @param allowEmpty?
  * @returns boolean
  */
-const objectValid = (value: IObject, allowEmpty?: boolean): boolean => (
+const objectValid = (value: any, allowEmpty?: boolean): value is IObject => (
   Boolean(value)
   && typeof value === 'object'
   && !Array.isArray(value)
@@ -52,7 +52,7 @@ const objectValid = (value: IObject, allowEmpty?: boolean): boolean => (
  * @param allowEmpty?
  * @returns boolean
  */
-const arrayValid = (value: Array<any>, allowEmpty?: boolean): boolean => (
+const arrayValid = (value: any, allowEmpty?: boolean): value is Array<any> => (
   Array.isArray(value)
   && (allowEmpty || value.length > 0)
 );
@@ -62,7 +62,7 @@ const arrayValid = (value: Array<any>, allowEmpty?: boolean): boolean => (
  * @param value
  * @returns boolean
  */
-const uuidValid = (value: string): boolean => uuidValidate(value) && uuidVersion(value) === 4;
+const uuidValid = (value: any): value is string => uuidValidate(value) && uuidVersion(value) === 4;
 
 /**
  * Verifies if a nickname meets the following requirements:
@@ -73,7 +73,7 @@ const uuidValid = (value: string): boolean => uuidValidate(value) && uuidVersion
  * @param value
  * @returns boolean
  */
-const nicknameValid = (value: string): boolean => (
+const nicknameValid = (value: any): value is string => (
   typeof value === 'string'
   && /^[a-zA-Z0-9\-._]{2,16}$/.test(value)
 );
@@ -88,7 +88,7 @@ const nicknameValid = (value: string): boolean => (
  * @param value
  * @returns boolean
  */
-const passwordValid = (value: string): boolean => (
+const passwordValid = (value: any): value is string => (
   typeof value === 'string'
   && /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,2048}$/.test(value)
 );
@@ -98,14 +98,14 @@ const passwordValid = (value: string): boolean => (
  * @param value
  * @returns boolean
  */
-const authorityValid = (value: IAuthority): value is IAuthority => numberValid(value, 1, 5);
+const authorityValid = (value: any): value is IAuthority => numberValid(value, 1, 5);
 
 /**
  * Verifies if a value has the correct OTP Token Format.
  * @param value
  * @returns boolean
  */
-const otpTokenValid = (value: string): boolean => (
+const otpTokenValid = (value: any): value is string => (
   typeof value === 'string'
   && /^[0-9]{6}$/.test(value)
 );
@@ -116,7 +116,7 @@ const otpTokenValid = (value: string): boolean => (
  * @param value
  * @returns boolean
  */
-const jwtValid = (value: string): boolean => (
+const jwtValid = (value: any): value is string => (
   typeof value === 'string'
   && /^[A-Za-z0-9-_]{2,1000}\.[A-Za-z0-9-_]{2,1000}\.[A-Za-z0-9-_]{2,1000}$/.test(value)
 );
@@ -126,21 +126,21 @@ const jwtValid = (value: string): boolean => (
  * @param value
  * @returns boolean
  */
-const ipValid = (value: string): boolean => stringValid(value, 5, 300);
+const ipValid = (value: any): value is string => stringValid(value, 5, 300);
 
 /**
  * Verifies if a value is (or could be) notes to be attached to an IP Address.
  * @param value
  * @returns boolean
  */
-const ipNotesValid = (value: string): boolean => stringValid(value, 5, 3000);
+const ipNotesValid = (value: any): value is string => stringValid(value, 5, 3000);
 
 /**
  * Verifies if a value is a value that complies with semantic versioning.
  * @param value
  * @returns boolean
  */
-const semverValid = (value: string): boolean => (
+const semverValid = (value: any): value is string => (
   typeof value === 'string'
   && /^[0-9]{1,5}\.[0-9]{1,5}\.[0-9]{1,5}$/.test(value)
 );
