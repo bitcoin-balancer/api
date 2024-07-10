@@ -5,6 +5,7 @@ import {
   stringValid,
   numberValid,
   objectValid,
+  arrayValid,
   nicknameValid,
   passwordValid,
   authorityValid,
@@ -112,6 +113,38 @@ describe('objectValid', () => {
     ['   ', undefined, false],
   ])('objectValid(%s, %s) -> %s', (a, b, expected) => {
     expect(objectValid(<IObject>a, b)).toBe(expected);
+  });
+});
+
+
+
+
+
+describe('arrayValid', () => {
+  test.each([
+    // valid
+    [[], true, true],
+    [[1, 2, 3], undefined, true],
+    [['a', 'b', 'c'], undefined, true],
+    [[[1, 2], [3, 4], [5, 6]], false, true],
+
+    // invalid
+    [undefined, undefined, false],
+    [null, undefined, false],
+    [{}, undefined, false],
+    [[], false, false],
+    ['a', undefined, false],
+    ['JESUSGRATEROL@', undefined, false],
+    ['Jes15-Gratero_.!', undefined, false],
+    ['@@', undefined, false],
+    ['Jes15-Gratero_.as', undefined, false],
+    ['jesu()', undefined, false],
+    ['asdjkhxaslkdj546512asdkasd', undefined, false],
+    ['', undefined, false],
+    [' ', undefined, false],
+    ['   ', undefined, false],
+  ])('arrayValid(%s, %s) -> %s', (a, b, expected) => {
+    expect(arrayValid(<Array<any>>a, b)).toBe(expected);
   });
 });
 

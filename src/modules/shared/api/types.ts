@@ -39,7 +39,23 @@ const PackageFileSchema = z.object({
   devDependencies: z.record(z.string(), z.string()),
   dependencies: z.record(z.string(), z.string()),
 });
-type IPackageFile = z.infer<typeof PackageFileSchema>;
+type IPackageFile = {
+  name: string;
+  description: string;
+  private: boolean;
+  version: string;
+  type: string;
+  main: string;
+  scripts: { [key: string]: string };
+  repository: { [key: string]: string };
+  keywords: string[];
+  author: string;
+  license: string;
+  bugs: { [key: string]: string };
+  homepage: string;
+  devDependencies: { [key: string]: string };
+  dependencies: { [key: string]: string };
+};
 
 /**
  * API

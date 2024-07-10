@@ -46,6 +46,17 @@ const objectValid = (value: IObject, allowEmpty?: boolean): boolean => (
 );
 
 /**
+ * Verifies if a given value is an array. It also validates if it has elements inside (optional)
+ * @param value
+ * @param allowEmpty?
+ * @returns boolean
+ */
+const arrayValid = (value: Array<any>, allowEmpty?: boolean): boolean => (
+  Array.isArray(value)
+  && (allowEmpty || value.length > 0)
+);
+
+/**
  * Verifies if a nickname meets the following requirements:
  * - Accepts any Alpha Characters (lower and upper case)
  * - Accepts any digits
@@ -135,6 +146,7 @@ export {
   stringValid,
   numberValid,
   objectValid,
+  arrayValid,
   nicknameValid,
   passwordValid,
   authorityValid,
