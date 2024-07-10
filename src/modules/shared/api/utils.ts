@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import { readFile } from 'node:fs/promises';
 import { ENVIRONMENT } from '../environment/index.js';
-import { ITerminationSignal, PackageFileSchema, IPackageFile } from './types.js';
+import { validatePackageFile } from './validations.js';
+import { ITerminationSignal, IPackageFile } from './types.js';
 
 /* ************************************************************************************************
  *                                      PACKAGE FILE HELPERS                                      *
@@ -12,8 +13,9 @@ import { ITerminationSignal, PackageFileSchema, IPackageFile } from './types.js'
  * @returns Promise<IPackageFile>
  */
 const readPackageFile = async (): Promise<IPackageFile> => {
-  const rawContent = await readFile('package.json', { encoding: 'utf8' });
-  return PackageFileSchema.parse(JSON.parse(rawContent));
+  const packageFile: IPackageFile = JSON.parse(await readFile('package.json', { encoding: 'utf8' }));
+  validatePackageFile(packageFile);
+  return packageFile;
 };
 
 
