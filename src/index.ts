@@ -1,7 +1,6 @@
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import requestIp from 'request-ip';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { ENVIRONMENT } from './modules/shared/environment/index.js';
@@ -43,9 +42,17 @@ app.disable('x-powered-by');
  * is behind a Cloudflare Tunnel (Reverse Proxy). This setting is mostly to avoid getting an
  * internal IP address of the reverse proxy instead of the client's IP Address.
  * https://expressjs.com/en/guide/behind-proxies.html
+ *
+ * The numeric value is set based on the number of proxies between the user and the server. To find
+ * the correct number of, create a test endpoint that shows the client IP and compare it with your
+ * public IP. If the IP is not correct, keep increasing the number until it is.
+ * Make sure to turn the VPN off when performing this test as some VPN vendors give you a different
+ * IP for every request.
+ * https://express-rate-limit.mintlify.app/reference/error-codes#err-erl-permissive-trust-proxy
+ * https://github.com/express-rate-limit/express-rate-limit/wiki/Troubleshooting-Proxy-Issues
  */
 if (ENVIRONMENT.HAS_TUNNEL_TOKEN) {
-  app.set('trust proxy', true);
+  app.set('trust proxy', 1);
 }
 
 
@@ -56,18 +63,6 @@ if (ENVIRONMENT.HAS_TUNNEL_TOKEN) {
  * https://github.com/expressjs/morgan
  */
 app.use(morgan('combined'));
-
-
-
-/**
- * Request IP
- * Retrieving the request sender's IP can be challenging, especially when hiding behind a reverse
- * proxy server like nginx or Cloudflare Tunnel. The request-ip package simplifies this process as
- * it scans through the headers in order to determine the client's IP. The middleware adds the
- * clientIp property to the request with the IP (string) or null in case it cannot determine the IP.
- * https://github.com/pbojinov/request-ip
- */
-app.use(requestIp.mw());
 
 
 
