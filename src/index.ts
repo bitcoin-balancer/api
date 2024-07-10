@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import requestIp from 'request-ip';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import { ENVIRONMENT } from './modules/shared/environment/index.js';
 import { API } from './modules/shared/api/index.js';
 
 /* ************************************************************************************************
@@ -37,14 +38,24 @@ app.disable('x-powered-by');
 
 
 /**
+ * Reverse Proxy
+ * If the environment variable HAS_TUNNEL_TOKEN is set to true, it means that Balancer's platform
+ * is behind a Cloudflare Tunnel (Reverse Proxy). This setting is mostly to avoid getting an
+ * internal IP address of the reverse proxy instead of the client's IP Address.
+ * https://expressjs.com/en/guide/behind-proxies.html
+ */
+if (ENVIRONMENT.HAS_TUNNEL_TOKEN) {
+  app.set('trust proxy', true);
+}
+
+
+
+/**
  * HTTP Logger
  * Morgan handles the logging of HTTP Request details as well as the senders'.
  * https://github.com/expressjs/morgan
  */
 app.use(morgan('combined'));
-// Even though the Balancer API sits behind a reverse proxy, Morgan has issues when it comes to
-// displaying the sender's IP. More info: https://github.com/expressjs/morgan/issues/214
-// app.set("trust proxy", true);
 
 
 

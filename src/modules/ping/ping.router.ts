@@ -18,6 +18,7 @@ const PingRouter = Router();
  * @returns IAPIResponse<string>
  */
 PingRouter.route('/').get(veryHighRiskLimit, (req: Request, res: Response) => {
+  console.log(req.clientIp);
   res.json(buildResponse('pong'));
 });
 
