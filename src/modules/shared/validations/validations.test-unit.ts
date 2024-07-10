@@ -1,8 +1,10 @@
 import { describe, test, expect } from 'vitest';
+import { IObject } from '../types.js';
 import { IAuthority } from '../../auth/user/types.js';
 import {
   stringValid,
   numberValid,
+  objectValid,
   nicknameValid,
   passwordValid,
   authorityValid,
@@ -78,6 +80,38 @@ describe('numberValid', () => {
     ['1', undefined, undefined, false],
   ])('numberValid(%s, %s, %s) -> %s', (a, b, c, expected) => {
     expect(numberValid(<number>a, b, c)).toBe(expected);
+  });
+});
+
+
+
+
+
+describe('objectValid', () => {
+  test.each([
+    // valid
+    [{}, true, true],
+    [{ foo: 'bar', auth: 123, isAdmin: true, obj: { some: 'obj', arr: [1, 2] } }, undefined, true],
+    [{ foo: 'bar', auth: 123, isAdmin: true, obj: { some: 'obj', arr: [1, 2] } }, true, true],
+
+    // invalid
+    [undefined, undefined, false],
+    [null, undefined, false],
+    [{}, false, false],
+    [[], false, false],
+    [[], true, false],
+    ['a', undefined, false],
+    ['JESUSGRATEROL@', undefined, false],
+    ['Jes15-Gratero_.!', undefined, false],
+    ['@@', undefined, false],
+    ['Jes15-Gratero_.as', undefined, false],
+    ['jesu()', undefined, false],
+    ['asdjkhxaslkdj546512asdkasd', undefined, false],
+    ['', undefined, false],
+    [' ', undefined, false],
+    ['   ', undefined, false],
+  ])('objectValid(%s, %s) -> %s', (a, b, expected) => {
+    expect(objectValid(<IObject>a, b)).toBe(expected);
   });
 });
 

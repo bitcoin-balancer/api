@@ -1,4 +1,6 @@
+import { IObject } from '../types.js';
 import { IAuthority } from '../../auth/user/types.js';
+
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -28,6 +30,19 @@ const numberValid = (value: number, min?: number, max?: number): boolean => (
   typeof value === 'number'
   && (min === undefined || value >= min)
   && (max === undefined || value <= max)
+);
+
+/**
+ * Verifies if a value is an actual object. It also validates if it has keys (optional).
+ * @param value
+ * @param allowEmpty?
+ * @returns boolean
+ */
+const objectValid = (value: IObject, allowEmpty?: boolean): boolean => (
+  Boolean(value)
+  && typeof value === 'object'
+  && !Array.isArray(value)
+  && (allowEmpty || Object.keys(value).length > 0)
 );
 
 /**
@@ -92,14 +107,14 @@ const jwtValid = (value: string): boolean => (
  * @param value
  * @returns boolean
  */
-const ipValid = (value: string) => stringValid(value, 5, 300);
+const ipValid = (value: string): boolean => stringValid(value, 5, 300);
 
 /**
  * Verifies if a value is (or could be) notes to be attached to an IP Address.
  * @param value
  * @returns boolean
  */
-const ipNotesValid = (value: string) => stringValid(value, 5, 3000);
+const ipNotesValid = (value: string): boolean => stringValid(value, 5, 3000);
 
 /**
  * Verifies if a value is a value that complies with semantic versioning.
@@ -117,9 +132,9 @@ const semverValid = (value: string): boolean => (
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  // implementation
   stringValid,
   numberValid,
+  objectValid,
   nicknameValid,
   passwordValid,
   authorityValid,
