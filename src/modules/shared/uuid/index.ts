@@ -1,4 +1,4 @@
-import { v4 as uuidv4, version as uuidVersion, validate as uuidValidate } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -10,13 +10,6 @@ import { v4 as uuidv4, version as uuidVersion, validate as uuidValidate } from '
  */
 const generateUUID = (): string => uuidv4();
 
-/**
- * Ensures the format and the version of an UUID are valid.
- * @param uuid
- * @returns boolean
- */
-const validateUUID = (uuid: string): boolean => uuidValidate(uuid) && uuidVersion(uuid) === 4;
-
 
 
 
@@ -25,7 +18,5 @@ const validateUUID = (uuid: string): boolean => uuidValidate(uuid) && uuidVersio
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  // implementation
   generateUUID,
-  validateUUID,
 };

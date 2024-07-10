@@ -6,6 +6,7 @@ import {
   numberValid,
   objectValid,
   arrayValid,
+  uuidValid,
   nicknameValid,
   passwordValid,
   authorityValid,
@@ -145,6 +146,32 @@ describe('arrayValid', () => {
     ['   ', undefined, false],
   ])('arrayValid(%s, %s) -> %s', (a, b, expected) => {
     expect(arrayValid(<Array<any>>a, b)).toBe(expected);
+  });
+});
+
+
+
+
+describe('uuidValid', () => {
+  test('can identify invalid uuids', () => {
+    // @ts-ignore
+    expect(uuidValid()).toBe(false);
+    // @ts-ignore
+    expect(uuidValid(123)).toBe(false);
+    // @ts-ignore
+    expect(uuidValid(undefined)).toBe(false);
+    // @ts-ignore
+    expect(uuidValid(null)).toBe(false);
+    expect(uuidValid('')).toBe(false);
+    // @ts-ignore
+    expect(uuidValid({})).toBe(false);
+    expect(uuidValid('9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d')).toBe(true);
+    expect(uuidValid('9b1deb4d-3b7d4bad-9bdd-2b0d7b3dcb6d')).toBe(false);
+    expect(uuidValid('somethingelse')).toBe(false);
+    expect(uuidValid('9b1deb4d-3%7d-4bad-9bdd-2b0d7b3d-b6d')).toBe(false);
+    expect(uuidValid('d9428888-122b-11e1-b85c-61cd3cbb3210')).toBe(false);
+    expect(uuidValid('c106a26a-21bb-5538-8bf2-57095d1976c1')).toBe(false);
+    expect(uuidValid('630eb68f-e0fa-5ecc-887a-7c7a62614681')).toBe(false);
   });
 });
 

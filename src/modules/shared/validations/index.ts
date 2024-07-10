@@ -1,3 +1,4 @@
+import { version as uuidVersion, validate as uuidValidate } from 'uuid';
 import { IObject } from '../types.js';
 import { IAuthority } from '../../auth/user/types.js';
 
@@ -55,6 +56,13 @@ const arrayValid = (value: Array<any>, allowEmpty?: boolean): boolean => (
   Array.isArray(value)
   && (allowEmpty || value.length > 0)
 );
+
+/**
+ * Verifies if a value is a UUID Version 4.
+ * @param value
+ * @returns boolean
+ */
+const uuidValid = (value: string): boolean => uuidValidate(value) && uuidVersion(value) === 4;
 
 /**
  * Verifies if a nickname meets the following requirements:
@@ -147,6 +155,7 @@ export {
   numberValid,
   objectValid,
   arrayValid,
+  uuidValid,
   nicknameValid,
   passwordValid,
   authorityValid,
