@@ -101,6 +101,16 @@ const passwordValid = (value: any): value is string => (
 const authorityValid = (value: any): value is IAuthority => numberValid(value, 1, 5);
 
 /**
+ * Verifies if a value has the correct OTP Secret Format.
+ * @param value
+ * @returns boolean
+ */
+const otpSecretValid = (value: any): value is string => (
+  typeof value === 'string'
+  && /^[0-9a-zA-Z]{16,64}$/.test(value)
+);
+
+/**
  * Verifies if a value has the correct OTP Token Format.
  * @param value
  * @returns boolean
@@ -159,6 +169,7 @@ export {
   nicknameValid,
   passwordValid,
   authorityValid,
+  otpSecretValid,
   otpTokenValid,
   jwtValid,
   ipValid,

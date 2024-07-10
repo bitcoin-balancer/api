@@ -10,6 +10,7 @@ import {
   nicknameValid,
   passwordValid,
   authorityValid,
+  otpSecretValid,
   otpTokenValid,
   jwtValid,
   ipValid,
@@ -278,6 +279,37 @@ describe('authorityValid', () => {
     [true, false],
   ])('authorityValid(%s) -> %s', (a, expected) => {
     expect(authorityValid(<IAuthority>a)).toBe(expected);
+  });
+});
+
+
+
+
+
+describe('otpSecretValid', () => {
+  test.each([
+    // valid
+    ['NB2RGV2KAY2CMACD', true],
+    ['KVKFKRCPNZQUYMLXOVYDSQKJKZDTSRLD', true],
+    ['KVKFKRCPNZQUYMLXOVYDSQKJKZDTSRLDKVKFKRCPNZQUYMLXOVYDSQKJKZDTSRLD', true],
+    ['K4BCGQYENRTSKTSX', true],
+    ['KB3XO6INJQ6GCGLN', true],
+
+    // invalid
+    [undefined, false],
+    [null, false],
+    [{}, false],
+    [[{}], false],
+    ['', false],
+    ['5', false],
+    ['......', false],
+    ['45654A', false],
+    ['1234567', false],
+    [true, false],
+    [123456, false],
+    [6541, false],
+  ])('otpSecretValid(%s) -> %s', (a, expected) => {
+    expect(otpSecretValid(<string>a)).toBe(expected);
   });
 });
 
