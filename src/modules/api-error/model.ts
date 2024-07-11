@@ -1,5 +1,5 @@
-import { DatabaseService } from '../database/index.js';
 import { IObject } from '../shared/types.js';
+import { DatabaseService } from '../database/index.js';
 import { IAPIError, IAPIErrorOrigin } from './types.js';
 
 /* ************************************************************************************************
