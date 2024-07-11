@@ -143,6 +143,32 @@ describe('APIError Model', () => {
 
 
   describe('__listNextRecords', () => {
-    test.todo('');
+    test.todo('can paginate through the records', async () => {
+      // save the test records in order
+      const ids = await saveRecords(ERRORS);
+
+      // list the first two records
+      const records = await listRecords(2);
+      expect(records).toHaveLength(2);
+      expect(records).toStrictEqual([
+        { ...ERRORS.at(-1), id: ids.at(-1), event_time: records[0].event_time },
+        { ...ERRORS.at(-2), id: ids.at(-2), event_time: records[1].event_time },
+      ]);
+
+      // list the next record
+      const nextRecord = await listRecords(1, records.at(-1)!.id);
+      expect(nextRecord).toHaveLength(1);
+      expect(nextRecord).toStrictEqual([
+        { ...ERRORS.at(-3), id: ids.at(-3), event_time: nextRecord[0].event_time },
+      ]);
+
+      // list the next two records
+      const nextRecords = await listRecords(2, nextRecord[0].id);
+      expect(nextRecords).toHaveLength(2);
+      expect(nextRecords).toStrictEqual([
+        { ...ERRORS.at(-4), id: ids.at(-4), event_time: nextRecords[0].event_time },
+        { ...ERRORS.at(-5), id: ids.at(-5), event_time: nextRecords[1].event_time },
+      ]);
+    });
   });
 });
