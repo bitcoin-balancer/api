@@ -1,8 +1,9 @@
 import { decodeError, extractMessage } from 'error-message-utils';
 import { IObject } from '../shared/types.js';
-import { IAPIErrorOrigin, IAPIErrorService } from './types.js';
+import { IAPIError, IAPIErrorOrigin, IAPIErrorService } from './types.js';
 import { buildArgs } from './utils.js';
-import { deleteAllRecords, saveRecord } from './model.js';
+import { canRecordsBeListed } from './validations.js';
+import { deleteAllRecords, listRecords, saveRecord } from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -41,7 +42,8 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
    ********************************************************************************************** */
 
   /**
-   * Saves an API Error in the Database. This function can be invoked safely as it will never throw.
+   * Saves an API Error in the Database if it is not in the omit list. This function can be invoked
+   * safely as it will never throw.
    * @param origin
    * @param error
    * @param uid?
@@ -57,10 +59,8 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
     args?: IObject,
   ): Promise<void> => {
     try {
-      // decode the error and check if it should be omitted
       const { code } = decodeError(error);
       if (!__OMIT_ERROR_CODES.includes(<number>code)) {
-        // save the record and increment the unread count
         await saveRecord(
           origin,
           extractMessage(error),
@@ -73,6 +73,19 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
     } catch (e) {
       console.error('APIErrorService.save(...)', e);
     }
+  };
+
+  /**
+   * Retrieves a series of API Errors. If the startAtID is provided, it will start at that point
+   * exclusively.
+   * @param startAtID
+   * @returns Promise<IAPIError[]>
+   */
+  const list = async (startAtID: number | undefined): Promise<IAPIError[]> => {
+    canRecordsBeListed(startAtID);
+    const records = await listRecords(__LIST_LIMIT, startAtID);
+    __unreadCount = 0;
+    return records;
   };
 
   /**
@@ -99,6 +112,7 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
 
     // actions
     save,
+    list,
     deleteAll,
   });
 };

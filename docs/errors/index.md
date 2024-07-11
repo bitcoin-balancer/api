@@ -12,4 +12,4 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `validations.ts`
 
-- **1:** ``
+- **1:** `The API Errors cannot be listed with an invalid startAtID. Received: ${startAtID}.`

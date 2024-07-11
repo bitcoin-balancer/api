@@ -20,6 +20,7 @@ type IAPIErrorService = {
     ip?: string,
     args?: IObject,
   ) => Promise<void>;
+  list: (startAtID: number | undefined) => Promise<IAPIError[]>;
   deleteAll: () => Promise<void>;
 };
 
