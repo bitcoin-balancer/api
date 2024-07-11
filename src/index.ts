@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { ENVIRONMENT } from './modules/shared/environment/index.js';
 import { mountRoutes } from './routes/index.js';
-import { API } from './modules/shared/api/index.js';
+import { APIService } from './modules/shared/api/index.js';
 
 /* ************************************************************************************************
  *                                       APPLICATION SETUP                                        *
@@ -106,6 +106,6 @@ mountRoutes(app);
 /* ************************************************************************************************
  *                                       API INITIALIZATION                                       *
  ************************************************************************************************ */
-API.initialize(app).then(() => {
+APIService.initialize(app).then(() => {
   // ...
 });

@@ -9,7 +9,7 @@ import {
   IHTTPServer,
   ITerminationSignal,
   IPackageFile,
-  IAPI,
+  IAPIService,
 } from './types.js';
 import {
   readPackageFile,
@@ -25,12 +25,12 @@ import { canBeInitialized } from './validations.js';
  ************************************************************************************************ */
 
 /**
- * API
- * Module in charge of managing the initialization and teardown of API modules as well as the
+ * API Service Factory
+ * Object in charge of managing the initialization and teardown of API modules as well as the
  * Node.js HTTP Server.
- * @returns IServer
+ * @returns IAPIService
  */
-const apiFactory = (): IAPI => {
+const apiFactory = (): IAPIService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
@@ -260,7 +260,7 @@ const apiFactory = (): IAPI => {
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
-const API = apiFactory();
+const APIService = apiFactory();
 
 
 
@@ -270,5 +270,5 @@ const API = apiFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  API,
+  APIService,
 };

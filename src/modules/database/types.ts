@@ -1,12 +1,13 @@
 import pg from 'pg';
 
 /* ************************************************************************************************
- *                                        DATABASE SERVICE                                        *
+ *                                            SERVICE                                             *
  ************************************************************************************************ */
 
 /**
  * Database Service
- * The service in charge of interacting with PostgreSQL.
+ * Object in charge of managing the initialization and teardown of the PostgreSQL connection. It
+ * also manages the instantiation of the Pool and exposes it so other modules can read it directly.
  */
 type IDatabaseService = {
   // properties

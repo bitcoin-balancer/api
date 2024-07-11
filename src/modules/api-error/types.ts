@@ -21,7 +21,7 @@ type IAPIError = {
   // the origin of the error
   origin: IAPIErrorOrigin;
 
-  // the error message
+  // the error message (encoded in case it was generated w/ error-message-utils)
   error: string;
 
   // the timestamp when the error was thrown

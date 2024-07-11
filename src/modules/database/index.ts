@@ -34,6 +34,14 @@ pg.types.setTypeParser(1700, (val) => parseFloat(val));
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
+
+/**
+ * Database Service Factory
+ * Generates the object in charge of managing the initialization and teardown of the PostgreSQL
+ * connection. It also manages the instantiation of the Pool and exposes it so other modules can
+ * read it directly.
+ * @returns IDatabaseService
+ */
 const databaseServiceFactory = (): IDatabaseService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *

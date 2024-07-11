@@ -2,6 +2,29 @@ import { Server, IncomingMessage, ServerResponse } from 'http';
 import { Express } from 'express';
 
 /* ************************************************************************************************
+ *                                            SERVICE                                             *
+ ************************************************************************************************ */
+
+/**
+ * API Service
+ * This object is instantiated on start up and is in charge of managing the initialization and
+ * teardown of API modules as well as the Node.js HTTP Server.
+ */
+type IAPIService = {
+  // properties
+  server: IHTTPServer;
+  initialized: boolean,
+  packageFile: IPackageFile,
+
+  // initialization
+  initialize: (app: Express, retryDelaySchedule?: number[]) => Promise<void>,
+};
+
+
+
+
+
+/* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
 
@@ -39,21 +62,6 @@ type IPackageFile = {
   dependencies: { [key: string]: string };
 };
 
-/**
- * API
- * The API Module that is instantiated on start up and is in charge of managing the
- * initialization and teardown of API modules as well as the Node.js HTTP Server.
- */
-type IAPI = {
-  // properties
-  server: IHTTPServer;
-  initialized: boolean,
-  packageFile: IPackageFile,
-
-  // initialization
-  initialize: (app: Express, retryDelaySchedule?: number[]) => Promise<void>,
-};
-
 
 
 
@@ -62,8 +70,11 @@ type IAPI = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
+  // service
+  IAPIService,
+
+  // types
   IHTTPServer,
   ITerminationSignal,
   IPackageFile,
-  IAPI,
 };
