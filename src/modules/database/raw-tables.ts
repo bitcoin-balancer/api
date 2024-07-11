@@ -7,6 +7,25 @@ export const RAW_TABLES: IRawTable[] = [
    ********************************************************************************************** */
 
   /**
+   * api_errors
+   * every record corresponds to an error that was thrown by the API.
+   */
+  {
+    name: 'api_errors',
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('api_errors')} (
+        id          BIGSERIAL PRIMARY KEY,
+        origin      VARCHAR(500) NOT NULL,
+        error       VARCHAR(5000) NOT NULL,
+        event_time  BIGINT NOT NULL,
+        uid         UUID NULL,
+        ip          VARCHAR(500) NULL,
+        args        JSONB NULL
+      );
+      CREATE INDEX IF NOT EXISTS ${getTableName('api_errors')}_event_time_idx ON ${getTableName('api_errors')}(event_time DESC);`,
+  },
+
+  /**
    * users
    * every record corresponds to a Balancer user.
    */
