@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { ENVIRONMENT } from './modules/shared/environment/index.js';
+import { mountRoutes } from './routes/index.js';
 import { API } from './modules/shared/api/index.js';
 
 /* ************************************************************************************************
@@ -94,17 +95,9 @@ app.use(cors({
 
 
 /* ************************************************************************************************
- *                                            ROUTERS                                             *
+ *                                             ROUTES                                             *
  ************************************************************************************************ */
-/* eslint-disable import/first */
-import { PingRouter } from './modules/ping/ping.router.js';
-
-app.use('/ping', PingRouter);
-
-// custom 404
-app.use((req, res) => {
-  res.status(404).send('The route you are looking for could not be matched. Please review the docs before trying again.');
-});
+mountRoutes(app);
 
 
 

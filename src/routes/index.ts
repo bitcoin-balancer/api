@@ -1,25 +1,22 @@
-import { Router, Request, Response } from 'express';
-import { buildResponse } from 'api-response-utils';
-import { veryHighRiskLimit } from '../../middlewares/rate-limit/index.js';
-
-// init the route
-const PingRouter = Router();
-
-
-
-
+import { Express } from 'express';
+import { PingRouter } from '../modules/ping/ping.router.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
 /**
- * Sends the client's IP Address in the response. This route is used to ensure the API is running.
- * @returns IAPIResponse<string>
+ * Mounts all the API Routes on an Express Instance.
+ * @param app
  */
-PingRouter.route('/').get(veryHighRiskLimit, (req: Request, res: Response) => {
-  res.json(buildResponse(req.ip));
-});
+const mountRoutes = (app: Express): void => {
+  app.use('/ping', PingRouter);
+
+  // custom 404
+  app.use((req, res) => {
+    res.status(404).send('The route you are looking for could not be matched. Please review the docs before trying again.');
+  });
+};
 
 
 
@@ -29,5 +26,5 @@ PingRouter.route('/').get(veryHighRiskLimit, (req: Request, res: Response) => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  PingRouter,
+  mountRoutes,
 };
