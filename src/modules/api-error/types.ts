@@ -8,7 +8,7 @@ import { IObject } from '../shared/types.js';
  * API Error Origin
  * The invocation that triggered the error. It can be a specific function or a route.
  */
-type IAPIErrorOrigin = 'Notification.broadcast';
+type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast';
 
 /**
  * API Error
