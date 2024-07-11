@@ -1,4 +1,5 @@
 import { version as uuidVersion, validate as uuidValidate } from 'uuid';
+import { isInteger } from 'bignumber-utils';
 import { IObject } from '../types.js';
 import { IAuthority } from '../../auth/user/types.js';
 
@@ -47,7 +48,7 @@ const objectValid = (value: any, allowEmpty?: boolean): value is IObject => (
 );
 
 /**
- * Verifies if a given value is an array. It also validates if it has elements inside (optional)
+ * Verifies if a value is an array. It also validates if it has elements inside (optional)
  * @param value
  * @param allowEmpty?
  * @returns boolean
@@ -55,6 +56,18 @@ const objectValid = (value: any, allowEmpty?: boolean): value is IObject => (
 const arrayValid = (value: any, allowEmpty?: boolean): value is Array<any> => (
   Array.isArray(value)
   && (allowEmpty || value.length > 0)
+);
+
+/**
+ * Verifies if a value is a valid unix timestamp in milliseconds. The smallest value is set for
+ * the beginning of the Unix epoch (January 1st, 1970 - 14400000) while the largest value is based
+ * on the numeric limit established by JavaScript (9007199254740991).
+ * @param value
+ * @returns boolean
+ */
+const timestampValid = (value: any): value is number => (
+  numberValid(value, 14400000, Number.MAX_SAFE_INTEGER)
+  && isInteger(value)
 );
 
 /**
@@ -165,6 +178,7 @@ export {
   numberValid,
   objectValid,
   arrayValid,
+  timestampValid,
   uuidValid,
   nicknameValid,
   passwordValid,

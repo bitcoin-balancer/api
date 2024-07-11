@@ -81,6 +81,7 @@ describe('numberValid', () => {
     [[], undefined, undefined, false],
     ['', undefined, undefined, false],
     ['1', undefined, undefined, false],
+    [true, undefined, undefined, false],
   ])('numberValid(%s, %s, %s) -> %s', (a, b, c, expected) => {
     expect(numberValid(<number>a, b, c)).toBe(expected);
   });
@@ -113,6 +114,8 @@ describe('objectValid', () => {
     ['', undefined, false],
     [' ', undefined, false],
     ['   ', undefined, false],
+    [123, undefined, false],
+    [true, undefined, false],
   ])('objectValid(%s, %s) -> %s', (a, b, expected) => {
     expect(objectValid(<IObject>a, b)).toBe(expected);
   });
@@ -145,6 +148,8 @@ describe('arrayValid', () => {
     ['', undefined, false],
     [' ', undefined, false],
     ['   ', undefined, false],
+    [123, undefined, false],
+    [true, undefined, false],
   ])('arrayValid(%s, %s) -> %s', (a, b, expected) => {
     expect(arrayValid(<Array<any>>a, b)).toBe(expected);
   });
@@ -153,26 +158,44 @@ describe('arrayValid', () => {
 
 
 
+
 describe('uuidValid', () => {
-  test('can identify invalid uuids', () => {
-    // @ts-ignore
-    expect(uuidValid()).toBe(false);
-    // @ts-ignore
-    expect(uuidValid(123)).toBe(false);
-    // @ts-ignore
-    expect(uuidValid(undefined)).toBe(false);
-    // @ts-ignore
-    expect(uuidValid(null)).toBe(false);
-    expect(uuidValid('')).toBe(false);
-    // @ts-ignore
-    expect(uuidValid({})).toBe(false);
-    expect(uuidValid('9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d')).toBe(true);
-    expect(uuidValid('9b1deb4d-3b7d4bad-9bdd-2b0d7b3dcb6d')).toBe(false);
-    expect(uuidValid('somethingelse')).toBe(false);
-    expect(uuidValid('9b1deb4d-3%7d-4bad-9bdd-2b0d7b3d-b6d')).toBe(false);
-    expect(uuidValid('d9428888-122b-11e1-b85c-61cd3cbb3210')).toBe(false);
-    expect(uuidValid('c106a26a-21bb-5538-8bf2-57095d1976c1')).toBe(false);
-    expect(uuidValid('630eb68f-e0fa-5ecc-887a-7c7a62614681')).toBe(false);
+  test.each([
+    // valid
+    ['fcd089f1-6a2c-48b8-b2d7-9faebd1fdfb6', true],
+    ['876cce51-a546-4256-a067-5bc7cdc673ca', true],
+    ['a2047635-3d32-4774-b83d-f9474b9606db', true],
+    ['62af1b6c-6e82-489f-89e4-a5f84b2ec7eb', true],
+    ['06ddec6e-a973-4bd0-b2c8-5b01233eee02', true],
+    ['9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d', true],
+
+    // invalid
+    [undefined, false],
+    [null, false],
+    [{}, false],
+    [[], false],
+    ['a', false],
+    ['JESUSGRATEROL@', false],
+    ['Jes15-Gratero_.!', false],
+    ['@@', false],
+    ['Jes15-Gratero_.as', false],
+    ['jesu()', false],
+    ['asdjkhxaslkdj546512asdkasd', false],
+    ['', false],
+    [' ', false],
+    ['   ', false],
+    [123, false],
+    ['9b1deb4d-3b7d4bad-9bdd-2b0d7b3dcb6d', false],
+    ['9b1deb4d-3b7d4bad-9bdd-2b0d7b3dcb6d', false],
+    ['9b1deb4d-3%7d-4bad-9bdd-2b0d7b3d-b6d', false],
+    ['d9428888-122b-11e1-b85c-61cd3cbb3210', false],
+    ['c106a26a-21bb-5538-8bf2-57095d1976c1', false],
+    ['630eb68f-e0fa-5ecc-887a-7c7a62614681', false],
+    ['06ddec6e-a973-4bd0-b2c8-5b01233eee02a', false],
+    ['06ddec6e-a973-4bd0-b2c8-5b01233eee0', false],
+    [true, false],
+  ])('uuidValid(%s) -> %s', (a, expected) => {
+    expect(uuidValid(<string>a)).toBe(expected);
   });
 });
 
@@ -209,6 +232,8 @@ describe('nicknameValid', () => {
     ['', false],
     [' ', false],
     ['   ', false],
+    [123, false],
+    [true, false],
   ])('nicknameValid(%s) -> %s', (a, expected) => {
     expect(nicknameValid(<string>a)).toBe(expected);
   });
@@ -249,6 +274,8 @@ describe('passwordValid', () => {
     ['!!!!!!!!', false],
     ['AAAAAAAA', false],
     ['AAAAAA665', false],
+    [123, false],
+    [true, false],
   ])('passwordValid(%s) -> %s', (a, expected) => {
     expect(passwordValid(<string>a)).toBe(expected);
   });
@@ -277,6 +304,7 @@ describe('authorityValid', () => {
     ['', false],
     ['5', false],
     [true, false],
+    [123, false],
   ])('authorityValid(%s) -> %s', (a, expected) => {
     expect(authorityValid(<IAuthority>a)).toBe(expected);
   });
@@ -403,6 +431,7 @@ describe('ipValid', () => {
 
     // invalid
     ['4565', false],
+    [true, false],
     ['eyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wb', false],
   ])('ipValid(%s) -> %s', (a, expected) => {
     expect(ipValid(<string>a)).toBe(expected);
@@ -420,6 +449,7 @@ describe('ipNotesValid', () => {
 
     // invalid
     ['4565', false],
+    [true, false],
     ['eyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wb', false],
   ])('ipNotesValid(%s) -> %s', (a, expected) => {
     expect(ipNotesValid(<string>a)).toBe(expected);
