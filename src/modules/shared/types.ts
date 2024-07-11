@@ -1,7 +1,7 @@
 
 
 /* ************************************************************************************************
- *                                             TYPES                                              *
+ *                                         UTILITY TYPES                                          *
  ************************************************************************************************ */
 
 /**
@@ -13,12 +13,6 @@ type IObject = {
   [key: string]: any;
 };
 
-/**
- * Non Empty Array
- * This utility type is used to declare arrays that we know for a fact will never be empty.
- */
-type NonEmptyArray<T> = [T, ...T[]];
-
 
 
 
@@ -28,5 +22,4 @@ type NonEmptyArray<T> = [T, ...T[]];
  ************************************************************************************************ */
 export type {
   IObject,
-  NonEmptyArray,
 };

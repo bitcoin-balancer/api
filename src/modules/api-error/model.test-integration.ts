@@ -1,7 +1,8 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { describe, beforeAll, afterAll, beforeEach, afterEach, test, expect } from 'vitest';
 import { IAPIError } from './types.js';
-import { deleteAllRecords, getRecord, saveRecord } from './model.js';
-import { NonEmptyArray } from '../shared/types.js';
+import { deleteAllRecords, getRecord, listRecords, saveRecord } from './model.js';
 import { objectValid } from '../shared/validations/index.js';
 
 /* ************************************************************************************************
@@ -19,6 +20,15 @@ const buildErr = (err: Partial<IAPIError> = {}): IAPIError => ({
   args: err.args || null,
 });
 
+// saves a given list of errors in sequential order and returns the ids
+const saveRecords = async (errors: IAPIError[]): Promise<number[]> => {
+  const ids: number[] = [];
+  for (const r of errors) {
+    const id = await saveRecord(r.origin, r.error, r.uid!, r.ip!, r.args!);
+    ids.push(id);
+  }
+  return ids;
+};
 
 
 
@@ -28,7 +38,7 @@ const buildErr = (err: Partial<IAPIError> = {}): IAPIError => ({
  ************************************************************************************************ */
 
 // list of fake errors
-const errs: NonEmptyArray<IAPIError> = [
+const ERRORS: IAPIError[] = [
   buildErr(),
   buildErr({ uid: '2b7f67e2-d13d-49d9-b2bf-3275cbe454a2' }),
   buildErr({ uid: '2b7f67e2-d13d-49d9-b2bf-3275cbe454a2', ip: '172.17.0.1' }),
@@ -45,7 +55,7 @@ const errs: NonEmptyArray<IAPIError> = [
 /* ************************************************************************************************
  *                                             TESTS                                              *
  ************************************************************************************************ */
-describe('saveRecord', () => {
+describe('APIError Model', () => {
   beforeAll(() => { });
 
   afterAll(() => { });
@@ -56,30 +66,64 @@ describe('saveRecord', () => {
     await deleteAllRecords();
   });
 
-  test('can save a series of records, validate their integrity and delete them', async () => {
-    // init the list of ids
-    const ids: number[] = [];
+  describe('saveRecord', () => {
+    test('can save a series of records, validate their integrity and delete them', async () => {
+      // init the list of ids
+      const ids: number[] = [];
 
-    // save the records and validate their integrities
-    // eslint-disable-next-line no-restricted-syntax
-    for (const r of errs) {
-      // eslint-disable-next-line no-await-in-loop
-      const id = await saveRecord(r.origin, r.error, r.uid!, r.ip!, r.args!);
-      expect(id).toBeTypeOf('number');
-      expect(id).toBeGreaterThan(0);
+      // save the records and validate their integrities
+      for (const r of ERRORS) {
+        const id = await saveRecord(r.origin, r.error, r.uid!, r.ip!, r.args!);
+        expect(id).toBeTypeOf('number');
+        expect(id).toBeGreaterThan(0);
 
-      // eslint-disable-next-line no-await-in-loop
-      const savedRecord = await getRecord(id);
-      expect(objectValid(savedRecord)).toBe(true);
-      expect(savedRecord).toStrictEqual({ ...r, id, event_time: savedRecord?.event_time });
+        const savedRecord = <IAPIError> await getRecord(id);
+        expect(objectValid(savedRecord)).toBe(true);
+        expect(savedRecord).toStrictEqual({ ...r, id, event_time: savedRecord.event_time });
 
-      // store the id for later
-      ids.push(id);
-    }
+        // store the id for later
+        ids.push(id);
+      }
 
-    // delete all the records and ensure they are gone
-    await deleteAllRecords();
-    const deletedRecords = await Promise.all(ids.map(getRecord));
-    expect(deletedRecords.every((rec) => rec === null)).toBe(true);
+      // delete all the records and ensure they are gone
+      await deleteAllRecords();
+      const deletedRecords = await Promise.all(ids.map(getRecord));
+      expect(deletedRecords.every((rec) => rec === null)).toBe(true);
+    });
+  });
+
+
+
+  describe('__listRecords', () => {
+    test('can list stored records', async () => {
+      // in the beginning there was nothing
+      let records = await listRecords(10);
+      expect(records).toHaveLength(0);
+
+      // save the test records in order
+      const ids = await saveRecords(ERRORS);
+
+      // records are retrieved in descending order - reverse the isd and the error records
+      const reversedIDs = ids.slice();
+      reversedIDs.reverse();
+      const reversedErrors = ERRORS.slice();
+      reversedErrors.reverse();
+
+      // retrieve the records again an ensure they were properly inserted
+      records = await listRecords(10);
+      expect(records).toHaveLength(ERRORS.length);
+      for (let i = 0; i < records.length; i += 1) {
+        expect(records[i]).toStrictEqual({
+          ...reversedErrors[i],
+          id: reversedIDs[i],
+          event_time: records[i].event_time,
+        });
+      }
+
+      // delete the records and ensure they're gone
+      await deleteAllRecords();
+      records = await listRecords(10);
+      expect(records).toHaveLength(0);
+    });
   });
 });
