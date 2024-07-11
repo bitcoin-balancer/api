@@ -35,6 +35,19 @@ const numberValid = (value: any, min?: number, max?: number): value is number =>
 );
 
 /**
+ * Verifies if a value is a valid integer and is within a range (optional). If a range is not
+ * provided, it will use the properties Number.MIN_SAFE_INTEGER & Number.MAX_SAFE_INTEGER.
+ * @param value
+ * @param min?
+ * @param max?
+ * @returns boolean
+ */
+const integerValid = (value: any, min?: number, max?: number): value is number => (
+  numberValid(value, min ?? Number.MIN_SAFE_INTEGER, max ?? Number.MAX_SAFE_INTEGER)
+  && isInteger(value)
+);
+
+/**
  * Verifies if a value is an actual object. It also validates if it has keys (optional).
  * @param value
  * @param allowEmpty?
@@ -66,8 +79,7 @@ const arrayValid = (value: any, allowEmpty?: boolean): value is Array<any> => (
  * @returns boolean
  */
 const timestampValid = (value: any): value is number => (
-  numberValid(value, 14400000, Number.MAX_SAFE_INTEGER)
-  && isInteger(value)
+  integerValid(value, 14400000, Number.MAX_SAFE_INTEGER)
 );
 
 /**
@@ -170,12 +182,15 @@ const semverValid = (value: any): value is string => (
 
 
 
+
+
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
   stringValid,
   numberValid,
+  integerValid,
   objectValid,
   arrayValid,
   timestampValid,

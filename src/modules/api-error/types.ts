@@ -1,6 +1,33 @@
 import { IObject } from '../shared/types.js';
 
 /* ************************************************************************************************
+ *                                            SERVICE                                             *
+ ************************************************************************************************ */
+
+/**
+ * API Error Service
+ * Object in charge of managing the storage and retrieval of errors thrown within the API.
+ */
+type IAPIErrorService = {
+  // properties
+  unreadCount: number;
+
+  // actions
+  save: (
+    origin: IAPIErrorOrigin,
+    error: any,
+    uid?: string,
+    ip?: string,
+    args?: IObject,
+  ) => Promise<void>;
+  deleteAll: () => Promise<void>;
+};
+
+
+
+
+
+/* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
 
@@ -45,6 +72,10 @@ type IAPIError = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
+  // service
+  IAPIErrorService,
+
+  // types
   IAPIErrorOrigin,
   IAPIError,
 };

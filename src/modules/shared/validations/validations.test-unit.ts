@@ -2,6 +2,7 @@ import { describe, test, expect } from 'vitest';
 import {
   stringValid,
   numberValid,
+  integerValid,
   objectValid,
   arrayValid,
   timestampValid,
@@ -83,6 +84,52 @@ describe('numberValid', () => {
     [true, undefined, undefined, false],
   ])('numberValid(%s, %s, %s) -> %s', (a, b, c, expected) => {
     expect(numberValid(a, b, c)).toBe(expected);
+  });
+});
+
+
+
+
+
+describe('integerValid', () => {
+  test.each([
+    // essential
+    [1, undefined, undefined, true],
+    [0, undefined, undefined, true],
+    [-1, undefined, undefined, true],
+    [14400000, undefined, undefined, true],
+    [Number.MAX_SAFE_INTEGER, undefined, undefined, true],
+    [Number.MIN_SAFE_INTEGER, undefined, undefined, true],
+    [1562851996000, undefined, undefined, true],
+
+    // ranges
+    [0, 1, 5, false],
+    [1, 1, 5, true],
+    [2, 1, 5, true],
+    [3, 1, 5, true],
+    [4, 1, 5, true],
+    [5, 1, 5, true],
+    [6, 1, 5, false],
+    [NaN, 0, undefined, false],
+    [-Infinity, 0, undefined, false],
+    [Infinity, undefined, 1, false],
+
+    // bad data types
+    [undefined, undefined, undefined, false],
+    [null, undefined, undefined, false],
+    [{}, undefined, undefined, false],
+    [[], undefined, undefined, false],
+    ['', undefined, undefined, false],
+    ['1', undefined, undefined, false],
+    [true, undefined, undefined, false],
+    [55.85, undefined, undefined, false],
+    [Infinity, undefined, undefined, false],
+    [-Infinity, undefined, undefined, false],
+    [NaN, undefined, undefined, false],
+    [Number.MAX_SAFE_INTEGER + 1, undefined, undefined, false],
+    [Number.MIN_SAFE_INTEGER - 1, undefined, undefined, false],
+  ])('integerValid(%s, %s, %s) -> %s', (a, b, c, expected) => {
+    expect(integerValid(a, b, c)).toBe(expected);
   });
 });
 

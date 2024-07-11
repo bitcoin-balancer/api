@@ -30,7 +30,7 @@ import { canBeInitialized } from './validations.js';
  * Node.js HTTP Server.
  * @returns IAPIService
  */
-const apiFactory = (): IAPIService => {
+const apiServiceFactory = (): IAPIService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
@@ -260,7 +260,7 @@ const apiFactory = (): IAPIService => {
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
-const APIService = apiFactory();
+const APIService = apiServiceFactory();
 
 
 
