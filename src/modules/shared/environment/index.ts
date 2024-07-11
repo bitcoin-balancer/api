@@ -54,7 +54,7 @@ validateJWTSecretConfig(ENVIRONMENT.JWT_SECRET);
  ************************************************************************************************ */
 export {
   // types
-  // ...
+  ITelegramConfig,
 
   // implementation
   ENVIRONMENT,

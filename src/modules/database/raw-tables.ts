@@ -8,7 +8,7 @@ export const RAW_TABLES: IRawTable[] = [
 
   /**
    * api_errors
-   * every record corresponds to an error that was thrown by the API.
+   * every record corresponds to an error that was thrown in the API.
    */
   {
     name: 'api_errors',

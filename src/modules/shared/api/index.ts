@@ -5,6 +5,7 @@ import { extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../environment/index.js';
 import { delay } from '../utils/index.js';
 import { DatabaseService } from '../../database/index.js';
+import { NotificationService } from '../notification/index.js';
 import {
   IHTTPServer,
   ITerminationSignal,
@@ -26,8 +27,8 @@ import { canBeInitialized } from './validations.js';
 
 /**
  * API Service Factory
- * Object in charge of managing the initialization and teardown of API modules as well as the
- * Node.js HTTP Server.
+ * Generates the object in charge of managing the initialization and teardown of API modules as well
+ * as the Node.js HTTP Server.
  * @returns IAPIService
  */
 const apiServiceFactory = (): IAPIService => {
@@ -170,7 +171,7 @@ const apiServiceFactory = (): IAPIService => {
 
     // print the initialization footer
     printInitializationFooter(__packageFile.version);
-    // Notification.apiInitializationCompleted(); @TODO
+    NotificationService.apiInit();
   };
 
   /**
@@ -199,14 +200,13 @@ const apiServiceFactory = (): IAPIService => {
     try {
       return await __runInitialize(app);
     } catch (e) {
-      const msg = extractMessage(e);
-      console.error(msg);
+      console.error('APIService.initialize(...)', e);
 
-      // throw an error if there no attempts left. Otherwise, try again
+      // throw an error if there are no attempts left. Otherwise, try again
       if (retryDelaySchedule.length === 0) {
-        // await Notification.apiInitializationFailed(msg); @TODO
+        await NotificationService.apiInitError(e);
         await __teardown();
-        throw new Error(msg);
+        throw e;
       }
       console.log(`Retrying in ~${retryDelaySchedule[0]} seconds...`);
       await __teardownModules();
