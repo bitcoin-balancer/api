@@ -125,5 +125,24 @@ describe('APIError Model', () => {
       records = await listRecords(10);
       expect(records).toHaveLength(0);
     });
+
+    test('can list any number of records', async () => {
+      // save the test records in order
+      const ids = await saveRecords(ERRORS);
+
+      // make sure only the last 2 records have been listed
+      const records = await listRecords(2);
+      expect(records).toHaveLength(2);
+      expect(records).toStrictEqual([
+        { ...ERRORS.at(-1), id: ids.at(-1), event_time: records[0].event_time },
+        { ...ERRORS.at(-2), id: ids.at(-2), event_time: records[1].event_time },
+      ]);
+    });
+  });
+
+
+
+  describe('__listNextRecords', () => {
+    test.todo('');
   });
 });
