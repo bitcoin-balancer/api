@@ -1,11 +1,10 @@
 import { describe, test, expect } from 'vitest';
-import { IObject } from '../types.js';
-import { IAuthority } from '../../auth/user/types.js';
 import {
   stringValid,
   numberValid,
   objectValid,
   arrayValid,
+  timestampValid,
   uuidValid,
   nicknameValid,
   passwordValid,
@@ -44,7 +43,7 @@ describe('stringValid', () => {
     [1, undefined, undefined, false],
     [true, undefined, undefined, false],
   ])('stringValid(%s, %s, %s) -> %s', (a, b, c, expected) => {
-    expect(stringValid(<string>a, b, c)).toBe(expected);
+    expect(stringValid(a, b, c)).toBe(expected);
   });
 });
 
@@ -83,7 +82,7 @@ describe('numberValid', () => {
     ['1', undefined, undefined, false],
     [true, undefined, undefined, false],
   ])('numberValid(%s, %s, %s) -> %s', (a, b, c, expected) => {
-    expect(numberValid(<number>a, b, c)).toBe(expected);
+    expect(numberValid(a, b, c)).toBe(expected);
   });
 });
 
@@ -117,7 +116,7 @@ describe('objectValid', () => {
     [123, undefined, false],
     [true, undefined, false],
   ])('objectValid(%s, %s) -> %s', (a, b, expected) => {
-    expect(objectValid(<IObject>a, b)).toBe(expected);
+    expect(objectValid(a, b)).toBe(expected);
   });
 });
 
@@ -151,7 +150,44 @@ describe('arrayValid', () => {
     [123, undefined, false],
     [true, undefined, false],
   ])('arrayValid(%s, %s) -> %s', (a, b, expected) => {
-    expect(arrayValid(<Array<any>>a, b)).toBe(expected);
+    expect(arrayValid(a, b)).toBe(expected);
+  });
+});
+
+
+
+
+
+describe('timestampValid', () => {
+  test.each([
+    // valid
+    [14400000, true],
+    [Number.MAX_SAFE_INTEGER, true],
+    [Date.now(), true],
+    [1562851996000, true],
+
+    // invalid
+    [undefined, false],
+    [null, false],
+    [{}, false],
+    [[], false],
+    ['a', false],
+    ['JESUSGRATEROL@', false],
+    ['Jes15-Gratero_.!', false],
+    ['@@', false],
+    ['Jes15-Gratero_.as', false],
+    ['jesu()', false],
+    ['asdjkhxaslkdj546512asdkasd', false],
+    ['', false],
+    [' ', false],
+    ['   ', false],
+    [123, false],
+    [true, false],
+    [14300000, false],
+    [Number.MAX_SAFE_INTEGER + 1, false],
+    [14400000.5, false],
+  ])('timestampValid(%s) -> %s', (a, expected) => {
+    expect(timestampValid(a)).toBe(expected);
   });
 });
 
@@ -195,7 +231,7 @@ describe('uuidValid', () => {
     ['06ddec6e-a973-4bd0-b2c8-5b01233eee0', false],
     [true, false],
   ])('uuidValid(%s) -> %s', (a, expected) => {
-    expect(uuidValid(<string>a)).toBe(expected);
+    expect(uuidValid(a)).toBe(expected);
   });
 });
 
@@ -235,7 +271,7 @@ describe('nicknameValid', () => {
     [123, false],
     [true, false],
   ])('nicknameValid(%s) -> %s', (a, expected) => {
-    expect(nicknameValid(<string>a)).toBe(expected);
+    expect(nicknameValid(a)).toBe(expected);
   });
 });
 
@@ -277,7 +313,7 @@ describe('passwordValid', () => {
     [123, false],
     [true, false],
   ])('passwordValid(%s) -> %s', (a, expected) => {
-    expect(passwordValid(<string>a)).toBe(expected);
+    expect(passwordValid(a)).toBe(expected);
   });
 });
 
@@ -306,7 +342,7 @@ describe('authorityValid', () => {
     [true, false],
     [123, false],
   ])('authorityValid(%s) -> %s', (a, expected) => {
-    expect(authorityValid(<IAuthority>a)).toBe(expected);
+    expect(authorityValid(a)).toBe(expected);
   });
 });
 
@@ -337,7 +373,7 @@ describe('otpSecretValid', () => {
     [123456, false],
     [6541, false],
   ])('otpSecretValid(%s) -> %s', (a, expected) => {
-    expect(otpSecretValid(<string>a)).toBe(expected);
+    expect(otpSecretValid(a)).toBe(expected);
   });
 });
 
@@ -366,7 +402,7 @@ describe('otpTokenValid', () => {
     [123456, false],
     [6541, false],
   ])('otpTokenValid(%s) -> %s', (a, expected) => {
-    expect(otpTokenValid(<string>a)).toBe(expected);
+    expect(otpTokenValid(a)).toBe(expected);
   });
 });
 
@@ -411,7 +447,7 @@ describe('jwtValid', () => {
     ['!a.a@.a#', false],
     ['a.a.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', false],
   ])('jwtValid(%s) -> %s', (a, expected) => {
-    expect(jwtValid(<string>a)).toBe(expected);
+    expect(jwtValid(a)).toBe(expected);
   });
 });
 
@@ -434,7 +470,7 @@ describe('ipValid', () => {
     [true, false],
     ['eyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wb', false],
   ])('ipValid(%s) -> %s', (a, expected) => {
-    expect(ipValid(<string>a)).toBe(expected);
+    expect(ipValid(a)).toBe(expected);
   });
 });
 
@@ -452,7 +488,7 @@ describe('ipNotesValid', () => {
     [true, false],
     ['eyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wb', false],
   ])('ipNotesValid(%s) -> %s', (a, expected) => {
-    expect(ipNotesValid(<string>a)).toBe(expected);
+    expect(ipNotesValid(a)).toBe(expected);
   });
 });
 
@@ -486,6 +522,6 @@ describe('semverValid', () => {
     ['...', false],
     ['a.a.a', false],
   ])('semverValid(%s) -> %s', (a, expected) => {
-    expect(semverValid(<string>a)).toBe(expected);
+    expect(semverValid(a)).toBe(expected);
   });
 });
