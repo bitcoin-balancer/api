@@ -17,7 +17,7 @@ const buildArgs = (args: IObject | undefined, sensitiveDataKeys: string[]): IObj
     ? Object.keys(args).reduce(
       (previous, current) => ({
         ...previous,
-        [current]: sensitiveDataKeys.includes(current) ? args[current] : '[SENSITIVE_DATA_HIDDEN]',
+        [current]: sensitiveDataKeys.includes(current) ? '[SENSITIVE_DATA_HIDDEN]' : args[current],
       }),
       {},
     )
