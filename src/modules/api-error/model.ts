@@ -104,7 +104,7 @@ const saveRecord = async (
  * Deletes all the existing records from the database.
  * @returns Promise<void>
  */
-const deleteAll = async (): Promise<void> => {
+const deleteAllRecords = async (): Promise<void> => {
   await DatabaseService.pool.query({
     text: `DELETE FROM ${DatabaseService.tn.api_errors}`,
   });
@@ -121,5 +121,5 @@ export {
   getRecord,
   listRecords,
   saveRecord,
-  deleteAll,
+  deleteAllRecords,
 };

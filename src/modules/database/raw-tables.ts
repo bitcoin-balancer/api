@@ -21,8 +21,7 @@ export const RAW_TABLES: IRawTable[] = [
         uid         UUID NULL,
         ip          VARCHAR(500) NULL,
         args        JSONB NULL
-      );
-      CREATE INDEX IF NOT EXISTS ${getTableName('api_errors')}_event_time_idx ON ${getTableName('api_errors')}(event_time DESC);`,
+      );`,
   },
 
   /**

@@ -28,13 +28,13 @@ type IAPIError = {
   event_time: number;
 
   // the identifier of the user who sent the request
-  uid?: string;
+  uid: string | null;
 
   // the ip address of the user who sent the request
-  ip?: string;
+  ip: string | null;
 
   // the arguments used when the error was thrown
-  args?: IObject;
+  args: IObject | null;
 };
 
 
