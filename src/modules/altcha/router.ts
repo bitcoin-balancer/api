@@ -1,24 +1,25 @@
-import { Express } from 'express';
-import { AltchaRouter } from '../modules/altcha/router.js';
-import { PingRouter } from '../modules/ping/router.js';
+import { Router, Request, Response } from 'express';
+import { highRiskLimit } from '../../middlewares/rate-limit/index.js';
+import { AltchaService } from './index.js';
+
+// init the route
+const AltchaRouter = Router();
+
+
+
+
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
 /**
- * Mounts all the API Routes on an Express Instance.
- * @param app
+ * Creates an Altcha Challenge ready to be sent to the client.
+ * @returns IChallenge
  */
-const mountRoutes = (app: Express): void => {
-  app.use('/altcha', AltchaRouter);
-  app.use('/ping', PingRouter);
-
-  // custom 404
-  app.use((req, res) => {
-    res.status(404).send('The route you are looking for could not be matched. Please review the docs before trying again.');
-  });
-};
+AltchaRouter.route('/').get(highRiskLimit, async (req: Request, res: Response) => {
+  res.json(await AltchaService.create());
+});
 
 
 
@@ -28,5 +29,5 @@ const mountRoutes = (app: Express): void => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  mountRoutes,
+  AltchaRouter,
 };
