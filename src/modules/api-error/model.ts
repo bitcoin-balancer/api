@@ -87,7 +87,7 @@ const saveRecord = async (
   error: string,
   uid: string | undefined,
   ip: string | undefined,
-  args: IRecord | undefined,
+  args: IRecord<any> | undefined,
 ): Promise<number> => {
   const { rows } = await DatabaseService.pool.query({
     text: `

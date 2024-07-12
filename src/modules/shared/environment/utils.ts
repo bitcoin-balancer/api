@@ -62,7 +62,7 @@ const getInteger = (key: string): number => {
  * - if the property does not exist or is an empty string
  * - if the property is not a valid object
  */
-const getObject = (key: string): IRecord => {
+const getObject = (key: string): IRecord<any> => {
   const val = getString(key);
   try {
     const parsedVal = JSON.parse(val);
@@ -111,7 +111,7 @@ const getSecretString = (key: string): string => {
  * - if it fails to extract content from a secret's path
  * - if the value cannot be parsed
  */
-const getSecretObject = (key: string): IRecord => {
+const getSecretObject = (key: string): IRecord<any> => {
   const val = getSecretString(key);
   try {
     const parsedVal = JSON.parse(val);

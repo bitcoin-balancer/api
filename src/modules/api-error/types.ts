@@ -18,7 +18,7 @@ type IAPIErrorService = {
     error: any,
     uid?: string,
     ip?: string,
-    args?: IRecord,
+    args?: IRecord<any>,
   ) => Promise<void>;
   list: (startAtID: number | undefined) => Promise<IAPIError[]>;
   deleteAll: () => Promise<void>;
@@ -62,7 +62,7 @@ type IAPIError = {
   ip: string | null;
 
   // the arguments used when the error was thrown
-  args: IRecord | null;
+  args: IRecord<any> | null;
 };
 
 

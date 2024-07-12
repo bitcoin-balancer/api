@@ -12,7 +12,10 @@ import { objectValid } from '../shared/validations/index.js';
  * @param sensitiveDataKeys
  * @returns IRecord | undefined
  */
-const buildArgs = (args: IRecord | undefined, sensitiveDataKeys: string[]): IRecord | undefined => (
+const buildArgs = (
+  args: IRecord<any> | undefined,
+  sensitiveDataKeys: string[],
+): IRecord<any> | undefined => (
   objectValid(args)
     ? Object.keys(args).reduce(
       (previous, current) => ({

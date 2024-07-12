@@ -56,7 +56,7 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
     error: any,
     uid?: string,
     ip?: string,
-    args?: IRecord,
+    args?: IRecord<any>,
   ): Promise<void> => {
     try {
       const { code } = decodeError(error);

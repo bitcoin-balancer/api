@@ -53,7 +53,7 @@ const integerValid = (value: any, min?: number, max?: number): value is number =
  * @param allowEmpty?
  * @returns boolean
  */
-const objectValid = (value: any, allowEmpty?: boolean): value is IRecord => (
+const objectValid = (value: any, allowEmpty?: boolean): value is IRecord<any> => (
   Boolean(value)
   && typeof value === 'object'
   && !Array.isArray(value)

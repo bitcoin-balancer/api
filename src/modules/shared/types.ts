@@ -9,8 +9,8 @@
  * This utility type is used to replace the original 'object' type which can become difficult to
  * deal with.
  */
-type IRecord = {
-  [key: string]: any;
+type IRecord<T> = {
+  [key: string]: T;
 };
 
 

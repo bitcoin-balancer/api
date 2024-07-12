@@ -1,6 +1,7 @@
 import { addMinutes } from 'date-fns';
 import { createChallenge, verifySolution } from 'altcha-lib';
 import { encodeError } from 'error-message-utils';
+import { IRecord } from '../shared/types.js';
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { IAltchaService, IChallenge } from './types.js';
 import { stringValid } from '../shared/validations/index.js';
@@ -23,10 +24,10 @@ const altchaServiceFactory = (): IAltchaService => {
   const __SECRET = ENVIRONMENT.ALTCHA_SECRET;
 
   // the number of minutes a challenge is valid for
-  const __CHALLENGE_DURATION = 5;
+  const __CHALLENGE_DURATION = 1;
 
   // the list of successfully solved challenges
-  const __solvedChallenges: string[] = [];
+  const __solvedChallenges: IRecord<boolean> = {};
 
 
 
@@ -60,7 +61,7 @@ const altchaServiceFactory = (): IAltchaService => {
     }
 
     // ensure the solved challenge hasn't already been used
-    if (__solvedChallenges.includes(payload)) {
+    if (__solvedChallenges[payload]) {
       throw new Error(encodeError(`The provided altcha payload '${payload}' has already been used. Please try again.`, 1001));
     }
 
@@ -71,7 +72,7 @@ const altchaServiceFactory = (): IAltchaService => {
     }
 
     // add the payload to the solved list
-    __solvedChallenges.push(payload);
+    __solvedChallenges[payload] = true;
   };
 
 
