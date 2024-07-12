@@ -109,10 +109,9 @@ const notificationServiceFactory = (): INotificationService => {
    */
   const initialize = async (): Promise<void> => {
     if (__CONFIG) {
-      __broadcastInterval = setInterval(() => {
+      __broadcastInterval = setInterval(async () => {
         if (__queue.length) {
-          // broadcast ...
-          __queue.shift();
+          await broadcast(<INotification>__queue.shift());
         }
       }, __broadcastFrequencySeconds * 1000);
     }

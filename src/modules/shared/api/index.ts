@@ -68,7 +68,12 @@ const apiServiceFactory = (): IAPIService => {
         console.error('DatabaseService.teardown()', e);
       }
 
-      // ...
+      // Notification Module
+      try {
+        await NotificationService.teardown();
+      } catch (e) {
+        console.error('NotificationService.teardown()', e);
+      }
     }
   };
 
@@ -138,7 +143,14 @@ const apiServiceFactory = (): IAPIService => {
       }
       console.log('1/10) Database Module: done');
 
-      // ...
+      // Notification Module
+      console.log('1/10) Notification Module: started');
+      try {
+        await NotificationService.initialize();
+      } catch (e) {
+        throw new Error(`NotificationService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('1/10) Notification Module: done');
     }
   };
 

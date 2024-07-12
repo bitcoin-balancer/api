@@ -10,9 +10,13 @@ import { INotification } from './types.js';
  * @param notification
  * @returns string
  */
-const toMessage = (notification: INotification): string => (
-  `${notification.sender}\n${notification.title}\n${notification.description}`
-);
+const toMessage = (notification: INotification): string => {
+  let _ = '';
+  _ += `${notification.sender}%0A`;
+  _ += `${notification.title}%0A`;
+  _ += `${notification.description}`;
+  return _;
+};
 
 /**
  * Builds the URL and the message that will be broadcasted through the Telegram group.
