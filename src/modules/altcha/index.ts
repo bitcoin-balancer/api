@@ -3,8 +3,8 @@ import { createChallenge, verifySolution } from 'altcha-lib';
 import { encodeError } from 'error-message-utils';
 import { IRecord } from '../shared/types.js';
 import { ENVIRONMENT } from '../shared/environment/index.js';
-import { IAltchaService, IChallenge } from './types.js';
 import { stringValid } from '../shared/validations/index.js';
+import { IAltchaService, IChallenge } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -24,7 +24,7 @@ const altchaServiceFactory = (): IAltchaService => {
   const __SECRET = ENVIRONMENT.ALTCHA_SECRET;
 
   // the number of minutes a challenge is valid for
-  const __CHALLENGE_DURATION = 1;
+  const __CHALLENGE_DURATION = 5;
 
   // the list of successfully solved challenges
   const __solvedChallenges: IRecord<boolean> = {};

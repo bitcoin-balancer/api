@@ -31,3 +31,23 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **1000:** `The provided altcha payload '${payload}' has an invalid format. Please try again.`
 - **1001:** `The provided altcha payload '${payload}' has already been used. Please try again.`
 - **1002:** `The solution to the Altcha challenge is invalid or it has expired. Please try again.`
+
+
+
+
+
+<br/><br/><br/>
+
+## `Auth/User` (2000 - 2999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **2000:** ``
+
+### `model.ts`
+
+- **2250:** ``

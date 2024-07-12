@@ -31,6 +31,23 @@ type IDatabaseService = {
 
 
 /* ************************************************************************************************
+ *                                            PG TYPES                                            *
+ ************************************************************************************************ */
+
+// the configuration object used to instantiate a pool
+type IPoolConfig = pg.PoolConfig;
+
+// the instance of a pool
+type IPool = pg.Pool;
+
+// the instance of a connection to the database
+type IPoolClient = pg.PoolClient;
+
+// the result of a query execution
+type IQueryResult = pg.QueryResult;
+
+
+/* ************************************************************************************************
  *                                             TABLES                                             *
  ************************************************************************************************ */
 
@@ -39,7 +56,7 @@ type IDatabaseService = {
  * Each table has a unique name. However, the API creates a test version of each table to be used in
  * unit and integration tests.
  */
-type ITableName = 'api_errors' | 'users' | 'refresh_tokens' | 'password_updates';
+type ITableName = 'api_errors' | 'users' | 'password_updates' | 'refresh_tokens';
 type ITestTableName = `test_${ITableName}`;
 type ITableNames = {
   [key in ITableName]: ITableName | ITestTableName;
@@ -122,6 +139,12 @@ type IDatabaseSummary = {
 export type {
   // database service
   IDatabaseService,
+
+  // pg types
+  IPoolConfig,
+  IPool,
+  IPoolClient,
+  IQueryResult,
 
   // tables
   IRawTable,

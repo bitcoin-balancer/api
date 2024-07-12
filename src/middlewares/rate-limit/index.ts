@@ -15,7 +15,7 @@ import { rateLimit, Options } from 'express-rate-limit';
  */
 const options: Partial<Options> = {
   windowMs: 15 * 60 * 1000, // 15 minutes
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  standardHeaders: false, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   statusCode: 429,
   message: 'You have exceeded your API request limit. Please wait for a few minutes before trying again.',

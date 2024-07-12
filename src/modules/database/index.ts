@@ -2,10 +2,14 @@ import pg from 'pg';
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import {
   IDatabaseService,
-  IDatabaseSummary,
-  IDatabaseSummaryTable,
+  IPoolConfig,
+  IPool,
+  IPoolClient,
+  IQueryResult,
   ITableName,
   ITestTableName,
+  IDatabaseSummary,
+  IDatabaseSummaryTable,
 } from './types.js';
 import { RAW_TABLES } from './raw-tables.js';
 import { buildTableNames, buildTables, getTableNamesForQuery } from './utils.js';
@@ -48,7 +52,7 @@ const databaseServiceFactory = (): IDatabaseService => {
    ********************************************************************************************** */
 
   // the pool's configuration -> https://node-postgres.com/apis/pool
-  const __POOL_CONFIG: pg.PoolConfig = {
+  const __POOL_CONFIG: IPoolConfig = {
     host: ENVIRONMENT.POSTGRES_HOST,
     user: ENVIRONMENT.POSTGRES_USER,
     password: ENVIRONMENT.POSTGRES_PASSWORD_FILE,
@@ -60,7 +64,7 @@ const databaseServiceFactory = (): IDatabaseService => {
   };
 
   // the instance of the pool
-  let __pool: pg.Pool | undefined;
+  let __pool: IPool | undefined;
 
   // the list of existing tables
   const __tables = buildTables(RAW_TABLES);
@@ -96,9 +100,9 @@ const databaseServiceFactory = (): IDatabaseService => {
 
   /**
    * Drops all the tables and indexes in a single query execution.
-   * @returns Promise<pg.QueryResult>
+   * @returns Promise<IQueryResult>
    */
-  const dropTables = (): Promise<pg.QueryResult> => (
+  const dropTables = (): Promise<IQueryResult> => (
     __pool!.query(`DROP TABLE IF EXISTS ${getTableNamesForQuery(__tables)};`)
   );
 
@@ -154,7 +158,7 @@ const databaseServiceFactory = (): IDatabaseService => {
    * @param client
    * @returns Promise<string>
    */
-  const __getDatabaseVersion = async (client: pg.PoolClient): Promise<string> => {
+  const __getDatabaseVersion = async (client: IPoolClient): Promise<string> => {
     const { rows } = await client.query('SELECT version();');
     return rows[0].version;
   };
@@ -164,7 +168,7 @@ const databaseServiceFactory = (): IDatabaseService => {
    * @param client
    * @returns Promise<number>
    */
-  const __getDatabaseSize = async (client: pg.PoolClient): Promise<number> => {
+  const __getDatabaseSize = async (client: IPoolClient): Promise<number> => {
     const { rows } = await client.query(`SELECT pg_database_size('${__POOL_CONFIG.database}');`);
     return rows[0].pg_database_size;
   };
@@ -177,7 +181,7 @@ const databaseServiceFactory = (): IDatabaseService => {
    */
   const __getSummaryTable = async (
     name: ITableName | ITestTableName,
-    client: pg.PoolClient,
+    client: IPoolClient,
   ): Promise<IDatabaseSummaryTable> => {
     const { rows } = await client.query(`SELECT pg_total_relation_size('${name}');`);
     return {
@@ -192,7 +196,7 @@ const databaseServiceFactory = (): IDatabaseService => {
    * @returns Promise<IDatabaseSummaryTable[]>
    */
   const __getAllSummaryTables = (
-    client: pg.PoolClient,
+    client: IPoolClient,
   ): Promise<IDatabaseSummaryTable[]> => Promise.all(
     __tables.map((table) => __getSummaryTable(table.name, client)),
   );
@@ -236,7 +240,7 @@ const databaseServiceFactory = (): IDatabaseService => {
   return Object.freeze({
     // properties
     get pool() {
-      return <pg.Pool>__pool;
+      return <IPool>__pool;
     },
     get tn() {
       return __tn;
@@ -272,5 +276,9 @@ const DatabaseService = databaseServiceFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // service
   DatabaseService,
+
+  // types
+  IQueryResult,
 };

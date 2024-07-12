@@ -1,6 +1,25 @@
 
 
 /* ************************************************************************************************
+ *                                            SERVICE                                             *
+ ************************************************************************************************ */
+
+/**
+ * User Service
+ * Object in charge of creating and managing users.
+ */
+type IUserService = {
+  // properties
+  // ...
+
+  // actions
+};
+
+
+
+
+
+/* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
 
@@ -36,7 +55,7 @@ type IUser = {
   otp_secret?: string;
 
   // the timestamp in ms when the account was first created by root
-  creation: number;
+  event_time: number;
 };
 
 
@@ -47,6 +66,10 @@ type IUser = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
+  // service
+  IUserService,
+
+  // types
   IAuthority,
   IAuthorities,
   IUser,

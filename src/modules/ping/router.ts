@@ -2,12 +2,7 @@ import { Router, Request, Response } from 'express';
 import { buildResponse } from 'api-response-utils';
 import { veryHighRiskLimit } from '../../middlewares/rate-limit/index.js';
 
-// init the route
 const PingRouter = Router();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *

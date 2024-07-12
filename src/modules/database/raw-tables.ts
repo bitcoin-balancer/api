@@ -43,6 +43,20 @@ export const RAW_TABLES: IRawTable[] = [
   },
 
   /**
+   * password_updates
+   * every record corresponds to a time the user updated their password.
+   */
+  {
+    name: 'password_updates',
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('password_updates')} (
+        uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
+        event_time  BIGINT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ${getTableName('password_updates')}_uid_event_time_idx ON ${getTableName('password_updates')}(uid, event_time DESC);`,
+  },
+
+  /**
    * refresh_tokens
    * every record corresponds to a user's auth session.
    */
@@ -55,19 +69,5 @@ export const RAW_TABLES: IRawTable[] = [
         event_time  BIGINT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_uid_token_idx ON ${getTableName('refresh_tokens')}(uid, token);`,
-  },
-
-  /**
-   * password_updates
-   * every record corresponds to a time the user updated their password.
-   */
-  {
-    name: 'password_updates',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('password_updates')} (
-        uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
-        event_time  BIGINT NOT NULL
-      );
-      CREATE INDEX IF NOT EXISTS ${getTableName('password_updates')}_uid_event_time_idx ON ${getTableName('password_updates')}(uid, event_time DESC);`,
   },
 ];

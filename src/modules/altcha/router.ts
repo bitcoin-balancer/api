@@ -2,12 +2,7 @@ import { Router, Request, Response } from 'express';
 import { highRiskLimit } from '../../middlewares/rate-limit/index.js';
 import { AltchaService } from './index.js';
 
-// init the route
 const AltchaRouter = Router();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
