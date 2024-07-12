@@ -1,4 +1,4 @@
-import { IObject } from '../shared/types.js';
+import { IRecord } from '../shared/types.js';
 import { objectValid } from '../shared/validations/index.js';
 
 /* ************************************************************************************************
@@ -10,9 +10,9 @@ import { objectValid } from '../shared/validations/index.js';
  * valid object it returns undefined.
  * @param args
  * @param sensitiveDataKeys
- * @returns IObject | undefined
+ * @returns IRecord | undefined
  */
-const buildArgs = (args: IObject | undefined, sensitiveDataKeys: string[]): IObject | undefined => (
+const buildArgs = (args: IRecord | undefined, sensitiveDataKeys: string[]): IRecord | undefined => (
   objectValid(args)
     ? Object.keys(args).reduce(
       (previous, current) => ({

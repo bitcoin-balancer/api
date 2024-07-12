@@ -5,11 +5,11 @@
  ************************************************************************************************ */
 
 /**
- * Object
+ * Record
  * This utility type is used to replace the original 'object' type which can become difficult to
  * deal with.
  */
-type IObject = {
+type IRecord = {
   [key: string]: any;
 };
 
@@ -21,5 +21,5 @@ type IObject = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
-  IObject,
+  IRecord,
 };
