@@ -64,7 +64,7 @@ const __listNextRecords = async (limit: number, startAtID: number): Promise<IAPI
 
 /**
  * Retrieves a list of API Errors from the database. If a startAtID is provided, it will only
- * retrieve records that are older to the passed ID (exclusive).
+ * retrieve records that are older than the passed ID (exclusive).
  * @param limit
  * @param startAtID?
  * @returns Promise<IAPIError[]>

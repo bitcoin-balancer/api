@@ -1,6 +1,6 @@
 import { encodeError } from 'error-message-utils';
 import { DatabaseService, IQueryResult } from '../../database/index.js';
-import { IAuthority, IUser } from './types.js';
+import { IAuthority, IPasswordUpdate, IUser } from './types.js';
 
 /* ************************************************************************************************
  *                                           RETRIEVERS                                           *
@@ -10,7 +10,7 @@ import { IAuthority, IUser } from './types.js';
  * Retrieves all the user records ordered by authority descendingly.
  * @returns Promise<IUser[]>
  */
-const getAllRecords = async (): Promise<IUser[]> => {
+const listRecords = async (): Promise<IUser[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT uid, nickname, authority, event_time
@@ -36,6 +36,28 @@ const getUserRecord = async (uid: string): Promise<IUser | undefined> => {
     values: [uid],
   });
   return rows[0];
+};
+
+/**
+ * Retrieves the Password Hash for a user based on its ID.
+ * @param uid
+ * @returns Promise<string>
+ * @throws
+ * - 3251: if the user record does not exist or the Password Hash is not valid
+ */
+const getUserPasswordHash = async (uid: string): Promise<string> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT password_hash
+      FROM ${DatabaseService.tn.users}
+      WHERE uid = $1;
+    `,
+    values: [uid],
+  });
+  if (!rows.length || typeof rows[0].password_hash !== 'string' || !rows[0].password_hash.length) {
+    throw new Error(encodeError(`The password_hash retrieved for uid '${uid}' doesn't exist or is invalid. Please go through the "Update Password" process before trying sign in again.`, 3251));
+  }
+  return rows[0].password_hash;
 };
 
 /**
@@ -65,6 +87,79 @@ const getUserOTPSecret = async (uid: string): Promise<string> => {
 
 
 /* ************************************************************************************************
+ *                               PASSWORD UPDATE RECORD RETRIEVERS                                *
+ ************************************************************************************************ */
+
+/**
+ * Retrieves a list of existing password update records for a uid.
+ * @param uid
+ * @param limit
+ * @returns Promise<IPasswordUpdate[]>
+ */
+const __listPasswordUpdateRecords = async (
+  uid: string,
+  limit: number,
+): Promise<IPasswordUpdate[]> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT uid, event_time
+      FROM ${DatabaseService.tn.password_updates}
+      WHERE uid = $1
+      LIMIT $2;
+    `,
+    values: [uid, limit],
+  });
+  return rows;
+};
+
+/**
+ * Retrieves a list of password update records for a uid starting at a given point. Note: the
+ * startAtEventTime record won't be included in the result.
+ * @param uid
+ * @param limit
+ * @param startAtEventTime
+ * @returns Promise<IPasswordUpdate[]>
+ */
+const __listNextPasswordUpdateRecords = async (
+  uid: string,
+  limit: number,
+  startAtEventTime: number,
+): Promise<IPasswordUpdate[]> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT uid, event_time
+      FROM ${DatabaseService.tn.password_updates}
+      WHERE uid = $1 AND event_time < $2
+      LIMIT $3;
+    `,
+    values: [uid, startAtEventTime, limit],
+  });
+  return rows;
+};
+
+/**
+ * Retrieves a list of password update records for a user. If the startAtEventTime is provided, it
+ * will only retrieve records that are older than the passed timestamp (exclusive).
+ * @param uid
+ * @param limit
+ * @param startAtEventTime?
+ * @returns Promise<IPasswordUpdate[]>
+ */
+const listUserPasswordUpdateRecords = async (
+  uid: string,
+  limit: number,
+  startAtEventTime?: number,
+): Promise<IPasswordUpdate[]> => (
+  typeof startAtEventTime === 'number'
+    ? __listNextPasswordUpdateRecords(uid, limit, startAtEventTime)
+    : __listPasswordUpdateRecords(uid, limit)
+);
+
+
+
+
+
+/* ************************************************************************************************
  *                                     USER RECORD MANAGEMENT                                     *
  ************************************************************************************************ */
 
@@ -73,16 +168,16 @@ const getUserOTPSecret = async (uid: string): Promise<string> => {
  * @param uid
  * @param nickname
  * @param authority
- * @param passwordHash
  * @param otpSecret
+ * @param passwordHash?
  * @returns Promise<IQueryResult>
  */
 const createUserRecord = (
   uid: string,
   nickname: string,
   authority: IAuthority,
-  passwordHash: string,
   otpSecret: string,
+  passwordHash?: string,
 ): Promise<IQueryResult> => DatabaseService.pool.query({
   text: `
     INSERT INTO ${DatabaseService.tn.users} (uid, nickname, authority, password_hash, otp_secret, event_time)
@@ -118,12 +213,12 @@ const updateUserAuthority = (uid: string, newAuthority: IAuthority): Promise<IQu
 );
 
 /**
- * Updates the user's password and logs the update it in a transaction.
+ * Updates the user's password hash and logs the update it in a transaction.
  * @param uid
  * @param newPasswordHash
  * @returns Promise<void>
  */
-const updateUserPassword = async (uid: string, newPasswordHash: string): Promise<void> => {
+const updateUserPasswordHash = async (uid: string, newPasswordHash: string): Promise<void> => {
   const client = await DatabaseService.pool.connect();
   try {
     await client.query('BEGIN');
@@ -132,12 +227,13 @@ const updateUserPassword = async (uid: string, newPasswordHash: string): Promise
       values: [newPasswordHash, uid],
     });
     await client.query({
-      text: `INSERT INTO ${DatabaseService.tn.password_updates} (uid, event_time) VALUES ($1, 2)`,
+      text: `INSERT INTO ${DatabaseService.tn.password_updates} (uid, event_time) VALUES ($1, $2)`,
       values: [uid, Date.now()],
     });
     await client.query('COMMIT');
   } catch (e) {
     await client.query('ROLLBACK');
+    throw e;
   } finally {
     client.release();
   }
@@ -188,15 +284,17 @@ const deleteAllUserRecords = (): Promise<IQueryResult> => (
  ************************************************************************************************ */
 export {
   // retrievers
-  getAllRecords,
+  listRecords,
   getUserRecord,
+  getUserPasswordHash,
   getUserOTPSecret,
+  listUserPasswordUpdateRecords,
 
   // user record management
   createUserRecord,
   updateUserNickname,
   updateUserAuthority,
-  updateUserPassword,
+  updateUserPasswordHash,
   updateUserOTPSecret,
   deleteUserRecord,
   deleteAllUserRecords,

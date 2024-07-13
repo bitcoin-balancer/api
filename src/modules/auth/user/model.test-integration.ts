@@ -3,12 +3,15 @@
 import { describe, afterEach, test, expect, vi } from 'vitest';
 import { IUser } from './types.js';
 import {
-  getAllRecords,
+  listRecords,
   getUserRecord,
+  getUserPasswordHash,
   getUserOTPSecret,
+  listUserPasswordUpdateRecords,
   createUserRecord,
   updateUserNickname,
   updateUserAuthority,
+  updateUserPasswordHash,
   updateUserOTPSecret,
   deleteUserRecord,
   deleteAllUserRecords,
@@ -43,7 +46,7 @@ const create: (user: IUser) => Promise<IQueryResult> = ({
   password_hash,
   otp_secret,
 }: IUser): Promise<IQueryResult> => (
-  createUserRecord(uid, nickname, authority, password_hash!, otp_secret!)
+  createUserRecord(uid, nickname, authority, otp_secret!, password_hash!)
 );
 
 // compares a record that was extracted from the database versus the one used to create it
@@ -55,6 +58,7 @@ const compareRecords = (expectFunc: Function, dbRecord: IUser, localRecord: IUse
     event_time: dbRecord.event_time,
   });
 };
+
 
 
 
@@ -80,14 +84,14 @@ describe('User Model', () => {
       // records are ordered descendingly by authority. ensure both lists are the same
       const localRecords: IUser[] = U.slice();
       localRecords.sort(sortRecords('authority', 'desc'));
-      let records: IUser[] = await getAllRecords();
+      let records: IUser[] = await listRecords();
       expect(records).toHaveLength(U.length);
       records.forEach((dbRecord, i) => {
         compareRecords(expect, dbRecord, localRecords[i]);
       });
 
       await deleteAllUserRecords();
-      records = await getAllRecords();
+      records = await listRecords();
       expect(records).toHaveLength(0);
     });
   });
@@ -149,6 +153,20 @@ describe('User Model', () => {
       const record = await getUserRecord(U[0].uid);
       expect(record).toBeDefined();
       expect(record!.authority).toBe(5);
+    });
+  });
+
+
+
+
+  describe('updateUserPasswordHash', async () => {
+    test('can update the user\'s password', async () => {
+      await create(U[0]);
+      await updateUserPasswordHash(U[0].uid, 'NewSecretPasswordHash');
+      await expect(getUserPasswordHash(U[0].uid)).resolves.toBe('NewSecretPasswordHash');
+      const records = await listUserPasswordUpdateRecords(U[0].uid, 10);
+      expect(records).toHaveLength(1);
+      expect(records[0].uid).toBe(U[0].uid);
     });
   });
 

@@ -69,6 +69,14 @@ type IMinifiedUser = {
   authority: string;
 };
 
+/**
+ * Password Update
+ * The record stored whenever a user updates their password.
+ */
+type IPasswordUpdate = {
+  uid: string;
+  event_time: number;
+};
 
 
 
@@ -85,4 +93,5 @@ export type {
   IAuthorities,
   IUser,
   IMinifiedUser,
+  IPasswordUpdate,
 };
