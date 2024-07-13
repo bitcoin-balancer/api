@@ -96,6 +96,24 @@ describe('User Model', () => {
     });
   });
 
+
+
+
+
+  describe('getUserPasswordHash', () => {
+    test.todo('can retrieve the password hash for a user', async () => {
+      await create(U[0]);
+      await expect(getUserPasswordHash(U[0].uid)).resolves.toBe(U[0].password_hash);
+    });
+
+    test.todo('throws when attemting to retrieve a password for a uid that doesn\'t exist', async () => {
+      await expect(() => getUserOTPSecret(U[0].uid)).rejects.toThrowError('3251');
+    });
+  });
+
+
+
+
   describe('getUserOTPSecret', () => {
     test('can retrieve the OTP Secret for a user', async () => {
       await create(U[0]);
@@ -106,6 +124,14 @@ describe('User Model', () => {
       await expect(() => getUserOTPSecret(U[0].uid)).rejects.toThrowError('3250');
     });
   });
+
+
+
+
+
+  /* **********************************************************************************************
+   *                               PASSWORD UPDATE RECORD RETRIEVERS                              *
+   ********************************************************************************************** */
 
 
 
