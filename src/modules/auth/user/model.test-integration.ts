@@ -85,6 +85,12 @@ describe('User Model', () => {
         compareRecords(expect, u, <IUser>U.find((user) => u.uid === user.uid));
       });
 
+      const reversed = U.slice();
+      reversed.reverse();
+      records.forEach((record, i) => {
+        expect(record.uid).toBe(reversed[i].uid);
+      });
+
       await deleteAllUserRecords();
       records = await getAllRecords();
       expect(records).toHaveLength(0);
