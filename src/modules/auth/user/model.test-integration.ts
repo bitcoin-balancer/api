@@ -2,7 +2,17 @@
 /* eslint-disable no-restricted-syntax */
 import { describe, afterEach, test, expect, vi } from 'vitest';
 import { IUser } from './types.js';
-import { createUserRecord, deleteAllUserRecords, deleteUserRecord, getAllRecords, getUserRecord } from './model.js';
+import {
+  getAllRecords,
+  getUserRecord,
+  getUserOTPSecret,
+  createUserRecord,
+  updateUserNickname,
+  updateUserAuthority,
+  updateUserOTPSecret,
+  deleteUserRecord,
+  deleteAllUserRecords,
+} from './model.js';
 import { IQueryResult } from '../../database/types.js';
 import { sortRecords } from '../../shared/utils/index.js';
 
@@ -59,23 +69,9 @@ describe('User Model', () => {
     vi.useRealTimers();
   });
 
-  describe('createUserRecord', () => {
-    test('can create a series of users, validate their integrity and delete them', async () => {
-      for (const user of U) {
-        await create(user);
-
-        let record = await getUserRecord(user.uid);
-        expect(record).toBeDefined();
-        compareRecords(expect, record!, user);
-
-        await deleteUserRecord(user.uid);
-        record = await getUserRecord(user.uid);
-        expect(record).toBeUndefined();
-      }
-    });
-  });
-
-
+  /* **********************************************************************************************
+   *                                          RETRIEVERS                                          *
+   ********************************************************************************************** */
 
   describe('getAllRecords', () => {
     test('can retrieve all the records in descending order by authority', async () => {
@@ -98,10 +94,61 @@ describe('User Model', () => {
 
 
 
-  describe.skip('updateUserNickname', async () => {
-    test('can update the nickname of a user', async () => {
+
+
+  /* **********************************************************************************************
+   *                                    USER RECORD MANAGEMENT                                    *
+   ********************************************************************************************** */
+  describe('createUserRecord', () => {
+    test('can create a series of users, validate their integrity and delete them', async () => {
+      for (const user of U) {
+        await create(user);
+
+        let record = await getUserRecord(user.uid);
+        expect(record).toBeDefined();
+        compareRecords(expect, record!, user);
+
+        await deleteUserRecord(user.uid);
+        record = await getUserRecord(user.uid);
+        expect(record).toBeUndefined();
+      }
+    });
+  });
+
+
+
+
+  describe('updateUserNickname', async () => {
+    test('can update the user\'s nickname', async () => {
       await create(U[0]);
-      expect(2).toBe(2);
+      await updateUserNickname(U[0].uid, 'NewNickname');
+      const record = await getUserRecord(U[0].uid);
+      expect(record).toBeDefined();
+      expect(record!.nickname).toBe('NewNickname');
+    });
+  });
+
+
+
+
+  describe('updateUserAuthority', async () => {
+    test('can update the user\'s authority', async () => {
+      await create(U[0]);
+      await updateUserAuthority(U[0].uid, 5);
+      const record = await getUserRecord(U[0].uid);
+      expect(record).toBeDefined();
+      expect(record!.authority).toBe(5);
+    });
+  });
+
+
+
+
+  describe('updateUserOTPSecret', async () => {
+    test('can update the user\'s  OTP Secret', async () => {
+      await create(U[0]);
+      await updateUserOTPSecret(U[0].uid, 'NEWSECRET');
+      await expect(getUserOTPSecret(U[0].uid)).resolves.toBe('NEWSECRET');
     });
   });
 });

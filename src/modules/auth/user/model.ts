@@ -1,3 +1,4 @@
+import { encodeError } from 'error-message-utils';
 import { DatabaseService, IQueryResult } from '../../database/index.js';
 import { IAuthority, IUser } from './types.js';
 
@@ -37,6 +38,27 @@ const getUserRecord = async (uid: string): Promise<IUser | undefined> => {
   return rows[0];
 };
 
+/**
+ * Retrieves the OTP Secret for a user based on its ID.
+ * @param uid
+ * @returns Promise<string>
+ * @throws
+ * - 3250: if the user record does not exist or the OTP Secret is not valid
+ */
+const getUserOTPSecret = async (uid: string): Promise<string> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT otp_secret
+      FROM ${DatabaseService.tn.users}
+      WHERE uid = $1;
+    `,
+    values: [uid],
+  });
+  if (!rows.length || typeof rows[0].otp_secret !== 'string' || !rows[0].otp_secret.length) {
+    throw new Error(encodeError(`The otp_secret retrieved for uid '${uid}' doesn't exist or is invalid. Received: ${rows.length ? rows[0].otp_secret : 'undefined'}`, 3250));
+  }
+  return rows[0].otp_secret;
+};
 
 
 
@@ -167,6 +189,7 @@ export {
   // retrievers
   getAllRecords,
   getUserRecord,
+  getUserOTPSecret,
 
   // user record management
   createUserRecord,
