@@ -4,6 +4,7 @@ import { describe, afterEach, test, expect, vi } from 'vitest';
 import { IUser } from './types.js';
 import { createUserRecord, deleteAllUserRecords, deleteUserRecord, getAllRecords, getUserRecord } from './model.js';
 import { IQueryResult } from '../../database/types.js';
+import { sortRecords } from '../../shared/utils/index.js';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
@@ -80,16 +81,13 @@ describe('User Model', () => {
     test('can retrieve all the records in descending order by authority', async () => {
       await Promise.all(U.map(create));
 
+      // records are ordered descendingly by authority. ensure both lists are the same
+      const localRecords: IUser[] = U.slice();
+      localRecords.sort(sortRecords('authority', 'desc'));
       let records: IUser[] = await getAllRecords();
       expect(records).toHaveLength(U.length);
-      records.forEach((u) => {
-        compareRecords(expect, u, <IUser>U.find((user) => u.uid === user.uid));
-      });
-
-      const reversed = U.slice();
-      reversed.reverse();
-      records.forEach((record, i) => {
-        expect(record.uid).toBe(reversed[i].uid);
+      records.forEach((dbRecord, i) => {
+        compareRecords(expect, dbRecord, localRecords[i]);
       });
 
       await deleteAllUserRecords();

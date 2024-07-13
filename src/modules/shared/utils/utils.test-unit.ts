@@ -70,9 +70,7 @@ describe('Sorting Utilities', () => {
     expect(() => a.sort(sortPrimitives(b))).toThrowError('1');
   });
 
-  test.each(<Array<
-  [(IRecord<number> | IRecord<string>)[], ISortDirection, (IRecord<number> | IRecord<string>)[]]
-  >>[
+  test.each(<Array<[IRecord<any>[], ISortDirection, IRecord<any>[]]>>[
     [[], 'asc', []],
 
     // numeric values

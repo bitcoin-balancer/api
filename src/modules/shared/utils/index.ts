@@ -84,7 +84,7 @@ const sortPrimitives = (
 const sortRecords = (
   key: string,
   direction: ISortDirection,
-) => <T extends IRecord<string> | IRecord<number>>(a: T, b: T): number => {
+) => <T extends IRecord<any>>(a: T, b: T): number => {
   if (typeof a[key] === 'string' && typeof b[key] === 'string') {
     return __sortStringValues(a[key], b[key], direction);
   }
