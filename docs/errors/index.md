@@ -12,7 +12,8 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `index.ts`
 
-- **1:** `Unable to sort list of values as they can only be string | number and must not be mixed. Received: ${typeof a}, ${typeof b}`
+- **1:** `Unable to sort list of primitive values as they can only be string | number and must not be mixed. Received: ${typeof a}, ${typeof b}`
+- **2:** `Unable to sort list of record values as they can only be string | number and must not be mixed. Received: ${typeof a[key]}, ${typeof b[key]}`
 
 
 

@@ -1,4 +1,5 @@
 import { encodeError } from 'error-message-utils';
+import { IRecord } from '../types.js';
 import { ISortDirection } from './types.js';
 
 /* ************************************************************************************************
@@ -58,11 +59,11 @@ const __sortNumberValues = (a: number, b: number, direction: ISortDirection): nu
 );
 
 /**
- * Sorts a list of values based on their type and a sort direction.
+ * Sorts a list of primitive values based on their type and a sort direction.
  * @param direction
  * @returns <T extends string | number>(a: T, b: T): number
  */
-const sortValuesFunc = (
+const sortPrimitives = (
   direction: ISortDirection,
 ) => <T extends string | number>(a: T, b: T): number => {
   if (typeof a === 'string' && typeof b === 'string') {
@@ -71,8 +72,28 @@ const sortValuesFunc = (
   if (typeof a === 'number' && typeof b === 'number') {
     return __sortNumberValues(a, b, direction);
   }
-  throw new Error(encodeError(`Unable to sort list of values as they can only be string | number and must not be mixed. Received: ${typeof a}, ${typeof b}`, 1));
+  throw new Error(encodeError(`Unable to sort list of primitive values as they can only be string | number and must not be mixed. Received: ${typeof a}, ${typeof b}`, 1));
 };
+
+/**
+ * Sorts a list of record values by key based on their type and a sort direction.
+ * @param key
+ * @param direction
+ * @returns <T extends string | number>(a: T, b: T): number
+ */
+const sortRecords = (
+  key: string,
+  direction: ISortDirection,
+) => <T extends IRecord<string> | IRecord<number>>(a: T, b: T): number => {
+  if (typeof a[key] === 'string' && typeof b[key] === 'string') {
+    return __sortStringValues(a[key], b[key], direction);
+  }
+  if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+    return __sortNumberValues(a[key], b[key], direction);
+  }
+  throw new Error(encodeError(`Unable to sort list of record values as they can only be string | number and must not be mixed. Received: ${typeof a[key]}, ${typeof b[key]}`, 2));
+};
+
 
 
 
@@ -103,7 +124,8 @@ export {
   toMilliseconds,
 
   // sorting utilities
-  sortValuesFunc,
+  sortPrimitives,
+  sortRecords,
 
   // misc helpers
   delay,

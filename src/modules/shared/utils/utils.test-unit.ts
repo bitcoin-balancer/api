@@ -3,7 +3,7 @@ import { ISortDirection } from './types.js';
 import {
   toSeconds,
   toMilliseconds,
-  sortValuesFunc,
+  sortPrimitives,
   delay,
 } from './index.js';
 
@@ -53,9 +53,9 @@ describe('Sorting Utilities', () => {
     [['Blue', 'Humpback', 'Beluga'], 'desc', ['Humpback', 'Blue', 'Beluga']],
     [['The', 'Magnetic', 'Edward', 'Sharpe', 'Zeros', 'And'], 'asc', ['And', 'Edward', 'Magnetic', 'Sharpe', 'The', 'Zeros']],
     [['The', 'Magnetic', 'Edward', 'Sharpe', 'Zeros', 'And'], 'desc', ['Zeros', 'The', 'Sharpe', 'Magnetic', 'Edward', 'And']],
-  ])('sortValuesFunc(%o, %s) -> %o', (a, b, expected) => {
+  ])('sortPrimitives(%o, %s) -> %o', (a, b, expected) => {
     const arr = a.slice();
-    arr.sort(sortValuesFunc(b));
+    arr.sort(sortPrimitives(b));
     expect(arr).toStrictEqual(expected);
   });
 
@@ -64,8 +64,8 @@ describe('Sorting Utilities', () => {
     [[1, '2', 3, 4, 5], 'asc'],
     [[1, 2, '3', 4, '5'], 'asc'],
     [[[1], 2, 3], 'asc'],
-  ])('sortValuesFunc(%o, %s) -> Error: 1', (a, b) => {
-    expect(() => a.sort(sortValuesFunc(b))).toThrowError('1');
+  ])('sortPrimitives(%o, %s) -> Error: 1', (a, b) => {
+    expect(() => a.sort(sortPrimitives(b))).toThrowError('1');
   });
 });
 
