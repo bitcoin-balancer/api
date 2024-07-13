@@ -18,6 +18,7 @@ import {
   updateUserOTPSecret,
   deleteUserRecord,
   deleteAllUserRecords,
+  nicknameExists,
 } from './model.js';
 
 /* ************************************************************************************************
@@ -126,6 +127,23 @@ describe('User Model', () => {
 
 
 
+  describe('nicknameExists', () => {
+    test('can check if a nickname is being used', async () => {
+      await expect(nicknameExists(U[0].nickname)).resolves.toBe(false);
+      await create(U[0]);
+      await expect(nicknameExists(U[0].nickname)).resolves.toBe(true);
+    });
+
+    test('the check is case insensitive', async () => {
+      await create(U[0]);
+      await expect(nicknameExists(U[0].nickname.toUpperCase())).resolves.toBe(true);
+    });
+  });
+
+
+
+
+
   describe('getUserPasswordHash', () => {
     test('can retrieve the password hash for a user', async () => {
       await create(U[0]);
@@ -156,7 +174,7 @@ describe('User Model', () => {
 
 
   /* **********************************************************************************************
-   *                               PASSWORD UPDATE RECORD RETRIEVERS                              *
+   *                                  PASSWORD UPDATE RETRIEVERS                                  *
    ********************************************************************************************** */
   describe('listUserPasswordUpdateRecords', () => {
     beforeEach(() => {

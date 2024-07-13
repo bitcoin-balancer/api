@@ -59,6 +59,23 @@ const getUserRecord = async (uid: string): Promise<IUser | undefined> => {
 };
 
 /**
+ * Verifies if a nickname is already being used by another user.
+ * @param nickname
+ * @returns Promise<boolean>
+ */
+const nicknameExists = async (nickname: string): Promise<boolean> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT 1
+      FROM ${DatabaseService.tn.users}
+      WHERE LOWER(nickname) = $1;
+    `,
+    values: [nickname.toLowerCase()],
+  });
+  return rows.length > 0;
+};
+
+/**
  * Retrieves the Password Hash for a user based on its nickname.
  * @param nickname
  * @returns Promise<string>
@@ -107,7 +124,7 @@ const getUserOTPSecret = async (uid: string): Promise<string> => {
 
 
 /* ************************************************************************************************
- *                               PASSWORD UPDATE RECORD RETRIEVERS                                *
+ *                                   PASSWORD UPDATE RETRIEVERS                                   *
  ************************************************************************************************ */
 
 /**
@@ -309,8 +326,11 @@ export {
   listRecords,
   listMinifiedRecords,
   getUserRecord,
+  nicknameExists,
   getUserPasswordHash,
   getUserOTPSecret,
+
+  // password update retrievers
   listUserPasswordUpdateRecords,
 
   // user record management
