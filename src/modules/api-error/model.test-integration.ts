@@ -146,7 +146,7 @@ describe('APIError Model', () => {
 
 
   describe('__listNextRecords', () => {
-    test.todo('can paginate through the records', async () => {
+    test('can paginate through the records', async () => {
       // save the test records in order
       const ids = await saveRecords(ERRORS);
 
