@@ -1,6 +1,11 @@
 import { encodeError } from 'error-message-utils';
 import { DatabaseService, IQueryResult } from '../../database/index.js';
-import { IAuthority, IPasswordUpdate, IUser } from './types.js';
+import {
+  IAuthority,
+  IUser,
+  IMinifiedUser,
+  IPasswordUpdate,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                           RETRIEVERS                                           *
@@ -14,6 +19,21 @@ const listRecords = async (): Promise<IUser[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT uid, nickname, authority, event_time
+      FROM ${DatabaseService.tn.users}
+      ORDER BY authority DESC;
+    `,
+  });
+  return rows;
+};
+
+/**
+ * Retrieves all the user records ordered by authority descendingly.
+ * @returns Promise<IUser[]>
+ */
+const listMinifiedRecords = async (): Promise<IMinifiedUser[]> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT uid, nickname, authority
       FROM ${DatabaseService.tn.users}
       ORDER BY authority DESC;
     `,
@@ -287,6 +307,7 @@ const deleteAllUserRecords = (): Promise<IQueryResult> => (
 export {
   // retrievers
   listRecords,
+  listMinifiedRecords,
   getUserRecord,
   getUserPasswordHash,
   getUserOTPSecret,

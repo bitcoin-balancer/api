@@ -3,9 +3,10 @@
 import { describe, beforeEach, afterEach, test, expect, vi } from 'vitest';
 import { sortRecords, toMilliseconds } from '../../shared/utils/index.js';
 import { IQueryResult } from '../../database/types.js';
-import { IUser } from './types.js';
+import { IUser, IMinifiedUser } from './types.js';
 import {
   listRecords,
+  listMinifiedRecords,
   getUserRecord,
   getUserPasswordHash,
   getUserOTPSecret,
@@ -77,7 +78,7 @@ describe('User Model', () => {
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
 
-  describe('getAllRecords', () => {
+  describe('listRecords', () => {
     test('can retrieve all the records in descending order by authority', async () => {
       await Promise.all(U.map(create));
 
@@ -92,6 +93,31 @@ describe('User Model', () => {
 
       await deleteAllUserRecords();
       records = await listRecords();
+      expect(records).toHaveLength(0);
+    });
+  });
+
+
+
+  describe('listMinifiedRecords', () => {
+    test('can retrieve all the minified records in descending order by authority', async () => {
+      await Promise.all(U.map(create));
+
+      // records are ordered descendingly by authority. ensure both lists are the same
+      const localRecords: IUser[] = U.slice();
+      localRecords.sort(sortRecords('authority', 'desc'));
+      let records: IMinifiedUser[] = await listMinifiedRecords();
+      expect(records).toHaveLength(U.length);
+      records.forEach((dbRecord, i) => {
+        expect(dbRecord).toStrictEqual({
+          uid: localRecords[i].uid,
+          nickname: localRecords[i].nickname,
+          authority: localRecords[i].authority,
+        });
+      });
+
+      await deleteAllUserRecords();
+      records = await listMinifiedRecords();
       expect(records).toHaveLength(0);
     });
   });
