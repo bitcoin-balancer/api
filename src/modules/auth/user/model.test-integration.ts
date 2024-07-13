@@ -72,6 +72,9 @@ describe('User Model', () => {
 
       let records: IUser[] = await getAllRecords();
       expect(records).toHaveLength(U.length);
+      records.forEach((u) => {
+        compareRecords(expect, u, <IUser>U.find((user) => u.uid === user.uid));
+      });
 
       await deleteAllUserRecords();
       records = await getAllRecords();
