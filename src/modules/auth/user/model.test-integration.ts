@@ -92,6 +92,17 @@ describe('User Model', () => {
     });
   });
 
+  describe('getUserOTPSecret', () => {
+    test('can retrieve the OTP Secret for a user', async () => {
+      await create(U[0]);
+      await expect(getUserOTPSecret(U[0].uid)).resolves.toBe(U[0].otp_secret);
+    });
+
+    test('throws when attempting to retrieve a secret for a uid that doesn\t exist', async () => {
+      await expect(() => getUserOTPSecret(U[0].uid)).rejects.toThrowError('3250');
+    });
+  });
+
 
 
 
