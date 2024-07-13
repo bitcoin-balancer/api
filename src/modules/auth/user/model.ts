@@ -105,6 +105,7 @@ const __listPasswordUpdateRecords = async (
       SELECT uid, event_time
       FROM ${DatabaseService.tn.password_updates}
       WHERE uid = $1
+      ORDER BY event_time DESC
       LIMIT $2;
     `,
     values: [uid, limit],
@@ -130,6 +131,7 @@ const __listNextPasswordUpdateRecords = async (
       SELECT uid, event_time
       FROM ${DatabaseService.tn.password_updates}
       WHERE uid = $1 AND event_time < $2
+      ORDER BY event_time DESC
       LIMIT $3;
     `,
     values: [uid, startAtEventTime, limit],
