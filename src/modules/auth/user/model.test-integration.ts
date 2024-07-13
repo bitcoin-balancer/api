@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { describe, afterEach, test, expect } from 'vitest';
+import { describe, afterEach, test, expect, vi } from 'vitest';
 import { IUser } from './types.js';
 import { createUserRecord, deleteAllUserRecords, deleteUserRecord, getAllRecords, getUserRecord } from './model.js';
 import { IQueryResult } from '../../database/types.js';
@@ -55,6 +55,7 @@ const compareRecords = (expectFunc: Function, dbRecord: IUser, localRecord: IUse
 describe('User Model', () => {
   afterEach(async () => {
     await deleteAllUserRecords();
+    vi.useRealTimers();
   });
 
   describe('createUserRecord', () => {

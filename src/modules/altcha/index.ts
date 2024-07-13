@@ -57,18 +57,18 @@ const altchaServiceFactory = (): IAltchaService => {
   const verify = async (payload: string): Promise<void> => {
     // ensure the payload is a valid string
     if (!stringValid(payload, 100, 1000)) {
-      throw new Error(encodeError(`The provided altcha payload '${payload}' has an invalid format. Please try again.`, 1000));
+      throw new Error(encodeError(`The provided altcha payload '${payload}' has an invalid format. Please try again.`, 2000));
     }
 
     // ensure the solved challenge hasn't already been used
     if (__solvedChallenges[payload]) {
-      throw new Error(encodeError(`The provided altcha payload '${payload}' has already been used. Please try again.`, 1001));
+      throw new Error(encodeError(`The provided altcha payload '${payload}' has already been used. Please try again.`, 2001));
     }
 
     // proceed to verify the solution
     const result = await verifySolution(payload, __SECRET, true);
     if (!result) {
-      throw new Error(encodeError('The solution to the Altcha challenge is invalid or it has expired. Please try again.', 1002));
+      throw new Error(encodeError('The solution to the Altcha challenge is invalid or it has expired. Please try again.', 2002));
     }
 
     // add the payload to the solved list

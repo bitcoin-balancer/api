@@ -26,6 +26,6 @@ describe('canRecordsBeListed', () => {
     Number.MAX_SAFE_INTEGER + 1,
     NaN,
   ])('canRecordsBeListed(%s)', (a) => {
-    expect(() => canRecordsBeListed(<any>a)).toThrowError('1');
+    expect(() => canRecordsBeListed(<any>a)).toThrowError('1000');
   });
 });

@@ -1,5 +1,11 @@
 import { describe, beforeAll, afterAll, test, expect, vi } from 'vitest';
-import { toSeconds, toMilliseconds, delay } from './index.js';
+import { ISortDirection } from './types.js';
+import {
+  toSeconds,
+  toMilliseconds,
+  sortValuesFunc,
+  delay,
+} from './index.js';
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
@@ -23,6 +29,46 @@ describe('Time Converters', () => {
     });
   });
 });
+
+
+
+
+
+describe('Sorting Utilities', () => {
+  test.each(<Array<[(number | string)[], ISortDirection, (number | string)[]]>>[
+    [[], 'asc', []],
+
+    // numeric values
+    [[1, 2, 3, 4, 5], 'asc', [1, 2, 3, 4, 5]],
+    [[1, 2, 3, 4, 5], 'desc', [5, 4, 3, 2, 1]],
+    [[5, 4, 3, 2, 1], 'asc', [1, 2, 3, 4, 5]],
+    [[5, 4, 3, 2, 1], 'desc', [5, 4, 3, 2, 1]],
+    [[3, 1, 4, 2, 5], 'asc', [1, 2, 3, 4, 5]],
+    [[3, 1, 4, 2, 5], 'desc', [5, 4, 3, 2, 1]],
+
+    // string values
+    [['a', 'b', 'c'], 'asc', ['a', 'b', 'c']],
+    [['a', 'b', 'c'], 'desc', ['c', 'b', 'a']],
+    [['Blue', 'Humpback', 'Beluga'], 'asc', ['Beluga', 'Blue', 'Humpback']],
+    [['Blue', 'Humpback', 'Beluga'], 'desc', ['Humpback', 'Blue', 'Beluga']],
+    [['The', 'Magnetic', 'Edward', 'Sharpe', 'Zeros', 'And'], 'asc', ['And', 'Edward', 'Magnetic', 'Sharpe', 'The', 'Zeros']],
+    [['The', 'Magnetic', 'Edward', 'Sharpe', 'Zeros', 'And'], 'desc', ['Zeros', 'The', 'Sharpe', 'Magnetic', 'Edward', 'And']],
+  ])('sortValuesFunc(%o, %s) -> %o', (a, b, expected) => {
+    const arr = a.slice();
+    arr.sort(sortValuesFunc(b));
+    expect(arr).toStrictEqual(expected);
+  });
+
+  test.each(<Array<[(number | string)[], ISortDirection]>>[
+    [[1, { foo: 'bar' }, 3, 4, 5], 'asc'],
+    [[1, '2', 3, 4, 5], 'asc'],
+    [[1, 2, '3', 4, '5'], 'asc'],
+    [[[1], 2, 3], 'asc'],
+  ])('sortValuesFunc(%o, %s) -> Error: 1', (a, b) => {
+    expect(() => a.sort(sortValuesFunc(b))).toThrowError('1');
+  });
+});
+
 
 
 
