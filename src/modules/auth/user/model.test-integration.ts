@@ -149,10 +149,28 @@ describe('User Model', () => {
         expect(record).toBeDefined();
         compareRecords(expect, record!, user);
 
+        await expect(getUserPasswordHash(user.uid)).resolves.toBe(user.password_hash);
+        await expect(getUserOTPSecret(user.uid)).resolves.toBe(user.otp_secret);
+
         await deleteUserRecord(user.uid);
         record = await getUserRecord(user.uid);
         expect(record).toBeUndefined();
       }
+    });
+
+    test('can create a user without providing a password to start with', async () => {
+      await createUserRecord(U[0].uid, U[0].nickname, U[0].authority, U[0].otp_secret!);
+
+      const record = await getUserRecord(U[0].uid);
+      expect(record).toBeDefined();
+      compareRecords(expect, record!, U[0]);
+
+      await expect(getUserOTPSecret(U[0].uid)).resolves.toBe(U[0].otp_secret);
+
+      await expect(() => getUserPasswordHash(U[0].uid)).rejects.toThrowError('3251');
+
+      await updateUserPasswordHash(U[0].uid, '$NEW_PASSWORD');
+      await expect(getUserPasswordHash(U[0].uid)).resolves.toBe('$NEW_PASSWORD');
     });
   });
 
