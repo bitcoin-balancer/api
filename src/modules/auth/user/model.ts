@@ -63,11 +63,9 @@ const createUserRecord = (
 ): Promise<IQueryResult> => DatabaseService.pool.query({
   text: `
     INSERT INTO ${DatabaseService.tn.users} (uid, nickname, authority, password_hash, otp_secret, event_time)
-    VALUES ($1, $2, $3, $4, $5, $6)
-    FROM ${DatabaseService.tn.users}
-    WHERE uid = $1;
+    VALUES ($1, $2, $3, $4, $5, $6);
   `,
-  values: [uid, nickname, authority, passwordHash, otpSecret],
+  values: [uid, nickname, authority, passwordHash, otpSecret, Date.now()],
 });
 
 /**

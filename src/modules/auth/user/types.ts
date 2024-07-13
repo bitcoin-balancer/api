@@ -58,6 +58,17 @@ type IUser = {
   event_time: number;
 };
 
+/**
+ * Minified User
+ * The minified record is included in the App Bulk so the GUI can accomodate the user properly and
+ * show sections accordingly to the user's authority.
+ */
+type IMinifiedUser = {
+  uid: string;
+  nickname: string;
+  authority: string;
+};
+
 
 
 
@@ -73,4 +84,5 @@ export type {
   IAuthority,
   IAuthorities,
   IUser,
+  IMinifiedUser,
 };
