@@ -59,23 +59,23 @@ const getUserRecord = async (uid: string): Promise<IUser | undefined> => {
 };
 
 /**
- * Retrieves the Password Hash for a user based on its ID.
- * @param uid
+ * Retrieves the Password Hash for a user based on its nickname.
+ * @param nickname
  * @returns Promise<string>
  * @throws
  * - 3251: if the user record does not exist or the Password Hash is not valid
  */
-const getUserPasswordHash = async (uid: string): Promise<string> => {
+const getUserPasswordHash = async (nickname: string): Promise<string> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT password_hash
       FROM ${DatabaseService.tn.users}
-      WHERE uid = $1;
+      WHERE LOWER(nickname) = $1;
     `,
-    values: [uid],
+    values: [nickname.toLowerCase()],
   });
   if (!rows.length || typeof rows[0].password_hash !== 'string' || !rows[0].password_hash.length) {
-    throw new Error(encodeError(`The password_hash retrieved for uid '${uid}' doesn't exist or is invalid. Please go through the "Update Password" process before trying sign in again.`, 3251));
+    throw new Error(encodeError(`The password_hash retrieved for user '${nickname}' doesn't exist or is invalid. Please go through the "Update Password" process before trying sign in again.`, 3251));
   }
   return rows[0].password_hash;
 };

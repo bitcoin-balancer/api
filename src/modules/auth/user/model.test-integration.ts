@@ -129,11 +129,11 @@ describe('User Model', () => {
   describe('getUserPasswordHash', () => {
     test('can retrieve the password hash for a user', async () => {
       await create(U[0]);
-      await expect(getUserPasswordHash(U[0].uid)).resolves.toBe(U[0].password_hash);
+      await expect(getUserPasswordHash(U[0].nickname)).resolves.toBe(U[0].password_hash);
     });
 
     test('throws when attemting to retrieve a password for a uid that doesn\'t exist', async () => {
-      await expect(() => getUserPasswordHash(U[0].uid)).rejects.toThrowError('3251');
+      await expect(() => getUserPasswordHash(U[0].nickname)).rejects.toThrowError('3251');
     });
   });
 
@@ -239,7 +239,7 @@ describe('User Model', () => {
         expect(record).toBeDefined();
         compareRecords(expect, record!, user);
 
-        await expect(getUserPasswordHash(user.uid)).resolves.toBe(user.password_hash);
+        await expect(getUserPasswordHash(user.nickname)).resolves.toBe(user.password_hash);
         await expect(getUserOTPSecret(user.uid)).resolves.toBe(user.otp_secret);
 
         await deleteUserRecord(user.uid);
@@ -257,10 +257,10 @@ describe('User Model', () => {
 
       await expect(getUserOTPSecret(U[0].uid)).resolves.toBe(U[0].otp_secret);
 
-      await expect(() => getUserPasswordHash(U[0].uid)).rejects.toThrowError('3251');
+      await expect(() => getUserPasswordHash(U[0].nickname)).rejects.toThrowError('3251');
 
       await updateUserPasswordHash(U[0].uid, '$NEW_PASSWORD');
-      await expect(getUserPasswordHash(U[0].uid)).resolves.toBe('$NEW_PASSWORD');
+      await expect(getUserPasswordHash(U[0].nickname)).resolves.toBe('$NEW_PASSWORD');
     });
   });
 
@@ -297,7 +297,7 @@ describe('User Model', () => {
     test('can update the user\'s password', async () => {
       await create(U[0]);
       await updateUserPasswordHash(U[0].uid, 'NewSecretPasswordHash');
-      await expect(getUserPasswordHash(U[0].uid)).resolves.toBe('NewSecretPasswordHash');
+      await expect(getUserPasswordHash(U[0].nickname)).resolves.toBe('NewSecretPasswordHash');
       const records = await listUserPasswordUpdateRecords(U[0].uid, 10);
       expect(records).toHaveLength(1);
       expect(records[0].uid).toBe(U[0].uid);

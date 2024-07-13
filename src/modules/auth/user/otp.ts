@@ -33,7 +33,7 @@ authenticator.options = { window: 2, step: 30 };
  * be used in apps like Google Authenticator to issue tokens.
  * @returns string
  */
-const generateOTPSecret = () => authenticator.generateSecret();
+const generateOTPSecret = (): string => authenticator.generateSecret();
 
 /**
  * Checks if a given TOTP token matches the generated token at the given epoch (default to current
