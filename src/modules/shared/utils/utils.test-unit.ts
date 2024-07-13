@@ -4,8 +4,10 @@ import {
   toSeconds,
   toMilliseconds,
   sortPrimitives,
+  sortRecords,
   delay,
 } from './index.js';
+import { IRecord } from '../types.js';
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
@@ -66,6 +68,39 @@ describe('Sorting Utilities', () => {
     [[[1], 2, 3], 'asc'],
   ])('sortPrimitives(%o, %s) -> Error: 1', (a, b) => {
     expect(() => a.sort(sortPrimitives(b))).toThrowError('1');
+  });
+
+  test.each(<Array<
+  [(IRecord<number> | IRecord<string>)[], ISortDirection, (IRecord<number> | IRecord<string>)[]]
+  >>[
+    [[], 'asc', []],
+
+    // numeric values
+    [[{ v: 1 }, { v: 2 }, { v: 3 }], 'asc', [{ v: 1 }, { v: 2 }, { v: 3 }]],
+    [[{ v: 1 }, { v: 2 }, { v: 3 }], 'desc', [{ v: 3 }, { v: 2 }, { v: 1 }]],
+    [[{ v: 21 }, { v: 37 }, { v: 45 }, { v: -12 }, { v: 13 }, { v: 37 }], 'asc', [{ v: -12 }, { v: 13 }, { v: 21 }, { v: 37 }, { v: 37 }, { v: 45 }]],
+    [[{ v: 21 }, { v: 37 }, { v: 45 }, { v: -12 }, { v: 13 }, { v: 37 }], 'desc', [{ v: 45 }, { v: 37 }, { v: 37 }, { v: 21 }, { v: 13 }, { v: -12 }]],
+
+    // string values
+    [[{ v: 'a' }, { v: 'b' }, { v: 'c' }], 'asc', [{ v: 'a' }, { v: 'b' }, { v: 'c' }]],
+    [[{ v: 'a' }, { v: 'b' }, { v: 'c' }], 'desc', [{ v: 'c' }, { v: 'b' }, { v: 'a' }]],
+    [[{ v: 'Blue' }, { v: 'Humpback' }, { v: 'Beluga' }], 'asc', [{ v: 'Beluga' }, { v: 'Blue' }, { v: 'Humpback' }]],
+    [[{ v: 'Blue' }, { v: 'Humpback' }, { v: 'Beluga' }], 'desc', [{ v: 'Humpback' }, { v: 'Blue' }, { v: 'Beluga' }]],
+    [[{ v: 'The' }, { v: 'Magnetic' }, { v: 'Edward' }, { v: 'Sharpe' }, { v: 'Zeros' }, { v: 'And' }], 'asc', [{ v: 'And' }, { v: 'Edward' }, { v: 'Magnetic' }, { v: 'Sharpe' }, { v: 'The' }, { v: 'Zeros' }]],
+    [[{ v: 'The' }, { v: 'Magnetic' }, { v: 'Edward' }, { v: 'Sharpe' }, { v: 'Zeros' }, { v: 'And' }], 'desc', [{ v: 'Zeros' }, { v: 'The' }, { v: 'Sharpe' }, { v: 'Magnetic' }, { v: 'Edward' }, { v: 'And' }]],
+  ])('sortRecords(%o, %s) -> %o', (a, b, expected) => {
+    const arr = a.slice();
+    arr.sort(sortRecords('v', b));
+    expect(arr).toStrictEqual(expected);
+  });
+
+  test.each(<Array<any>>[
+    [[{ v: 'a' }, { v: 'b' }, { v: { c: 'c' } }]],
+    [[{ v: 1 }, { v: 'b' }, { v: 3 }]],
+    [[{ v: 1 }, { v: 2 }, { v: '3' }]],
+    [[{ v: [1] }, { v: [2] }, { v: '3' }]],
+  ])('sortRecords(%o, %s) -> Error: 2', (a) => {
+    expect(() => a.sort(sortRecords('v', 'asc'))).toThrowError('2');
   });
 });
 
