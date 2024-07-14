@@ -134,20 +134,6 @@ const getUserSignInDataByNickname = async (
   }
   return { uid: rows[0].uid, password_hash: rows[0].password_hash, otp_secret: rows[0].otp_secret };
 };
-/* const getUserPasswordHash = async (nickname: string): Promise<string> => {
-  const { rows } = await DatabaseService.pool.query({
-    text: `
-      SELECT password_hash
-      FROM ${DatabaseService.tn.users}
-      WHERE LOWER(nickname) = $1;
-    `,
-    values: [nickname.toLowerCase()],
-  });
-  if (!rows.length || typeof rows[0].password_hash !== 'string' || !rows[0].password_hash.length) {
-    throw new Error(encodeError(`The password_hash retrieved for user '${nickname}' doesn't exist or is invalid. Please go through the "Update Password" process before trying sign in again.`, 3251));
-  }
-  return rows[0].password_hash;
-}; */
 
 
 

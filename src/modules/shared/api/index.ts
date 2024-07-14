@@ -167,7 +167,7 @@ const apiServiceFactory = (): IAPIService => {
       } catch (e) {
         throw new Error(`UserService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('3/10) Notification Module: done');
+      console.log('3/10) User Module: done');
     }
   };
 

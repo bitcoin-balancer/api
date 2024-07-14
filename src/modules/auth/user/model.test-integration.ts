@@ -153,14 +153,30 @@ describe('User Model', () => {
 
 
 
-  describe('getUserPasswordHash', () => {
-    test('can retrieve the password hash for a user', async () => {
+  describe('getUserSignInDataByNickname', () => {
+    test('can retrieve the sign in data for a user', async () => {
       await create(U[0]);
-      await expect(getUserPasswordHash(U[0].nickname)).resolves.toBe(U[0].password_hash);
+      await expect(getUserSignInDataByNickname(U[0].nickname)).resolves.toStrictEqual({
+        uid: U[0].uid,
+        password_hash: U[0].password_hash,
+        otp_secret: U[0].otp_secret,
+      });
     });
 
-    test('throws when attemting to retrieve a password for a uid that doesn\'t exist', async () => {
-      await expect(() => getUserPasswordHash(U[0].nickname)).rejects.toThrowError('3251');
+    test('throws when attemting to retrieve the sign in data for a uid that doesn\'t exist', async () => {
+      await expect(() => getUserSignInDataByNickname(U[0].nickname)).rejects.toThrowError('3253');
+    });
+
+    test('throws when attemting to retrieve the sign in data for a uid that hasn\'t set a password', async () => {
+      await createUserRecord(
+        U[0].uid,
+        U[0].nickname,
+        U[0].authority,
+        undefined,
+        U[0].otp_secret!,
+        U[0].event_time,
+      );
+      await expect(() => getUserSignInDataByNickname(U[0].nickname)).rejects.toThrowError('3251');
     });
   });
 
@@ -264,8 +280,11 @@ describe('User Model', () => {
         expect(record).toBeDefined();
         compareRecords(expect, record!, user);
 
-        await expect(getUserPasswordHash(user.nickname)).resolves.toBe(user.password_hash);
-        await expect(getUserOTPSecret(user.uid)).resolves.toBe(user.otp_secret);
+        await expect(getUserSignInDataByNickname(user.nickname)).resolves.toStrictEqual({
+          uid: user.uid,
+          password_hash: user.password_hash,
+          otp_secret: user.otp_secret,
+        });
 
         await deleteUserRecord(user.uid);
         record = await getUserRecord(user.uid);
@@ -289,10 +308,14 @@ describe('User Model', () => {
 
       await expect(getUserOTPSecret(U[0].uid)).resolves.toBe(U[0].otp_secret);
 
-      await expect(() => getUserPasswordHash(U[0].nickname)).rejects.toThrowError('3251');
+      await expect(() => getUserSignInDataByNickname(U[0].nickname)).rejects.toThrowError('3251');
 
       await updateUserPasswordHash(U[0].uid, '$NEW_PASSWORD');
-      await expect(getUserPasswordHash(U[0].nickname)).resolves.toBe('$NEW_PASSWORD');
+      await expect(getUserSignInDataByNickname(U[0].nickname)).resolves.toStrictEqual({
+        uid: U[0].uid,
+        password_hash: '$NEW_PASSWORD',
+        otp_secret: U[0].otp_secret,
+      });
     });
   });
 
@@ -329,7 +352,11 @@ describe('User Model', () => {
     test('can update the user\'s password', async () => {
       await create(U[0]);
       await updateUserPasswordHash(U[0].uid, 'NewSecretPasswordHash');
-      await expect(getUserPasswordHash(U[0].nickname)).resolves.toBe('NewSecretPasswordHash');
+      await expect(getUserSignInDataByNickname(U[0].nickname)).resolves.toStrictEqual({
+        uid: U[0].uid,
+        password_hash: 'NewSecretPasswordHash',
+        otp_secret: U[0].otp_secret,
+      });
       const records = await listUserPasswordUpdateRecords(U[0].uid, 10);
       expect(records).toHaveLength(1);
       expect(records[0].uid).toBe(U[0].uid);

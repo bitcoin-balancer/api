@@ -1,4 +1,5 @@
 import { encodeError } from 'error-message-utils';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { sortRecords } from '../../shared/utils/index.js';
 import { generateUUID } from '../../shared/uuid/index.js';
 import {
@@ -33,7 +34,6 @@ import {
   listUserPasswordUpdateRecords,
   getUserRecord,
 } from './model.js';
-import { ENVIRONMENT } from '../../shared/environment/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -169,6 +169,8 @@ const userServiceFactory = (): IUserService => {
    * - 3510: if the OTP Token's format is invalid
    * - 2000: the altcha payload has an invalid format
    * - 2001: the altcha solution is invalid or it has expired
+   * - 3004: if the password verification fails
+   * - 3005: hides the original error in production to avoid leaking information
    */
   const verifySignInCredentials = async (
     nickname: string,
