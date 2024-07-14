@@ -1,6 +1,6 @@
 import { encodeError } from 'error-message-utils';
 import { authorityValid, nicknameValid, passwordValid } from '../../shared/validations/index.js';
-import { IAuthority } from './types.js';
+import { IAuthority, IUser } from './types.js';
 import { isRoot } from './utils.js';
 import { nicknameExists } from './model.js';
 
@@ -16,7 +16,7 @@ import { nicknameExists } from './model.js';
  * - 3500: if the format of the nickname is invalid
  * - 3501: if the nickname is already being used
  */
-const canNicknameBeUsed = async (nickname: string): Promise<void> => {
+const __canNicknameBeUsed = async (nickname: string): Promise<void> => {
   if (!nicknameValid(nickname)) {
     throw new Error(encodeError(`The nickname '${nickname}' is invalid.`, 3500));
   }
@@ -45,7 +45,7 @@ const canUserBeCreated = async (
   password: string | undefined,
 ): Promise<void> => {
   // validate the nickname
-  await canNicknameBeUsed(nickname);
+  await __canNicknameBeUsed(nickname);
 
   // proceed based on the kind of user
   if (isRoot(nickname)) {
@@ -65,6 +65,25 @@ const canUserBeCreated = async (
   }
 };
 
+/**
+ * Validates the user's record and makes sure the nickname can be used.
+ * @param record
+ * @param newNickname
+ * @returns Promise<void>
+ * @throws
+ * - 3500: if the format of the nickname is invalid
+ * - 3501: if the nickname is already being used
+ * - 3506: if the user's record is undefined
+ */
+const canNicknameBeUpdated = async (
+  record: IUser | undefined,
+  newNickname: string,
+): Promise<void> => {
+  if (record === undefined) {
+    throw new Error(encodeError(`Unable to set the nickname to '${newNickname}' because the user record doesn't exist.`, 3506));
+  }
+  await __canNicknameBeUsed(newNickname);
+};
 
 
 
@@ -75,4 +94,5 @@ const canUserBeCreated = async (
 export {
   // user record management
   canUserBeCreated,
+  canNicknameBeUpdated,
 };

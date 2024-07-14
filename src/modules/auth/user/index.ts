@@ -2,8 +2,8 @@ import { generateUUID } from '../../shared/uuid/index.js';
 import { IUserService, IAuthority, IUser } from './types.js';
 import { generateOTPSecret } from './otp.js';
 import { hashPassword } from './bcrypt.js';
-import { canUserBeCreated } from './validations.js';
-import { createUserRecord } from './model.js';
+import { canNicknameBeUpdated, canUserBeCreated } from './validations.js';
+import { createUserRecord, getUserRecord, updateUserNickname } from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -44,7 +44,14 @@ const userServiceFactory = (): IUserService => {
    * @param authority
    * @param password
    * @returns Promise<IUser>
-   */
+  * @throws
+  * - 3500: if the format of the nickname is invalid
+  * - 3501: if the nickname is already being used
+  * - 3502: if the root's authority is not the highest
+  * - 3503: if the root's password is invalid or weak
+  * - 3504: if a password is provided when creating a nonroot user
+  * - 3505: if the authority provided is not ranging 1 - 4
+  */
   const createUser = async (
     nickname: string,
     authority: IAuthority,
@@ -71,6 +78,20 @@ const userServiceFactory = (): IUserService => {
     };
   };
 
+  /**
+   * Validates and updates an user's nickname.
+   * @param uid
+   * @param newNickname
+   * @returns Promise<void>
+   * @throws
+   * - 3500: if the format of the nickname is invalid
+   * - 3501: if the nickname is already being used
+   * - 3506: if the user's record is undefined
+   */
+  const updateNickname = async (uid: string, newNickname: string): Promise<void> => {
+    await canNicknameBeUpdated(await getUserRecord(uid), newNickname);
+    await updateUserNickname(uid, newNickname);
+  };
 
 
 
@@ -108,6 +129,7 @@ const userServiceFactory = (): IUserService => {
 
     // user record management
     createUser,
+    updateNickname,
 
     // initializer
     initialize,

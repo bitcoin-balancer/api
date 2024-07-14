@@ -14,6 +14,7 @@ type IUserService = {
 
   // user record management
   createUser: (nickname: string, authority: IAuthority, password?: string) => Promise<IUser>;
+  updateNickname: (uid: string, newNickname: string) => Promise<void>;
 
   // initializer
   initialize: () => Promise<void>;
