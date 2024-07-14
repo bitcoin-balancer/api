@@ -1,6 +1,7 @@
 import { encodeError } from 'error-message-utils';
-import { nicknameValid } from '../../shared/validations/index.js';
+import { authorityValid, nicknameValid, passwordValid } from '../../shared/validations/index.js';
 import { IAuthority } from './types.js';
+import { isRoot } from './utils.js';
 import { nicknameExists } from './model.js';
 
 /* ************************************************************************************************
@@ -33,6 +34,10 @@ const canNicknameBeUsed = async (nickname: string): Promise<void> => {
  * @throws
  * - 3500: if the format of the nickname is invalid
  * - 3501: if the nickname is already being used
+ * - 3502: if the root's authority is not the highest
+ * - 3503: if the root's password is invalid or weak
+ * - 3504: if a password is provided when creating a nonroot user
+ * - 3505: if the authority provided is not ranging 1 - 4
  */
 const canUserBeCreated = async (
   nickname: string,
@@ -41,6 +46,23 @@ const canUserBeCreated = async (
 ): Promise<void> => {
   // validate the nickname
   await canNicknameBeUsed(nickname);
+
+  // proceed based on the kind of user
+  if (isRoot(nickname)) {
+    if (authority !== 5) {
+      throw new Error(encodeError(`The root's authority must be 5. Received: ${authority}`, 3502));
+    }
+    if (!passwordValid(password)) {
+      throw new Error(encodeError('The root account cannot be created with an invalid|weak password.', 3503));
+    }
+  } else {
+    if (password !== undefined) {
+      throw new Error(encodeError('A password cannot be provided when creating a nonroot user.', 3504));
+    }
+    if (!authorityValid(authority, 4)) {
+      throw new Error(encodeError(`The nonroot user's authority must range 1 - 4. Received: ${authority}`, 3505));
+    }
+  }
 };
 
 

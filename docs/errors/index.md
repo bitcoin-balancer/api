@@ -77,3 +77,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **3500:** `The nickname '${nickname}' is invalid.`
 - **3501:** `The nickname '${nickname}' is already being used by another user.`
+- **3502:** `The root's authority must be 5. Received: ${authority}`
+- **3503:** `The root account cannot be created with an invalid|weak password.`
+- **3504:** `A password cannot be provided when creating a nonroot user.`
+- **3505:** `The nonroot user's authority must range 1 - 4. Received: ${authority}`
