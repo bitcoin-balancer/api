@@ -8,7 +8,6 @@ import {
   canAuthorityBeUpdated,
 } from './validations.js';
 import {
-  getUserRecord,
   createUserRecord,
   updateUserNickname,
   updateUserAuthority,
@@ -95,7 +94,9 @@ const userServiceFactory = (): IUserService => {
    * @throws
    * - 3500: if the format of the nickname is invalid
    * - 3501: if the nickname is already being used
-   * - 3506: if the record doesn't exist in the database
+   * - 3506: if the uid has an invalid format
+   * - 3507: if the record doesn't exist in the database
+   * - 3508: if the record belongs to the root and has not been explicitly allowed
    */
   const updateNickname = async (uid: string, newNickname: string): Promise<void> => {
     await canNicknameBeUpdated(uid, newNickname);
@@ -109,12 +110,23 @@ const userServiceFactory = (): IUserService => {
    * @returns Promise<void>
    * @throws
    * - 3505: if the authority provided is not ranging 1 - 4
-   * - 3506: if the record doesn't exist in the database
+   * - 3506: if the uid has an invalid format
+   * - 3507: if the record doesn't exist in the database
+   * - 3508: if the record belongs to the root and has not been explicitly allowed
    */
   const updateAuthority = async (uid: string, newAuthority: IAuthority): Promise<void> => {
     await canAuthorityBeUpdated(uid, newAuthority);
     await updateUserAuthority(uid, newAuthority);
   };
+
+  /* const updatePassword = async (
+    nickname: string,
+    newPassword: string,
+    otpToken: string,
+    altchaPayload: string,
+  ): Promise<void> => {
+
+  }; */
 
 
 

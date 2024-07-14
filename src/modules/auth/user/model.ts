@@ -59,6 +59,28 @@ const getUserRecord = async (uid: string): Promise<IUser | undefined> => {
 };
 
 /**
+ * Retrieves a user by Nickname.
+ * @param nickname
+ * @returns Promise<IUser>
+ * @throws
+ * - 3252: if no record is found for the nickname
+ */
+const getUserRecordByNickname = async (nickname: string): Promise<IUser> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT uid, nickname, authority, event_time
+      FROM ${DatabaseService.tn.users}
+      WHERE LOWER(nickname) = $1;
+    `,
+    values: [nickname.toLowerCase()],
+  });
+  if (!rows.length) {
+    throw new Error(encodeError(`The user record retrieved for nickname '${nickname}' doesn't exist or is invalid.`, 3252));
+  }
+  return rows[0];
+};
+
+/**
  * Verifies if a nickname is already being used by another user.
  * @param nickname
  * @returns Promise<boolean>
@@ -328,6 +350,7 @@ export {
   listUserRecords,
   listMinifiedUserRecords,
   getUserRecord,
+  getUserRecordByNickname,
   nicknameExists,
   getUserPasswordHash,
   getUserOTPSecret,

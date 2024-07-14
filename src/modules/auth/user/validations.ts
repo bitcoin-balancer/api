@@ -16,14 +16,19 @@ import { getUserRecord, nicknameExists } from './model.js';
 /**
  * Validates the format of a uid and ensures the record exists in the database.
  * @param uid
+ * @param allowRoot
  * @returns Promise<void>
  * @throws
  * - 3506: if the uid has an invalid format
  * - 3507: if the record doesn't exist in the database
+ * - 3508: if the record belongs to the root and has not been explicitly allowed
  */
-const validateUserRecordExistance = async (uid: string): Promise<void> => {
+const validateUserRecordExistance = async (uid: string, allowRoot?: boolean): Promise<void> => {
   if (!uuidValid(uid)) {
     throw new Error(encodeError(`The uid '${uid}' is invalid.`, 3506));
+  }
+  if (!allowRoot && isRoot(uid)) {
+    throw new Error(encodeError(`The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`, 3508));
   }
   if (await getUserRecord(uid) === undefined) {
     throw new Error(encodeError(`The record for uid '${uid}' could not be found in the database.`, 3507));
@@ -97,6 +102,7 @@ const canUserBeCreated = async (
  * - 3501: if the nickname is already being used
  * - 3506: if the uid has an invalid format
  * - 3507: if the record doesn't exist in the database
+ * - 3508: if the record belongs to the root and has not been explicitly allowed
  */
 const canNicknameBeUpdated = async (uid: string, newNickname: string): Promise<void> => {
   await validateUserRecordExistance(uid);
@@ -112,6 +118,7 @@ const canNicknameBeUpdated = async (uid: string, newNickname: string): Promise<v
  * - 3505: if the authority provided is not ranging 1 - 4
  * - 3506: if the uid has an invalid format
  * - 3507: if the record doesn't exist in the database
+ * - 3508: if the record belongs to the root and has not been explicitly allowed
  */
 const canAuthorityBeUpdated = async (uid: string, newAuthority: IAuthority): Promise<void> => {
   if (!authorityValid(newAuthority, 4)) {
@@ -120,6 +127,9 @@ const canAuthorityBeUpdated = async (uid: string, newAuthority: IAuthority): Pro
   await validateUserRecordExistance(uid);
 };
 
+const canPasswordBeUpdated = async (): Promise<void> => {
+
+};
 
 
 
@@ -133,4 +143,5 @@ export {
   canUserBeCreated,
   canNicknameBeUpdated,
   canAuthorityBeUpdated,
+  canPasswordBeUpdated,
 };

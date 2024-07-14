@@ -8,6 +8,8 @@ import {
   listUserRecords,
   listMinifiedUserRecords,
   getUserRecord,
+  getUserRecordByNickname,
+  nicknameExists,
   getUserPasswordHash,
   getUserOTPSecret,
   listUserPasswordUpdateRecords,
@@ -18,7 +20,6 @@ import {
   updateUserOTPSecret,
   deleteUserRecord,
   deleteAllUserRecords,
-  nicknameExists,
 } from './model.js';
 
 /* ************************************************************************************************
@@ -124,6 +125,36 @@ describe('User Model', () => {
       await deleteAllUserRecords();
       records = await listMinifiedUserRecords();
       expect(records).toHaveLength(0);
+    });
+  });
+
+
+
+
+
+  describe('getUserRecordByNickname', () => {
+    test('can retrieve a record by nickname', async () => {
+      await create(U[0]);
+      await expect(getUserRecordByNickname(U[0].nickname)).resolves.toStrictEqual({
+        uid: U[0].uid,
+        nickname: U[0].nickname,
+        authority: U[0].authority,
+        event_time: U[0].event_time,
+      });
+    });
+
+    test('the check is case insensitive', async () => {
+      await create(U[0]);
+      await expect(getUserRecordByNickname(U[0].nickname.toUpperCase())).resolves.toStrictEqual({
+        uid: U[0].uid,
+        nickname: U[0].nickname,
+        authority: U[0].authority,
+        event_time: U[0].event_time,
+      });
+    });
+
+    test('throws if the nickname doesn\'t exist', async () => {
+      await expect(() => getUserRecordByNickname(U[0].nickname)).rejects.toThrowError('3252');
     });
   });
 
