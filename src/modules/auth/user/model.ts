@@ -75,7 +75,7 @@ const getUserRecordByNickname = async (nickname: string): Promise<IUser> => {
     values: [nickname.toLowerCase()],
   });
   if (!rows.length) {
-    throw new Error(encodeError(`The user record retrieved for nickname '${nickname}' doesn't exist or is invalid.`, 3252));
+    throw new Error(encodeError(`The user record retrieved for nickname '${nickname}' doesn't exist.`, 3252));
   }
   return rows[0];
 };

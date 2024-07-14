@@ -71,7 +71,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **3250:** `The otp_secret retrieved for uid '${uid}' doesn't exist or is invalid. Received: ${rows.length ? rows[0].otp_secret : 'undefined'}`
 - **3251:** `The password_hash retrieved for user '${nickname}' doesn't exist or is invalid. Please go through the "Update Password" process before trying sign in again.`
-- **3252:** `The user record retrieved for nickname '${nickname}' doesn't exist or is invalid.`
+- **3252:** `The user record retrieved for nickname '${nickname}' doesn't exist.`
 
 
 ### `validations.ts`
@@ -85,3 +85,4 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **3506:** `The uid '${uid}' is invalid.`
 - **3507:** `The record for uid '${uid}' could not be found in the database.`
 - **3508:** `The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`
+- **3509:** `The password for uid '${uid}' is invalid or too weak. Make sure the password meets the requirements and try again.`

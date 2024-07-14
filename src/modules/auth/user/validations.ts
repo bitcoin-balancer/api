@@ -127,8 +127,18 @@ const canAuthorityBeUpdated = async (uid: string, newAuthority: IAuthority): Pro
   await validateUserRecordExistance(uid);
 };
 
-const canPasswordBeUpdated = async (): Promise<void> => {
 
+const canPasswordBeUpdated = async (
+  uid: string,
+  newPassword: string,
+  altchaPayload: string,
+): Promise<void> => {
+  if (isRoot(uid)) {
+    throw new Error(encodeError(`The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`, 3508));
+  }
+  if (!passwordValid(newPassword)) {
+    throw new Error(encodeError(`The password for uid '${uid}' is invalid or too weak. Make sure the password meets the requirements and try again.`, 3509));
+  }
 };
 
 

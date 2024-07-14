@@ -8,6 +8,7 @@ import {
   canAuthorityBeUpdated,
 } from './validations.js';
 import {
+  getUserRecordByNickname,
   createUserRecord,
   updateUserNickname,
   updateUserAuthority,
@@ -119,14 +120,14 @@ const userServiceFactory = (): IUserService => {
     await updateUserAuthority(uid, newAuthority);
   };
 
-  /* const updatePassword = async (
+  const updatePassword = async (
     nickname: string,
     newPassword: string,
     otpToken: string,
     altchaPayload: string,
   ): Promise<void> => {
-
-  }; */
+    const user = await getUserRecordByNickname(nickname);
+  };
 
 
 
