@@ -1,4 +1,5 @@
 import { encodeError } from 'error-message-utils';
+import { sortRecords } from '../../shared/utils/index.js';
 import { generateUUID } from '../../shared/uuid/index.js';
 import { IUserService, IAuthority, IUser } from './types.js';
 import { checkOTPToken, generateOTPSecret } from './otp.js';
@@ -20,6 +21,7 @@ import {
   updateUserPasswordHash,
   updateUserOTPSecret,
   deleteUserRecord,
+  listUserRecords,
 } from './model.js';
 
 /* ************************************************************************************************
@@ -37,7 +39,7 @@ const userServiceFactory = (): IUserService => {
    ********************************************************************************************** */
 
   // an object containing all the user records by uid and is built on start up
-  const __users: { [uid: string]: IUser } = {};
+  let __users: { [uid: string]: IUser } = {};
 
 
 
@@ -47,7 +49,19 @@ const userServiceFactory = (): IUserService => {
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
 
-  /* const list */
+  /**
+   * Retrieves the list of existing user records ordered by authority descendingly.
+   * @returns IUser[]
+   */
+  const listUsers = (): IUser[] => {
+    const users = Object.values(__users);
+    users.sort(sortRecords('authority', 'desc'));
+    return users;
+  };
+
+
+
+
 
 
   /* **********************************************************************************************
@@ -246,7 +260,18 @@ const userServiceFactory = (): IUserService => {
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
-    // ...
+    __users = (await listUserRecords()).reduce(
+      (previous, current) => ({
+        ...previous,
+        [current.uid]: {
+          uid: current.uid,
+          nickname: current.nickname,
+          authority: current.authority,
+          event_time: current.event_time,
+        },
+      }),
+      {},
+    );
   };
 
   /**
@@ -254,7 +279,7 @@ const userServiceFactory = (): IUserService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    // ...
+    __users = {};
   };
 
 
@@ -267,6 +292,9 @@ const userServiceFactory = (): IUserService => {
   return Object.freeze({
     // properties
     // ...
+
+    // retrievers
+    listUsers,
 
     // credentials verification
     verifyOTPToken,

@@ -12,6 +12,9 @@ type IUserService = {
   // properties
   // ...
 
+  // retrievers
+  listUsers: () => IUser[];
+
   // credentials verification
   verifyOTPToken: (uid: string, token: string) => Promise<void>;
 
