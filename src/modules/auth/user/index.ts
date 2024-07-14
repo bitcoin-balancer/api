@@ -4,20 +4,21 @@ import { IUserService, IAuthority, IUser } from './types.js';
 import { checkOTPToken, generateOTPSecret } from './otp.js';
 import { hashPassword } from './bcrypt.js';
 import {
+  validateUserRecordExistance,
+  canVerifyOTPToken,
   canUserBeCreated,
   canNicknameBeUpdated,
   canAuthorityBeUpdated,
   canPasswordBeUpdated,
-  canVerifyOTPToken,
-  validateUserRecordExistance,
 } from './validations.js';
 import {
   getUserRecordByNickname,
+  getUserOTPSecret,
   createUserRecord,
   updateUserNickname,
   updateUserAuthority,
   updateUserPasswordHash,
-  getUserOTPSecret,
+  updateUserOTPSecret,
   deleteUserRecord,
 } from './model.js';
 
@@ -164,6 +165,16 @@ const userServiceFactory = (): IUserService => {
    * @param otpToken
    * @param altchaPayload
    * @returns Promise<void>
+   * @throws
+   * - 3252: if no record is found for the nickname
+   * - 3508: if attempting to update the root's password
+   * - 3509: if the password is invalid or too weak
+   * - 2000: the payload has an invalid format
+   * - 2001: the solution is invalid or it has expired
+   * - 3250: if the user record does not exist or the OTP Secret is not valid
+   * - 3506: if the uid has an invalid format
+   * - 3510: if the OTP Token has an invalid format
+   * - 3000: if the OTP Token failed the verification
    */
   const updatePasswordHash = async (
     nickname: string,
@@ -185,13 +196,29 @@ const userServiceFactory = (): IUserService => {
   };
 
   /**
+   * Validates and updates a nonroot user's OTP Secret. The new secret is returned on completion.
+   * @param uid
+   * @returns Promise<string>
+   * @throws
+   * - 3506: if the uid has an invalid format
+   * - 3507: if the record doesn't exist in the database
+   * - 3508: if the record belongs to the root and has not been explicitly allowed
+   */
+  const updateOTPSecret = async (uid: string): Promise<string> => {
+    await validateUserRecordExistance(uid);
+    const newSecret = generateOTPSecret();
+    await updateUserOTPSecret(uid, newSecret);
+    return newSecret;
+  };
+
+  /**
    * Validates and deletes a nonroot user account.
    * @param uid
    * @returns Promise<void>
    * @throws
-   * 3506: if the uid has an invalid format
-   * 3507: if the record doesn't exist in the database
-   * 3508: if the record belongs to the root and has not been explicitly allowed
+   * - 3506: if the uid has an invalid format
+   * - 3507: if the record doesn't exist in the database
+   * - 3508: if the record belongs to the root and has not been explicitly allowed
    */
   const deleteUser = async (uid: string): Promise<void> => {
     await validateUserRecordExistance(uid);
@@ -241,7 +268,7 @@ const userServiceFactory = (): IUserService => {
     updateNickname,
     updateAuthority,
     updatePasswordHash,
-
+    updateOTPSecret,
     deleteUser,
 
     // initializer

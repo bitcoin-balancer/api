@@ -25,7 +25,7 @@ type IUserService = {
     otpToken: string,
     altchaPayload: string,
   ) => Promise<void>;
-
+  updateOTPSecret: (uid: string) => Promise<string>;
   deleteUser: (uid: string) => Promise<void>;
 
   // initializer
