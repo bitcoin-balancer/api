@@ -81,4 +81,5 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **3503:** `The root account cannot be created with an invalid|weak password.`
 - **3504:** `A password cannot be provided when creating a nonroot user.`
 - **3505:** `The nonroot user's authority must range 1 - 4. Received: ${authority}`
+- **3506:** `The uid '${uid}' is invalid.`
 - **3506:** `The record for uid '${uid}' could not be found in the database.`

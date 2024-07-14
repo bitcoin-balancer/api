@@ -98,7 +98,7 @@ const userServiceFactory = (): IUserService => {
    * - 3506: if the record doesn't exist in the database
    */
   const updateNickname = async (uid: string, newNickname: string): Promise<void> => {
-    await canNicknameBeUpdated(uid, await getUserRecord(uid), newNickname);
+    await canNicknameBeUpdated(uid, newNickname);
     await updateUserNickname(uid, newNickname);
   };
 
@@ -112,7 +112,7 @@ const userServiceFactory = (): IUserService => {
    * - 3506: if the record doesn't exist in the database
    */
   const updateAuthority = async (uid: string, newAuthority: IAuthority): Promise<void> => {
-    canAuthorityBeUpdated(uid, await getUserRecord(uid), newAuthority);
+    await canAuthorityBeUpdated(uid, newAuthority);
     await updateUserAuthority(uid, newAuthority);
   };
 

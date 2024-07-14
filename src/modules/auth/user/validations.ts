@@ -1,23 +1,32 @@
 import { encodeError } from 'error-message-utils';
-import { authorityValid, nicknameValid, passwordValid } from '../../shared/validations/index.js';
-import { IAuthority, IUser } from './types.js';
+import {
+  nicknameValid,
+  authorityValid,
+  passwordValid,
+  uuidValid,
+} from '../../shared/validations/index.js';
+import { IAuthority } from './types.js';
 import { isRoot } from './utils.js';
-import { nicknameExists } from './model.js';
+import { getUserRecord, nicknameExists } from './model.js';
 
 /* ************************************************************************************************
  *                                     USER RECORD MANAGEMENT                                     *
  ************************************************************************************************ */
 
 /**
- * Validates a record was successfully retrieved from the database.
+ * Validates the format of a uid and ensures the record exists in the database.
  * @param uid
- * @param record
+ * @returns Promise<void>
  * @throws
- * - 3506: if the record doesn't exist in the database
+ * - 3506: if the uid has an invalid format
+ * - 3507: if the record doesn't exist in the database
  */
-const __validateRecordExistance = (uid: string, record: IUser | undefined): void => {
-  if (record === undefined) {
-    throw new Error(encodeError(`The record for uid '${uid}' could not be found in the database.`, 3506));
+const validateUserRecordExistance = async (uid: string): Promise<void> => {
+  if (!uuidValid(uid)) {
+    throw new Error(encodeError(`The uid '${uid}' is invalid.`, 3506));
+  }
+  if (await getUserRecord(uid) === undefined) {
+    throw new Error(encodeError(`The record for uid '${uid}' could not be found in the database.`, 3507));
   }
 };
 
@@ -81,42 +90,34 @@ const canUserBeCreated = async (
 /**
  * Validates the user's record and makes sure the nickname can be used.
  * @param uid
- * @param record
  * @param newNickname
  * @returns Promise<void>
  * @throws
  * - 3500: if the format of the nickname is invalid
  * - 3501: if the nickname is already being used
- * - 3506: if the record doesn't exist in the database
+ * - 3506: if the uid has an invalid format
+ * - 3507: if the record doesn't exist in the database
  */
-const canNicknameBeUpdated = async (
-  uid: string,
-  record: IUser | undefined,
-  newNickname: string,
-): Promise<void> => {
-  __validateRecordExistance(uid, record);
+const canNicknameBeUpdated = async (uid: string, newNickname: string): Promise<void> => {
+  await validateUserRecordExistance(uid);
   await __canNicknameBeUsed(newNickname);
 };
 
 /**
  * Validates the user's record and makes sure the authority can be set.
  * @param uid
- * @param record
  * @param newNickname
- * @returns void
+ * @returns Promise<void>
  * @throws
  * - 3505: if the authority provided is not ranging 1 - 4
- * - 3506: if the record doesn't exist in the database
+ * - 3506: if the uid has an invalid format
+ * - 3507: if the record doesn't exist in the database
  */
-const canAuthorityBeUpdated = (
-  uid: string,
-  record: IUser | undefined,
-  newAuthority: IAuthority,
-): void => {
-  __validateRecordExistance(uid, record);
+const canAuthorityBeUpdated = async (uid: string, newAuthority: IAuthority): Promise<void> => {
   if (!authorityValid(newAuthority, 4)) {
     throw new Error(encodeError(`The nonroot user's authority must range 1 - 4. Received: ${newAuthority}`, 3505));
   }
+  await validateUserRecordExistance(uid);
 };
 
 
@@ -128,6 +129,7 @@ const canAuthorityBeUpdated = (
  ************************************************************************************************ */
 export {
   // user record management
+  validateUserRecordExistance,
   canUserBeCreated,
   canNicknameBeUpdated,
   canAuthorityBeUpdated,
