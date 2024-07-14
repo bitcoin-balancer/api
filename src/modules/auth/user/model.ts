@@ -82,28 +82,6 @@ const nicknameExists = async (nickname: string): Promise<boolean> => {
 };
 
 /**
- * Retrieves the Password Hash for a user based on its nickname.
- * @param nickname
- * @returns Promise<string>
- * @throws
- * - 3251: if the user record does not exist or the Password Hash is not valid
- */
-const getUserPasswordHash = async (nickname: string): Promise<string> => {
-  const { rows } = await DatabaseService.pool.query({
-    text: `
-      SELECT password_hash
-      FROM ${DatabaseService.tn.users}
-      WHERE LOWER(nickname) = $1;
-    `,
-    values: [nickname.toLowerCase()],
-  });
-  if (!rows.length || typeof rows[0].password_hash !== 'string' || !rows[0].password_hash.length) {
-    throw new Error(encodeError(`The password_hash retrieved for user '${nickname}' doesn't exist or is invalid. Please go through the "Update Password" process before trying sign in again.`, 3251));
-  }
-  return rows[0].password_hash;
-};
-
-/**
  * Retrieves the OTP Secret for a user based on its ID.
  * @param uid
  * @returns Promise<string>
@@ -124,6 +102,52 @@ const getUserOTPSecret = async (uid: string): Promise<string> => {
   }
   return rows[0].otp_secret;
 };
+
+/**
+ * Retrieves the Password Hash for a user based on its nickname.
+ * @param nickname
+ * @returns Promise<string>
+ * @throws
+ * - 3250: if the user's OTP Secret is invalid
+ * - 3251: if the password hash is invalid
+ * - 3253: if the user's record does not exist
+ */
+const getUserSignInDataByNickname = async (
+  nickname: string,
+): Promise<{ uid: string, password_hash: string, otp_secret: string }> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT uid, password_hash, otp_secret
+      FROM ${DatabaseService.tn.users}
+      WHERE LOWER(nickname) = $1;
+    `,
+    values: [nickname.toLowerCase()],
+  });
+  if (!rows.length) {
+    throw new Error(encodeError(`The sign in data could not be retrieved for '${nickname}' because it doesn't exist.`, 3253));
+  }
+  if (typeof rows[0].password_hash !== 'string' || !rows[0].password_hash.length) {
+    throw new Error(encodeError(`The password_hash retrieved for user '${nickname}' is invalid. Please go through the "Update Password" process before trying sign in again.`, 3251));
+  }
+  if (typeof rows[0].otp_secret !== 'string' || !rows[0].otp_secret.length) {
+    throw new Error(encodeError(`The otp_secret retrieved for user '${nickname}' is invalid. Received: ${rows.length ? rows[0].otp_secret : 'undefined'}`, 3250));
+  }
+  return { uid: rows[0].uid, password_hash: rows[0].password_hash, otp_secret: rows[0].otp_secret };
+};
+/* const getUserPasswordHash = async (nickname: string): Promise<string> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT password_hash
+      FROM ${DatabaseService.tn.users}
+      WHERE LOWER(nickname) = $1;
+    `,
+    values: [nickname.toLowerCase()],
+  });
+  if (!rows.length || typeof rows[0].password_hash !== 'string' || !rows[0].password_hash.length) {
+    throw new Error(encodeError(`The password_hash retrieved for user '${nickname}' doesn't exist or is invalid. Please go through the "Update Password" process before trying sign in again.`, 3251));
+  }
+  return rows[0].password_hash;
+}; */
 
 
 
@@ -335,8 +359,8 @@ export {
   getUserRecord,
   getUserRecordByNickname,
   nicknameExists,
-  getUserPasswordHash,
   getUserOTPSecret,
+  getUserSignInDataByNickname,
 
   // password update retrievers
   listUserPasswordUpdateRecords,

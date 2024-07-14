@@ -14,6 +14,7 @@ type IUserService = {
 
   // retrievers
   listUsers: () => IUser[];
+  getUser: (uid: string) => IUser;
   listUserPasswordUpdates: (
     uid: string,
     startAtEventTime: number | undefined,

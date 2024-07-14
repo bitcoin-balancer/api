@@ -8,7 +8,7 @@ import {
   IPasswordUpdate,
 } from './types.js';
 import { generateOTPSecret, checkOTPToken } from './otp.js';
-import { hashPassword } from './bcrypt.js';
+import { comparePassword, hashPassword } from './bcrypt.js';
 import {
   validateUserRecordExistance,
   canListUserPasswordUpdates,
@@ -23,6 +23,7 @@ import {
   listUserRecords,
   getUserRecordByNickname,
   getUserOTPSecret,
+  getUserSignInDataByNickname,
   createUserRecord,
   updateUserNickname,
   updateUserAuthority,
@@ -73,6 +74,21 @@ const userServiceFactory = (): IUserService => {
   };
 
   /**
+   * Retrieves a user record by uid from the local object.
+   * @param uid
+   * @returns IUser
+   * @throws
+   * - 3003: if there isn't a user matching the uid
+   */
+  const getUser = (uid: string): IUser => {
+    const user = listUsers().find((u) => u.uid === uid);
+    if (user === undefined) {
+      throw new Error(encodeError(`The user '${uid}' could not be found in the local users' object.`, 3003));
+    }
+    return user;
+  };
+
+  /**
    * Validates and retrieves the list of password update records for a uid.
    * @param uid
    * @param startAtEventTime
@@ -120,6 +136,7 @@ const userServiceFactory = (): IUserService => {
    * Validates and verifies an OTP Token for a user against the secret.
    * @param uid
    * @param otpToken
+   * @param otpSecret
    * @returns Promise<void>
    * @throws
    * - 3250: if the user record does not exist or the OTP Secret is not valid
@@ -127,9 +144,14 @@ const userServiceFactory = (): IUserService => {
    * - 3510: if the OTP Token has an invalid format
    * - 3000: if the OTP Token failed the verification
    */
-  const verifyOTPToken = async (uid: string, otpToken: string): Promise<void> => {
+  const verifyOTPToken = async (
+    uid: string,
+    otpToken: string,
+    otpSecret?: string,
+  ): Promise<void> => {
     canVerifyOTPToken(uid, otpToken);
-    if (!checkOTPToken(otpToken, await getUserOTPSecret(uid))) {
+    const secret = typeof otpSecret === 'string' ? otpSecret : await getUserOTPSecret(uid);
+    if (!checkOTPToken(otpToken, secret)) {
       throw new Error(encodeError(`The OTP Token '${otpToken}' for uid '${uid}' is invalid.`, 3000));
     }
   };
@@ -157,8 +179,24 @@ const userServiceFactory = (): IUserService => {
     // validate the request
     await canVerifySignInCredentials(nickname, password, otpToken, altchaPayload);
 
-    // verify the OTP Token
-    // await verifyOTPToken();
+    // in the case of an error, avoid leaking any confidential information (only in prod)
+    try {
+      // retrieve the sign in data
+      const { uid, password_hash, otp_secret } = await getUserSignInDataByNickname(nickname);
+
+      // verify the OTP Token
+      await verifyOTPToken(uid, otpToken, otp_secret);
+
+      // compare the password
+      if (!await comparePassword(password, password_hash)) {
+        throw new Error(encodeError('The password doesn\'t match the one stored in the database. Please double check it and try again.', 3004));
+      }
+    } catch (e) {
+      if (ENVIRONMENT.NODE_ENV === 'production') {
+        throw new Error(encodeError('The provided credentials are invalid. Please double check them and try again.', 3005));
+      }
+      throw e;
+    }
   };
 
 
@@ -402,6 +440,7 @@ const userServiceFactory = (): IUserService => {
 
     // retrievers
     listUsers,
+    getUser,
     listUserPasswordUpdates,
 
     // credentials verification

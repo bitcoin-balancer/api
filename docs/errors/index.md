@@ -66,6 +66,9 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **3000:** `The OTP Token '${token}' for uid '${uid}' is invalid.`
 - **3001:** `The uid '${uid}' was not found in the users object.`
 - **3002:** `The user '${uid}' is not authorized to perform the action. Has ${__users[uid].authority} and needs ${requiredAuthority}`
+- **3003:** `The user '${uid}' could not be found in the local users' object.`
+- **3004:** `The password doesn't match the one stored in the database. Please double check it and try again.`
+- **3005:** `The provided credentials are invalid. Please double check them and try again.`
 
 
 ### `model.ts`
@@ -73,6 +76,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **3250:** `The otp_secret retrieved for uid '${uid}' doesn't exist or is invalid. Received: ${rows.length ? rows[0].otp_secret : 'undefined'}`
 - **3251:** `The password_hash retrieved for user '${nickname}' doesn't exist or is invalid. Please go through the "Update Password" process before trying sign in again.`
 - **3252:** `The user record retrieved for nickname '${nickname}' doesn't exist.`
+- **3253:** `The sign in data could not be retrieved for '${nickname}' because it doesn't exist.`
 
 
 ### `validations.ts`

@@ -6,6 +6,7 @@ import { ENVIRONMENT } from '../environment/index.js';
 import { delay } from '../utils/index.js';
 import { DatabaseService } from '../../database/index.js';
 import { NotificationService } from '../notification/index.js';
+import { UserService } from '../../auth/user/index.js';
 import {
   IHTTPServer,
   ITerminationSignal,
@@ -73,6 +74,13 @@ const apiServiceFactory = (): IAPIService => {
         await NotificationService.teardown();
       } catch (e) {
         console.error('NotificationService.teardown()', e);
+      }
+
+      // User Module
+      try {
+        await UserService.teardown();
+      } catch (e) {
+        console.error('UserService.teardown()', e);
       }
     }
   };
@@ -144,13 +152,22 @@ const apiServiceFactory = (): IAPIService => {
       console.log('1/10) Database Module: done');
 
       // Notification Module
-      console.log('1/10) Notification Module: started');
+      console.log('2/10) Notification Module: started');
       try {
         await NotificationService.initialize();
       } catch (e) {
         throw new Error(`NotificationService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('1/10) Notification Module: done');
+      console.log('2/10) Notification Module: done');
+
+      // User Module
+      console.log('3/10) User Module: started');
+      try {
+        await UserService.initialize();
+      } catch (e) {
+        throw new Error(`UserService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('3/10) Notification Module: done');
     }
   };
 
