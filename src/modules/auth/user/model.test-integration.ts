@@ -5,8 +5,8 @@ import { sortRecords, toMilliseconds } from '../../shared/utils/index.js';
 import { IQueryResult } from '../../database/types.js';
 import { IUser, IMinifiedUser } from './types.js';
 import {
-  listRecords,
-  listMinifiedRecords,
+  listUserRecords,
+  listMinifiedUserRecords,
   getUserRecord,
   getUserPasswordHash,
   getUserOTPSecret,
@@ -83,35 +83,35 @@ describe('User Model', () => {
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
 
-  describe('listRecords', () => {
+  describe('listUserRecords', () => {
     test('can retrieve all the records in descending order by authority', async () => {
       await Promise.all(U.map(create));
 
       // records are ordered descendingly by authority. ensure both lists are the same
       const localRecords: IUser[] = U.slice();
       localRecords.sort(sortRecords('authority', 'desc'));
-      let records: IUser[] = await listRecords();
+      let records: IUser[] = await listUserRecords();
       expect(records).toHaveLength(U.length);
       records.forEach((dbRecord, i) => {
         compareRecords(expect, dbRecord, localRecords[i]);
       });
 
       await deleteAllUserRecords();
-      records = await listRecords();
+      records = await listUserRecords();
       expect(records).toHaveLength(0);
     });
   });
 
 
 
-  describe('listMinifiedRecords', () => {
+  describe('listMinifiedUserRecords', () => {
     test('can retrieve all the minified records in descending order by authority', async () => {
       await Promise.all(U.map(create));
 
       // records are ordered descendingly by authority. ensure both lists are the same
       const localRecords: IUser[] = U.slice();
       localRecords.sort(sortRecords('authority', 'desc'));
-      let records: IMinifiedUser[] = await listMinifiedRecords();
+      let records: IMinifiedUser[] = await listMinifiedUserRecords();
       expect(records).toHaveLength(U.length);
       records.forEach((dbRecord, i) => {
         expect(dbRecord).toStrictEqual({
@@ -122,7 +122,7 @@ describe('User Model', () => {
       });
 
       await deleteAllUserRecords();
-      records = await listMinifiedRecords();
+      records = await listMinifiedUserRecords();
       expect(records).toHaveLength(0);
     });
   });

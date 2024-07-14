@@ -15,7 +15,7 @@ import {
  * Retrieves all the user records ordered by authority descendingly.
  * @returns Promise<IUser[]>
  */
-const listRecords = async (): Promise<IUser[]> => {
+const listUserRecords = async (): Promise<IUser[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT uid, nickname, authority, event_time
@@ -30,7 +30,7 @@ const listRecords = async (): Promise<IUser[]> => {
  * Retrieves all the user records ordered by authority descendingly.
  * @returns Promise<IUser[]>
  */
-const listMinifiedRecords = async (): Promise<IMinifiedUser[]> => {
+const listMinifiedUserRecords = async (): Promise<IMinifiedUser[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT uid, nickname, authority
@@ -325,8 +325,8 @@ const deleteAllUserRecords = (): Promise<IQueryResult> => (
  ************************************************************************************************ */
 export {
   // retrievers
-  listRecords,
-  listMinifiedRecords,
+  listUserRecords,
+  listMinifiedUserRecords,
   getUserRecord,
   nicknameExists,
   getUserPasswordHash,
