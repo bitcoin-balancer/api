@@ -12,7 +12,8 @@ type IUserService = {
   // properties
   // ...
 
-  // actions
+  // user record management
+  createUser: (nickname: string, authority: IAuthority, password?: string) => Promise<IUser>
 };
 
 
