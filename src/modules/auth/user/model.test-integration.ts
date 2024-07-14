@@ -25,11 +25,14 @@ import {
  *                                           CONSTANTS                                            *
  ************************************************************************************************ */
 
+// 1 hour worth of milliseconds in order to simulate actions happening sequentially
+const TIME_INCREMENT: number = toMilliseconds(60 * 60);
+
 // list of mock users
 const U: IUser[] = [
-  { uid: 'a44a6414-7d7a-4b32-8bc1-a5ce7ab96b2e', nickname: 'user-1', authority: 1, password_hash: '$ome_password', otp_secret: 'NFDCMADPEVFEMSIC', event_time: 0 },
-  { uid: '99720f31-d944-4e21-a402-b420ed413fed', nickname: 'user-2', authority: 2, password_hash: '$ome_password', otp_secret: 'L5IFQI2EHAYAODTF', event_time: 0 },
-  { uid: 'e9a214bb-c4da-4af7-a514-d57bfd91e94e', nickname: 'user-3', authority: 3, password_hash: '$ome_password', otp_secret: 'DEVC63QFD4OS2UKY', event_time: 0 },
+  { uid: 'a44a6414-7d7a-4b32-8bc1-a5ce7ab96b2e', nickname: 'user-1', authority: 1, password_hash: '$ome_password', otp_secret: 'NFDCMADPEVFEMSIC', event_time: Date.now() + TIME_INCREMENT },
+  { uid: '99720f31-d944-4e21-a402-b420ed413fed', nickname: 'user-2', authority: 2, password_hash: '$ome_password', otp_secret: 'L5IFQI2EHAYAODTF', event_time: Date.now() + (TIME_INCREMENT * 2) },
+  { uid: 'e9a214bb-c4da-4af7-a514-d57bfd91e94e', nickname: 'user-3', authority: 3, password_hash: '$ome_password', otp_secret: 'DEVC63QFD4OS2UKY', event_time: Date.now() + (TIME_INCREMENT * 3) },
 ];
 
 
@@ -47,8 +50,9 @@ const create: (user: IUser) => Promise<IQueryResult> = ({
   authority,
   password_hash,
   otp_secret,
+  event_time,
 }: IUser): Promise<IQueryResult> => (
-  createUserRecord(uid, nickname, authority, otp_secret!, password_hash!)
+  createUserRecord(uid, nickname, authority, password_hash, otp_secret!, event_time)
 );
 
 // compares a record that was extracted from the database versus the one used to create it
@@ -185,7 +189,6 @@ describe('User Model', () => {
       await create(U[0]);
 
       const eventTimes: number[] = [Date.now()];
-      const timeIncrement: number = toMilliseconds(60 * 60);
 
       let records = await listUserPasswordUpdateRecords(U[0].uid, 10);
       expect(records).toHaveLength(0);
@@ -195,7 +198,7 @@ describe('User Model', () => {
       expect(records).toHaveLength(1);
       expect(records[0]).toStrictEqual({ uid: U[0].uid, event_time: eventTimes[0] });
 
-      await vi.advanceTimersByTimeAsync(timeIncrement);
+      await vi.advanceTimersByTimeAsync(TIME_INCREMENT);
       eventTimes.push(Date.now());
 
       await updateUserPasswordHash(U[0].uid, 'NEW_PASSWORD_2');
@@ -203,7 +206,7 @@ describe('User Model', () => {
       expect(records).toHaveLength(2);
       expect(records[0]).toStrictEqual({ uid: U[0].uid, event_time: eventTimes[1] });
 
-      await vi.advanceTimersByTimeAsync(timeIncrement);
+      await vi.advanceTimersByTimeAsync(TIME_INCREMENT);
       eventTimes.push(Date.now());
 
       await updateUserPasswordHash(U[0].uid, 'NEW_PASSWORD_3');
@@ -216,12 +219,11 @@ describe('User Model', () => {
       create(U[0]);
 
       const eventTimes: number[] = [];
-      const timeIncrement: number = toMilliseconds(60 * 60);
 
       for (let i = 0; i < 10; i += 1) {
         await updateUserPasswordHash(U[0].uid, 'NEW_PASSWORD');
         eventTimes.push(Date.now());
-        await vi.advanceTimersByTimeAsync(timeIncrement);
+        await vi.advanceTimersByTimeAsync(TIME_INCREMENT);
       }
 
       eventTimes.reverse();
@@ -267,7 +269,14 @@ describe('User Model', () => {
     });
 
     test('can create a user without providing a password to start with', async () => {
-      await createUserRecord(U[0].uid, U[0].nickname, U[0].authority, U[0].otp_secret!);
+      await createUserRecord(
+        U[0].uid,
+        U[0].nickname,
+        U[0].authority,
+        undefined,
+        U[0].otp_secret!,
+        U[0].event_time,
+      );
 
       const record = await getUserRecord(U[0].uid);
       expect(record).toBeDefined();

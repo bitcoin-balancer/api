@@ -207,22 +207,24 @@ const listUserPasswordUpdateRecords = async (
  * @param uid
  * @param nickname
  * @param authority
+ * @param passwordHash
  * @param otpSecret
- * @param passwordHash?
+ * @param eventTime
  * @returns Promise<IQueryResult>
  */
 const createUserRecord = (
   uid: string,
   nickname: string,
   authority: IAuthority,
+  passwordHash: string | undefined,
   otpSecret: string,
-  passwordHash?: string,
+  eventTime: number,
 ): Promise<IQueryResult> => DatabaseService.pool.query({
   text: `
     INSERT INTO ${DatabaseService.tn.users} (uid, nickname, authority, password_hash, otp_secret, event_time)
     VALUES ($1, $2, $3, $4, $5, $6);
   `,
-  values: [uid, nickname, authority, passwordHash, otpSecret, Date.now()],
+  values: [uid, nickname, authority, passwordHash, otpSecret, eventTime],
 });
 
 /**
