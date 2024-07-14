@@ -26,6 +26,8 @@ type IUserService = {
     altchaPayload: string,
   ) => Promise<void>;
 
+  deleteUser: (uid: string) => Promise<void>;
+
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;

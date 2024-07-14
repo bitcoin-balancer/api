@@ -9,6 +9,7 @@ import {
   canAuthorityBeUpdated,
   canPasswordBeUpdated,
   canVerifyOTPToken,
+  validateUserRecordExistance,
 } from './validations.js';
 import {
   getUserRecordByNickname,
@@ -17,6 +18,7 @@ import {
   updateUserAuthority,
   updateUserPasswordHash,
   getUserOTPSecret,
+  deleteUserRecord,
 } from './model.js';
 
 /* ************************************************************************************************
@@ -182,6 +184,21 @@ const userServiceFactory = (): IUserService => {
     await updateUserPasswordHash(uid, await hashPassword(newPassword));
   };
 
+  /**
+   * Validates and deletes a nonroot user account.
+   * @param uid
+   * @returns Promise<void>
+   * @throws
+   * 3506: if the uid has an invalid format
+   * 3507: if the record doesn't exist in the database
+   * 3508: if the record belongs to the root and has not been explicitly allowed
+   */
+  const deleteUser = async (uid: string): Promise<void> => {
+    await validateUserRecordExistance(uid);
+    await deleteUserRecord(uid);
+    delete __users[uid];
+  };
+
 
 
 
@@ -224,6 +241,8 @@ const userServiceFactory = (): IUserService => {
     updateNickname,
     updateAuthority,
     updatePasswordHash,
+
+    deleteUser,
 
     // initializer
     initialize,
