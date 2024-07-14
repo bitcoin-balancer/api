@@ -40,15 +40,14 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ## `Altcha` (2000 - 2999)
 
-- If the errors `2000`, `2001` or `2002` are thrown, generate a new Altcha Challenge in the GUI.
+- ...
 - ...
 - ...
 
 ### `index.ts`
 
 - **2000:** `The provided altcha payload '${payload}' has an invalid format. Please try again.`
-- **2001:** `The provided altcha payload '${payload}' has already been used. Please try again.`
-- **2002:** `The solution to the Altcha challenge is invalid or it has expired. Please try again.`
+- **2001:** `The solution to the Altcha challenge is invalid or it has expired. Please try again.`
 
 
 

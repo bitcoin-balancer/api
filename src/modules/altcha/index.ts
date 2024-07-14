@@ -1,7 +1,6 @@
 import { addMinutes } from 'date-fns';
 import { createChallenge, verifySolution } from 'altcha-lib';
 import { encodeError } from 'error-message-utils';
-import { IRecord } from '../shared/types.js';
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { stringValid } from '../shared/validations/index.js';
 import { IAltchaService, IChallenge } from './types.js';
@@ -25,9 +24,6 @@ const altchaServiceFactory = (): IAltchaService => {
 
   // the number of minutes a challenge is valid for
   const __CHALLENGE_DURATION = 5;
-
-  // the list of successfully solved challenges
-  const __solvedChallenges: IRecord<boolean> = {};
 
 
 
@@ -53,6 +49,9 @@ const altchaServiceFactory = (): IAltchaService => {
    * Verifies if a solution to a challenge is valid and has not expired or previously used.
    * @param payload
    * @returns Promise<void>
+   * @throws
+   * - 2000: the payload has an invalid format
+   * - 2001: the solution is invalid or it has expired
    */
   const verify = async (payload: string): Promise<void> => {
     // ensure the payload is a valid string
@@ -60,19 +59,11 @@ const altchaServiceFactory = (): IAltchaService => {
       throw new Error(encodeError(`The provided altcha payload '${payload}' has an invalid format. Please try again.`, 2000));
     }
 
-    // ensure the solved challenge hasn't already been used
-    if (__solvedChallenges[payload]) {
-      throw new Error(encodeError(`The provided altcha payload '${payload}' has already been used. Please try again.`, 2001));
-    }
-
     // proceed to verify the solution
     const result = await verifySolution(payload, __SECRET, true);
     if (!result) {
-      throw new Error(encodeError('The solution to the Altcha challenge is invalid or it has expired. Please try again.', 2002));
+      throw new Error(encodeError('The solution to the Altcha challenge is invalid or it has expired. Please try again.', 2001));
     }
-
-    // add the payload to the solved list
-    __solvedChallenges[payload] = true;
   };
 
 
