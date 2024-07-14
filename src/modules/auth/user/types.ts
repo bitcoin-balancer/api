@@ -13,7 +13,11 @@ type IUserService = {
   // ...
 
   // user record management
-  createUser: (nickname: string, authority: IAuthority, password?: string) => Promise<IUser>
+  createUser: (nickname: string, authority: IAuthority, password?: string) => Promise<IUser>;
+
+  // initializer
+  initialize: () => Promise<void>;
+  teardown: () => Promise<void>;
 };
 
 

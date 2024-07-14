@@ -5,7 +5,6 @@ import { IMinifiedUser, IUser } from './types.js';
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
-
 /**
  * Verifies if a value identifies the ROOT_ACCOUNT by uid or nickname.
  * @param val
@@ -23,6 +22,7 @@ const isRoot = (val: string | IUser | IMinifiedUser): boolean => (
     )
   )
 );
+
 
 
 

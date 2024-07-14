@@ -1,8 +1,9 @@
 import { generateUUID } from '../../shared/uuid/index.js';
 import { IUserService, IAuthority, IUser } from './types.js';
-import { createUserRecord } from './model.js';
 import { generateOTPSecret } from './otp.js';
 import { hashPassword } from './bcrypt.js';
+import { canUserBeCreated } from './validations.js';
+import { createUserRecord } from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -50,7 +51,7 @@ const userServiceFactory = (): IUserService => {
     password?: string,
   ): Promise<IUser> => {
     // validate the request
-    // ...
+    await canUserBeCreated(nickname, authority, password);
 
     // init record values
     const uid = generateUUID();
@@ -78,6 +79,23 @@ const userServiceFactory = (): IUserService => {
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
 
+  /**
+   * Initializes the User Module.
+   * @returns Promise<void>
+   */
+  const initialize = async (): Promise<void> => {
+    // ...
+  };
+
+  /**
+   * Tears down the User Module.
+   * @returns Promise<void>
+   */
+  const teardown = async (): Promise<void> => {
+    // ...
+  };
+
+
 
 
 
@@ -90,6 +108,10 @@ const userServiceFactory = (): IUserService => {
 
     // user record management
     createUser,
+
+    // initializer
+    initialize,
+    teardown,
   });
 };
 

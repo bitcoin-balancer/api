@@ -66,7 +66,14 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **3000:** ``
 
+
 ### `model.ts`
 
 - **3250:** `The otp_secret retrieved for uid '${uid}' doesn't exist or is invalid. Received: ${rows.length ? rows[0].otp_secret : 'undefined'}`
 - **3251:** `The password_hash retrieved for user '${nickname}' doesn't exist or is invalid. Please go through the "Update Password" process before trying sign in again.`
+
+
+### `validations.ts`
+
+- **3500:** `The nickname '${nickname}' is invalid.`
+- **3501:** `The nickname '${nickname}' is already being used by another user.`

@@ -121,9 +121,12 @@ const passwordValid = (value: any): value is string => (
 /**
  * Verifies if a value is a valid authority level.
  * @param value
+ * @param max?
  * @returns boolean
  */
-const authorityValid = (value: any): value is IAuthority => numberValid(value, 1, 5);
+const authorityValid = (value: any, max?: IAuthority): value is IAuthority => (
+  numberValid(value, 1, max ?? 5)
+);
 
 /**
  * Verifies if a value has the correct OTP Secret Format.

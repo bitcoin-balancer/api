@@ -21,7 +21,10 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
    ********************************************************************************************** */
 
   // the keys of values that are confidential and should not be stored or logged
-  const __SENSITIVE_DATA_KEYS: string[] = ['password', 'newPassword'];
+  const __SENSITIVE_DATA_KEYS: string[] = [
+    'password',
+    'newPassword',
+  ];
 
   // the list of errors that are regular and shouldn't be stored
   const __OMIT_ERROR_CODES: number[] = [

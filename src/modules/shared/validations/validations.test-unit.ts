@@ -1,4 +1,5 @@
 import { describe, test, expect } from 'vitest';
+import { IAuthority } from '../../auth/user/types.js';
 import {
   stringValid,
   numberValid,
@@ -369,27 +370,30 @@ describe('passwordValid', () => {
 
 
 describe('authorityValid', () => {
-  test.each([
+  test.each(<Array<[IAuthority, IAuthority | undefined, boolean]>>[
     // essential
-    [0, false],
-    [1, true],
-    [2, true],
-    [3, true],
-    [4, true],
-    [5, true],
-    [6, false],
+    [0, undefined, false],
+    [1, undefined, true],
+    [2, undefined, true],
+    [3, undefined, true],
+    [4, undefined, true],
+    [5, undefined, true],
+    [6, undefined, false],
+
+    // with a max value
+    [5, 4, false],
 
     // bad data types
-    [undefined, false],
-    [null, false],
-    [{}, false],
-    [[{}], false],
-    ['', false],
-    ['5', false],
-    [true, false],
-    [123, false],
-  ])('authorityValid(%s) -> %s', (a, expected) => {
-    expect(authorityValid(a)).toBe(expected);
+    [undefined, undefined, false],
+    [null, undefined, false],
+    [{}, undefined, false],
+    [[{}], undefined, false],
+    ['', undefined, false],
+    ['5', undefined, false],
+    [true, undefined, false],
+    [123, undefined, false],
+  ])('authorityValid(%s, %s) -> %s', (a, b, expected) => {
+    expect(authorityValid(a, b)).toBe(expected);
   });
 });
 
