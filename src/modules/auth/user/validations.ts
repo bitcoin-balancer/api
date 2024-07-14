@@ -78,18 +78,50 @@ const canListUserPasswordUpdates = async (
 /**
  * Verifies if the uid and the OTP token have the correct format before performing the verification.
  * @param uid
- * @param token
+ * @param otpToken
  * @throws
  * - 3506: if the uid has an invalid format
  * - 3510: if the OTP Token has an invalid format
  */
-const canVerifyOTPToken = (uid: string, token: string): void => {
+const canVerifyOTPToken = (uid: string, otpToken: string): void => {
   if (!uuidValid(uid)) {
     throw new Error(encodeError(`The uid '${uid}' is invalid.`, 3506));
   }
-  if (!otpTokenValid(token)) {
-    throw new Error(encodeError(`The OTP Token '${token}' is invalid.`, 3510));
+  if (!otpTokenValid(otpToken)) {
+    throw new Error(encodeError(`The OTP Token '${otpToken}' is invalid.`, 3510));
   }
+};
+
+/**
+ * Verifies of the format of the data required to sign in.
+ * @param nickname
+ * @param password
+ * @param otpToken
+ * @param altchaPayload
+ * @returns Promise<void>
+ * @throws
+ * - 3500: if the nickname's format is invalid
+ * - 3509: if the pasword's format is invalid or is too weak
+ * - 3510: if the OTP Token's format is invalid
+ * - 2000: the altcha payload has an invalid format
+ * - 2001: the altcha solution is invalid or it has expired
+ */
+const canVerifySignInCredentials = async (
+  nickname: string,
+  password: string,
+  otpToken: string,
+  altchaPayload: string,
+): Promise<void> => {
+  if (!nicknameValid(nickname)) {
+    throw new Error(encodeError(`The nickname '${nickname}' is invalid.`, 3500));
+  }
+  if (!passwordValid(password)) {
+    throw new Error(encodeError('The password is invalid or too weak. Make sure the password meets the requirements and try again.', 3509));
+  }
+  if (!otpTokenValid(otpToken)) {
+    throw new Error(encodeError(`The OTP Token '${otpToken}' is invalid.`, 3510));
+  }
+  await AltchaService.verify(altchaPayload);
 };
 
 
@@ -201,8 +233,8 @@ const canAuthorityBeUpdated = async (uid: string, newAuthority: IAuthority): Pro
  * @throws
  * - 3508: if attempting to update the root's password
  * - 3509: if the password is invalid or too weak
- * - 2000: the payload has an invalid format
- * - 2001: the solution is invalid or it has expired
+ * - 2000: the altcha payload has an invalid format
+ * - 2001: the altcha solution is invalid or it has expired
  */
 const canPasswordBeUpdated = async (
   uid: string,
@@ -234,6 +266,7 @@ export {
 
   // credentials verification
   canVerifyOTPToken,
+  canVerifySignInCredentials,
 
   // user record management
   canUserBeCreated,

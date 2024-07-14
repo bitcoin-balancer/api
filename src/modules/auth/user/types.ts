@@ -22,6 +22,12 @@ type IUserService = {
   // credentials verification
   isAuthorized: (uid: string, requiredAuthority: IAuthority) => void;
   verifyOTPToken: (uid: string, token: string) => Promise<void>;
+  verifySignInCredentials: (
+    nickname: string,
+    password: string,
+    otpToken: string,
+    altchaPayload: string,
+  ) => Promise<void>;
 
   // user record management
   createUser: (nickname: string, authority: IAuthority, password?: string) => Promise<IUser>;

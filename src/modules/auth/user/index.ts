@@ -7,12 +7,13 @@ import {
   IUser,
   IPasswordUpdate,
 } from './types.js';
-import { checkOTPToken, generateOTPSecret } from './otp.js';
+import { generateOTPSecret, checkOTPToken } from './otp.js';
 import { hashPassword } from './bcrypt.js';
 import {
   validateUserRecordExistance,
   canListUserPasswordUpdates,
   canVerifyOTPToken,
+  canVerifySignInCredentials,
   canUserBeCreated,
   canNicknameBeUpdated,
   canAuthorityBeUpdated,
@@ -29,7 +30,9 @@ import {
   updateUserOTPSecret,
   deleteUserRecord,
   listUserPasswordUpdateRecords,
+  getUserRecord,
 } from './model.js';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -113,7 +116,6 @@ const userServiceFactory = (): IUserService => {
     }
   };
 
-
   /**
    * Validates and verifies an OTP Token for a user against the secret.
    * @param uid
@@ -132,6 +134,33 @@ const userServiceFactory = (): IUserService => {
     }
   };
 
+  /**
+   * Validates and verifies the sign in credentials are valid.
+   * @param nickname
+   * @param password
+   * @param otpToken
+   * @param altchaPayload
+   * @returns Promise<void>
+   * @throws
+   * - 3500: if the nickname's format is invalid
+   * - 3509: if the pasword's format is invalid or is too weak
+   * - 3510: if the OTP Token's format is invalid
+   * - 2000: the altcha payload has an invalid format
+   * - 2001: the altcha solution is invalid or it has expired
+   */
+  const verifySignInCredentials = async (
+    nickname: string,
+    password: string,
+    otpToken: string,
+    altchaPayload: string,
+  ): Promise<void> => {
+    // validate the request
+    await canVerifySignInCredentials(nickname, password, otpToken, altchaPayload);
+
+    // verify the OTP Token
+    // await verifyOTPToken();
+  };
+
 
 
 
@@ -145,7 +174,9 @@ const userServiceFactory = (): IUserService => {
    * Normal users should set the password by going through the Password Update functionality.
    * @param nickname
    * @param authority
+   * @param uid?
    * @param password?
+   * @param otpSecret?
    * @returns Promise<IUser>
   * @throws
   * - 3500: if the format of the nickname is invalid
@@ -158,13 +189,16 @@ const userServiceFactory = (): IUserService => {
   const createUser = async (
     nickname: string,
     authority: IAuthority,
+    uid?: string,
     password?: string,
+    otpSecret?: string,
   ): Promise<IUser> => {
     // validate the request
     await canUserBeCreated(nickname, authority, password);
 
     // init record values
-    const uid = generateUUID();
+    const fUID = uid ?? generateUUID();
+    const fOTPSecret = otpSecret ?? generateOTPSecret();
     const eventTime = Date.now();
     let passwordHash: string | undefined;
     if (typeof password === 'string') {
@@ -172,9 +206,9 @@ const userServiceFactory = (): IUserService => {
     }
 
     // create the record and add it to the local object
-    await createUserRecord(uid, nickname, authority, passwordHash, generateOTPSecret(), eventTime);
-    __users[uid] = {
-      uid,
+    await createUserRecord(fUID, nickname, authority, passwordHash, fOTPSecret, eventTime);
+    __users[fUID] = {
+      uid: fUID,
       nickname,
       authority,
       event_time: eventTime,
@@ -182,7 +216,7 @@ const userServiceFactory = (): IUserService => {
 
     // finally, return it
     return {
-      uid,
+      uid: fUID,
       nickname,
       authority,
       event_time: eventTime,
@@ -235,8 +269,8 @@ const userServiceFactory = (): IUserService => {
    * - 3252: if no record is found for the nickname
    * - 3508: if attempting to update the root's password
    * - 3509: if the password is invalid or too weak
-   * - 2000: the payload has an invalid format
-   * - 2001: the solution is invalid or it has expired
+   * - 2000: the altcha payload has an invalid format
+   * - 2001: the altcha solution is invalid or it has expired
    * - 3250: if the user record does not exist or the OTP Secret is not valid
    * - 3506: if the uid has an invalid format
    * - 3510: if the OTP Token has an invalid format
@@ -295,16 +329,33 @@ const userServiceFactory = (): IUserService => {
 
 
 
+
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
 
   /**
-   * Initializes the User Module.
+   * Creates the root account record in case it doesn't exist.
    * @returns Promise<void>
    */
-  const initialize = async (): Promise<void> => {
-    __users = (await listUserRecords()).reduce(
+  const __initializeRootAccount = async (): Promise<void> => {
+    const {
+      uid,
+      nickname,
+      password,
+      otpSecret,
+    } = ENVIRONMENT.ROOT_ACCOUNT;
+    if (await getUserRecord(uid) === undefined) {
+      await createUser(nickname, 5, uid, password, otpSecret);
+    }
+  };
+
+  /**
+   * Retrieves all the existing users and builds the local user object.
+   * @returns Promise<{ [uid: string]: IUser }>
+   */
+  const __buildLocalUsersObject = async (): Promise<{ [uid: string]: IUser }> => (
+    (await listUserRecords()).reduce(
       (previous, current) => ({
         ...previous,
         [current.uid]: {
@@ -315,7 +366,19 @@ const userServiceFactory = (): IUserService => {
         },
       }),
       {},
-    );
+    )
+  );
+
+  /**
+   * Initializes the User Module.
+   * @returns Promise<void>
+   */
+  const initialize = async (): Promise<void> => {
+    // initialize the root account
+    await __initializeRootAccount();
+
+    // build the local object
+    __users = await __buildLocalUsersObject();
   };
 
   /**
@@ -344,6 +407,7 @@ const userServiceFactory = (): IUserService => {
     // credentials verification
     isAuthorized,
     verifyOTPToken,
+    verifySignInCredentials,
 
     // user record management
     createUser,
