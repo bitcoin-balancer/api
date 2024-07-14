@@ -9,6 +9,19 @@ import { nicknameExists } from './model.js';
  ************************************************************************************************ */
 
 /**
+ * Validates a record was successfully retrieved from the database.
+ * @param uid
+ * @param record
+ * @throws
+ * - 3506: if the record doesn't exist in the database
+ */
+const __validateRecordExistance = (uid: string, record: IUser | undefined): void => {
+  if (record === undefined) {
+    throw new Error(encodeError(`The record for uid '${uid}' could not be found in the database.`, 3506));
+  }
+};
+
+/**
  * Validates the format of a nickname and it also checks if it is available.
  * @param nickname
  * @returns Promise<void>
@@ -67,23 +80,45 @@ const canUserBeCreated = async (
 
 /**
  * Validates the user's record and makes sure the nickname can be used.
+ * @param uid
  * @param record
  * @param newNickname
  * @returns Promise<void>
  * @throws
  * - 3500: if the format of the nickname is invalid
  * - 3501: if the nickname is already being used
- * - 3506: if the user's record is undefined
+ * - 3506: if the record doesn't exist in the database
  */
 const canNicknameBeUpdated = async (
+  uid: string,
   record: IUser | undefined,
   newNickname: string,
 ): Promise<void> => {
-  if (record === undefined) {
-    throw new Error(encodeError(`Unable to set the nickname to '${newNickname}' because the user record doesn't exist.`, 3506));
-  }
+  __validateRecordExistance(uid, record);
   await __canNicknameBeUsed(newNickname);
 };
+
+/**
+ * Validates the user's record and makes sure the authority can be set.
+ * @param uid
+ * @param record
+ * @param newNickname
+ * @returns void
+ * @throws
+ * - 3505: if the authority provided is not ranging 1 - 4
+ * - 3506: if the record doesn't exist in the database
+ */
+const canAuthorityBeUpdated = (
+  uid: string,
+  record: IUser | undefined,
+  newAuthority: IAuthority,
+): void => {
+  __validateRecordExistance(uid, record);
+  if (!authorityValid(newAuthority, 4)) {
+    throw new Error(encodeError(`The nonroot user's authority must range 1 - 4. Received: ${newAuthority}`, 3505));
+  }
+};
+
 
 
 
@@ -95,4 +130,5 @@ export {
   // user record management
   canUserBeCreated,
   canNicknameBeUpdated,
+  canAuthorityBeUpdated,
 };

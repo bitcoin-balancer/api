@@ -2,8 +2,17 @@ import { generateUUID } from '../../shared/uuid/index.js';
 import { IUserService, IAuthority, IUser } from './types.js';
 import { generateOTPSecret } from './otp.js';
 import { hashPassword } from './bcrypt.js';
-import { canNicknameBeUpdated, canUserBeCreated } from './validations.js';
-import { createUserRecord, getUserRecord, updateUserNickname } from './model.js';
+import {
+  canUserBeCreated,
+  canNicknameBeUpdated,
+  canAuthorityBeUpdated,
+} from './validations.js';
+import {
+  getUserRecord,
+  createUserRecord,
+  updateUserNickname,
+  updateUserAuthority,
+} from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -86,11 +95,25 @@ const userServiceFactory = (): IUserService => {
    * @throws
    * - 3500: if the format of the nickname is invalid
    * - 3501: if the nickname is already being used
-   * - 3506: if the user's record is undefined
+   * - 3506: if the record doesn't exist in the database
    */
   const updateNickname = async (uid: string, newNickname: string): Promise<void> => {
-    await canNicknameBeUpdated(await getUserRecord(uid), newNickname);
+    await canNicknameBeUpdated(uid, await getUserRecord(uid), newNickname);
     await updateUserNickname(uid, newNickname);
+  };
+
+  /**
+   * Validates and updates an user's authority.
+   * @param uid
+   * @param newAuthority
+   * @returns Promise<void>
+   * @throws
+   * - 3505: if the authority provided is not ranging 1 - 4
+   * - 3506: if the record doesn't exist in the database
+   */
+  const updateAuthority = async (uid: string, newAuthority: IAuthority): Promise<void> => {
+    canAuthorityBeUpdated(uid, await getUserRecord(uid), newAuthority);
+    await updateUserAuthority(uid, newAuthority);
   };
 
 
@@ -130,6 +153,7 @@ const userServiceFactory = (): IUserService => {
     // user record management
     createUser,
     updateNickname,
+    updateAuthority,
 
     // initializer
     initialize,
