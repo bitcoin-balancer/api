@@ -4,10 +4,37 @@ import {
   authorityValid,
   passwordValid,
   uuidValid,
+  otpTokenValid,
 } from '../../shared/validations/index.js';
+import { AltchaService } from '../../altcha/index.js';
 import { IAuthority } from './types.js';
 import { isRoot } from './utils.js';
 import { getUserRecord, nicknameExists } from './model.js';
+
+/* ************************************************************************************************
+ *                                    CREDENTIALS VERIFICATION                                    *
+ ************************************************************************************************ */
+
+/**
+ * Verifies if the uid and the OTP token have the correct format before performing the verification.
+ * @param uid
+ * @param token
+ * @throws
+ * - 3506: if the uid has an invalid format
+ * - 3510: if the OTP Token has an invalid format
+ */
+const canVerifyOTPToken = (uid: string, token: string): void => {
+  if (!uuidValid(uid)) {
+    throw new Error(encodeError(`The uid '${uid}' is invalid.`, 3506));
+  }
+  if (!otpTokenValid(token)) {
+    throw new Error(encodeError(`The OTP Token '${token}' is invalid.`, 3510));
+  }
+};
+
+
+
+
 
 /* ************************************************************************************************
  *                                     USER RECORD MANAGEMENT                                     *
@@ -127,7 +154,18 @@ const canAuthorityBeUpdated = async (uid: string, newAuthority: IAuthority): Pro
   await validateUserRecordExistance(uid);
 };
 
-
+/**
+ * Validates the user's required data to update / set their password.
+ * @param uid
+ * @param newPassword
+ * @param altchaPayload
+ * @returns Promise<void>
+ * @throws
+ * - 3508: if attempting to update the root's password
+ * - 3509: if the password is invalid or too weak
+ * - 2000: the payload has an invalid format
+ * - 2001: the solution is invalid or it has expired
+ */
 const canPasswordBeUpdated = async (
   uid: string,
   newPassword: string,
@@ -139,7 +177,9 @@ const canPasswordBeUpdated = async (
   if (!passwordValid(newPassword)) {
     throw new Error(encodeError(`The password for uid '${uid}' is invalid or too weak. Make sure the password meets the requirements and try again.`, 3509));
   }
+  await AltchaService.verify(altchaPayload);
 };
+
 
 
 
@@ -148,6 +188,9 @@ const canPasswordBeUpdated = async (
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // credentials verification
+  canVerifyOTPToken,
+
   // user record management
   validateUserRecordExistance,
   canUserBeCreated,

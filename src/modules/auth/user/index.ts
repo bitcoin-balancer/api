@@ -1,17 +1,22 @@
+import { encodeError } from 'error-message-utils';
 import { generateUUID } from '../../shared/uuid/index.js';
 import { IUserService, IAuthority, IUser } from './types.js';
-import { generateOTPSecret } from './otp.js';
+import { checkOTPToken, generateOTPSecret } from './otp.js';
 import { hashPassword } from './bcrypt.js';
 import {
   canUserBeCreated,
   canNicknameBeUpdated,
   canAuthorityBeUpdated,
+  canPasswordBeUpdated,
+  canVerifyOTPToken,
 } from './validations.js';
 import {
   getUserRecordByNickname,
   createUserRecord,
   updateUserNickname,
   updateUserAuthority,
+  updateUserPasswordHash,
+  getUserOTPSecret,
 } from './model.js';
 
 /* ************************************************************************************************
@@ -28,6 +33,9 @@ const userServiceFactory = (): IUserService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
+  // an object containing all the user records by uid and is built on start up
+  const __users: { [uid: string]: IUser } = {};
+
 
 
 
@@ -37,6 +45,31 @@ const userServiceFactory = (): IUserService => {
    ********************************************************************************************** */
 
   /* const list */
+
+
+  /* **********************************************************************************************
+   *                                    CREDENTIALS VERIFICATION                                  *
+   ********************************************************************************************** */
+
+
+
+  /**
+   * Validates and verifies an OTP Token for a user against the secret.
+   * @param uid
+   * @param otpToken
+   * @returns Promise<void>
+   * @throws
+   * - 3250: if the user record does not exist or the OTP Secret is not valid
+   * - 3506: if the uid has an invalid format
+   * - 3510: if the OTP Token has an invalid format
+   * - 3000: if the OTP Token failed the verification
+   */
+  const verifyOTPToken = async (uid: string, otpToken: string): Promise<void> => {
+    canVerifyOTPToken(uid, otpToken);
+    if (!checkOTPToken(otpToken, await getUserOTPSecret(uid))) {
+      throw new Error(encodeError(`The OTP Token '${otpToken}' for uid '${uid}' is invalid.`, 3000));
+    }
+  };
 
 
 
@@ -51,7 +84,7 @@ const userServiceFactory = (): IUserService => {
    * Normal users should set the password by going through the Password Update functionality.
    * @param nickname
    * @param authority
-   * @param password
+   * @param password?
    * @returns Promise<IUser>
   * @throws
   * - 3500: if the format of the nickname is invalid
@@ -88,7 +121,7 @@ const userServiceFactory = (): IUserService => {
   };
 
   /**
-   * Validates and updates an user's nickname.
+   * Validates and updates a nonroot user's nickname.
    * @param uid
    * @param newNickname
    * @returns Promise<void>
@@ -102,10 +135,11 @@ const userServiceFactory = (): IUserService => {
   const updateNickname = async (uid: string, newNickname: string): Promise<void> => {
     await canNicknameBeUpdated(uid, newNickname);
     await updateUserNickname(uid, newNickname);
+    __users[uid].nickname = newNickname;
   };
 
   /**
-   * Validates and updates an user's authority.
+   * Validates and updates a nonroot user's authority.
    * @param uid
    * @param newAuthority
    * @returns Promise<void>
@@ -118,15 +152,34 @@ const userServiceFactory = (): IUserService => {
   const updateAuthority = async (uid: string, newAuthority: IAuthority): Promise<void> => {
     await canAuthorityBeUpdated(uid, newAuthority);
     await updateUserAuthority(uid, newAuthority);
+    __users[uid].authority = newAuthority;
   };
 
-  const updatePassword = async (
+  /**
+   * Validates and updates a nonroot user's password hash.
+   * @param nickname
+   * @param newPassword
+   * @param otpToken
+   * @param altchaPayload
+   * @returns Promise<void>
+   */
+  const updatePasswordHash = async (
     nickname: string,
     newPassword: string,
     otpToken: string,
     altchaPayload: string,
   ): Promise<void> => {
-    const user = await getUserRecordByNickname(nickname);
+    // retrieve the record
+    const { uid } = await getUserRecordByNickname(nickname);
+
+    // validate the request
+    await canPasswordBeUpdated(uid, newPassword, altchaPayload);
+
+    // validate the otp token
+    await verifyOTPToken(uid, otpToken);
+
+    // hash the new password and update the record
+    await updateUserPasswordHash(uid, await hashPassword(newPassword));
   };
 
 
@@ -163,10 +216,14 @@ const userServiceFactory = (): IUserService => {
     // properties
     // ...
 
+    // credentials verification
+    verifyOTPToken,
+
     // user record management
     createUser,
     updateNickname,
     updateAuthority,
+    updatePasswordHash,
 
     // initializer
     initialize,

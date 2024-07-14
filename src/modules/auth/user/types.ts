@@ -12,10 +12,19 @@ type IUserService = {
   // properties
   // ...
 
+  // credentials verification
+  verifyOTPToken: (uid: string, token: string) => Promise<void>;
+
   // user record management
   createUser: (nickname: string, authority: IAuthority, password?: string) => Promise<IUser>;
   updateNickname: (uid: string, newNickname: string) => Promise<void>;
   updateAuthority: (uid: string, newAuthority: IAuthority) => Promise<void>;
+  updatePasswordHash: (
+    nickname: string,
+    newPassword: string,
+    otpToken: string,
+    altchaPayload: string,
+  ) => Promise<void>;
 
   // initializer
   initialize: () => Promise<void>;
