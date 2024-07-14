@@ -14,6 +14,10 @@ type IUserService = {
 
   // retrievers
   listUsers: () => IUser[];
+  listUserPasswordUpdates: (
+    uid: string,
+    startAtEventTime: number | undefined,
+  ) => Promise<IPasswordUpdate[]>;
 
   // credentials verification
   verifyOTPToken: (uid: string, token: string) => Promise<void>;

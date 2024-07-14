@@ -86,3 +86,4 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **3508:** `The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`
 - **3509:** `The password for uid '${uid}' is invalid or too weak. Make sure the password meets the requirements and try again.`
 - **3510:** `The OTP Token '${token}' is invalid.`
+- **3511:** `If the startAtEventTime arg is provided, it must be a valid timestamp. Received: ${startAtEventTime}`

@@ -1,15 +1,70 @@
 import { encodeError } from 'error-message-utils';
 import {
+  timestampValid,
+  uuidValid,
   nicknameValid,
   authorityValid,
   passwordValid,
-  uuidValid,
   otpTokenValid,
 } from '../../shared/validations/index.js';
 import { AltchaService } from '../../altcha/index.js';
 import { IAuthority } from './types.js';
 import { isRoot } from './utils.js';
 import { getUserRecord, nicknameExists } from './model.js';
+
+/* ************************************************************************************************
+ *                                            HELPERS                                             *
+ ************************************************************************************************ */
+
+/**
+ * Validates the format of a uid and ensures the record exists in the database.
+ * @param uid
+ * @param allowRoot
+ * @returns Promise<void>
+ * @throws
+ * - 3506: if the uid has an invalid format
+ * - 3507: if the record doesn't exist in the database
+ * - 3508: if the record belongs to the root and has not been explicitly allowed
+ */
+const validateUserRecordExistance = async (uid: string, allowRoot?: boolean): Promise<void> => {
+  if (!uuidValid(uid)) {
+    throw new Error(encodeError(`The uid '${uid}' is invalid.`, 3506));
+  }
+  if (!allowRoot && isRoot(uid)) {
+    throw new Error(encodeError(`The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`, 3508));
+  }
+  if (await getUserRecord(uid) === undefined) {
+    throw new Error(encodeError(`The record for uid '${uid}' could not be found in the database.`, 3507));
+  }
+};
+
+/* ************************************************************************************************
+ *                                           RETRIEVERS                                           *
+ ************************************************************************************************ */
+
+/**
+ * Verifies if the password update records can be listed for a given uid at a given time.
+ * @param uid
+ * @param startAtEventTime
+ * @returns Promise<void>
+ * @throws
+ * - 3506: if the uid has an invalid format
+ * - 3507: if the record doesn't exist in the database
+ * - 3508: if the record belongs to the root and has not been explicitly allowed
+ * - 3511: if the starting point is provided but it's not a valid unix timestamp
+ */
+const canListUserPasswordUpdates = async (
+  uid: string,
+  startAtEventTime: number | undefined,
+): Promise<void> => {
+  await validateUserRecordExistance(uid);
+  if (typeof startAtEventTime !== undefined && !timestampValid(startAtEventTime)) {
+    throw new Error(encodeError(`If the startAtEventTime arg is provided, it must be a valid timestamp. Received: ${startAtEventTime}`, 3511));
+  }
+};
+
+
+
 
 /* ************************************************************************************************
  *                                    CREDENTIALS VERIFICATION                                    *
@@ -39,28 +94,6 @@ const canVerifyOTPToken = (uid: string, token: string): void => {
 /* ************************************************************************************************
  *                                     USER RECORD MANAGEMENT                                     *
  ************************************************************************************************ */
-
-/**
- * Validates the format of a uid and ensures the record exists in the database.
- * @param uid
- * @param allowRoot
- * @returns Promise<void>
- * @throws
- * - 3506: if the uid has an invalid format
- * - 3507: if the record doesn't exist in the database
- * - 3508: if the record belongs to the root and has not been explicitly allowed
- */
-const validateUserRecordExistance = async (uid: string, allowRoot?: boolean): Promise<void> => {
-  if (!uuidValid(uid)) {
-    throw new Error(encodeError(`The uid '${uid}' is invalid.`, 3506));
-  }
-  if (!allowRoot && isRoot(uid)) {
-    throw new Error(encodeError(`The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`, 3508));
-  }
-  if (await getUserRecord(uid) === undefined) {
-    throw new Error(encodeError(`The record for uid '${uid}' could not be found in the database.`, 3507));
-  }
-};
 
 /**
  * Validates the format of a nickname and it also checks if it is available.
@@ -188,11 +221,16 @@ const canPasswordBeUpdated = async (
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // helpers
+  validateUserRecordExistance,
+
+  // retrievers
+  canListUserPasswordUpdates,
+
   // credentials verification
   canVerifyOTPToken,
 
   // user record management
-  validateUserRecordExistance,
   canUserBeCreated,
   canNicknameBeUpdated,
   canAuthorityBeUpdated,

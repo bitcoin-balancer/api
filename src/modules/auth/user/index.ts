@@ -1,11 +1,17 @@
 import { encodeError } from 'error-message-utils';
 import { sortRecords } from '../../shared/utils/index.js';
 import { generateUUID } from '../../shared/uuid/index.js';
-import { IUserService, IAuthority, IUser } from './types.js';
+import {
+  IUserService,
+  IAuthority,
+  IUser,
+  IPasswordUpdate,
+} from './types.js';
 import { checkOTPToken, generateOTPSecret } from './otp.js';
 import { hashPassword } from './bcrypt.js';
 import {
   validateUserRecordExistance,
+  canListUserPasswordUpdates,
   canVerifyOTPToken,
   canUserBeCreated,
   canNicknameBeUpdated,
@@ -22,6 +28,7 @@ import {
   updateUserPasswordHash,
   updateUserOTPSecret,
   deleteUserRecord,
+  listUserPasswordUpdateRecords,
 } from './model.js';
 
 /* ************************************************************************************************
@@ -37,6 +44,9 @@ const userServiceFactory = (): IUserService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
+
+  // the maximum number of password update records that can be queried at a time
+  const __PASSWORD_UPDATE_QUERY_LIMIT = 15;
 
   // an object containing all the user records by uid and is built on start up
   let __users: { [uid: string]: IUser } = {};
@@ -57,6 +67,25 @@ const userServiceFactory = (): IUserService => {
     const users = Object.values(__users);
     users.sort(sortRecords('authority', 'desc'));
     return users;
+  };
+
+  /**
+   * Validates and retrieves the list of password update records for a uid.
+   * @param uid
+   * @param startAtEventTime
+   * @returns Promise<IPasswordUpdate[]>
+   * @throws
+   * - 3506: if the uid has an invalid format
+   * - 3507: if the record doesn't exist in the database
+   * - 3508: if the record belongs to the root and has not been explicitly allowed
+   * - 3511: if the starting point is provided but it's not a valid unix timestamp
+   */
+  const listUserPasswordUpdates = async (
+    uid: string,
+    startAtEventTime: number | undefined,
+  ): Promise<IPasswordUpdate[]> => {
+    await canListUserPasswordUpdates(uid, startAtEventTime);
+    return listUserPasswordUpdateRecords(uid, __PASSWORD_UPDATE_QUERY_LIMIT, startAtEventTime);
   };
 
 
@@ -294,6 +323,7 @@ const userServiceFactory = (): IUserService => {
 
     // retrievers
     listUsers,
+    listUserPasswordUpdates,
 
     // credentials verification
     verifyOTPToken,
