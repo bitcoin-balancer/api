@@ -96,6 +96,22 @@ const userServiceFactory = (): IUserService => {
    *                                    CREDENTIALS VERIFICATION                                  *
    ********************************************************************************************** */
 
+  /**
+   * Verifies if a user is authorized to perform an action based on a requirement.
+   * @param uid
+   * @param requiredAuthority
+   * @throws
+   * - 3001: if the uid is invalid or not present in the users' object
+   * - 3002: if the user is not authorized to perform the action
+   */
+  const isAuthorized = (uid: string, requiredAuthority: IAuthority): void => {
+    if (typeof uid !== 'string' || !__users[uid]) {
+      throw new Error(encodeError(`The uid '${uid}' was not found in the users object.`, 3001));
+    }
+    if (__users[uid].authority < requiredAuthority) {
+      throw new Error(encodeError(`The user '${uid}' is not authorized to perform the action. Has ${__users[uid].authority} and needs ${requiredAuthority}`, 3002));
+    }
+  };
 
 
   /**
@@ -326,6 +342,7 @@ const userServiceFactory = (): IUserService => {
     listUserPasswordUpdates,
 
     // credentials verification
+    isAuthorized,
     verifyOTPToken,
 
     // user record management

@@ -64,6 +64,8 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 ### `index.ts`
 
 - **3000:** `The OTP Token '${token}' for uid '${uid}' is invalid.`
+- **3001:** `The uid '${uid}' was not found in the users object.`
+- **3002:** `The user '${uid}' is not authorized to perform the action. Has ${__users[uid].authority} and needs ${requiredAuthority}`
 
 
 ### `model.ts`

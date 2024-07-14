@@ -38,6 +38,10 @@ const validateUserRecordExistance = async (uid: string, allowRoot?: boolean): Pr
   }
 };
 
+
+
+
+
 /* ************************************************************************************************
  *                                           RETRIEVERS                                           *
  ************************************************************************************************ */
@@ -62,6 +66,7 @@ const canListUserPasswordUpdates = async (
     throw new Error(encodeError(`If the startAtEventTime arg is provided, it must be a valid timestamp. Received: ${startAtEventTime}`, 3511));
   }
 };
+
 
 
 

@@ -20,6 +20,7 @@ type IUserService = {
   ) => Promise<IPasswordUpdate[]>;
 
   // credentials verification
+  isAuthorized: (uid: string, requiredAuthority: IAuthority) => void;
   verifyOTPToken: (uid: string, token: string) => Promise<void>;
 
   // user record management
