@@ -113,8 +113,16 @@ const userServiceFactory = (): IUserService => {
       passwordHash = await hashPassword(password);
     }
 
-    // create the record and return it
+    // create the record and add it to the local object
     await createUserRecord(uid, nickname, authority, passwordHash, generateOTPSecret(), eventTime);
+    __users[uid] = {
+      uid,
+      nickname,
+      authority,
+      event_time: eventTime,
+    };
+
+    // finally, return it
     return {
       uid,
       nickname,
