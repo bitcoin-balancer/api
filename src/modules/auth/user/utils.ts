@@ -1,5 +1,5 @@
 import { ENVIRONMENT } from '../../shared/environment/index.js';
-import { IMinifiedUser, IUser } from './types.js';
+import { IUser } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -10,7 +10,7 @@ import { IMinifiedUser, IUser } from './types.js';
  * @param val
  * @returns boolean
  */
-const isRoot = (val: string | IUser | IMinifiedUser): boolean => (
+const isRoot = (val: string | IUser): boolean => (
   (
     typeof val === 'string' && (
       val === ENVIRONMENT.ROOT_ACCOUNT.uid || val === ENVIRONMENT.ROOT_ACCOUNT.nickname

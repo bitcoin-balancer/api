@@ -13,6 +13,7 @@ import {
   canPasswordBeUpdated,
 } from './validations.js';
 import {
+  listUserRecords,
   getUserRecordByNickname,
   getUserOTPSecret,
   createUserRecord,
@@ -21,7 +22,6 @@ import {
   updateUserPasswordHash,
   updateUserOTPSecret,
   deleteUserRecord,
-  listUserRecords,
 } from './model.js';
 
 /* ************************************************************************************************
@@ -58,7 +58,6 @@ const userServiceFactory = (): IUserService => {
     users.sort(sortRecords('authority', 'desc'));
     return users;
   };
-
 
 
 
