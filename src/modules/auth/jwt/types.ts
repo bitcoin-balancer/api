@@ -23,6 +23,7 @@ type IJWTService = {
     otpToken: string,
     altchaPayload: string,
   ) => Promise<{ access: string, refresh: string }>;
+  verifyAccessToken: (accessJWT: string) => Promise<string>;
   refreshAccessJWT: (refreshJWT: string) => Promise<string>;
   signOut: (uid: string, refreshJWT: string, allDevices?: boolean) => Promise<void>;
 

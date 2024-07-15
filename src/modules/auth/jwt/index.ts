@@ -148,6 +148,18 @@ const jwtServiceFactory = (): IJWTService => {
   };
 
   /**
+   * Decodes an Access JWT and returns the UID.
+   * @param accessJWT
+   * @returns Promise<string>
+   * @throws
+   * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
+   * - 4253: if the decoded data is an invalid object or does not contain the uid
+   */
+  const verifyAccessToken = (accessJWT: string): Promise<string> => (
+    verify(accessJWT, __SECRET.access)
+  );
+
+  /**
    * Refreshes an access token based on a long lived Refresh JWT.
    * @param refreshJWT
    * @returns Promise<string>
@@ -254,6 +266,7 @@ const jwtServiceFactory = (): IJWTService => {
 
     // auth actions
     signIn,
+    verifyAccessToken,
     refreshAccessJWT,
     signOut,
 
