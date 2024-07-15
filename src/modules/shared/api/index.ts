@@ -8,6 +8,7 @@ import { DatabaseService } from '../../database/index.js';
 import { NotificationService } from '../notification/index.js';
 import { UserService } from '../../auth/user/index.js';
 import { JWTService } from '../../auth/jwt/index.js';
+import { IPBlacklistService } from '../../ip-blacklist/index.js';
 import {
   IHTTPServer,
   ITerminationSignal,
@@ -82,6 +83,13 @@ const apiServiceFactory = (): IAPIService => {
         await JWTService.teardown();
       } catch (e) {
         console.error('JWTService.teardown()', e);
+      }
+
+      // IP Blacklist Module
+      try {
+        await IPBlacklistService.teardown();
+      } catch (e) {
+        console.error('IPBlacklistService.teardown()', e);
       }
 
       // Database Module
@@ -186,6 +194,15 @@ const apiServiceFactory = (): IAPIService => {
         throw new Error(`JWTService.initialize() -> ${extractMessage(e)}`);
       }
       console.log('4/10) JWT Module: done');
+
+      // IP Blacklist Module
+      console.log('5/10) IP Blacklist Module: started');
+      try {
+        await IPBlacklistService.initialize();
+      } catch (e) {
+        throw new Error(`IPBlacklistService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('5/10) IP Blacklist Module: done');
     }
   };
 

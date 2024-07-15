@@ -12,7 +12,11 @@ type IIPBlacklistService = {
   // properties
   // ...
 
-  // ...
+
+
+  // initializer
+  initialize: () => Promise<void>;
+  teardown: () => Promise<void>;
 };
 
 
