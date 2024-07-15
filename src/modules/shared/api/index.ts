@@ -7,6 +7,7 @@ import { delay } from '../utils/index.js';
 import { DatabaseService } from '../../database/index.js';
 import { NotificationService } from '../notification/index.js';
 import { UserService } from '../../auth/user/index.js';
+import { JWTService } from '../../auth/jwt/index.js';
 import {
   IHTTPServer,
   ITerminationSignal,
@@ -62,13 +63,6 @@ const apiServiceFactory = (): IAPIService => {
    */
   const __teardownModules = async (): Promise<void> => {
     if (!ENVIRONMENT.TEST_MODE) {
-      // Database Module
-      try {
-        await DatabaseService.teardown();
-      } catch (e) {
-        console.error('DatabaseService.teardown()', e);
-      }
-
       // Notification Module
       try {
         await NotificationService.teardown();
@@ -81,6 +75,21 @@ const apiServiceFactory = (): IAPIService => {
         await UserService.teardown();
       } catch (e) {
         console.error('UserService.teardown()', e);
+      }
+
+      // JWT Module
+      try {
+        await JWTService.teardown();
+      } catch (e) {
+        console.error('JWTService.teardown()', e);
+      }
+
+      // Database Module
+      // must be last so the pool remains active until all modules have been teared down
+      try {
+        await DatabaseService.teardown();
+      } catch (e) {
+        console.error('DatabaseService.teardown()', e);
       }
     }
   };
@@ -168,6 +177,15 @@ const apiServiceFactory = (): IAPIService => {
         throw new Error(`UserService.initialize() -> ${extractMessage(e)}`);
       }
       console.log('3/10) User Module: done');
+
+      // JWT Module
+      console.log('4/10) JWT Module: started');
+      try {
+        await JWTService.initialize();
+      } catch (e) {
+        throw new Error(`JWTService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('4/10) JWT Module: done');
     }
   };
 
