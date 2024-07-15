@@ -1,13 +1,13 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 import { describe, afterEach, test, expect, vi } from 'vitest';
-import { addDays } from 'date-fns';
+import { addDays, subDays } from 'date-fns';
 import { toMilliseconds } from '../../shared/utils/index.js';
 import { IQueryResult } from '../../database/index.js';
 import { createUserRecord, deleteAllUserRecords } from '../user/model.js';
 import { IUser } from '../user/types.js';
 import { sign, verify } from './jwt.js';
-import { deleteUserRecords, listRecordsByUID, saveRecord } from './model.js';
+import { deleteExpiredRecords, deleteUserRecords, listRecordsByUID, saveRecord } from './model.js';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
@@ -161,6 +161,50 @@ describe('JWT Model', () => {
       await deleteUserRecords(U[0].uid);
       records = await listRecordsByUID(U[0].uid);
       expect(records).toHaveLength(0);
+    });
+  });
+
+
+
+  describe('deleteExpiredRecords', async () => {
+    test('can delete all the expired records based on a custom time', async () => {
+      vi.useFakeTimers();
+
+      const realDate = new Date();
+      const eventTimes: number[] = [];
+
+      vi.setSystemTime(subDays(realDate, 35));
+      await createUser(U[0]);
+      await saveRecord(U[0].uid, 'some-fake-refresh-token-1');
+      eventTimes.push(Date.now());
+
+      vi.setSystemTime(subDays(realDate, 32));
+      await saveRecord(U[0].uid, 'some-fake-refresh-token-2');
+      eventTimes.push(Date.now());
+
+      vi.setSystemTime(subDays(realDate, 27));
+      await saveRecord(U[0].uid, 'some-fake-refresh-token-3');
+      eventTimes.push(Date.now());
+
+      vi.setSystemTime(subDays(realDate, 6));
+      await saveRecord(U[0].uid, 'some-fake-refresh-token-4');
+      eventTimes.push(Date.now());
+
+      vi.setSystemTime(realDate);
+      await saveRecord(U[0].uid, 'some-fake-refresh-token-5');
+      eventTimes.push(Date.now());
+
+      await expect(listRecordsByUID(U[0].uid)).resolves.toHaveLength(5);
+
+      await deleteExpiredRecords(subDays(realDate, 31).getTime());
+
+      const records = await listRecordsByUID(U[0].uid);
+      expect(records).toHaveLength(3);
+      expect(records).toStrictEqual([
+        { uid: U[0].uid, token: 'some-fake-refresh-token-5', event_time: eventTimes.at(-1) },
+        { uid: U[0].uid, token: 'some-fake-refresh-token-4', event_time: eventTimes.at(-2) },
+        { uid: U[0].uid, token: 'some-fake-refresh-token-3', event_time: eventTimes.at(-3) },
+      ]);
     });
   });
 });

@@ -1,10 +1,10 @@
-import { addMinutes, addDays } from 'date-fns';
+import { addMinutes, addDays, subDays } from 'date-fns';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
-import { IQueryResult } from '../../database/types.js';
 import { UserService } from '../user/index.js';
 import { IJWTService } from './types.js';
+import { canUserSignOut } from './validations.js';
 import { sign } from './jwt.js';
-import { saveRecord, deleteAllRecords, deleteUserRecords } from './model.js';
+import { saveRecord, deleteUserRecords, deleteExpiredRecords } from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -135,21 +135,36 @@ const jwtServiceFactory = (): IJWTService => {
    * @param refreshJWT
    * @param allDevices?
    * @returns Promise<void>
+   * @throws
+   * - 4500: if the uid has an invalid format
+   * - 4501: if the Refresh JWT has an invalid format
    */
   const signOut = async (uid: string, refreshJWT: string, allDevices?: boolean): Promise<void> => {
     // validate the request
-    // @TODO
+    canUserSignOut(uid, refreshJWT);
 
     // sign the user out accordingly
     await deleteUserRecords(uid, allDevices === true ? undefined : refreshJWT);
   };
 
+
+
+
+
+  /* **********************************************************************************************
+   *                                         MAINTENANCE                                          *
+   ********************************************************************************************** */
+
   /**
-   * Signs all the users out of Balancer, including the root account.
+   * Executes all the maintenance processes in order to keep the module fast and efficient.
    * @returns Promise<void>
    */
-  const signAllUsersOut = async (): Promise<IQueryResult> => deleteAllRecords();
+  const __runMaintenance = async (): Promise<void> => {
+    // delete expired records
+    await deleteExpiredRecords(subDays(new Date(), __ACCESS_JWT_DURATION + 1).getTime());
 
+    // ...
+  };
 
 
 
@@ -171,7 +186,7 @@ const jwtServiceFactory = (): IJWTService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    // ...
+    await __runMaintenance();
   };
 
 
@@ -194,7 +209,6 @@ const jwtServiceFactory = (): IJWTService => {
     signIn,
     refreshAccessJWT,
     signOut,
-    signAllUsersOut,
 
     // initializer
     initialize,

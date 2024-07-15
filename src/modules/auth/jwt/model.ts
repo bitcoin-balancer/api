@@ -74,6 +74,21 @@ const deleteUserRecords = (uid: string, refreshJWT?: string) => (
 );
 
 /**
+ * Deletes all the records containing Refresh JWTs that have expired.
+ * @param startAtTimestamp
+ * @returns Promise<IQueryResult>
+ */
+const deleteExpiredRecords = (startAtTimestamp: number): Promise<IQueryResult> => (
+  DatabaseService.pool.query({
+    text: `
+      DELETE FROM ${DatabaseService.tn.refresh_tokens}
+      WHERE event_time <= $1;
+    `,
+    values: [startAtTimestamp],
+  })
+);
+
+/**
  * Deletes all of the Refresh Token Records from the database. In other words, it signs out all of
  * the users.
  * @returns Promise<IQueryResult>
@@ -97,5 +112,6 @@ export {
   // record management
   saveRecord,
   deleteUserRecords,
+  deleteExpiredRecords,
   deleteAllRecords,
 };

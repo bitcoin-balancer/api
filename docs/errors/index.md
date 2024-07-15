@@ -116,3 +116,8 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **4251:** `The signed JWT '${token}' has an invalid format.`
 - **4252:** `Failed to verify the JWT. Error: ${extractMessage(err)}`
 - **4253:** `The data decoded from the JWT is not a valid object or contains an invalid UUID.`
+
+### `validations.ts`
+
+- **4500:** `The uid '${uid}' is invalid.`
+- **4501:** `The refresh JWT '${refreshJWT}' is invalid.`
