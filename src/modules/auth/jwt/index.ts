@@ -2,9 +2,14 @@ import { addMinutes, addDays, subDays } from 'date-fns';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { UserService } from '../user/index.js';
 import { IJWTService } from './types.js';
-import { canUserSignOut } from './validations.js';
-import { sign } from './jwt.js';
-import { saveRecord, deleteUserRecords, deleteExpiredRecords } from './model.js';
+import { canRefreshAccessJWT, canUserSignOut } from './validations.js';
+import { sign, verify } from './jwt.js';
+import {
+  getUidByRefreshToken,
+  saveRecord,
+  deleteUserRecords,
+  deleteExpiredRecords,
+} from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -126,8 +131,26 @@ const jwtServiceFactory = (): IJWTService => {
    * Refreshes an access token based on a long lived Refresh JWT.
    * @param refreshJWT
    * @returns Promise<string>
+   * @throws
+   * - 4250: if the jsonwebtoken lib fails to sign the token
+   * - 4251: if the signed token has an invalid format
+   * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
+   * - 4253: if the decoded data is an invalid object or does not contain the uid
+   * - 4750: if there isn't a record that matches the refreshToken
    */
-  const refreshAccessJWT = async (refreshJWT: string): Promise<string> => '@TODO';
+  const refreshAccessJWT = async (refreshJWT: string): Promise<string> => {
+    // decode the JWT
+    const decodedUID = await verify(refreshJWT, __SECRET.refresh);
+
+    // extract the uid from the Refresh JWT Records
+    const retrievedUID = await getUidByRefreshToken(refreshJWT);
+
+    // validate the data
+    canRefreshAccessJWT(decodedUID, retrievedUID);
+
+    // finally, generate the token and return it
+    return __generateAccessToken(decodedUID);
+  };
 
   /**
    * Signs an user out from a single or multiple devices in one go.
@@ -165,6 +188,7 @@ const jwtServiceFactory = (): IJWTService => {
 
     // ...
   };
+
 
 
 

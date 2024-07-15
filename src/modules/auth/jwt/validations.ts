@@ -7,14 +7,15 @@ import { jwtValid, uuidValid } from '../../shared/validations/index.js';
 
 /**
  * Verifies if an access token can be refreshed based on the validity of the Refresh JWT.
- * @param refreshJWT
+ * @param decodedUID
+ * @param retrievedUID
  * @throws
- * - 4501: if the Refresh JWT has an invalid format
+ * - 4502: if the Decoded UID is different to the one stored in the database
  */
-const canRefreshAccessJWT = (refreshJWT: string): void => {
-  /* if (!jwtValid(refreshJWT)) {
-    throw new Error(encodeError(`The refresh JWT '${refreshJWT}' is invalid.`, 4501));
-  } */
+const canRefreshAccessJWT = (decodedUID: string, retrievedUID: string): void => {
+  if (decodedUID !== retrievedUID) {
+    throw new Error(encodeError(`The UID decoded from the Refresh JWT '${decodedUID}' is different to the one stored in the database '${retrievedUID}'.`, 4502));
+  }
 };
 
 /**

@@ -121,6 +121,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **4500:** `The uid '${uid}' is invalid.`
 - **4501:** `The refresh JWT '${refreshJWT}' is invalid.`
+- **4502:** `The UID decoded from the Refresh JWT '${decodedUID}' is different to the one stored in the database '${uidFromRecord}'.`
 
 ### `model.ts`
 
