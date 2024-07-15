@@ -171,7 +171,7 @@ const ipValid = (value: any): value is string => stringValid(value, 5, 300);
  * @param value
  * @returns boolean
  */
-const ipNotesValid = (value: any): value is string => stringValid(value, 5, 3000);
+const ipNotesValid = (value: any): value is string => stringValid(value, 5, 25000);
 
 /**
  * Verifies if a value is a value that complies with semantic versioning.
