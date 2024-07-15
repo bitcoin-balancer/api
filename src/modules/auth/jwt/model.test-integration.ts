@@ -97,6 +97,10 @@ describe('JWT Model', () => {
       await expect(getUidByRefreshToken('some_fake_token-2')).resolves.toBe(U[1].uid);
       await expect(getUidByRefreshToken('some_fake_token-3')).resolves.toBe(U[2].uid);
     });
+
+    test('throws if the Refresh JWT doesn\'t exist', async () => {
+      await expect(getUidByRefreshToken('some_fake_token-1')).rejects.toThrowError('4750');
+    });
   });
 
 
