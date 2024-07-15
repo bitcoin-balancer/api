@@ -50,6 +50,13 @@ const checkOTPToken = (token: string, secret: string): boolean => {
   }
 };
 
+/**
+ * Generates an OTP Token for a secret. Note: this method is to be used in the automated tests to
+ * simulate authentication.
+ * @param secret
+ * @returns string
+ */
+const generateOTPToken = (secret: string) => authenticator.generate(secret);
 
 
 
@@ -60,4 +67,5 @@ const checkOTPToken = (token: string, secret: string): boolean => {
 export {
   generateOTPSecret,
   checkOTPToken,
+  generateOTPToken,
 };

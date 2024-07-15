@@ -10,7 +10,8 @@
  */
 type IJWTService = {
   // properties
-  REFRESH_TOKEN_DURATION_MS: number;
+  REFRESH_JWT_DURATION_MS: number;
+  REFRESH_JWT_COOKIE_NAME: string;
 
   // auth actions
   signIn: (
@@ -19,6 +20,7 @@ type IJWTService = {
     otpToken: string,
     altchaPayload: string,
   ) => Promise<{ access: string, refresh: string }>;
+  refreshAccessJWT: (refreshJWT: string) => Promise<string>;
   signOut: (uid: string, refreshJWT: string, allDevices?: boolean) => Promise<void>;
   signAllUsersOut: () => Promise<void>;
 
