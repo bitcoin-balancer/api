@@ -68,7 +68,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **3002:** `The user '${uid}' is not authorized to perform the action. Has ${__users[uid].authority} and needs ${requiredAuthority}`
 - **3003:** `The user '${uid}' could not be found in the local users' object.`
 - **3004:** `The password doesn't match the one stored in the database. Please double check it and try again.`
-- **3005:** `The provided credentials are invalid. Please double check them and try again.`
+- **3005:** `The provided credentials are invalid. Please double-check them and try again. If your account is new, you must set a password via the "Password Update" section before signing in.`
 
 
 ### `model.ts`
@@ -93,3 +93,26 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **3509:** `The password for uid '${uid}' is invalid or too weak. Make sure the password meets the requirements and try again.`
 - **3510:** `The OTP Token '${token}' is invalid.`
 - **3511:** `If the startAtEventTime arg is provided, it must be a valid timestamp. Received: ${startAtEventTime}`
+
+
+
+
+
+<br/><br/><br/>
+
+## `Auth/JWT` (4000 - 4999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **4000:** ``
+
+### `jwt.ts`
+
+- **4250:** `Failed to sign the JWT. Error: ${extractMessage(err)}`
+- **4251:** `The signed JWT '${token}' has an invalid format.`
+- **4252:** `Failed to verify the JWT. Error: ${extractMessage(err)}`
+- **4253:** `The data decoded from the JWT is not a valid object or contains an invalid UUID.`

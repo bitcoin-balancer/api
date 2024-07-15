@@ -195,7 +195,7 @@ const userServiceFactory = (): IUserService => {
       }
     } catch (e) {
       if (ENVIRONMENT.NODE_ENV === 'production') {
-        throw new Error(encodeError('The provided credentials are invalid. Please double check them and try again.', 3005));
+        throw new Error(encodeError('The provided credentials are invalid. Please double-check them and try again. If your account is new, you must set a password via the "Password Update" section before signing in.', 3005));
       }
       throw e;
     }
