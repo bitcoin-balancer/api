@@ -71,4 +71,20 @@ export const RAW_TABLES: IRawTable[] = [
       CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_uid_token_idx ON ${getTableName('refresh_tokens')}(uid, token);
       CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_uid_event_time_idx ON ${getTableName('refresh_tokens')}(uid, event_time DESC);`,
   },
+
+  /**
+   * ip_blacklist
+   * every record corresponds to an IP Address that has been blacklisted.
+   */
+  {
+    name: 'ip_blacklist',
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('ip_blacklist')} (
+        id          BIGSERIAL PRIMARY KEY,
+        ip          VARCHAR(500) NOT NULL UNIQUE,
+        notes       VARCHAR(25000) NULL,
+        event_time  BIGINT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ${getTableName('ip_blacklist')}_ip_idx ON ${getTableName('ip_blacklist')}(ip);`,
+  },
 ];

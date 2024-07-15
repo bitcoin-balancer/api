@@ -56,7 +56,7 @@ type IQueryResult = pg.QueryResult;
  * Each table has a unique name. However, the API creates a test version of each table to be used in
  * unit and integration tests.
  */
-type ITableName = 'api_errors' | 'users' | 'password_updates' | 'refresh_tokens';
+type ITableName = 'api_errors' | 'users' | 'password_updates' | 'refresh_tokens' | 'ip_blacklist';
 type ITestTableName = `test_${ITableName}`;
 type ITableNames = {
   [key in ITableName]: ITableName | ITestTableName;
