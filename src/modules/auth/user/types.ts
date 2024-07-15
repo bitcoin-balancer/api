@@ -28,7 +28,7 @@ type IUserService = {
     password: string,
     otpToken: string,
     altchaPayload: string,
-  ) => Promise<void>;
+  ) => Promise<string>;
 
   // user record management
   createUser: (nickname: string, authority: IAuthority, password?: string) => Promise<IUser>;

@@ -157,12 +157,12 @@ const userServiceFactory = (): IUserService => {
   };
 
   /**
-   * Validates and verifies the sign in credentials are valid.
+   * Validates and verifies the sign in credentials are valid. If successful, returns the uid.
    * @param nickname
    * @param password
    * @param otpToken
    * @param altchaPayload
-   * @returns Promise<void>
+   * @returns Promise<string>
    * @throws
    * - 3500: if the nickname's format is invalid
    * - 3509: if the pasword's format is invalid or is too weak
@@ -177,7 +177,7 @@ const userServiceFactory = (): IUserService => {
     password: string,
     otpToken: string,
     altchaPayload: string,
-  ): Promise<void> => {
+  ): Promise<string> => {
     // validate the request
     await canVerifySignInCredentials(nickname, password, otpToken, altchaPayload);
 
@@ -193,6 +193,9 @@ const userServiceFactory = (): IUserService => {
       if (!await comparePassword(password, password_hash)) {
         throw new Error(encodeError('The password doesn\'t match the one stored in the database. Please double check it and try again.', 3004));
       }
+
+      // finally, return the uid
+      return uid;
     } catch (e) {
       if (ENVIRONMENT.NODE_ENV === 'production') {
         throw new Error(encodeError('The provided credentials are invalid. Please double-check them and try again. If your account is new, you must set a password via the "Password Update" section before signing in.', 3005));
