@@ -7,7 +7,13 @@ import { IQueryResult } from '../../database/index.js';
 import { createUserRecord, deleteAllUserRecords } from '../user/model.js';
 import { IUser } from '../user/types.js';
 import { sign, verify } from './jwt.js';
-import { deleteExpiredRecords, deleteUserRecords, listRecordsByUID, saveRecord } from './model.js';
+import {
+  getUidByRefreshToken,
+  listRecordsByUID,
+  saveRecord,
+  deleteExpiredRecords,
+  deleteUserRecords,
+} from './model.js';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
@@ -60,7 +66,6 @@ describe('JWT Model', () => {
   /* **********************************************************************************************
    *                                             MISC                                             *
    ********************************************************************************************** */
-
   describe('sign & verify', () => {
     test('can sign and verify a JSON Web Token', async () => {
       for (const user of U) {
@@ -79,6 +84,24 @@ describe('JWT Model', () => {
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
+  describe('getUidByRefreshToken', () => {
+    test('can retrieve the uid from a refresh token (if exists)', async () => {
+      await Promise.all(U.map(createUser));
+      await Promise.all([
+        await saveRecord(U[0].uid, 'some_fake_token-1'),
+        await saveRecord(U[1].uid, 'some_fake_token-2'),
+        await saveRecord(U[2].uid, 'some_fake_token-3'),
+      ]);
+
+      await expect(getUidByRefreshToken('some_fake_token-1')).resolves.toBe(U[0].uid);
+      await expect(getUidByRefreshToken('some_fake_token-2')).resolves.toBe(U[1].uid);
+      await expect(getUidByRefreshToken('some_fake_token-3')).resolves.toBe(U[2].uid);
+    });
+  });
+
+
+
+
 
   describe('listRecordsByUID', () => {
     test('can retrieve a list of records by uid in descending order', async () => {
@@ -163,6 +186,8 @@ describe('JWT Model', () => {
       expect(records).toHaveLength(0);
     });
   });
+
+
 
 
 

@@ -6,6 +6,18 @@ import { jwtValid, uuidValid } from '../../shared/validations/index.js';
  ************************************************************************************************ */
 
 /**
+ * Verifies if an access token can be refreshed based on the validity of the Refresh JWT.
+ * @param refreshJWT
+ * @throws
+ * - 4501: if the Refresh JWT has an invalid format
+ */
+const canRefreshAccessJWT = (refreshJWT: string): void => {
+  /* if (!jwtValid(refreshJWT)) {
+    throw new Error(encodeError(`The refresh JWT '${refreshJWT}' is invalid.`, 4501));
+  } */
+};
+
+/**
  * Verifies if an user has provided the correct details in order to sign out.
  * @param uid
  * @param refreshJWT
@@ -24,11 +36,10 @@ const canUserSignOut = (uid: string, refreshJWT: string): void => {
 
 
 
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  canRefreshAccessJWT,
   canUserSignOut,
 };

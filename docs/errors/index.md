@@ -121,3 +121,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **4500:** `The uid '${uid}' is invalid.`
 - **4501:** `The refresh JWT '${refreshJWT}' is invalid.`
+
+### `model.ts`
+
+- **4750:** `The provided Refresh JWT did not match any uids stored in the database.`

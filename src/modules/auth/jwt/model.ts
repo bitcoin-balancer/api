@@ -1,9 +1,32 @@
+import { encodeError } from 'error-message-utils';
 import { DatabaseService, IQueryResult } from '../../database/index.js';
 import { IRefreshTokenRecord } from './types.js';
 
 /* ************************************************************************************************
  *                                          RETRIEVERS                                            *
  ************************************************************************************************ */
+
+/**
+ * Retrieves an uid based on a Refresh JWT.
+ * @param refreshToken
+ * @returns Promise<string>
+ * @throws
+ * - 4750: if there isn't a record that matches the refreshToken
+ */
+const getUidByRefreshToken = async (refreshToken: string): Promise<string> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT uid
+      FROM ${DatabaseService.tn.refresh_tokens}
+      WHERE token = $1;
+    `,
+    values: [refreshToken],
+  });
+  if (!rows.length) {
+    throw new Error(encodeError('The provided Refresh JWT did not match any uids stored in the database.', 4750));
+  }
+  return rows[0].uid;
+};
 
 /**
  * Lists all the existing refresh token records for a uid. If a user has no records it means they
@@ -23,6 +46,7 @@ const listRecordsByUID = async (uid: string): Promise<IRefreshTokenRecord[]> => 
   });
   return rows;
 };
+
 
 
 
@@ -107,6 +131,7 @@ const deleteAllRecords = (): Promise<IQueryResult> => DatabaseService.pool.query
  ************************************************************************************************ */
 export {
   // retrievers
+  getUidByRefreshToken,
   listRecordsByUID,
 
   // record management
