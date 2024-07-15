@@ -41,7 +41,7 @@ type IJWTService = {
  * Refresh Token
  * A record is generated and stored whenever a user signs in on a device.
  */
-type IRefreshToken = {
+type IRefreshTokenRecord = {
   // the owner of the token
   uid: string;
 
@@ -64,5 +64,5 @@ export type {
   IJWTService,
 
   // types
-  IRefreshToken,
+  IRefreshTokenRecord,
 };

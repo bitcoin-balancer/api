@@ -3,6 +3,10 @@
 import { describe, beforeEach, afterEach, test, expect, vi } from 'vitest';
 import { sortRecords, toMilliseconds } from '../../shared/utils/index.js';
 import { IQueryResult } from '../../database/types.js';
+import {
+  saveRecord as saveRefreshTokenRecord,
+  listRecordsByUID as listRefreshTokenRecordsByUID,
+} from '../jwt/model.js';
 import { IUser } from './types.js';
 import {
   listUserRecords,
@@ -387,15 +391,18 @@ describe('User Model', () => {
       let passwordUpdateRecords = await listUserPasswordUpdateRecords(U[0].uid, 15);
       expect(passwordUpdateRecords).toHaveLength(2);
 
-      // add some refresh tokens
-      // ...
+      await saveRefreshTokenRecord(U[0].uid, 'Some fake refresh token');
+      await saveRefreshTokenRecord(U[0].uid, 'Some other fake refresh token');
+      await saveRefreshTokenRecord(U[0].uid, 'Last fake refresh token');
+      let refreshTokenRecords = await listRefreshTokenRecordsByUID(U[0].uid);
+      expect(refreshTokenRecords).toHaveLength(3);
 
       await deleteUserRecord(U[0].uid);
       passwordUpdateRecords = await listUserPasswordUpdateRecords(U[0].uid, 15);
       expect(passwordUpdateRecords).toHaveLength(0);
 
-      // check the refresh tokens
-      // ...
+      refreshTokenRecords = await listRefreshTokenRecordsByUID(U[0].uid);
+      expect(refreshTokenRecords).toHaveLength(0);
     });
   });
 });

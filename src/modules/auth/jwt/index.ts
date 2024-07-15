@@ -3,6 +3,7 @@ import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { UserService } from '../user/index.js';
 import { IJWTService } from './types.js';
 import { sign } from './jwt.js';
+import { saveRecord } from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -34,6 +35,7 @@ const jwtServiceFactory = (): IJWTService => {
 
 
 
+
   /* **********************************************************************************************
    *                                        JWT GENERATORS                                        *
    ********************************************************************************************** */
@@ -42,6 +44,9 @@ const jwtServiceFactory = (): IJWTService => {
    * Generates an Access JWT for an uid.
    * @param uid
    * @returns Promise<string>
+   * @throws
+   * - 4250: if the jsonwebtoken lib fails to sign the token
+   * - 4251: if the signed token has an invalid format
    */
   const __generateAccessToken = (uid: string): Promise<string> => sign(
     uid,
@@ -53,6 +58,9 @@ const jwtServiceFactory = (): IJWTService => {
    * Generates a Refresh JWT for an uid.
    * @param uid
    * @returns Promise<string>
+   * @throws
+   * - 4250: if the jsonwebtoken lib fails to sign the token
+   * - 4251: if the signed token has an invalid format
    */
   const __generateRefreshToken = (uid: string): Promise<string> => sign(
     uid,
@@ -75,6 +83,16 @@ const jwtServiceFactory = (): IJWTService => {
    * @param otpToken
    * @param altchaPayload
    * @returns Promise<{ access: string, refresh: string }>
+   * @throws
+   * - 3500: if the nickname's format is invalid
+   * - 3509: if the pasword's format is invalid or is too weak
+   * - 3510: if the OTP Token's format is invalid
+   * - 2000: the altcha payload has an invalid format
+   * - 2001: the altcha solution is invalid or it has expired
+   * - 3004: if the password verification fails
+   * - 3005: hides the original error in production to avoid leaking information
+   * - 4250: if the jsonwebtoken lib fails to sign the token
+   * - 4251: if the signed token has an invalid format
    */
   const signIn = async (
     nickname: string,
@@ -97,7 +115,7 @@ const jwtServiceFactory = (): IJWTService => {
     ]);
 
     // store the refresh token (user's session)
-    // @TODO
+    await saveRecord(uid, refresh);
 
     // finally, return both JWTs
     return { access, refresh };
