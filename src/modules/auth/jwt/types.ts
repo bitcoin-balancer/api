@@ -1,4 +1,4 @@
-
+import { IQueryResult } from '../../database/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -22,7 +22,7 @@ type IJWTService = {
   ) => Promise<{ access: string, refresh: string }>;
   refreshAccessJWT: (refreshJWT: string) => Promise<string>;
   signOut: (uid: string, refreshJWT: string, allDevices?: boolean) => Promise<void>;
-  signAllUsersOut: () => Promise<void>;
+  signAllUsersOut: () => Promise<IQueryResult>;
 
   // initializer
   initialize: () => Promise<void>;

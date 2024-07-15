@@ -1,9 +1,10 @@
 import { addMinutes, addDays } from 'date-fns';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
+import { IQueryResult } from '../../database/types.js';
 import { UserService } from '../user/index.js';
 import { IJWTService } from './types.js';
 import { sign } from './jwt.js';
-import { saveRecord } from './model.js';
+import { saveRecord, deleteAllRecords, deleteUserRecords } from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -126,7 +127,7 @@ const jwtServiceFactory = (): IJWTService => {
    * @param refreshJWT
    * @returns Promise<string>
    */
-  const refreshAccessJWT = async (refreshJWT: string): Promise<string> => '';
+  const refreshAccessJWT = async (refreshJWT: string): Promise<string> => '@TODO';
 
   /**
    * Signs an user out from a single or multiple devices in one go.
@@ -140,14 +141,14 @@ const jwtServiceFactory = (): IJWTService => {
     // @TODO
 
     // sign the user out accordingly
-    // @TODO
+    await deleteUserRecords(uid, allDevices === true ? undefined : refreshJWT);
   };
 
   /**
    * Signs all the users out of Balancer, including the root account.
    * @returns Promise<void>
    */
-  const signAllUsersOut = async (): Promise<void> => undefined;
+  const signAllUsersOut = async (): Promise<IQueryResult> => deleteAllRecords();
 
 
 

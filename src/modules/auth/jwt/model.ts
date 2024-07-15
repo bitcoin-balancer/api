@@ -48,6 +48,32 @@ const saveRecord = (uid: string, refreshJWT: string): Promise<IQueryResult> => (
 );
 
 /**
+ * Deletes the refresh token records for a user. If the refreshJWT is provided, it will delete that
+ * individual record. Otherwise, it deletes all the existing records for the user (sign out from
+ * all devices).
+ * @param uid
+ * @param refreshJWT
+ * @returns Promise<IQueryResult>
+ */
+const deleteUserRecords = (uid: string, refreshJWT?: string) => (
+  typeof refreshJWT === 'string'
+    ? DatabaseService.pool.query({
+      text: `
+        DELETE FROM ${DatabaseService.tn.refresh_tokens}
+        WHERE uid = $1 AND token = $2;
+      `,
+      values: [uid, refreshJWT],
+    })
+    : DatabaseService.pool.query({
+      text: `
+        DELETE FROM ${DatabaseService.tn.refresh_tokens}
+        WHERE uid = $1;
+      `,
+      values: [uid],
+    })
+);
+
+/**
  * Deletes all of the Refresh Token Records from the database. In other words, it signs out all of
  * the users.
  * @returns Promise<IQueryResult>
@@ -70,5 +96,6 @@ export {
 
   // record management
   saveRecord,
+  deleteUserRecords,
   deleteAllRecords,
 };
