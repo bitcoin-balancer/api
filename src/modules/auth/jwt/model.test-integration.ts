@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { describe, afterEach, test, expect } from 'vitest';
+import { describe, afterEach, test, expect, vi } from 'vitest';
 import { addDays } from 'date-fns';
 import { toMilliseconds } from '../../shared/utils/index.js';
 import { IQueryResult } from '../../database/index.js';
@@ -54,6 +54,7 @@ const createUser: (user: IUser) => Promise<IQueryResult> = ({
 describe('JWT Model', () => {
   afterEach(async () => {
     await deleteAllUserRecords();
+    vi.useRealTimers();
   });
 
   describe('sign & verify', () => {
@@ -66,6 +67,8 @@ describe('JWT Model', () => {
       }
     });
   });
+
+
 
 
 
@@ -85,6 +88,37 @@ describe('JWT Model', () => {
           event_time: records[0].event_time,
         }]);
       }
+    });
+  });
+
+
+
+  describe('listRecordsByUID', () => {
+    test('can retrieve a list of records by uid in descending order', async () => {
+      vi.useFakeTimers();
+
+      await createUser(U[0]);
+
+      const eventTimes: number[] = [Date.now()];
+      await saveRecord(U[0].uid, 'some_fake_token');
+
+      await vi.advanceTimersByTimeAsync(TIME_INCREMENT);
+      eventTimes.push(Date.now());
+
+      await saveRecord(U[0].uid, 'some_other_fake_token');
+
+      await vi.advanceTimersByTimeAsync(TIME_INCREMENT);
+      eventTimes.push(Date.now());
+
+      await saveRecord(U[0].uid, 'final_fake_token');
+
+      const records = await listRecordsByUID(U[0].uid);
+      expect(records).toHaveLength(3);
+      expect(records).toStrictEqual([
+        { uid: U[0].uid, token: 'final_fake_token', event_time: eventTimes[2] },
+        { uid: U[0].uid, token: 'some_other_fake_token', event_time: eventTimes[1] },
+        { uid: U[0].uid, token: 'some_fake_token', event_time: eventTimes[0] },
+      ]);
     });
   });
 });
