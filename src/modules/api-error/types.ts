@@ -40,7 +40,7 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast';
 
 /**
  * API Error
- * The recordof the error that is stored in the database.
+ * The record of the error that is stored in the database.
  */
 type IAPIError = {
   // the autoincrementing integer used to identify a record
