@@ -64,7 +64,7 @@ const sign = (
  * @param ignoreExpiration?
  * @returns Promise<string>
  * @throws
- * - 4252: if the lib fails to verify the JWT for any reason
+ * - 4252: if the lib fails to verify the JWT for any reason (most likely is that the token expired)
  * - 4253: if the decoded data is an invalid object or does not contain the uid
  */
 const verify = (

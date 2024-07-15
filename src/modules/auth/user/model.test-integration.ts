@@ -377,8 +377,24 @@ describe('User Model', () => {
 
 
 
+
   describe('deleteUserRecord', () => {
-    test.todo('when an user is deleted, it also deletes the password_updates & refresh_tokens records', async () => {
+    test('when an user is deleted, it also deletes the password_updates & refresh_tokens records', async () => {
+      await create(U[0]);
+      await updateUserPasswordHash(U[0].uid, 'NewSecretPasswordHash');
+      await updateUserPasswordHash(U[0].uid, 'NewSecretPasswordHash');
+
+      let passwordUpdateRecords = await listUserPasswordUpdateRecords(U[0].uid, 15);
+      expect(passwordUpdateRecords).toHaveLength(2);
+
+      // add some refresh tokens
+      // ...
+
+      await deleteUserRecord(U[0].uid);
+      passwordUpdateRecords = await listUserPasswordUpdateRecords(U[0].uid, 15);
+      expect(passwordUpdateRecords).toHaveLength(0);
+
+      // check the refresh tokens
       // ...
     });
   });
