@@ -6,6 +6,18 @@ import { jwtValid, uuidValid } from '../../shared/validations/index.js';
  ************************************************************************************************ */
 
 /**
+ * Verifies if the records can be listed for an uid.
+ * @param uid
+ * @throws
+ * - 4500: if the uid has an invalid format
+ */
+const canRecordsBeListed = (uid: string): void => {
+  if (!uuidValid(uid)) {
+    throw new Error(encodeError(`The uid '${uid}' is invalid.`, 4500));
+  }
+};
+
+/**
  * Verifies if an access token can be refreshed based on the validity of the Refresh JWT.
  * @param decodedUID
  * @param retrievedUID
@@ -37,10 +49,13 @@ const canUserSignOut = (uid: string, refreshJWT: string): void => {
 
 
 
+
+
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  canRecordsBeListed,
   canRefreshAccessJWT,
   canUserSignOut,
 };

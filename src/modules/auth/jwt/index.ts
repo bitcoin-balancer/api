@@ -1,11 +1,12 @@
 import { addMinutes, addDays, subDays } from 'date-fns';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { UserService } from '../user/index.js';
-import { IJWTService } from './types.js';
-import { canRefreshAccessJWT, canUserSignOut } from './validations.js';
+import { IJWTService, IRefreshTokenRecord } from './types.js';
+import { canRecordsBeListed, canRefreshAccessJWT, canUserSignOut } from './validations.js';
 import { sign, verify } from './jwt.js';
 import {
   getUidByRefreshToken,
+  listRecordsByUID,
   saveRecord,
   deleteUserRecords,
   deleteExpiredRecords,
@@ -38,6 +39,25 @@ const jwtServiceFactory = (): IJWTService => {
   // the name of the property that will contain the user's Refresh JWT
   const __REFRESH_JWT_COOKIE_NAME = 'refreshJWT';
 
+
+
+
+
+  /* **********************************************************************************************
+   *                                          RETRIEVERS                                          *
+   ********************************************************************************************** */
+
+  /**
+   * Validates and lists the refresh token records for an uid.
+   * @param uid
+   * @returns Promise<IRefreshTokenRecord[]>
+   * @throws
+   * - 4500: if the uid has an invalid format
+   */
+  const listRecords = (uid: string): Promise<IRefreshTokenRecord[]> => {
+    canRecordsBeListed(uid);
+    return listRecordsByUID(uid);
+  };
 
 
 
@@ -228,6 +248,9 @@ const jwtServiceFactory = (): IJWTService => {
     get REFRESH_JWT_COOKIE_NAME() {
       return __REFRESH_JWT_COOKIE_NAME;
     },
+
+    // retrievers
+    listRecords,
 
     // auth actions
     signIn,

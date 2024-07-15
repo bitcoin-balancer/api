@@ -13,6 +13,9 @@ type IJWTService = {
   REFRESH_JWT_DURATION_MS: number;
   REFRESH_JWT_COOKIE_NAME: string;
 
+  // retrievers
+  listRecords: (uid: string) => Promise<IRefreshTokenRecord[]>;
+
   // auth actions
   signIn: (
     nickname: string,
