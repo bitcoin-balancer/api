@@ -126,3 +126,19 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 ### `model.ts`
 
 - **4750:** `The provided Refresh JWT did not match any uids stored in the database.`
+
+
+
+
+
+<br/><br/><br/>
+
+## `IPBlacklist` (5000 - 5999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **5000:** `The ip '${ip}' is blacklisted and should not be served.`

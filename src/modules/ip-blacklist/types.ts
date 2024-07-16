@@ -12,7 +12,8 @@ type IIPBlacklistService = {
   // properties
   // ...
 
-
+  // ip status
+  isBlacklisted: (ip: string) => void;
 
   // initializer
   initialize: () => Promise<void>;
