@@ -33,7 +33,7 @@ const canIPBeRegistered = async (ip: string, notes: string | undefined): Promise
   if (!ipValid(ip)) {
     throw new Error(encodeError(`The IP Address '${ip}' is invalid.`, 5250));
   }
-  if (typeof notes !== undefined && !ipNotesValid(notes)) {
+  if (notes !== undefined && !ipNotesValid(notes)) {
     throw new Error(encodeError(`The IP Address Blacklisting notes are invalid. Received '${notes}'`, 5251));
   }
   if (await getRecordByIP(ip) !== undefined) {
@@ -61,7 +61,7 @@ const canIPRegistrationBeUpdated = async (
   if (!ipValid(ip)) {
     throw new Error(encodeError(`The IP Address '${ip}' is invalid.`, 5250));
   }
-  if (typeof notes !== undefined && !ipNotesValid(notes)) {
+  if (notes !== undefined && !ipNotesValid(notes)) {
     throw new Error(encodeError(`The IP Address Blacklisting notes are invalid. Received '${notes}'`, 5251));
   }
   if (!integerValid(id, 1)) {
