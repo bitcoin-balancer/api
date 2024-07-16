@@ -1,7 +1,7 @@
 import { encodeError } from 'error-message-utils';
 import { IIPBlacklistRecord, IIPBlacklistService } from './types.js';
 import { sanitizeIP } from './utils.js';
-import { createRecord, listIPs } from './model.js';
+import { listIPs, createRecord, updateRecord } from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -56,6 +56,13 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
    *                                        RECORD MANAGEMENT                                     *
    ********************************************************************************************** */
 
+  /**
+   * Registers an IP Address in the Blacklist. Once registered, the API won't serve future requests
+   * sent by the IP.
+   * @param ip
+   * @param notes
+   * @returns Promise<IIPBlacklistRecord>
+   */
   const registerIP = async (ip: string, notes: string | undefined): Promise<IIPBlacklistRecord> => {
     // init values
     const sip = sanitizeIP(ip);
@@ -63,7 +70,7 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
     const eventTime = Date.now();
 
     // validate the request
-    // ...
+    // @TODO
 
     // register the record and return it
     const id = await createRecord(sip, snotes, eventTime);
@@ -74,6 +81,10 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
       notes: snotes,
       event_time: eventTime,
     };
+  };
+
+  const updateIPRegistration = async (): Promise<void> => {
+
   };
 
 

@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { sanitizeIP } from './utils.js';
+import { sanitizeIP, sanitizeRecordData } from './utils.js';
 
 
 /* ************************************************************************************************
@@ -15,5 +15,19 @@ describe('sanitizeIP', () => {
     [' FFFF: 192.168.0 . 1 ', 'ffff:192.168.0.1'],
   ])('sanitizeIP(%s) -> %s', (a, expected) => {
     expect(sanitizeIP(a)).toBe(expected);
+  });
+});
+
+
+
+
+describe('sanitizeRecordData', () => {
+  test.each([
+    ['192.168.0.1', 'Hello world!', { sanitizedIP: '192.168.0.1', sanitizedNotes: 'Hello world!' }],
+    [' FFFF: 192.168.0 . 1', 'Hello world!', { sanitizedIP: 'ffff:192.168.0.1', sanitizedNotes: 'Hello world!' }],
+    ['192.168.0.1', undefined, { sanitizedIP: '192.168.0.1', sanitizedNotes: undefined }],
+    ['192.168.0.1', '', { sanitizedIP: '192.168.0.1', sanitizedNotes: undefined }],
+  ])('sanitizeRecordData(%s, %s) -> %o', (a, b, expected) => {
+    expect(sanitizeRecordData(a, b)).toStrictEqual(expected);
   });
 });

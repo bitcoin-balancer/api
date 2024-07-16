@@ -13,6 +13,20 @@ const sanitizeIP = (rawIP: string): string => (
   typeof rawIP === 'string' ? rawIP.toLowerCase().replace(/\s+/g, '') : ''
 );
 
+/**
+ * Sanitizes all the values required to interact with IP Blacklist Records.
+ * @param rawIP
+ * @param rawNotes
+ * @returns { sanitizedIP: string, sanitizedNotes: string | undefined }
+ */
+const sanitizeRecordData = (
+  rawIP: string,
+  rawNotes: string | undefined,
+): { sanitizedIP: string, sanitizedNotes: string | undefined } => ({
+  sanitizedIP: sanitizeIP(rawIP),
+  sanitizedNotes: typeof rawNotes === 'string' && rawNotes.length ? rawNotes : undefined,
+});
+
 
 
 
@@ -22,4 +36,5 @@ const sanitizeIP = (rawIP: string): string => (
  ************************************************************************************************ */
 export {
   sanitizeIP,
+  sanitizeRecordData,
 };
