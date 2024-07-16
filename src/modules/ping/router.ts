@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { buildResponse } from 'api-response-utils';
 import { veryHighRiskLimit } from '../../middlewares/rate-limit/index.js';
+import { checkPublicRequest } from '../shared/request-guard/index.js';
+import { APIErrorService } from '../api-error/index.js';
 
 const PingRouter = Router();
 
@@ -13,8 +15,13 @@ const PingRouter = Router();
  * @returns IAPIResponse<string>
  */
 PingRouter.route('/').get(veryHighRiskLimit, (req: Request, res: Response) => {
-  console.log(req.get('authorization'));
-  res.json(buildResponse(req.ip));
+  try {
+    checkPublicRequest(req.ip);
+    res.json(buildResponse(req.ip));
+  } catch (e) {
+    APIErrorService.save('PingRoute.get', e, undefined, req.ip);
+    res.json(buildResponse(undefined, e));
+  }
 });
 
 

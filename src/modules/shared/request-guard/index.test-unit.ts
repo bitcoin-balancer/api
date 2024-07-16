@@ -100,12 +100,4 @@ describe('RequestGuard', () => {
       expect(() => checkPublicRequest(IP, ['someArg'], { someArg: NaN })).toThrowError('6004');
     });
   });
-
-
-
-
-
-  describe('checkRequest', () => {
-    test.todo('...');
-  });
 });

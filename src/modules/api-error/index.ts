@@ -1,9 +1,11 @@
+/* eslint-disable no-console */
 import { decodeError, extractMessage } from 'error-message-utils';
 import { IRecord } from '../shared/types.js';
 import { IAPIError, IAPIErrorOrigin, IAPIErrorService } from './types.js';
 import { buildArgs } from './utils.js';
 import { canRecordsBeListed } from './validations.js';
 import { deleteAllRecords, listRecords, saveRecord } from './model.js';
+import { ENVIRONMENT } from '../shared/environment/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -52,6 +54,7 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
    * @param uid?
    * @param ip?
    * @param args?
+   * @param printError?
    * @returns Promise<void>
    */
   const save = async (
@@ -60,8 +63,10 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
     uid?: string,
     ip?: string,
     args?: IRecord<any>,
+    printError: boolean = true,
   ): Promise<void> => {
     try {
+      if (!ENVIRONMENT.TEST_MODE && printError) console.error(error);
       const { code } = decodeError(error);
       if (!__OMIT_ERROR_CODES.includes(<number>code)) {
         await saveRecord(

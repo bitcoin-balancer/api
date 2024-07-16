@@ -1,14 +1,29 @@
 import { encodeError } from 'error-message-utils';
 import { IRecord } from '../types.js';
-import { objectValid } from '../validations/index.js';
+import { authorizationHeaderValid, ipValid, objectValid } from '../validations/index.js';
 import { ENVIRONMENT } from '../environment/index.js';
 import { APIService } from '../api/index.js';
 import { IAuthority, UserService } from '../../auth/user/index.js';
+import { JWTService } from '../../auth/jwt/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
 
 /* ************************************************************************************************
  *                                            HELPERS                                             *
  ************************************************************************************************ */
+
+/**
+ * Validates the Client's IP format and also checks it against the Blacklist.
+ * @param ip
+ * @throws
+ * - 6006: if the IP's format is invalid
+ * - 5000: if the IP Address is in the blacklist
+ */
+const __validateIP = (ip: string | undefined): void => {
+  if (!ipValid(ip)) {
+    throw new Error(encodeError(`The request's IP Address '${ip}' is invalid and therefore cannot be served.`, 6006));
+  }
+  IPBlacklistService.isBlacklisted(ip);
+};
 
 /**
  * If there are required arguments, it will ensure the args object contains all the required keys.
@@ -39,12 +54,34 @@ const __validateArgs = (
   }
 };
 
-
-const __validateAuthorizationHeader = (): void => {
-
+/**
+ * Validates and extracts the Access JWT from the authorization header.
+ * @param authorization
+ * @returns string
+ * @throws
+ * - 6005: if the authorization header has an invalid format or doesn't exist
+ */
+const __extractAccessJWT = (authorization: string | undefined): string => {
+  if (!authorizationHeaderValid(authorization)) {
+    throw new Error(encodeError('The Authorization Header is invalid. Please review the docs and try again.', 6005));
+  }
+  return authorization.split('Bearer ')[1];
 };
 
-const __decodeAuthorizationHeader = async (authorization: string): Promise<string> => '';
+/**
+ * Extracts the Access JWT from the Authorization Header and attempts to verify it. If successful,
+ * returns the uid.
+ * @param authorization
+ * @returns Promise<string>
+ * @throws
+ * - 6005: if the authorization header has an invalid format or doesn't exist
+ * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
+ * - 4253: if the decoded data is an invalid object or does not contain the uid
+ */
+const __decodeAuthorizationHeader = async (authorization: string | undefined): Promise<string> => (
+  JWTService.verifyAccessToken(__extractAccessJWT(authorization))
+);
+
 
 
 
@@ -62,12 +99,13 @@ const __decodeAuthorizationHeader = async (authorization: string): Promise<strin
  * - 6000: if TEST_MODE is enabled
  * - 6001: if RESTORE_MODE is enabled
  * - 6002: if the API has not finished the initialization process
+ * - 6006: if the IP's format is invalid
  * - 5000: if the IP Address is in the blacklist
  * - 6003: if there are required args but the args object is invalid or empty
  * - 6004: if an argument is required but wasn't included in the request args (body|query)
  */
 const checkPublicRequest = (
-  clientIP: string,
+  clientIP: string | undefined,
   requiredArgs?: string[],
   args?: IRecord<any>,
 ): void => {
@@ -87,7 +125,7 @@ const checkPublicRequest = (
   }
 
   // ensure the IP Address is not Blacklisted
-  IPBlacklistService.isBlacklisted(clientIP);
+  __validateIP(clientIP);
 
   // validate the arguments
   __validateArgs(requiredArgs, args);
@@ -109,10 +147,19 @@ const checkPublicRequest = (
  * - 5000: if the IP Address is in the blacklist
  * - 6003: if there are required args but the args object is invalid or empty
  * - 6004: if an argument is required but wasn't included in the request args (body|query)
+ * - 6005: if the authorization header has an invalid format or doesn't exist
+ * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
+ * - 4253: if the decoded data is an invalid object or does not contain the uid
+ * - 3001: if the uid is invalid or not present in the users' object
+ * - 3002: if the user is not authorized to perform the action
+ * - 3250: if the user record does not exist or the OTP Secret is not valid
+ * - 3506: if the uid has an invalid format
+ * - 3510: if the OTP Token has an invalid format
+ * - 3000: if the OTP Token failed the verification
  */
 const checkRequest = async (
-  authorization: string,
-  clientIP: string,
+  authorization: string | undefined,
+  clientIP: string | undefined,
   requiredAuthority: IAuthority,
   requiredArgs?: string[],
   args?: IRecord<any>,
@@ -128,7 +175,9 @@ const checkRequest = async (
   UserService.isAuthorized(uid, requiredAuthority);
 
   // verify the OTP Token
-  // UserService.verifyOTPToken(uid, otpToken);
+  if (typeof otpToken === 'string') {
+    await UserService.verifyOTPToken(uid, otpToken);
+  }
 
   // finally, return the decoded uid
   return uid;
