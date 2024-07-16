@@ -3,7 +3,7 @@ import { IRecord } from '../types.js';
 import { objectValid } from '../validations/index.js';
 import { ENVIRONMENT } from '../environment/index.js';
 import { APIService } from '../api/index.js';
-import { IAuthority } from '../../auth/user/index.js';
+import { IAuthority, UserService } from '../../auth/user/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
 
 /* ************************************************************************************************
@@ -40,40 +40,18 @@ const __validateArgs = (
 };
 
 
+const __validateAuthorizationHeader = (): void => {
+
+};
+
+const __decodeAuthorizationHeader = async (authorization: string): Promise<string> => '';
+
 
 
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
-
-/**
- * Verifies if the API is able to receive an authenticated request.
- * @param authorization
- * @param clientIP
- * @param requiredAuthority
- * @param requiredArgs
- * @param args
- * @param otpToken
- * @returns Promise<void>
- * @throws
- * - 6000: if TEST_MODE is enabled
- * - 6001: if RESTORE_MODE is enabled
- * - 6002: if the API has not finished the initialization process
- * - 5000: if the IP Address is in the blacklist
- * - 6003: if there are required args but the args object is invalid or empty
- * - 6004: if an argument is required but wasn't included in the request args (body|query)
- */
-const checkRequest = async (
-  authorization: string,
-  clientIP: string,
-  requiredAuthority: IAuthority,
-  requiredArgs?: string[],
-  args?: IRecord<any>,
-  otpToken?: string,
-): Promise<string> => {
-  return '';
-};
 
 /**
  * Verifies if the API is able to receive a public (non-authenticated) request.
@@ -115,6 +93,47 @@ const checkPublicRequest = (
   __validateArgs(requiredArgs, args);
 };
 
+/**
+ * Verifies if the API is able to receive an authenticated request.
+ * @param authorization
+ * @param clientIP
+ * @param requiredAuthority
+ * @param requiredArgs
+ * @param args
+ * @param otpToken
+ * @returns Promise<void>
+ * @throws
+ * - 6000: if TEST_MODE is enabled
+ * - 6001: if RESTORE_MODE is enabled
+ * - 6002: if the API has not finished the initialization process
+ * - 5000: if the IP Address is in the blacklist
+ * - 6003: if there are required args but the args object is invalid or empty
+ * - 6004: if an argument is required but wasn't included in the request args (body|query)
+ */
+const checkRequest = async (
+  authorization: string,
+  clientIP: string,
+  requiredAuthority: IAuthority,
+  requiredArgs?: string[],
+  args?: IRecord<any>,
+  otpToken?: string,
+): Promise<string> => {
+  // perform the essential validations
+  checkPublicRequest(clientIP, requiredArgs, args);
+
+  // decode the authorization
+  const uid = await __decodeAuthorizationHeader(authorization);
+
+  // verify the authority
+  UserService.isAuthorized(uid, requiredAuthority);
+
+  // verify the OTP Token
+  // UserService.verifyOTPToken(uid, otpToken);
+
+  // finally, return the decoded uid
+  return uid;
+};
+
 
 
 
@@ -123,6 +142,6 @@ const checkPublicRequest = (
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  checkRequest,
   checkPublicRequest,
+  checkRequest,
 };

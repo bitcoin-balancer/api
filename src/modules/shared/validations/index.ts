@@ -160,6 +160,20 @@ const jwtValid = (value: any): value is string => (
 );
 
 /**
+ * Verifies if a value has a valid Authorization Header format based on the RFC6750. Example:
+ * Authorization: Bearer eyJhbGciOiJIUzI1NiIXVCJ9TJV...r7E20RMHrHDcEfxjoYZgeFONFh7HgQ
+ * More info:
+ * - https://stackoverflow.com/questions/33265812/best-http-authorization-header-type-for-jwt
+ * - https://www.rfc-editor.org/rfc/rfc6750
+ * @param value
+ * @returns boolean
+ */
+const authorizationHeaderValid = (value: any): value is string => (
+  typeof value === 'string'
+  && /^Bearer [A-Za-z0-9-_]{2,1000}\.[A-Za-z0-9-_]{2,1000}\.[A-Za-z0-9-_]{2,1000}$/.test(value)
+);
+
+/**
  * Verifies if a value is (or could be) an IP Address.
  * @param value
  * @returns boolean
@@ -204,6 +218,7 @@ export {
   otpSecretValid,
   otpTokenValid,
   jwtValid,
+  authorizationHeaderValid,
   ipValid,
   ipNotesValid,
   semverValid,

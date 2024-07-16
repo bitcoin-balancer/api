@@ -54,14 +54,6 @@ describe('RequestGuard', () => {
     vi.restoreAllMocks();
   });
 
-  describe('checkRequest', () => {
-    test.todo('...');
-  });
-
-
-
-
-
   describe('checkPublicRequest', () => {
     test('can check a valid public request', () => {
       mockEnvironment({ TEST_MODE: false });
@@ -107,5 +99,13 @@ describe('RequestGuard', () => {
       expect(() => checkPublicRequest(IP, ['someArg'], { someArg: '' })).toThrowError('6004');
       expect(() => checkPublicRequest(IP, ['someArg'], { someArg: NaN })).toThrowError('6004');
     });
+  });
+
+
+
+
+
+  describe('checkRequest', () => {
+    test.todo('...');
   });
 });
