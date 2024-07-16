@@ -19,6 +19,8 @@ type IIPBlacklistService = {
 
   // record management
   registerIP: (ip: string, notes: string | undefined) => Promise<IIPBlacklistRecord>;
+  updateIPRegistration: (id: number, ip: string, notes: string | undefined) => Promise<void>;
+  unregisterIP: (id: number) => Promise<void>;
 
   // initializer
   initialize: () => Promise<void>;

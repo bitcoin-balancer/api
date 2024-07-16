@@ -1,8 +1,14 @@
 import { encodeError } from 'error-message-utils';
 import { IIPBlacklistRecord, IIPBlacklistService } from './types.js';
 import { sanitizeIP, sanitizeRecordData } from './utils.js';
-import { canIPBeRegistered } from './validations.js';
-import { listIPs, createRecord, updateRecord } from './model.js';
+import { canIPBeRegistered, canIPBeUnregistered, canIPRegistrationBeUpdated } from './validations.js';
+import {
+  getRecord,
+  listIPs,
+  createRecord,
+  updateRecord,
+  deleteRecord,
+} from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -87,8 +93,53 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
     };
   };
 
-  const updateIPRegistration = async (): Promise<void> => {
+  /**
+   * Updates an IP Blacklist Registration Record.
+   * @param id
+   * @param ip
+   * @param notes
+   * @returns Promise<void>
+   * @throws
+   * - 5250: if the IP has an invalid format
+   * - 5251: if the notes have been provided but are invalid
+   * - 5252: if the identifier has an invalid format
+   * - 5253: if the IP has already been blacklisted by a different record
+   */
+  const updateIPRegistration = async (
+    id: number,
+    ip: string,
+    notes: string | undefined,
+  ): Promise<void> => {
+    // init values
+    const { sanitizedIP, sanitizedNotes } = sanitizeRecordData(ip, notes);
 
+    // validate the request
+    await canIPRegistrationBeUpdated(id, sanitizedIP, sanitizedNotes);
+
+    // update the record
+    await updateRecord(id, sanitizedIP, sanitizedNotes);
+    delete __blacklist[ip];
+    __blacklist[sanitizedIP] = true;
+  };
+
+
+  /**
+   * Unregisters an IP Address from the Blacklist.
+   * @param id
+   * @returns Promise<void>
+   * @throws
+   * - 5254: if the registration cannot be found in the database
+   */
+  const unregisterIP = async (id: number): Promise<void> => {
+    // retrieve the record (if any)
+    const record = await getRecord(id);
+
+    // validate the request
+    canIPBeUnregistered(id, record);
+
+    // delete the record
+    await deleteRecord(id);
+    delete __blacklist[record!.ip];
   };
 
 
@@ -140,6 +191,8 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
 
     // record management
     registerIP,
+    updateIPRegistration,
+    unregisterIP,
 
     // initializer
     initialize,
