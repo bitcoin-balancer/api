@@ -70,6 +70,8 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
    * provided in order to paginate through the records.
    * @param startAtID
    * @returns Promise<IIPBlacklistRecord[]>
+   * @throws
+   * - 5255: if the starting point is provided and is invalid
    */
   const list = (startAtID: number | undefined): Promise<IIPBlacklistRecord[]> => {
     canBlacklistBeListed(startAtID);

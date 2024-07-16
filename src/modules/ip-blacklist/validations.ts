@@ -11,7 +11,7 @@ import { getRecordByIP } from './model.js';
  * Verifies if the IP Blacklist Records can be listed.
  * @param startAtID
  * @throws
- * - 5255: if the provided starting point is invalid
+ * - 5255: if the starting point is provided and is invalid
  */
 const canBlacklistBeListed = (startAtID: number | undefined): void => {
   if (startAtID !== undefined && !integerValid(startAtID, 1)) {
