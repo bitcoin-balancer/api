@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { describe, beforeAll, afterAll, beforeEach, afterEach, test, expect } from 'vitest';
+import { describe, afterEach, test, expect } from 'vitest';
 import { IAPIError } from './types.js';
 import { deleteAllRecords, getRecord, listRecords, saveRecord } from './model.js';
 import { objectValid } from '../shared/validations/index.js';
@@ -59,12 +59,6 @@ const ERRORS: IAPIError[] = [
  *                                             TESTS                                              *
  ************************************************************************************************ */
 describe('APIError Model', () => {
-  beforeAll(() => { });
-
-  afterAll(() => { });
-
-  beforeEach(() => { });
-
   afterEach(async () => {
     await deleteAllRecords();
   });

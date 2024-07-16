@@ -11,5 +11,5 @@ describe('broadcast', () => {
       title: 'Integration Test',
       description: 'Hi! If you\'re reading this message it\'s because the Telegram Module has been implemented correctly and is ready to be used in production.',
     })).resolves.toBeUndefined();
-  });
+  }, 15000);
 });

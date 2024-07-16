@@ -24,7 +24,7 @@ const getRecord = async (id: number): Promise<IAPIError | null> => {
 };
 
 /**
- * Retrieves the list of existing API Errors.
+ * Retrieves a list of existing API Errors constrained by a limit.
  * @param limit
  * @returns Promise<IAPIError[]>
  */
