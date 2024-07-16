@@ -142,3 +142,9 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 ### `index.ts`
 
 - **5000:** `The ip '${ip}' is blacklisted and should not be served.`
+
+### `validations.ts`
+
+- **5250:** `The IP Address '${ip}' is invalid.`
+- **5251:** `The IP Address Blacklisting notes are invalid. Received '${notes}'`
+- **5252:** ``

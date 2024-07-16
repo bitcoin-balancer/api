@@ -1,6 +1,7 @@
 import { encodeError } from 'error-message-utils';
 import { IIPBlacklistRecord, IIPBlacklistService } from './types.js';
-import { sanitizeIP } from './utils.js';
+import { sanitizeIP, sanitizeRecordData } from './utils.js';
+import { canIPBeRegistered } from './validations.js';
 import { listIPs, createRecord, updateRecord } from './model.js';
 
 /* ************************************************************************************************
@@ -62,23 +63,26 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
    * @param ip
    * @param notes
    * @returns Promise<IIPBlacklistRecord>
+   * @throws
+   * - 5250: if the IP has an invalid format
+   * - 5251: if the notes have been provided but are invalid
+   * - 5252: if the IP Address has already been registered
    */
   const registerIP = async (ip: string, notes: string | undefined): Promise<IIPBlacklistRecord> => {
     // init values
-    const sip = sanitizeIP(ip);
-    const snotes = typeof notes === 'string' && notes.length ? notes : undefined;
+    const { sanitizedIP, sanitizedNotes } = sanitizeRecordData(ip, notes);
     const eventTime = Date.now();
 
     // validate the request
-    // @TODO
+    await canIPBeRegistered(sanitizedIP, sanitizedNotes);
 
     // register the record and return it
-    const id = await createRecord(sip, snotes, eventTime);
-    __blacklist[sip] = true;
+    const id = await createRecord(sanitizedIP, sanitizedNotes, eventTime);
+    __blacklist[sanitizedIP] = true;
     return {
       id,
-      ip: sip,
-      notes: snotes,
+      ip: sanitizedIP,
+      notes: sanitizedNotes,
       event_time: eventTime,
     };
   };
