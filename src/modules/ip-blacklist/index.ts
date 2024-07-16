@@ -1,3 +1,4 @@
+import { listIPs } from './model.js';
 import { IIPBlacklistService } from './types.js';
 
 /* ************************************************************************************************
@@ -14,9 +15,8 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // ...
-
-
+  // the object containing all blacklisted IP Addresses
+  let __blacklist: { [ip: string]: boolean } = {};
 
 
 
@@ -41,7 +41,13 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
-    // ...
+    __blacklist = (await listIPs()).reduce(
+      (previous, current) => ({
+        ...previous,
+        [current]: true,
+      }),
+      {},
+    );
   };
 
   /**
@@ -49,8 +55,9 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    // ...
+    __blacklist = {};
   };
+
 
 
 
