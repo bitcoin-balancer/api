@@ -484,5 +484,9 @@ const UserService = userServiceFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // types
+  type IAuthority,
+
+  // service
   UserService,
 };

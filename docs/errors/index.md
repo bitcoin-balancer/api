@@ -151,3 +151,26 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **5253:** `The IP Address '${ip}' has already been blacklisted by another record.`
 - **5254:** `The registration '${id}' cannot be unregistered because it doesn't exist.`
 - **5255:** `The IP Blacklist records cannot be listed with an invalid startAtID. Received: ${startAtID}.`
+
+
+
+
+
+<br/><br/><br/>
+
+## `RequestGuard` (6000 - 6999)
+
+- If the error **`6002`** is thrown, retry the request after ~1-2 minutes
+- ...
+- ...
+
+### `index.ts`
+
+- **6000:** `The API cannot accept requests when TEST_MODE is enabled.`
+- **6001:** `The API cannot accept requests when RESTORE_MODE is enabled.`
+- **6002:** `The API cannot accept requests because it has not yet been initialized. Please try again in a few minutes.`
+- **6003:** `The request cannot be served because the required arguments were not sent.`
+- **6004:** `The arg '${argKey}' is required but it was not sent in the request.`
+- **6005:** ``
+- **6006:** ``
+- **6007:** ``

@@ -62,9 +62,6 @@ type IUserService = {
  * by a user.
  */
 type IAuthority = 1 | 2 | 3 | 4 | 5;
-type IAuthorities = {
-  [uid: string]: IAuthority
-};
 
 /**
  * User
@@ -112,7 +109,6 @@ export type {
 
   // types
   IAuthority,
-  IAuthorities,
   IUser,
   IPasswordUpdate,
 };
