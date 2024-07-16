@@ -1,7 +1,7 @@
 import { encodeError } from 'error-message-utils';
-import { IIPBlacklistService } from './types.js';
+import { IIPBlacklistRecord, IIPBlacklistService } from './types.js';
 import { sanitizeIP } from './utils.js';
-import { listIPs } from './model.js';
+import { createRecord, listIPs } from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -37,7 +37,7 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
   const isBlacklisted = (ip: string): void => {
     const sip = sanitizeIP(ip);
     if (__blacklist[sip]) {
-      throw new Error(encodeError(`The ip '${ip}' is blacklisted and should not be served.`, 5000));
+      throw new Error(encodeError(`The ip '${sip}' is blacklisted and should not be served.`, 5000));
     }
   };
 
@@ -56,8 +56,24 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
    *                                        RECORD MANAGEMENT                                     *
    ********************************************************************************************** */
 
-  const someAction = () => {
+  const registerIP = async (ip: string, notes: string | undefined): Promise<IIPBlacklistRecord> => {
+    // init values
+    const sip = sanitizeIP(ip);
+    const snotes = typeof notes === 'string' && notes.length ? notes : undefined;
+    const eventTime = Date.now();
+
+    // validate the request
     // ...
+
+    // register the record and return it
+    const id = await createRecord(sip, snotes, eventTime);
+    __blacklist[sip] = true;
+    return {
+      id,
+      ip: sip,
+      notes: snotes,
+      event_time: eventTime,
+    };
   };
 
 
@@ -108,7 +124,7 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
     // ...
 
     // record management
-    someAction,
+    registerIP,
 
     // initializer
     initialize,

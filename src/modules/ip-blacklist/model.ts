@@ -60,7 +60,7 @@ const __listRecords = async (limit: number): Promise<IIPBlacklistRecord[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, ip, notes, event_time
-      FROM ${DatabaseService.tn.ip_blacklist} 
+      FROM ${DatabaseService.tn.ip_blacklist}
       ORDER BY id DESC
       LIMIT $1;
     `,
@@ -83,7 +83,7 @@ const __listNextRecords = async (
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, ip, notes, event_time
-      FROM ${DatabaseService.tn.ip_blacklist} 
+      FROM ${DatabaseService.tn.ip_blacklist}
       WHERE id < $1
       ORDER BY id DESC
       LIMIT $2;
@@ -116,16 +116,21 @@ const listRecords = (limit: number, startAtID?: number): Promise<IIPBlacklistRec
  * Creates an IP Blacklist record and returns its identifier.
  * @param ip
  * @param notes
+ * @param eventTime
  * @returns Promise<number>
  */
-const createRecord = async (ip: string, notes: string | undefined): Promise<number> => {
+const createRecord = async (
+  ip: string,
+  notes: string | undefined,
+  eventTime: number,
+): Promise<number> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       INSERT INTO ${DatabaseService.tn.ip_blacklist} (ip, notes, event_time)
       VALUES ($1, $2, $3)
       RETURNING id;
     `,
-    values: [ip, notes, Date.now()],
+    values: [ip, notes, eventTime],
   });
   return rows[0].id;
 };
@@ -140,9 +145,9 @@ const createRecord = async (ip: string, notes: string | undefined): Promise<numb
 const updateRecord = (id: number, ip: string, notes: string | undefined): Promise<IQueryResult> => (
   DatabaseService.pool.query({
     text: `
-      UPDATE ${DatabaseService.tn.ip_blacklist} 
+      UPDATE ${DatabaseService.tn.ip_blacklist}
       SET ip = $1, notes = $2
-      WHERE id = $3
+      WHERE id = $3;
     `,
     values: [ip, notes, id],
   })
@@ -154,10 +159,7 @@ const updateRecord = (id: number, ip: string, notes: string | undefined): Promis
  * @returns Promise<IQueryResult>
  */
 const deleteRecord = (id: number): Promise<IQueryResult> => DatabaseService.pool.query({
-  text: `
-    DELETE FROM ${DatabaseService.tn.ip_blacklist}
-    WHERE id = $1;
-  `,
+  text: `DELETE FROM ${DatabaseService.tn.ip_blacklist} WHERE id = $1;`,
   values: [id],
 });
 

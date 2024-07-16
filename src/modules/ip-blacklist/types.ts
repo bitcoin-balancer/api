@@ -15,6 +15,11 @@ type IIPBlacklistService = {
   // ip status
   isBlacklisted: (ip: string) => void;
 
+  // retrievers
+
+  // record management
+  registerIP: (ip: string, notes: string | undefined) => Promise<IIPBlacklistRecord>;
+
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;

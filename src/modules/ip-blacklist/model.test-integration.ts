@@ -33,7 +33,7 @@ const IPs: string[] = [
 const createRecords = async (ips: string[]): Promise<number[]> => {
   const ids: number[] = [];
   for (const ip of ips) {
-    ids.push(await createRecord(ip, undefined));
+    ids.push(await createRecord(ip, undefined, Date.now()));
   }
   return ids;
 };
@@ -54,7 +54,7 @@ describe('IP Blacklist Model', () => {
    ********************************************************************************************** */
   describe('listIPs', () => {
     test('can create several records and retrieve the list of IPs', async () => {
-      await Promise.all(IPs.map((ip) => createRecord(ip, undefined)));
+      await Promise.all(IPs.map((ip) => createRecord(ip, undefined, Date.now())));
       const ips = await listIPs();
       expect(ips).toHaveLength(IPs.length);
       ips.forEach((ip) => {
@@ -144,7 +144,7 @@ describe('IP Blacklist Model', () => {
       record = await getRecordByIP(IPs[0]);
       expect(record).toBeUndefined();
 
-      const id = await createRecord(IPs[0], 'Some cool notes!');
+      const id = await createRecord(IPs[0], 'Some cool notes!', Date.now());
 
       record = await getRecord(id);
       expect(record).toBeDefined();
@@ -172,7 +172,7 @@ describe('IP Blacklist Model', () => {
     });
 
     test('can create a record without a note', async () => {
-      const id = await createRecord(IPs[0], undefined);
+      const id = await createRecord(IPs[0], undefined, Date.now());
 
       let record = await getRecord(id);
       expect(record).toBeDefined();
@@ -200,7 +200,7 @@ describe('IP Blacklist Model', () => {
 
   describe('updateRecord', () => {
     test('can create a record and update it', async () => {
-      const id = await createRecord(IPs[0], 'Some Cool Note');
+      const id = await createRecord(IPs[0], 'Some Cool Note', Date.now());
 
       await updateRecord(id, IPs[1], undefined);
       let record = await getRecord(id);
@@ -225,7 +225,7 @@ describe('IP Blacklist Model', () => {
   });
 
   test('can update a record that didn\'t have a note initially', async () => {
-    const id = await createRecord(IPs[0], undefined);
+    const id = await createRecord(IPs[0], undefined, Date.now());
     await updateRecord(id, IPs[0], 'Add this sweet note');
     const record = await getRecord(id);
     expect(record).toBeDefined();
