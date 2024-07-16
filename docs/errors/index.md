@@ -150,3 +150,4 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **5252:** `The identifier '${id}' for the IP Blacklist Record is invalid.`
 - **5253:** `The IP Address '${ip}' has already been blacklisted by another record.`
 - **5254:** `The registration '${id}' cannot be unregistered because it doesn't exist.`
+- **5255:** `The IP Blacklist records cannot be listed with an invalid startAtID. Received: ${startAtID}.`

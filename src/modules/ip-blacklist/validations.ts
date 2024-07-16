@@ -1,11 +1,23 @@
 import { encodeError } from 'error-message-utils';
-import { ipNotesValid, ipValid, numberValid } from '../shared/validations/index.js';
+import { integerValid, ipNotesValid, ipValid } from '../shared/validations/index.js';
 import { IIPBlacklistRecord } from './types.js';
 import { getRecordByIP } from './model.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
+
+/**
+ * Verifies if the IP Blacklist Records can be listed.
+ * @param startAtID
+ * @throws
+ * - 5255: if the provided starting point is invalid
+ */
+const canBlacklistBeListed = (startAtID: number | undefined): void => {
+  if (startAtID !== undefined && !integerValid(startAtID, 1)) {
+    throw new Error(encodeError(`The IP Blacklist Records cannot be listed with an invalid startAtID. Received: ${startAtID}.`, 5255));
+  }
+};
 
 /**
  * Verifies if an IP can be registered in the Blacklist.
@@ -52,7 +64,7 @@ const canIPRegistrationBeUpdated = async (
   if (typeof notes !== undefined && !ipNotesValid(notes)) {
     throw new Error(encodeError(`The IP Address Blacklisting notes are invalid. Received '${notes}'`, 5251));
   }
-  if (!numberValid(id, 1)) {
+  if (!integerValid(id, 1)) {
     throw new Error(encodeError(`The identifier '${id}' for the IP Blacklist Record is invalid.`, 5252));
   }
 
@@ -84,6 +96,7 @@ const canIPBeUnregistered = (id: number, record: IIPBlacklistRecord | undefined)
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  canBlacklistBeListed,
   canIPBeRegistered,
   canIPRegistrationBeUpdated,
   canIPBeUnregistered,

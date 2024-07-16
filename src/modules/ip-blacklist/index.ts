@@ -1,13 +1,19 @@
 import { encodeError } from 'error-message-utils';
 import { IIPBlacklistRecord, IIPBlacklistService } from './types.js';
 import { sanitizeIP, sanitizeRecordData } from './utils.js';
-import { canIPBeRegistered, canIPBeUnregistered, canIPRegistrationBeUpdated } from './validations.js';
+import {
+  canBlacklistBeListed,
+  canIPBeRegistered,
+  canIPBeUnregistered,
+  canIPRegistrationBeUpdated,
+} from './validations.js';
 import {
   getRecord,
   listIPs,
   createRecord,
   updateRecord,
   deleteRecord,
+  listRecords,
 } from './model.js';
 
 /* ************************************************************************************************
@@ -23,6 +29,9 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
+
+  // the number of records that can be retrieved at a time
+  const __LIST_LIMIT: number = 15;
 
   // the object containing all blacklisted IP Addresses
   let __blacklist: { [ip: string]: boolean } = {};
@@ -55,6 +64,18 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
   /* **********************************************************************************************
    *                                           RETRIEVERS                                         *
    ********************************************************************************************** */
+
+  /**
+   * Retrieves a list of IP Blacklist Records from the database. A custom starting point can be
+   * provided in order to paginate through the records.
+   * @param startAtID
+   * @returns Promise<IIPBlacklistRecord[]>
+   */
+  const list = (startAtID: number | undefined): Promise<IIPBlacklistRecord[]> => {
+    canBlacklistBeListed(startAtID);
+    return listRecords(__LIST_LIMIT, startAtID);
+  };
+
 
 
 
@@ -187,7 +208,7 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
     isBlacklisted,
 
     // retrievers
-    // ...
+    list,
 
     // record management
     registerIP,
