@@ -2,8 +2,8 @@ import { encodeError } from 'error-message-utils';
 import { IRecord } from '../types.js';
 import { objectValid } from '../validations/index.js';
 import { ENVIRONMENT } from '../environment/index.js';
-import { IAuthority } from '../../auth/user/index.js';
 import { APIService } from '../api/index.js';
+import { IAuthority } from '../../auth/user/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
 
 /* ************************************************************************************************

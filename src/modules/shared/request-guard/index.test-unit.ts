@@ -1,6 +1,7 @@
 import { describe, beforeAll, afterAll, beforeEach, afterEach, test, expect, vi } from 'vitest';
 import { IEnvironment } from '../environment/types.js';
 import * as ENVIRONMENT from '../environment/index.js';
+import { APIService } from '../api/index.js';
 import { checkPublicRequest } from './index.js';
 
 /* ************************************************************************************************
@@ -24,6 +25,16 @@ const mockEnvironment = (value: Partial<IEnvironment>) => vi.spyOn(
   'ENVIRONMENT',
   'get',
 ).mockReturnValue(<IEnvironment>value);
+
+// mocks the initialized state of the API
+vi.mock('../api/index.js', () => ({
+  APIService: {
+    initialized: false,
+  },
+}));
+const mockInitializedState = (state: boolean) => (
+  vi.spyOn(APIService, 'initialized', 'get').mockReturnValue(state)
+);
 
 
 
@@ -52,6 +63,18 @@ describe('RequestGuard', () => {
 
 
   describe('checkPublicRequest', () => {
+    test('can check a valid public request', () => {
+      mockEnvironment({ TEST_MODE: false });
+      mockInitializedState(true);
+      expect(checkPublicRequest(IP)).toBeUndefined();
+    });
+
+    test('can check a valid public request with args', () => {
+      mockEnvironment({ TEST_MODE: false });
+      mockInitializedState(true);
+      expect(checkPublicRequest(IP, ['someArg'], { someArg: 'hello!' })).toBeUndefined();
+    });
+
     test('throws if TEST_MODE is enabled', () => {
       mockEnvironment({ TEST_MODE: true });
       expect(() => checkPublicRequest(IP)).toThrowError('6000');
@@ -60,6 +83,12 @@ describe('RequestGuard', () => {
     test('throws if RESTORE_MODE is enabled', () => {
       mockEnvironment({ TEST_MODE: false, RESTORE_MODE: true });
       expect(() => checkPublicRequest(IP)).toThrowError('6001');
+    });
+
+    test('throws if the API has not been initialized', () => {
+      mockEnvironment({ TEST_MODE: false });
+      mockInitializedState(false);
+      expect(() => checkPublicRequest(IP)).toThrowError('6002');
     });
   });
 });
