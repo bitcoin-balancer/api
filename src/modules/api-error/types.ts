@@ -37,7 +37,8 @@ type IAPIErrorService = {
  * The invocation that triggered the error. It can be a specific function or a route.
  */
 type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRouter.get'
-| 'APIErrorRouter.delete' | 'PingRouter.get' | 'AltchaRouter.get';
+| 'APIErrorRouter.delete' | 'PingRouter.get' | 'AltchaRouter.get' | 'IPBlacklistRouter.get'
+| 'IPBlacklistRouter.post' | 'IPBlacklistRouter.put' | 'IPBlacklistRouter.delete';
 
 /**
  * API Error

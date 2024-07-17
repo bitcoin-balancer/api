@@ -52,7 +52,7 @@ APIErrorRouter.route('/').delete(veryHighRiskLimit, async (req: Request, res: Re
     await APIErrorService.deleteAll();
     res.json(buildResponse());
   } catch (e) {
-    APIErrorService.save('APIErrorRouter.delete', e, reqUid, req.ip, req.query);
+    APIErrorService.save('APIErrorRouter.delete', e, reqUid, req.ip);
     res.json(buildResponse(undefined, e));
   }
 });

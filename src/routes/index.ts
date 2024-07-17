@@ -1,6 +1,7 @@
 import { Express } from 'express';
 import { AltchaRouter } from '../modules/altcha/router.js';
 import { APIErrorRouter } from '../modules/api-error/router.js';
+import { IPBlacklistRouter } from '../modules/ip-blacklist/router.js';
 import { PingRouter } from '../modules/ping/router.js';
 
 /* ************************************************************************************************
@@ -13,7 +14,8 @@ import { PingRouter } from '../modules/ping/router.js';
  */
 const mountRoutes = (app: Express): void => {
   app.use('/altcha', AltchaRouter);
-  app.use('/api-errors', APIErrorRouter);
+  app.use('/api-error', APIErrorRouter);
+  app.use('/ip-blacklist', IPBlacklistRouter);
   app.use('/ping', PingRouter);
 
   // custom 404
