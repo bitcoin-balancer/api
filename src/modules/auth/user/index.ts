@@ -382,14 +382,14 @@ const userServiceFactory = (): IUserService => {
    * @returns Promise<void>
    */
   const __initializeRootAccount = async (): Promise<void> => {
-    const {
-      uid,
-      nickname,
-      password,
-      otpSecret,
-    } = ENVIRONMENT.ROOT_ACCOUNT;
-    if (await getUserRecord(uid) === undefined) {
-      await createUser(nickname, 5, uid, password, otpSecret);
+    if (await getUserRecord(ENVIRONMENT.ROOT_ACCOUNT.uid) === undefined) {
+      await createUser(
+        ENVIRONMENT.ROOT_ACCOUNT.nickname,
+        5,
+        ENVIRONMENT.ROOT_ACCOUNT.uid,
+        ENVIRONMENT.ROOT_ACCOUNT.password,
+        ENVIRONMENT.ROOT_ACCOUNT.otpSecret,
+      );
     }
   };
 

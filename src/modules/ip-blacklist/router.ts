@@ -66,7 +66,6 @@ IPBlacklistRouter.route('/').post(veryLowRiskLimit, async (req: Request, res: Re
 
 /**
  * Updates an IP Blacklist Registration Record.
- * @param id
  * @param ip
  * @param notes?
  * @returns IAPIResponse<void>
@@ -74,48 +73,51 @@ IPBlacklistRouter.route('/').post(veryLowRiskLimit, async (req: Request, res: Re
  * - authority: 3
  * - otp-token
  */
-IPBlacklistRouter.route('/').put(veryHighRiskLimit, async (req: Request, res: Response) => {
+IPBlacklistRouter.route('/:id').put(veryHighRiskLimit, async (req: Request, res: Response) => {
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(
       req.get('authorization'),
       req.ip,
       3,
-      ['id', 'ip'],
+      ['ip'],
       req.body,
       req.get('otp-token') || '',
     );
-    await IPBlacklistService.updateIPRegistration(req.body.id, req.body.ip, req.body.notes);
+    await IPBlacklistService.updateIPRegistration(
+      Number(req.params.id),
+      req.body.ip,
+      req.body.notes,
+    );
     res.json(buildResponse());
   } catch (e) {
-    APIErrorService.save('IPBlacklistRouter.put', e, reqUid, req.ip, req.body);
+    APIErrorService.save('IPBlacklistRouter.put', e, reqUid, req.ip, { ...req.params, ...req.body });
     res.json(buildResponse(undefined, e));
   }
 });
 
 /**
  * Unregisters an IP Address from the Blacklist.
- * @param id
  * @returns IAPIResponse<void>
  * @requirements
  * - authority: 3
  * - otp-token
  */
-IPBlacklistRouter.route('/').delete(veryHighRiskLimit, async (req: Request, res: Response) => {
+IPBlacklistRouter.route('/:id').delete(veryHighRiskLimit, async (req: Request, res: Response) => {
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(
       req.get('authorization'),
       req.ip,
       3,
-      ['id'],
-      req.body,
+      undefined,
+      undefined,
       req.get('otp-token') || '',
     );
-    await IPBlacklistService.unregisterIP(req.body.id);
+    await IPBlacklistService.unregisterIP(Number(req.params.id));
     res.json(buildResponse());
   } catch (e) {
-    APIErrorService.save('IPBlacklistRouter.delete', e, reqUid, req.ip, req.body);
+    APIErrorService.save('IPBlacklistRouter.delete', e, reqUid, req.ip, req.params);
     res.json(buildResponse(undefined, e));
   }
 });
