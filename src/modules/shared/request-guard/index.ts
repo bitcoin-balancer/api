@@ -1,90 +1,12 @@
 import { encodeError } from 'error-message-utils';
 import { IRecord } from '../types.js';
-import { authorizationHeaderValid, ipValid, objectValid } from '../validations/index.js';
 import { ENVIRONMENT } from '../environment/index.js';
 import { APIService } from '../api/index.js';
 import { IAuthority, UserService } from '../../auth/user/index.js';
 import { JWTService } from '../../auth/jwt/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
-
-/* ************************************************************************************************
- *                                            HELPERS                                             *
- ************************************************************************************************ */
-
-/**
- * Validates the Client's IP format and also checks it against the Blacklist.
- * @param ip
- * @throws
- * - 6006: if the IP's format is invalid
- * - 5000: if the IP Address is in the blacklist
- */
-const __validateIP = (ip: string | undefined): void => {
-  if (!ipValid(ip)) {
-    throw new Error(encodeError(`The request's IP Address '${ip}' is invalid and therefore cannot be served.`, 6006));
-  }
-  IPBlacklistService.isBlacklisted(ip);
-};
-
-/**
- * If there are required arguments, it will ensure the args object contains all the required keys.
- * @param requiredArgs
- * @param args
- * @throws
- * - 6003: if there are required args but the args object is invalid or empty
- * - 6004: if an argument is required but wasn't included in the request args (body|query)
- */
-const __validateArgs = (
-  requiredArgs: string[] | undefined,
-  args: IRecord<any> | undefined,
-): void => {
-  if (Array.isArray(requiredArgs) && requiredArgs.length) {
-    if (!objectValid(args)) {
-      throw new Error(encodeError('The request cannot be served because the required arguments were not sent.', 6003));
-    }
-    requiredArgs.forEach((argKey) => {
-      if (
-        args[argKey] === undefined
-        || args[argKey] === null
-        || args[argKey] === ''
-        || Number.isNaN(args[argKey])
-      ) {
-        throw new Error(encodeError(`The arg '${argKey}' is required but it was not sent in the request.`, 6004));
-      }
-    });
-  }
-};
-
-/**
- * Validates and extracts the Access JWT from the authorization header.
- * @param authorization
- * @returns string
- * @throws
- * - 6005: if the authorization header has an invalid format or doesn't exist
- */
-const __extractAccessJWT = (authorization: string | undefined): string => {
-  if (!authorizationHeaderValid(authorization)) {
-    throw new Error(encodeError('The Authorization Header is invalid. Please review the docs and try again.', 6005));
-  }
-  return authorization.split('Bearer ')[1];
-};
-
-/**
- * Extracts the Access JWT from the Authorization Header and attempts to verify it. If successful,
- * returns the uid.
- * @param authorization
- * @returns Promise<string>
- * @throws
- * - 6005: if the authorization header has an invalid format or doesn't exist
- * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
- * - 4253: if the decoded data is an invalid object or does not contain the uid
- */
-const __decodeAuthorizationHeader = async (authorization: string | undefined): Promise<string> => (
-  JWTService.verifyAccessToken(__extractAccessJWT(authorization))
-);
-
-
-
-
+import { extractAccessJWT } from './utils.js';
+import { validateArgs, validateAuthorizationHeader, validateIP } from './validations.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -99,10 +21,10 @@ const __decodeAuthorizationHeader = async (authorization: string | undefined): P
  * - 6000: if TEST_MODE is enabled
  * - 6001: if RESTORE_MODE is enabled
  * - 6002: if the API has not finished the initialization process
- * - 6006: if the IP's format is invalid
+ * - 6250: if the IP's format is invalid
  * - 5000: if the IP Address is in the blacklist
- * - 6003: if there are required args but the args object is invalid or empty
- * - 6004: if an argument is required but wasn't included in the request args (body|query)
+ * - 6251: if there are required args but the args object is invalid or empty
+ * - 6252: if an argument is required but wasn't included in the request args (body|query)
  */
 const checkPublicRequest = (
   clientIP: string | undefined,
@@ -124,11 +46,12 @@ const checkPublicRequest = (
     throw new Error(encodeError('The API cannot accept requests because it has not yet been initialized. Please try again in a few minutes.', 6002));
   }
 
-  // ensure the IP Address is not Blacklisted
-  __validateIP(clientIP);
+  // ensure the IP Address is valid and is not Blacklisted
+  validateIP(clientIP);
+  IPBlacklistService.isBlacklisted(<string>clientIP);
 
   // validate the arguments
-  __validateArgs(requiredArgs, args);
+  validateArgs(requiredArgs, args);
 };
 
 /**
@@ -145,9 +68,9 @@ const checkPublicRequest = (
  * - 6001: if RESTORE_MODE is enabled
  * - 6002: if the API has not finished the initialization process
  * - 5000: if the IP Address is in the blacklist
- * - 6003: if there are required args but the args object is invalid or empty
- * - 6004: if an argument is required but wasn't included in the request args (body|query)
- * - 6005: if the authorization header has an invalid format or doesn't exist
+ * - 6251: if there are required args but the args object is invalid or empty
+ * - 6252: if an argument is required but wasn't included in the request args (body|query)
+ * - 6253: if the authorization header has an invalid format or doesn't exist
  * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
  * - 4253: if the decoded data is an invalid object or does not contain the uid
  * - 3001: if the uid is invalid or not present in the users' object
@@ -169,7 +92,8 @@ const checkRequest = async (
   checkPublicRequest(clientIP, requiredArgs, args);
 
   // decode the authorization
-  const uid = await __decodeAuthorizationHeader(authorization);
+  validateAuthorizationHeader(authorization);
+  const uid = await JWTService.verifyAccessToken(extractAccessJWT(<string>authorization));
 
   // verify the authority
   UserService.isAuthorized(uid, requiredAuthority);

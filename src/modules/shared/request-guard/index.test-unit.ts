@@ -86,18 +86,18 @@ describe('RequestGuard', () => {
     test('throws if there are required args and an invalid object is passed', () => {
       mockEnvironment({ TEST_MODE: false });
       mockInitializedState(true);
-      expect(() => checkPublicRequest(IP, ['someArg'], undefined)).toThrowError('6003');
-      expect(() => checkPublicRequest(IP, ['someArg'], null!)).toThrowError('6003');
-      expect(() => checkPublicRequest(IP, ['someArg'], {})).toThrowError('6003');
+      expect(() => checkPublicRequest(IP, ['someArg'], undefined)).toThrowError('6251');
+      expect(() => checkPublicRequest(IP, ['someArg'], null!)).toThrowError('6251');
+      expect(() => checkPublicRequest(IP, ['someArg'], {})).toThrowError('6251');
     });
 
     test('throws if the required arg has an invalid value', () => {
       mockEnvironment({ TEST_MODE: false });
       mockInitializedState(true);
-      expect(() => checkPublicRequest(IP, ['someArg'], { someArg: undefined })).toThrowError('6004');
-      expect(() => checkPublicRequest(IP, ['someArg'], { someArg: null })).toThrowError('6004');
-      expect(() => checkPublicRequest(IP, ['someArg'], { someArg: '' })).toThrowError('6004');
-      expect(() => checkPublicRequest(IP, ['someArg'], { someArg: NaN })).toThrowError('6004');
+      expect(() => checkPublicRequest(IP, ['someArg'], { someArg: undefined })).toThrowError('6252');
+      expect(() => checkPublicRequest(IP, ['someArg'], { someArg: null })).toThrowError('6252');
+      expect(() => checkPublicRequest(IP, ['someArg'], { someArg: '' })).toThrowError('6252');
+      expect(() => checkPublicRequest(IP, ['someArg'], { someArg: NaN })).toThrowError('6252');
     });
   });
 });

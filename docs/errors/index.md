@@ -169,8 +169,10 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **6000:** `The API cannot accept requests when TEST_MODE is enabled.`
 - **6001:** `The API cannot accept requests when RESTORE_MODE is enabled.`
 - **6002:** `The API cannot accept requests because it has not yet been initialized. Please try again in a few minutes.`
-- **6003:** `The request cannot be served because the required arguments were not sent.`
-- **6004:** `The arg '${argKey}' is required but it was not sent in the request.`
-- **6005:** `The Authorization Header is invalid. Please review the docs and try again.`
-- **6006:** `The request's IP Address '${ip}' is invalid and therefore cannot be served.`
-- **6007:** ``
+
+### `validations.ts`
+
+- **6250:** `The request's IP Address '${ip}' is invalid and therefore cannot be served.`
+- **6251:** `The request cannot be served because the required arguments were not sent.`
+- **6252:** `The arg '${argKey}' is required but it was not sent in the request.`
+- **6253:** `The Authorization Header is invalid. Please review the docs and try again.`
