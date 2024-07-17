@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { ENVIRONMENT } from './modules/shared/environment/index.js';
 import { mountRoutes } from './routes/index.js';
@@ -74,6 +75,19 @@ app.use(morgan('combined'));
  * https://github.com/expressjs/body-parser
  */
 app.use(bodyParser.json({ type: 'application/json', limit: '100kb' }));
+
+
+
+/**
+ * Cookie Parser
+ * Parses the Cookie header and populate the req.cookies property with an object keyed by the cookie
+ * names. When passing a secret, it will unsign and validate any signed cookie values and move those
+ * name value pairs from req.cookies into req.signedCookies.  A signed cookie is a cookie that has a
+ * value prefixed with s:. Signed cookies that fail signature validation will have the value false
+ * instead of the tampered value.
+ * https://github.com/expressjs/cookie-parser
+ */
+app.use(cookieParser(ENVIRONMENT.COOKIE_SECRET));
 
 
 
