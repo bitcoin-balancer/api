@@ -38,6 +38,7 @@ const ENVIRONMENT: IEnvironment = {
   TELEGRAM: <ITelegramConfig>getSecretObject('TELEGRAM'),
   ALTCHA_SECRET: getSecretString('ALTCHA_SECRET'),
   JWT_SECRET: <IJWTSecretConfig>getSecretObject('JWT_SECRET'),
+  COOKIE_SECRET: getSecretString('COOKIE_SECRET'),
 };
 
 // validate objects & arrays

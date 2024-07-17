@@ -93,6 +93,9 @@ type IEnvironment = {
 
   // the secrets that will be used to generate access and refresh auth tokens
   JWT_SECRET: IJWTSecretConfig;
+
+  // the secret that will be used to sign the cookies used by the platform
+  COOKIE_SECRET: string;
 };
 
 
