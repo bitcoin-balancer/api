@@ -36,7 +36,8 @@ type IAPIErrorService = {
  * API Error Origin
  * The invocation that triggered the error. It can be a specific function or a route.
  */
-type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'PingRoute.get';
+type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRouter.get'
+| 'APIErrorRouter.delete' | 'PingRouter.get' | 'AltchaRouter.get';
 
 /**
  * API Error

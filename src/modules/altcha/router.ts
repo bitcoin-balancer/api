@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
+import { buildResponse } from 'api-response-utils';
 import { highRiskLimit } from '../../middlewares/rate-limit/index.js';
+import { APIErrorService } from '../api-error/index.js';
 import { AltchaService } from './index.js';
 
 const AltchaRouter = Router();
@@ -13,7 +15,12 @@ const AltchaRouter = Router();
  * @returns IChallenge
  */
 AltchaRouter.route('/').get(highRiskLimit, async (req: Request, res: Response) => {
-  res.json(await AltchaService.create());
+  try {
+    res.json(await AltchaService.create());
+  } catch (e) {
+    APIErrorService.save('AltchaRouter.get', e, undefined, req.ip);
+    res.json(buildResponse(undefined, e));
+  }
 });
 
 

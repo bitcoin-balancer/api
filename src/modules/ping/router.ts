@@ -19,7 +19,7 @@ PingRouter.route('/').get(veryHighRiskLimit, (req: Request, res: Response) => {
     checkPublicRequest(req.ip);
     res.json(buildResponse(req.ip));
   } catch (e) {
-    APIErrorService.save('PingRoute.get', e, undefined, req.ip);
+    APIErrorService.save('PingRouter.get', e, undefined, req.ip);
     res.json(buildResponse(undefined, e));
   }
 });

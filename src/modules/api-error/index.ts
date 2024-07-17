@@ -66,7 +66,7 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
     printError: boolean = true,
   ): Promise<void> => {
     try {
-      if (!ENVIRONMENT.TEST_MODE && printError) console.error(error);
+      if (!ENVIRONMENT.TEST_MODE && printError) console.error(origin, error);
       const { code } = decodeError(error);
       if (!__OMIT_ERROR_CODES.includes(<number>code)) {
         await saveRecord(
