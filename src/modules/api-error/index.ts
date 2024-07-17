@@ -26,6 +26,8 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
   const __SENSITIVE_DATA_KEYS: string[] = [
     'password',
     'newPassword',
+    'otpToken',
+    'otpSecret',
   ];
 
   // the list of errors that are regular and shouldn't be stored

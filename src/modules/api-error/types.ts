@@ -41,7 +41,8 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'IPBlacklistRouter.post' | 'IPBlacklistRouter.put' | 'IPBlacklistRouter.delete'
 | 'UserRouter.get' | 'UserRouter.get.password-updates' | 'UserRouter.post' | 'UserRouter.patch.nickname'
 | 'UserRouter.patch.authority' | 'UserRouter.patch.password' | 'UserRouter.patch.otpSecret'
-| 'UserRouter.delete';
+| 'UserRouter.delete' | 'JWTRouter.get' | 'JWTRouter.post.sign-in' | 'JWTRouter.post.refresh-jwt'
+| 'JWTRouter.post.sign-out';
 
 /**
  * API Error
