@@ -48,6 +48,9 @@ npm run build
 
 ## @TODO
 
+- [ ] Create a benchmarking system to improve the database’s performance
+- [ ] Store server metrics (usage%, load%, temperature°) in OHLC format 
+- [ ] Expand the automated tests' coverage (unit & integration)
 - [ ] ...
 
 
@@ -60,9 +63,6 @@ npm run build
 **Important:** these tests are to be executed from [Balancer CLI](https://github.com/bitcoin-balancer/cli) as they must run in a containerized environment.
 
 ```bash
-# run the e2e tests
-npm run test:e2e
-
 # run the integration tests
 npm run test:integration
 
