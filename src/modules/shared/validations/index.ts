@@ -174,6 +174,13 @@ const authorizationHeaderValid = (value: any): value is string => (
 );
 
 /**
+ * Verifies if a value is (or could be) an Altcha Payload.
+ * @param value
+ * @returns boolean
+ */
+const altchaPayloadValid = (value: any): value is string => stringValid(value, 100, 1000);
+
+/**
  * Verifies if a value is (or could be) an IP Address.
  * @param value
  * @returns boolean
@@ -219,6 +226,7 @@ export {
   otpTokenValid,
   jwtValid,
   authorizationHeaderValid,
+  altchaPayloadValid,
   ipValid,
   ipNotesValid,
   semverValid,
