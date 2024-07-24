@@ -216,7 +216,7 @@ const jwtServiceFactory = (): IJWTService => {
    */
   const __runMaintenance = async (): Promise<void> => {
     // delete expired records
-    await deleteExpiredRecords(subDays(new Date(), __ACCESS_JWT_DURATION + 1).getTime());
+    await deleteExpiredRecords(subDays(new Date(), __REFRESH_JWT_DURATION + 1).getTime());
 
     // ...
   };
