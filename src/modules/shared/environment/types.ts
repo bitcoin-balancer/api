@@ -63,6 +63,9 @@ type IEnvironment = {
   // the kind of environment the API was started with
   NODE_ENV: INodeEnv;
 
+  // the app's URL - this value is used on the CORS Configuration
+  GUI_URL: string;
+
   // if enabled, the API will be setup with the sole purpose of running unit & integration tests
   TEST_MODE: boolean;
 

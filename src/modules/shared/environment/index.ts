@@ -25,6 +25,7 @@ import {
 // populate the global object
 const ENVIRONMENT: IEnvironment = {
   NODE_ENV: <INodeEnv>getString('NODE_ENV', ['development', 'production']),
+  GUI_URL: getString('GUI_URL'),
   TEST_MODE: getBoolean('TEST_MODE'),
   RESTORE_MODE: getBoolean('RESTORE_MODE'),
   HAS_TUNNEL_TOKEN: getBoolean('HAS_TUNNEL_TOKEN'),

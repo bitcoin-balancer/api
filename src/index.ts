@@ -98,8 +98,9 @@ app.use(cookieParser(ENVIRONMENT.COOKIE_SECRET));
  * https://github.com/expressjs/cors
  */
 app.use(cors({
-  origin: '*',
+  origin: ENVIRONMENT.GUI_URL,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
   preflightContinue: false,
   optionsSuccessStatus: 204,
 }));
