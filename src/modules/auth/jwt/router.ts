@@ -1,10 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { buildResponse } from 'api-response-utils';
-import {
-  highRiskLimit,
-  mediumRiskLimit,
-  veryHighRiskLimit,
-} from '../../../middlewares/rate-limit/index.js';
+import { mediumRiskLimit, veryHighRiskLimit } from '../../../middlewares/rate-limit/index.js';
 import { checkPublicRequest, checkRequest } from '../../shared/request-guard/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { JWTService } from './index.js';
@@ -83,7 +79,7 @@ JWTRouter.route('/sign-in').post(veryHighRiskLimit, async (req: Request, res: Re
  * Refreshes an access token based on a long lived Refresh JWT.
  * @returns IAPIResponse<string>
  */
-JWTRouter.route('/refresh-jwt').post(highRiskLimit, async (req: Request, res: Response) => {
+JWTRouter.route('/refresh-jwt').post(mediumRiskLimit, async (req: Request, res: Response) => {
   try {
     checkPublicRequest(req.ip);
     res.json(buildResponse(
