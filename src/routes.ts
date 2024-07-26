@@ -1,10 +1,10 @@
 import { Express } from 'express';
-import { AltchaRouter } from '../modules/altcha/router.js';
-import { APIErrorRouter } from '../modules/api-error/router.js';
-import { UserRouter } from '../modules/auth/user/router.js';
-import { JWTRouter } from '../modules/auth/jwt/router.js';
-import { IPBlacklistRouter } from '../modules/ip-blacklist/router.js';
-import { PingRouter } from '../modules/ping/router.js';
+import { AltchaRouter } from './modules/altcha/router.js';
+import { APIErrorRouter } from './modules/api-error/router.js';
+import { UserRouter } from './modules/auth/user/router.js';
+import { JWTRouter } from './modules/auth/jwt/router.js';
+import { IPBlacklistRouter } from './modules/ip-blacklist/router.js';
+import { PingRouter } from './modules/ping/router.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *

@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { ENVIRONMENT } from './modules/shared/environment/index.js';
-import { mountRoutes } from './routes/index.js';
+import { mountRoutes } from './routes.js';
 import { APIService } from './modules/shared/api/index.js';
 
 /* ************************************************************************************************
