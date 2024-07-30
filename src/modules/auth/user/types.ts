@@ -15,6 +15,7 @@ type IUserService = {
   // retrievers
   listUsers: () => IUser[];
   getUser: (uid: string) => IUser;
+  getOTPSecret: (uid: string) => Promise<string>;
   listUserPasswordUpdates: (
     uid: string,
     startAtEventTime: number | undefined,

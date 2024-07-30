@@ -29,13 +29,33 @@ UserRouter.route('/').get(mediumRiskLimit, async (req: Request, res: Response) =
 });
 
 /**
+ * Validates & retrieves the OTP Secret for an ID.
+ * @returns IAPIResponse<string>
+ * @requirements
+ * - authority: 5
+ */
+UserRouter.route('/:uid/otp-secret').get(mediumRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 5);
+    res.json(buildResponse(await UserService.getOTPSecret(req.params.uid)));
+  } catch (e) {
+    APIErrorService.save('UserRouter.get.otp-secret', e, reqUid, req.ip, {
+      ...req.params,
+      ...req.query,
+    });
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
  * Validates and retrieves the list of password update records for a uid.
  * @param startAtEventTime?
  * @returns IAPIResponse<IPasswordUpdate[]>
  * @requirements
  * - authority: 5
  */
-UserRouter.route('/password-updates/:uid').get(mediumRiskLimit, async (req: Request, res: Response) => {
+UserRouter.route('/:uid/password-updates').get(mediumRiskLimit, async (req: Request, res: Response) => {
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 5);

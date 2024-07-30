@@ -89,6 +89,21 @@ const userServiceFactory = (): IUserService => {
   };
 
   /**
+   * Validates & retrieves the OTP Secret for an ID.
+   * @param uid
+   * @returns Promise<string>
+   * @throws
+   * - 3506: if the uid has an invalid format
+   * - 3507: if the record doesn't exist in the database
+   * - 3508: if the record belongs to the root and has not been explicitly allowed
+   * - 3250: if the user record does not exist or the OTP Secret is not valid
+   */
+  const getOTPSecret = async (uid: string): Promise<string> => {
+    await validateUserRecordExistance(uid, true);
+    return getUserOTPSecret(uid);
+  };
+
+  /**
    * Validates and retrieves the list of password update records for a uid.
    * @param uid
    * @param startAtEventTime
@@ -446,6 +461,7 @@ const userServiceFactory = (): IUserService => {
     // retrievers
     listUsers,
     getUser,
+    getOTPSecret,
     listUserPasswordUpdates,
 
     // credentials verification

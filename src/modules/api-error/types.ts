@@ -39,10 +39,10 @@ type IAPIErrorService = {
 type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRouter.get'
 | 'APIErrorRouter.delete' | 'PingRouter.get' | 'AltchaRouter.get' | 'IPBlacklistRouter.get'
 | 'IPBlacklistRouter.post' | 'IPBlacklistRouter.put' | 'IPBlacklistRouter.delete'
-| 'UserRouter.get' | 'UserRouter.get.password-updates' | 'UserRouter.post' | 'UserRouter.patch.nickname'
-| 'UserRouter.patch.authority' | 'UserRouter.patch.password' | 'UserRouter.patch.otpSecret'
-| 'UserRouter.delete' | 'JWTRouter.get' | 'JWTRouter.post.sign-in' | 'JWTRouter.post.refresh-jwt'
-| 'JWTRouter.post.sign-out';
+| 'UserRouter.get' | 'UserRouter.get.otp-secret' | 'UserRouter.get.password-updates'
+| 'UserRouter.post' | 'UserRouter.patch.nickname' | 'UserRouter.patch.authority'
+| 'UserRouter.patch.password' | 'UserRouter.patch.otpSecret' | 'UserRouter.delete' | 'JWTRouter.get'
+| 'JWTRouter.post.sign-in' | 'JWTRouter.post.refresh-jwt' | 'JWTRouter.post.sign-out';
 
 /**
  * API Error
