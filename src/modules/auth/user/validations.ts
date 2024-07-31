@@ -79,7 +79,7 @@ const canListUserPasswordUpdates = async (
   if (!integerValid(limit, 1, __PASSWORD_UPDATE_QUERY_LIMIT)) {
     throw new Error(encodeError(`The maximum number of password update records that can be retrieved at a time is ${__PASSWORD_UPDATE_QUERY_LIMIT}. Received: ${limit}`, 3512));
   }
-  if (typeof startAtEventTime !== undefined && !timestampValid(startAtEventTime)) {
+  if (startAtEventTime !== undefined && !timestampValid(startAtEventTime)) {
     throw new Error(encodeError(`If the startAtEventTime arg is provided, it must be a valid timestamp. Received: ${startAtEventTime}`, 3511));
   }
   await validateUserRecordExistance(uid);
