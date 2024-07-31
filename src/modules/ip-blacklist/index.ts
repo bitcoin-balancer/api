@@ -30,9 +30,6 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // the number of records that can be retrieved at a time
-  const __LIST_LIMIT: number = 15;
-
   // the object containing all blacklisted IP Addresses
   let __blacklist: { [ip: string]: boolean } = {};
 
@@ -68,14 +65,16 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
   /**
    * Retrieves a list of IP Blacklist Records from the database. A custom starting point can be
    * provided in order to paginate through the records.
+   * @param limit
    * @param startAtID
    * @returns Promise<IIPBlacklistRecord[]>
    * @throws
    * - 5255: if the starting point is provided and is invalid
+   * - 5256: if the query limit is larger than the limit
    */
-  const list = (startAtID: number | undefined): Promise<IIPBlacklistRecord[]> => {
-    canBlacklistBeListed(startAtID);
-    return listRecords(__LIST_LIMIT, startAtID);
+  const list = (limit: number, startAtID: number | undefined): Promise<IIPBlacklistRecord[]> => {
+    canBlacklistBeListed(limit, startAtID);
+    return listRecords(limit, startAtID);
   };
 
 

@@ -16,7 +16,7 @@ type IIPBlacklistService = {
   isBlacklisted: (ip: string) => void;
 
   // retrievers
-  list: (startAtID: number | undefined) => Promise<IIPBlacklistRecord[]>;
+  list: (limit: number, startAtID: number | undefined) => Promise<IIPBlacklistRecord[]>;
 
   // record management
   registerIP: (ip: string, notes: string | undefined) => Promise<IIPBlacklistRecord>;

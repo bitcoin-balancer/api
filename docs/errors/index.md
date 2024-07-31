@@ -152,6 +152,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **5253:** `The IP Address '${ip}' has already been blacklisted by another record.`
 - **5254:** `The registration '${id}' cannot be unregistered because it doesn't exist.`
 - **5255:** `The IP Blacklist records cannot be listed with an invalid startAtID. Received: ${startAtID}.`
+- **5256:** `The maximum number of IP Blacklist records that can be retrieved at a time is ${__BLACKLIST_QUERY_LIMIT}. Received: ${limit}`
 
 
 

@@ -4,16 +4,32 @@ import { IIPBlacklistRecord } from './types.js';
 import { getRecordByIP } from './model.js';
 
 /* ************************************************************************************************
+ *                                           CONSTANTS                                            *
+ ************************************************************************************************ */
+
+// the maximum number of records that can be queried at a time
+const __BLACKLIST_QUERY_LIMIT = 30;
+
+
+
+
+
+/* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
 /**
  * Verifies if the IP Blacklist Records can be listed.
+ * @param limit
  * @param startAtID
  * @throws
  * - 5255: if the starting point is provided and is invalid
+ * - 5256: if the query limit is larger than the limit
  */
-const canBlacklistBeListed = (startAtID: number | undefined): void => {
+const canBlacklistBeListed = (limit: number, startAtID: number | undefined): void => {
+  if (!integerValid(limit, 1, __BLACKLIST_QUERY_LIMIT)) {
+    throw new Error(encodeError(`The maximum number of IP Blacklist records that can be retrieved at a time is ${__BLACKLIST_QUERY_LIMIT}. Received: ${limit}`, 5256));
+  }
   if (startAtID !== undefined && !integerValid(startAtID, 1)) {
     throw new Error(encodeError(`The IP Blacklist Records cannot be listed with an invalid startAtID. Received: ${startAtID}.`, 5255));
   }
