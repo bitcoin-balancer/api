@@ -93,6 +93,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **3509:** `The password for uid '${uid}' is invalid or too weak. Make sure the password meets the requirements and try again.`
 - **3510:** `The OTP Token '${token}' is invalid.`
 - **3511:** `If the startAtEventTime arg is provided, it must be a valid timestamp. Received: ${startAtEventTime}`
+- **3512:** `The maximum number of password update records that can be retrieved at a time is ${__PASSWORD_UPDATE_QUERY_LIMIT}. Received: ${limit}`
 
 
 

@@ -49,9 +49,6 @@ const userServiceFactory = (): IUserService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // the maximum number of password update records that can be queried at a time
-  const __PASSWORD_UPDATE_QUERY_LIMIT = 15;
-
   // an object containing all the user records by uid and is built on start up
   let __users: { [uid: string]: IUser } = {};
 
@@ -106,6 +103,7 @@ const userServiceFactory = (): IUserService => {
   /**
    * Validates and retrieves the list of password update records for a uid.
    * @param uid
+   * @param limit
    * @param startAtEventTime
    * @returns Promise<IPasswordUpdate[]>
    * @throws
@@ -113,13 +111,15 @@ const userServiceFactory = (): IUserService => {
    * - 3507: if the record doesn't exist in the database
    * - 3508: if the record belongs to the root and has not been explicitly allowed
    * - 3511: if the starting point is provided but it's not a valid unix timestamp
+   * - 3512: if the record limit is larger than the limit
    */
   const listUserPasswordUpdates = async (
     uid: string,
+    limit: number,
     startAtEventTime: number | undefined,
   ): Promise<IPasswordUpdate[]> => {
-    await canListUserPasswordUpdates(uid, startAtEventTime);
-    return listUserPasswordUpdateRecords(uid, __PASSWORD_UPDATE_QUERY_LIMIT, startAtEventTime);
+    await canListUserPasswordUpdates(uid, limit, startAtEventTime);
+    return listUserPasswordUpdateRecords(uid, limit, startAtEventTime);
   };
 
 

@@ -50,6 +50,7 @@ UserRouter.route('/:uid/otp-secret').get(mediumRiskLimit, async (req: Request, r
 
 /**
  * Validates and retrieves the list of password update records for a uid.
+ * @param limit
  * @param startAtEventTime?
  * @returns IAPIResponse<IPasswordUpdate[]>
  * @requirements
@@ -58,9 +59,10 @@ UserRouter.route('/:uid/otp-secret').get(mediumRiskLimit, async (req: Request, r
 UserRouter.route('/:uid/password-updates').get(mediumRiskLimit, async (req: Request, res: Response) => {
   let reqUid: string | undefined;
   try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 5);
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 5, ['limit'], req.query);
     res.json(buildResponse(await UserService.listUserPasswordUpdates(
       req.params.uid,
+      Number(req.query.limit),
       typeof req.query.startAtEventTime === 'string' ? Number(req.query.startAtEventTime) : undefined,
     )));
   } catch (e) {

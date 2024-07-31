@@ -6,11 +6,23 @@ import {
   authorityValid,
   passwordValid,
   otpTokenValid,
+  integerValid,
 } from '../../shared/validations/index.js';
 import { AltchaService } from '../../altcha/index.js';
 import { IAuthority } from './types.js';
 import { isRoot } from './utils.js';
 import { getUserRecord, nicknameExists } from './model.js';
+
+/* ************************************************************************************************
+ *                                           CONSTANTS                                            *
+ ************************************************************************************************ */
+
+// the maximum number of password update records that can be queried at a time
+const __PASSWORD_UPDATE_QUERY_LIMIT = 30;
+
+
+
+
 
 /* ************************************************************************************************
  *                                            HELPERS                                             *
@@ -49,6 +61,7 @@ const validateUserRecordExistance = async (uid: string, allowRoot?: boolean): Pr
 /**
  * Verifies if the password update records can be listed for a given uid at a given time.
  * @param uid
+ * @param limit
  * @param startAtEventTime
  * @returns Promise<void>
  * @throws
@@ -56,15 +69,20 @@ const validateUserRecordExistance = async (uid: string, allowRoot?: boolean): Pr
  * - 3507: if the record doesn't exist in the database
  * - 3508: if the record belongs to the root and has not been explicitly allowed
  * - 3511: if the starting point is provided but it's not a valid unix timestamp
+ * - 3512: if the record limit is larger than the limit
  */
 const canListUserPasswordUpdates = async (
   uid: string,
+  limit: number,
   startAtEventTime: number | undefined,
 ): Promise<void> => {
-  await validateUserRecordExistance(uid);
+  if (!integerValid(limit, 1, __PASSWORD_UPDATE_QUERY_LIMIT)) {
+    throw new Error(encodeError(`The maximum number of password update records that can be retrieved at a time is ${__PASSWORD_UPDATE_QUERY_LIMIT}. Received: ${limit}`, 3512));
+  }
   if (typeof startAtEventTime !== undefined && !timestampValid(startAtEventTime)) {
     throw new Error(encodeError(`If the startAtEventTime arg is provided, it must be a valid timestamp. Received: ${startAtEventTime}`, 3511));
   }
+  await validateUserRecordExistance(uid);
 };
 
 

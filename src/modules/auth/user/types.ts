@@ -18,6 +18,7 @@ type IUserService = {
   getOTPSecret: (uid: string) => Promise<string>;
   listUserPasswordUpdates: (
     uid: string,
+    limit: number,
     startAtEventTime: number | undefined,
   ) => Promise<IPasswordUpdate[]>;
 
