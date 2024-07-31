@@ -1,5 +1,6 @@
 import { Server, IncomingMessage, ServerResponse } from 'http';
 import { Express } from 'express';
+import { IPackageFile } from '../types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -40,28 +41,6 @@ type IHTTPServer = Server<typeof IncomingMessage, typeof ServerResponse>;
  */
 type ITerminationSignal = 'SIGINT' | 'SIGTERM';
 
-/**
- * Package File
- * When the API is initialized, it loads the package.json file and keeps its contents in memory.
- */
-type IPackageFile = {
-  name: string;
-  description: string;
-  private: boolean;
-  version: string;
-  type: string;
-  main: string;
-  scripts: { [key: string]: string };
-  repository: { [key: string]: string };
-  keywords: string[];
-  author: string;
-  license: string;
-  bugs: { [key: string]: string };
-  homepage: string;
-  devDependencies: { [key: string]: string };
-  dependencies: { [key: string]: string };
-};
-
 
 
 
@@ -76,5 +55,4 @@ export type {
   // types
   IHTTPServer,
   ITerminationSignal,
-  IPackageFile,
 };

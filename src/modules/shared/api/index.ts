@@ -3,6 +3,7 @@ import process from 'node:process';
 import { Express } from 'express';
 import { extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../environment/index.js';
+import { IPackageFile } from '../types.js';
 import { delay } from '../utils/index.js';
 import { DatabaseService } from '../../database/index.js';
 import { NotificationService } from '../notification/index.js';
@@ -12,7 +13,6 @@ import { IPBlacklistService } from '../../ip-blacklist/index.js';
 import {
   IHTTPServer,
   ITerminationSignal,
-  IPackageFile,
   IAPIService,
 } from './types.js';
 import {

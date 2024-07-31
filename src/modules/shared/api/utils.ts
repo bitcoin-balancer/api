@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 import { readFileSync } from 'node:fs';
+import { IPackageFile } from '../types.js';
 import { ENVIRONMENT } from '../environment/index.js';
 import { validatePackageFile } from './validations.js';
-import { ITerminationSignal, IPackageFile } from './types.js';
+import { ITerminationSignal } from './types.js';
 
 /* ************************************************************************************************
  *                                      PACKAGE FILE HELPERS                                      *
