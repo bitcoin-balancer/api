@@ -1,4 +1,6 @@
-import { IServerService } from './types.js';
+import { recordStoreServiceFactory, IRecordStore } from '../shared/record-store/index.js';
+import { buildDefaultAlarms } from './utils.js';
+import { IServerService, IAlarmsConfiguration } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -14,12 +16,13 @@ const serverServiceFactory = (): IServerService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
-  
-  // ...
-  const __SOME_CONSTANT = 'I am a constant!';
-  
-  // ...
-  let __someProperty = 123;
+
+  // alarms' configuration
+  let __alarms: IRecordStore<IAlarmsConfiguration>;
+
+  // the resources will be scanned every __MONITOR_FREQUENCY seconds
+  const __MONITOR_FREQUENCY = 120;
+  let __monitorInterval: NodeJS.Timeout;
 
 
 
@@ -37,27 +40,26 @@ const serverServiceFactory = (): IServerService => {
 
 
 
-
   /* **********************************************************************************************
    *                                          INITIALIZER                                         *
    ********************************************************************************************** */
 
   /**
-   * Initializes the Notification Module if the configuration was provided.
+   * Initializes the Server Module.
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
-    /* // initialize the version build
-    await __buildVersion(runningVersion);
+    // initialize the alarms' configuration
+    __alarms = await recordStoreServiceFactory('SERVER_ALARMS', buildDefaultAlarms());
 
-    // initialize the refresh interval
-    __refreshInterval = setInterval(async () => {
+    // initialize the monitor interval
+    __monitorInterval = setInterval(async () => {
       try {
-        await __buildVersion();
+        // @TODO
       } catch (e) {
-        APIErrorService.save('VersionService.initialize.__buildVersion', e);
+        // APIErrorService.save('VersionService.initialize.__buildVersion', e);
       }
-    }, (__REFRESH_FREQUENCY * (60 * 60)) * 1000); */
+    }, __MONITOR_FREQUENCY * 1000);
   };
 
   /**
@@ -65,10 +67,11 @@ const serverServiceFactory = (): IServerService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    /* if (__refreshInterval) {
-      clearInterval(__refreshInterval);
-    } */
+    if (__monitorInterval) {
+      clearInterval(__monitorInterval);
+    }
   };
+
 
 
 
@@ -78,14 +81,8 @@ const serverServiceFactory = (): IServerService => {
    ********************************************************************************************** */
   return Object.freeze({
     // properties
-    get SOME_CONSTANT() {
-      return __SOME_CONSTANT;
-    },
-    get someProperty() {
-      return __someProperty;
-    },
-    set someProperty(newSomeProperty) {
-      __someProperty = newSomeProperty;
+    get alarms() {
+      return __alarms.value;
     },
 
     // actions

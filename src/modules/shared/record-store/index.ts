@@ -75,4 +75,7 @@ const recordStoreServiceFactory: IRecordStoreFactory = async <T>(
 export {
   // factory
   recordStoreServiceFactory,
+
+  // types
+  type IRecordStore,
 };

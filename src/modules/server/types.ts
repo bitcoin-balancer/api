@@ -10,7 +10,7 @@
  */
 type IServerService = {
   // properties
-  // ...
+  alarms: IAlarmsConfiguration;
 
   // initializer
   initialize: () => Promise<void>;
@@ -25,6 +25,27 @@ type IServerService = {
  *                                             TYPES                                              *
  ************************************************************************************************ */
 
+/**
+ * Alarms Configuration
+ * Object containing the limits to what is considered 'Acceptable'. Breaking any of these limits
+ * will trigger a notification.
+ */
+type IAlarmsConfiguration = {
+  // highest acceptable usage% of the drive's space
+  maxFileSystemUsage: number;
+
+  // highest acceptable usage% of the virtual memory (RAM)
+  maxMemoryUsage: number;
+
+  // highest acceptable load% the CPU
+  maxCPULoad: number;
+
+  // highest acceptable temp (celcius degrees) the CPU can experience
+  maxCPUTemperature: number;
+};
+
+
+
 
 
 /* ************************************************************************************************
@@ -35,5 +56,5 @@ export type {
   IServerService,
 
   // types
-  // ...
+  IAlarmsConfiguration,
 };
