@@ -178,3 +178,20 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **6251:** `The request cannot be served because the required arguments were not sent.`
 - **6252:** `The arg '${argKey}' is required but it was not sent in the request.`
 - **6253:** `The Authorization Header is invalid. Please review the docs and try again.`
+
+
+
+
+
+<br/><br/><br/>
+
+## `Version` (7000 - 7999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **7000:** `The package.json file retrieved from ${url} does not contain a valid version.`
+- **7001:** `The list of commits retrieved from ${url} are invalid.`

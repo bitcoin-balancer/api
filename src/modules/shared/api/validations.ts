@@ -5,7 +5,7 @@ import {
   semverValid,
 } from '../validations/index.js';
 import { ENVIRONMENT } from '../environment/index.js';
-import { IPackageFile } from './types.js';
+import { IPackageFile } from '../types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *

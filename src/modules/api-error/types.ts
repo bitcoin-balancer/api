@@ -42,7 +42,8 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'UserRouter.get' | 'UserRouter.get.otp-secret' | 'UserRouter.get.password-updates'
 | 'UserRouter.post' | 'UserRouter.patch.nickname' | 'UserRouter.patch.authority'
 | 'UserRouter.patch.password' | 'UserRouter.patch.otpSecret' | 'UserRouter.delete' | 'JWTRouter.get'
-| 'JWTRouter.post.sign-in' | 'JWTRouter.post.refresh-jwt' | 'JWTRouter.post.sign-out';
+| 'JWTRouter.post.sign-in' | 'JWTRouter.post.refresh-jwt' | 'JWTRouter.post.sign-out'
+| 'VersionService.initialize.__buildVersion';
 
 /**
  * API Error
