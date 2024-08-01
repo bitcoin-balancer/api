@@ -196,3 +196,27 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **7000:** `The package.json file retrieved from ${url} does not contain a valid version.`
 - **7001:** `The list of commits retrieved from ${url} are invalid.`
+
+
+
+
+
+<br/><br/><br/>
+
+## `Server` (8000 - 8999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **8000:** ``
+
+### `validations.ts`
+
+- **8250:** `The alarms configuration is not a valid object.`
+- **8251:** `The maxFileSystemUsage must be a number ranging 30-99. Received: ${config.maxFileSystemUsage}`
+- **8252:** `The maxMemoryUsage must be a number ranging 30-99. Received: ${config.maxMemoryUsage}`
+- **8253:** `The maxCPULoad must be a number ranging 30-99. Received: ${config.maxMemoryUsage}`
+- **8254:** `The maxCPUTemperature must be a number ranging 50-90. Received: ${config.maxMemoryUsage}`

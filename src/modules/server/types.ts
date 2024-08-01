@@ -12,6 +12,9 @@ type IServerService = {
   // properties
   alarms: IAlarmsConfiguration;
 
+  // alarms configuration
+
+
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;

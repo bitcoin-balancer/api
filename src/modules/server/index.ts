@@ -1,6 +1,7 @@
 import { recordStoreServiceFactory, IRecordStore } from '../shared/record-store/index.js';
 import { buildDefaultAlarms } from './utils.js';
 import { IServerService, IAlarmsConfiguration } from './types.js';
+import { canAlarmsBeUpdated } from './validations.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -29,11 +30,22 @@ const serverServiceFactory = (): IServerService => {
 
 
   /* **********************************************************************************************
-   *                                            ACTIONS                                           *
+   *                                     ALARMS CONFIGURATION                                     *
    ********************************************************************************************** */
 
-  const someAction = () => {
-    // ...
+  /**
+   * Validats and updates the alarms' configuration.
+   * @param newConfig
+   * @throws
+   * - 8250: if the configuration is not a valid object
+   * - 8251: if the maxFileSystemUsage is invalid
+   * - 8252: if the maxMemoryUsage is invalid
+   * - 8253: if the maxCPULoad is invalid
+   * - 8254: if the maxCPUTemperature is invalid
+   */
+  const updateAlarms = async (newConfig: IAlarmsConfiguration): Promise<void> => {
+    canAlarmsBeUpdated(newConfig);
+    await __alarms.update(newConfig);
   };
 
 
@@ -85,8 +97,8 @@ const serverServiceFactory = (): IServerService => {
       return __alarms.value;
     },
 
-    // actions
-    someAction,
+    // alarms configuration
+    updateAlarms,
 
     // initializer
     initialize,
