@@ -19,7 +19,7 @@ const readRecord = async <T>(id: IStoreID): Promise<T | null> => {
     `,
     values: [id],
   });
-  return rows.length > 0 ? rows[0].data : null;
+  return rows.length > 0 ? rows[0].value : null;
 };
 
 /**
@@ -65,6 +65,7 @@ const deleteRecord = async (id: IStoreID): Promise<IQueryResult> => DatabaseServ
   `,
   values: [id],
 });
+
 
 
 

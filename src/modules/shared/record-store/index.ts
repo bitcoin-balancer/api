@@ -1,4 +1,4 @@
-import { IRecordStoreFactory, IStoreID } from './types.js';
+import { IRecordStoreFactory, IStoreID, IRecordStore } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -12,7 +12,7 @@ import { IRecordStoreFactory, IStoreID } from './types.js';
 const recordStoreServiceFactory: IRecordStoreFactory = async <T>(
   storeID: IStoreID,
   defaultValue: T,
-) => {
+): Promise<IRecordStore<T>> => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
