@@ -11,6 +11,7 @@ import { UserService } from '../../auth/user/index.js';
 import { JWTService } from '../../auth/jwt/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
 import { VersionService } from '../version/index.js';
+import { ServerService } from '../../server/index.js';
 import {
   IHTTPServer,
   ITerminationSignal,
@@ -98,6 +99,13 @@ const apiServiceFactory = (): IAPIService => {
         await VersionService.teardown();
       } catch (e) {
         console.error('VersionService.teardown()', e);
+      }
+
+      // Server Module
+      try {
+        await ServerService.teardown();
+      } catch (e) {
+        console.error('ServerService.teardown()', e);
       }
 
       // Database Module
@@ -220,6 +228,15 @@ const apiServiceFactory = (): IAPIService => {
         throw new Error(`VersionService.initialize() -> ${extractMessage(e)}`);
       }
       console.log('6/10) Version Module: done');
+
+      // Server Module
+      console.log('7/10) Server Module: started');
+      try {
+        await ServerService.initialize();
+      } catch (e) {
+        throw new Error(`ServerService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('7/10) Server Module: done');
     }
   };
 
