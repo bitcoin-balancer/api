@@ -21,8 +21,9 @@ const APIErrorRouter = Router();
 APIErrorRouter.route('/').get(mediumRiskLimit, async (req: Request, res: Response) => {
   let reqUid: string | undefined;
   try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 3);
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 3, ['limit'], req.query);
     res.json(buildResponse(await APIErrorService.list(
+      Number(req.query.limit),
       typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
     )));
   } catch (e) {

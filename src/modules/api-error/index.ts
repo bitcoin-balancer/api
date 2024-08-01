@@ -35,9 +35,6 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
     // ...
   ];
 
-  // the number of records that can be retrieved at a time
-  const __LIST_LIMIT: number = 15;
-
   // the number of API Errors that have not been yet read by users
   let __unreadCount: number = 0;
 
@@ -88,12 +85,16 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
   /**
    * Retrieves a series of API Errors. If the startAtID is provided, it will start at that point
    * exclusively.
+   * @param limit
    * @param startAtID
    * @returns Promise<IAPIError[]>
+   * @throws
+   * - 1000: if the startAtID was provided and is not a valid identifier
+   * - 1001: if the query limit is larger than the limit
    */
-  const list = async (startAtID: number | undefined): Promise<IAPIError[]> => {
-    canRecordsBeListed(startAtID);
-    const records = await listRecords(__LIST_LIMIT, startAtID);
+  const list = async (limit: number, startAtID: number | undefined): Promise<IAPIError[]> => {
+    canRecordsBeListed(limit, startAtID);
+    const records = await listRecords(limit, startAtID);
     __unreadCount = 0;
     return records;
   };

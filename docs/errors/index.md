@@ -30,6 +30,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 ### `validations.ts`
 
 - **1000:** `The API Errors cannot be listed with an invalid startAtID. Received: ${startAtID}.`
+- **1001:** `The maximum number of API Errors that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`
 
 
 

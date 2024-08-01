@@ -20,7 +20,7 @@ type IAPIErrorService = {
     ip?: string,
     args?: IRecord<any>,
   ) => Promise<void>;
-  list: (startAtID: number | undefined) => Promise<IAPIError[]>;
+  list: (limit: number, startAtID: number | undefined) => Promise<IAPIError[]>;
   deleteAll: () => Promise<void>;
 };
 

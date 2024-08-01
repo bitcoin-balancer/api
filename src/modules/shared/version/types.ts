@@ -92,7 +92,8 @@ type IVersion = {
     // the latest distributed version
     latest: IServiceVersion;
 
-    // ...
+    // the verion that is running can be extracted from the GUI's ENVIRONMENT global
+    // running: string;
   };
 
   // the server's version (back-end)
