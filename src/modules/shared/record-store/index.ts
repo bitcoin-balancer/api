@@ -1,3 +1,5 @@
+import { IQueryResult } from '../../database/types.js';
+import { readRecord, writeRecord } from './model.js';
 import { IRecordStoreFactory, IStoreID, IRecordStore } from './types.js';
 
 /* ************************************************************************************************
@@ -20,8 +22,12 @@ const recordStoreServiceFactory: IRecordStoreFactory = async <T>(
   // the store's identifier
   const __id: IStoreID = storeID;
 
-  // the store's current value
-  let __value: T;
+  // the store's current value - initialize it in case it hasn't been
+  let __value = <T> await readRecord(__id);
+  if (__value === null) {
+    await writeRecord(__id, defaultValue, true);
+    __value = defaultValue;
+  }
 
 
 
@@ -31,9 +37,13 @@ const recordStoreServiceFactory: IRecordStoreFactory = async <T>(
    *                                            ACTIONS                                           *
    ********************************************************************************************** */
 
-  const someAction = () => {
-    // ...
-  };
+  /**
+   * Updates the value of the store.
+   * @param newValue
+   * @returns Promise<IQueryResult>
+   */
+  const update = (newValue: T): Promise<IQueryResult> => writeRecord(__id, newValue);
+
 
 
 
@@ -51,7 +61,7 @@ const recordStoreServiceFactory: IRecordStoreFactory = async <T>(
     },
 
     // actions
-    someAction,
+    update,
   });
 };
 
