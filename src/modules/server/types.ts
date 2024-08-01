@@ -13,7 +13,7 @@ type IServerService = {
   alarms: IAlarmsConfiguration;
 
   // alarms configuration
-
+  updateAlarms: (newConfig: IAlarmsConfiguration) => Promise<void>;
 
   // initializer
   initialize: () => Promise<void>;

@@ -43,7 +43,7 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'UserRouter.post' | 'UserRouter.patch.nickname' | 'UserRouter.patch.authority'
 | 'UserRouter.patch.password' | 'UserRouter.patch.otpSecret' | 'UserRouter.delete' | 'JWTRouter.get'
 | 'JWTRouter.post.sign-in' | 'JWTRouter.post.refresh-jwt' | 'JWTRouter.post.sign-out'
-| 'VersionService.initialize.__buildVersion';
+| 'VersionService.initialize.__buildVersion' | 'ServerRouter.get.alarms' | 'ServerRouter.put.alarms';
 
 /**
  * API Error
