@@ -87,4 +87,17 @@ export const RAW_TABLES: IRawTable[] = [
       );
       CREATE INDEX IF NOT EXISTS ${getTableName('ip_blacklist')}_ip_idx ON ${getTableName('ip_blacklist')}(ip);`,
   },
+
+  /**
+   * record_store
+   * every record corresponds to a unique record that will be store persistently.
+   */
+  {
+    name: 'record_stores',
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('record_stores')} (
+        id    VARCHAR(500) PRIMARY KEY,
+        value JSONB NOT NULL
+      );`,
+  },
 ];
