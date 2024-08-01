@@ -61,7 +61,24 @@ describe('Record Store Model', () => {
     await Promise.all([deleteRecord(ID[0]), deleteRecord(ID[1])]);
   });
 
-  test.skip('can calculate 2 plus 2', () => {
-    expect(2 + 2).toBe(4);
+  test('can initialize and update a record', async () => {
+    await expect(readRecord(ID[0])).resolves.toBeNull();
+    await writeRecord(ID[0], R[0], true);
+    await expect(readRecord(ID[0])).resolves.toStrictEqual(R[0]);
+    await writeRecord(ID[0], R[1]);
+    await expect(readRecord(ID[0])).resolves.toStrictEqual(R[1]);
+    await deleteRecord(ID[0]);
+    await expect(readRecord(ID[0])).resolves.toBeNull();
+  });
+
+  test('can manage any number of records simultaneously', async () => {
+    await writeRecord(ID[0], R[0], true);
+    await writeRecord(ID[1], R[1], true);
+    await expect(readRecord(ID[0])).resolves.toStrictEqual(R[0]);
+    await expect(readRecord(ID[1])).resolves.toStrictEqual(R[1]);
+    await deleteRecord(ID[0]);
+    await expect(readRecord(ID[0])).resolves.toBeNull();
+    await deleteRecord(ID[1]);
+    await expect(readRecord(ID[1])).resolves.toBeNull();
   });
 });
