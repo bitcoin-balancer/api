@@ -34,7 +34,7 @@ const serverServiceFactory = (): IServerService => {
    ********************************************************************************************** */
 
   /**
-   * Validats and updates the alarms' configuration.
+   * Validates and updates the alarms' configuration.
    * @param newConfig
    * @throws
    * - 8250: if the configuration is not a valid object

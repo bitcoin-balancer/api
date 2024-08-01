@@ -1,4 +1,3 @@
-import { IQueryResult } from '../../database/types.js';
 import { readRecord, writeRecord } from './model.js';
 import { IRecordStoreFactory, IStoreID, IRecordStore } from './types.js';
 
@@ -40,9 +39,12 @@ const recordStoreServiceFactory: IRecordStoreFactory = async <T>(
   /**
    * Updates the value of the store.
    * @param newValue
-   * @returns Promise<IQueryResult>
+   * @returns Promise<void>
    */
-  const update = (newValue: T): Promise<IQueryResult> => writeRecord(__id, newValue);
+  const update = async (newValue: T): Promise<void> => {
+    await writeRecord(__id, newValue);
+    __value = newValue;
+  };
 
 
 

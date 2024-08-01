@@ -1,4 +1,4 @@
-import { IQueryResult } from '../../database/index.js';
+
 
 /* ************************************************************************************************
  *                                            FACTORY                                             *
@@ -23,7 +23,7 @@ type IRecordStore<T> = {
   value: T;
 
   // actions
-  update: (newValue: T) => Promise<IQueryResult>;
+  update: (newValue: T) => Promise<void>;
 };
 
 
