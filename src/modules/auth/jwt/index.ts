@@ -33,8 +33,7 @@ const jwtServiceFactory = (): IJWTService => {
   const __ACCESS_JWT_DURATION = 15;
 
   // the number of days a refresh token is valid for
-  //const __REFRESH_JWT_DURATION = 30;
-  const __REFRESH_JWT_DURATION = 1;
+  const __REFRESH_JWT_DURATION = 30;
   const __REFRESH_JWT_DURATION_MS = __REFRESH_JWT_DURATION * ((24 * 60 * 60) * 1000);
 
   // the name of the property that will contain the user's Refresh JWT

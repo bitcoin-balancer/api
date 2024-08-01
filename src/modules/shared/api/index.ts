@@ -10,6 +10,7 @@ import { NotificationService } from '../notification/index.js';
 import { UserService } from '../../auth/user/index.js';
 import { JWTService } from '../../auth/jwt/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
+import { VersionService } from '../version/index.js';
 import {
   IHTTPServer,
   ITerminationSignal,
@@ -90,6 +91,13 @@ const apiServiceFactory = (): IAPIService => {
         await IPBlacklistService.teardown();
       } catch (e) {
         console.error('IPBlacklistService.teardown()', e);
+      }
+
+      // Version Module
+      try {
+        await VersionService.teardown();
+      } catch (e) {
+        console.error('VersionService.teardown()', e);
       }
 
       // Database Module
@@ -203,6 +211,15 @@ const apiServiceFactory = (): IAPIService => {
         throw new Error(`IPBlacklistService.initialize() -> ${extractMessage(e)}`);
       }
       console.log('5/10) IP Blacklist Module: done');
+
+      // Version Module
+      console.log('6/10) Version Module: started');
+      try {
+        await VersionService.initialize(__packageFile.version);
+      } catch (e) {
+        throw new Error(`VersionService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('6/10) Version Module: done');
     }
   };
 

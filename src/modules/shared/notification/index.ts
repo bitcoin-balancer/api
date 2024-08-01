@@ -3,8 +3,8 @@ import { sendPOST } from 'fetch-request-node';
 import { ENVIRONMENT, ITelegramConfig } from '../environment/index.js';
 import { delay } from '../utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
-import { INotificationService, INotification } from './types.js';
 import { buildRequestInput, toMessage } from './utils.js';
+import { INotificationService, INotification } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -12,7 +12,7 @@ import { buildRequestInput, toMessage } from './utils.js';
 
 /**
  * Notification Service Factory
- * Generates the in charge of broadcasting notifications through the Telegram Group.
+ * Generates the object in charge of broadcasting notifications through the Telegram Group.
  * @returns INotificationService
  */
 const notificationServiceFactory = (): INotificationService => {
