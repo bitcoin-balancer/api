@@ -26,8 +26,107 @@ type IServerService = {
 
 
 /* ************************************************************************************************
- *                                             TYPES                                              *
+ *                                             STATE                                              *
  ************************************************************************************************ */
+
+/**
+ * CPU State
+ * Information regarding the server's CPU state (all values are in %).
+ */
+type ICPUState = {
+  // average load
+  avgLoad: number;
+
+  // CPU load
+  currentLoad: number;
+
+  // CPU load user
+  currentLoadUser: number;
+
+  // CPU load system
+  currentLoadSystem: number;
+
+  // load% - value populated in the service
+  load: number;
+};
+
+/**
+ * Memory State
+ * Information regarding the server's virtual memory state (all values are in bytes).
+ */
+type IMemoryState = {
+  // total memory in bytes
+  total: number;
+
+  // not used in bytes
+  free: number;
+
+  // used (incl. buffers/cache)
+  used: number;
+
+  // used actively (excl. buffers/cache)
+  active: number;
+
+  // used by buffers+cache
+  buffcache?: number
+
+  // used by buffers
+  buffers?: number;
+
+  // used by cache
+  cached?: number;
+
+  // used by slab
+  slab?: number;
+
+  // potentially available (total - active)
+  available: number;
+
+  // hard disk space used as RAM
+  swaptotal: number;
+  swapused: number;
+  swapfree: number;
+
+  // ?
+  writeback?: number;
+  dirty?: number;
+
+  // usage% - value populated in the service
+  usage: number;
+};
+
+/**
+ * File System State
+ * Information regarding the server's file system drive state (all values are in bytes).
+ */
+type IFileSystemState = {
+  // name of file system
+  fs: string;
+
+  // type of file system
+  type: string;
+
+  // sizes in bytes
+  size: number;
+
+  // used in bytes
+  used: number;
+
+  // available in bytes
+  available: number;
+
+  // used in %
+  use: number;
+
+  // mount point
+  mount: string;
+
+  // read/write (false if read only)
+  rw: boolean;
+
+  // usage% - value populated in the service
+  usage: number;
+};
 
 /**
  * Server State
@@ -46,19 +145,26 @@ type IServerState = {
   // the current version of the Balancer platform
   version: string;
 
-  // cpu's load%
-  cpuLoad: number;
+  // the state of the server's core proccessing unit (CPU)
+  cpu: ICPUState;
 
-  // memory's usage%
-  memoryUsage: number;
+  // the state of the server's virtual memory (RAM)
+  memory: IMemoryState;
 
-  // file systems' usage% (it will always pick the drive with highest usage%)
-  fileSystemUsage: number;
+  // the state of the server's hard drive (it will always pick the drive with highest usage%)
+  fileSystem: IFileSystemState;
 
   // the timestamp in ms of the last time the resources were fetched
   refetchTime: number;
 };
 
+
+
+
+
+/* ************************************************************************************************
+ *                                             ALARMS                                             *
+ ************************************************************************************************ */
 /**
  * Alarms Configuration
  * Object containing the limits to what is considered 'Acceptable'. Breaking any of these limits
