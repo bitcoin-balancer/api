@@ -1,13 +1,13 @@
 import { encodeError } from 'error-message-utils';
 import { sendGET } from 'fetch-request-node';
-import { delay } from '../shared/utils/index.js';
+import { delay } from '../utils/index.js';
 import {
   arrayValid,
   objectValid,
   semverValid,
   stringValid,
-} from '../shared/validations/index.js';
-import { APIErrorService } from '../api-error/index.js';
+} from '../validations/index.js';
+import { APIErrorService } from '../../api-error/index.js';
 import {
   IVersionService,
   IServiceVersionURLs,

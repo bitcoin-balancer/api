@@ -10,7 +10,7 @@ import { NotificationService } from '../notification/index.js';
 import { UserService } from '../../auth/user/index.js';
 import { JWTService } from '../../auth/jwt/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
-import { VersionService } from '../../version/index.js';
+import { VersionService } from '../version/index.js';
 import { ServerService } from '../../server/index.js';
 import {
   IHTTPServer,
