@@ -1,6 +1,6 @@
 import { recordStoreServiceFactory, IRecordStore } from '../shared/record-store/index.js';
 import { buildDefaultAlarms } from './utils.js';
-import { IServerService, IAlarmsConfiguration } from './types.js';
+import { IServerService, IAlarmsConfiguration, IServerState } from './types.js';
 import { canAlarmsBeUpdated } from './validations.js';
 
 /* ************************************************************************************************
@@ -18,6 +18,12 @@ const serverServiceFactory = (): IServerService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
+  // the running version of the API
+  let __runningVersion: string;
+
+  // server's runtime environment and resources info
+  let __state: IServerState;
+
   // alarms' configuration
   let __alarms: IRecordStore<IAlarmsConfiguration>;
 
@@ -25,6 +31,15 @@ const serverServiceFactory = (): IServerService => {
   const __MONITOR_FREQUENCY = 120;
   let __monitorInterval: NodeJS.Timeout;
 
+
+
+
+
+  /* **********************************************************************************************
+   *                                       STATE PROCESSING                                       *
+   ********************************************************************************************** */
+
+  // ...
 
 
 
@@ -41,7 +56,6 @@ const serverServiceFactory = (): IServerService => {
    * - 8251: if the maxFileSystemUsage is invalid
    * - 8252: if the maxMemoryUsage is invalid
    * - 8253: if the maxCPULoad is invalid
-   * - 8254: if the maxCPUTemperature is invalid
    */
   const updateAlarms = async (newConfig: IAlarmsConfiguration): Promise<void> => {
     canAlarmsBeUpdated(newConfig);
@@ -58,9 +72,13 @@ const serverServiceFactory = (): IServerService => {
 
   /**
    * Initializes the Server Module.
+   * @param runningVersion
    * @returns Promise<void>
    */
-  const initialize = async (): Promise<void> => {
+  const initialize = async (runningVersion: string): Promise<void> => {
+    // initialize the running version
+    __runningVersion = runningVersion;
+
     // initialize the alarms' configuration
     __alarms = await recordStoreServiceFactory('SERVER_ALARMS', buildDefaultAlarms());
 
@@ -93,6 +111,9 @@ const serverServiceFactory = (): IServerService => {
    ********************************************************************************************** */
   return Object.freeze({
     // properties
+    get state() {
+      return __state;
+    },
     get alarms() {
       return __alarms.value;
     },

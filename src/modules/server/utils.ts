@@ -9,10 +9,9 @@ import { IAlarmsConfiguration } from './types.js';
  * @returns IAlarmsConfiguration
  */
 const buildDefaultAlarms = (): IAlarmsConfiguration => ({
-  maxFileSystemUsage: 80,
-  maxMemoryUsage: 75,
   maxCPULoad: 75,
-  maxCPUTemperature: 70,
+  maxMemoryUsage: 75,
+  maxFileSystemUsage: 80,
 });
 
 

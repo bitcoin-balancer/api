@@ -56,6 +56,7 @@ validateJWTSecretConfig(ENVIRONMENT.JWT_SECRET);
  ************************************************************************************************ */
 export {
   // types
+  INodeEnv,
   ITelegramConfig,
 
   // implementation

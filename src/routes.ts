@@ -6,6 +6,7 @@ import { JWTRouter } from './modules/auth/jwt/router.js';
 import { IPBlacklistRouter } from './modules/ip-blacklist/router.js';
 import { ServerRouter } from './modules/server/router.js';
 import { PingRouter } from './modules/ping/router.js';
+import { VersionRouter } from './modules/version/router.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -23,6 +24,7 @@ const mountRoutes = (app: Express): void => {
   app.use('/ip-blacklist', IPBlacklistRouter);
   app.use('/server', ServerRouter);
   app.use('/ping', PingRouter);
+  app.use('/version', VersionRouter);
 
   // custom 404
   app.use((req, res) => {

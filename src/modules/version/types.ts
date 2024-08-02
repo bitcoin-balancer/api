@@ -105,8 +105,8 @@ type IVersion = {
     running: string;
   };
 
-  // the timestamp in ms of the last time the version was refreshed
-  refreshTime: number;
+  // the timestamp in ms of the last time the version was fetched
+  refetchTime: number;
 };
 
 

@@ -10,7 +10,7 @@ import { NotificationService } from '../notification/index.js';
 import { UserService } from '../../auth/user/index.js';
 import { JWTService } from '../../auth/jwt/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
-import { VersionService } from '../version/index.js';
+import { VersionService } from '../../version/index.js';
 import { ServerService } from '../../server/index.js';
 import {
   IHTTPServer,
@@ -232,7 +232,7 @@ const apiServiceFactory = (): IAPIService => {
       // Server Module
       console.log('7/10) Server Module: started');
       try {
-        await ServerService.initialize();
+        await ServerService.initialize(__packageFile.version);
       } catch (e) {
         throw new Error(`ServerService.initialize() -> ${extractMessage(e)}`);
       }

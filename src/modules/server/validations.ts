@@ -14,7 +14,6 @@ import { IAlarmsConfiguration } from './types.js';
  * - 8251: if the maxFileSystemUsage is invalid
  * - 8252: if the maxMemoryUsage is invalid
  * - 8253: if the maxCPULoad is invalid
- * - 8254: if the maxCPUTemperature is invalid
  */
 const canAlarmsBeUpdated = (config: IAlarmsConfiguration): void => {
   if (!objectValid(config)) {
@@ -29,9 +28,6 @@ const canAlarmsBeUpdated = (config: IAlarmsConfiguration): void => {
   }
   if (!numberValid(config.maxCPULoad, 30, 99)) {
     throw new Error(encodeError(`The maxCPULoad must be a number ranging 30-99. Received: ${config.maxMemoryUsage}`, 8253));
-  }
-  if (!numberValid(config.maxCPUTemperature, 50, 90)) {
-    throw new Error(encodeError(`The maxCPUTemperature must be a number ranging 50-90. Received: ${config.maxMemoryUsage}`, 8254));
   }
 };
 

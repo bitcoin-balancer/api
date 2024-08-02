@@ -219,4 +219,4 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **8251:** `The maxFileSystemUsage must be a number ranging 30-99. Received: ${config.maxFileSystemUsage}`
 - **8252:** `The maxMemoryUsage must be a number ranging 30-99. Received: ${config.maxMemoryUsage}`
 - **8253:** `The maxCPULoad must be a number ranging 30-99. Received: ${config.maxMemoryUsage}`
-- **8254:** `The maxCPUTemperature must be a number ranging 50-90. Received: ${config.maxMemoryUsage}`
+- **8254:** ``

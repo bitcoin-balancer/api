@@ -1,13 +1,13 @@
 import { encodeError } from 'error-message-utils';
 import { sendGET } from 'fetch-request-node';
-import { delay } from '../utils/index.js';
+import { delay } from '../shared/utils/index.js';
 import {
   arrayValid,
   objectValid,
   semverValid,
   stringValid,
-} from '../validations/index.js';
-import { APIErrorService } from '../../api-error/index.js';
+} from '../shared/validations/index.js';
+import { APIErrorService } from '../api-error/index.js';
 import {
   IVersionService,
   IServiceVersionURLs,
@@ -49,8 +49,8 @@ const versionServiceFactory = (): IVersionService => {
   const __REQUEST_DELAY = 2;
 
   // the latest versions will be re-fetched every __refreshFrequency hours
-  const __REFRESH_FREQUENCY: number = 6;
-  let __refreshInterval: NodeJS.Timeout;
+  const __REFETCH_FREQUENCY: number = 6;
+  let __refetchInterval: NodeJS.Timeout;
 
 
 
@@ -145,12 +145,12 @@ const versionServiceFactory = (): IVersionService => {
           latest: api,
           running: runningVersion,
         },
-        refreshTime: Date.now(),
+        refetchTime: Date.now(),
       };
     } else {
       __version.gui.latest = gui;
       __version.api.latest = api;
-      __version.refreshTime = Date.now();
+      __version.refetchTime = Date.now();
     }
   };
 
@@ -171,13 +171,13 @@ const versionServiceFactory = (): IVersionService => {
     await __buildVersion(runningVersion);
 
     // initialize the refresh interval
-    __refreshInterval = setInterval(async () => {
+    __refetchInterval = setInterval(async () => {
       try {
         await __buildVersion();
       } catch (e) {
         APIErrorService.save('VersionService.initialize.__buildVersion', e);
       }
-    }, (__REFRESH_FREQUENCY * (60 * 60)) * 1000);
+    }, (__REFETCH_FREQUENCY * (60 * 60)) * 1000);
   };
 
   /**
@@ -185,8 +185,8 @@ const versionServiceFactory = (): IVersionService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    if (__refreshInterval) {
-      clearInterval(__refreshInterval);
+    if (__refetchInterval) {
+      clearInterval(__refetchInterval);
     }
   };
 

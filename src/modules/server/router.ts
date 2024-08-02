@@ -12,6 +12,23 @@ const ServerRouter = Router();
  ************************************************************************************************ */
 
 /**
+ * Retrieves the current state of the server.
+ * @returns IAPIResponse<IServerState>
+ * @requirements
+ * - authority: 3
+ */
+ServerRouter.route('/').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 3);
+    res.json(buildResponse(ServerService.state));
+  } catch (e) {
+    APIErrorService.save('ServerRouter.get', e, reqUid, req.ip);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
  * Retrieves the alarms' configuration.
  * @returns IAPIResponse<IAlarmsConfiguration>
  * @requirements
