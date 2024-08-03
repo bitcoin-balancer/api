@@ -45,9 +45,6 @@ type ICPUState = {
 
   // CPU load system
   currentLoadSystem: number;
-
-  // load% - value populated in the service
-  load: number;
 };
 
 /**
@@ -61,35 +58,8 @@ type IMemoryState = {
   // not used in bytes
   free: number;
 
-  // used (incl. buffers/cache)
-  used: number;
-
   // used actively (excl. buffers/cache)
   active: number;
-
-  // used by buffers+cache
-  buffcache?: number
-
-  // used by buffers
-  buffers?: number;
-
-  // used by cache
-  cached?: number;
-
-  // used by slab
-  slab?: number;
-
-  // potentially available (total - active)
-  available: number;
-
-  // hard disk space used as RAM
-  swaptotal: number;
-  swapused: number;
-  swapfree: number;
-
-  // ?
-  writeback?: number;
-  dirty?: number;
 
   // usage% - value populated in the service
   usage: number;
@@ -120,12 +90,6 @@ type IFileSystemState = {
 
   // mount point
   mount: string;
-
-  // read/write (false if read only)
-  rw: boolean;
-
-  // usage% - value populated in the service
-  usage: number;
 };
 
 /**
@@ -133,9 +97,6 @@ type IFileSystemState = {
  * The object containing information regarding the server's runtime environment and resources.
  */
 type IServerState = {
-  // the server's current time in ms
-  time: number;
-
   // the amount of seconds the server has been running for
   uptime: number;
 
@@ -192,7 +153,12 @@ export type {
   // service
   IServerService,
 
-  // types
+  // state
+  ICPUState,
+  IMemoryState,
+  IFileSystemState,
   IServerState,
+
+  // alarms
   IAlarmsConfiguration,
 };

@@ -1,7 +1,9 @@
+import { ENVIRONMENT } from '../shared/environment/index.js';
 import { recordStoreServiceFactory, IRecordStore } from '../shared/record-store/index.js';
 import { buildDefaultAlarms } from './utils.js';
 import { IServerService, IAlarmsConfiguration, IServerState } from './types.js';
 import { canAlarmsBeUpdated } from './validations.js';
+import { scanResources } from './scanner.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -27,9 +29,9 @@ const serverServiceFactory = (): IServerService => {
   // alarms' configuration
   let __alarms: IRecordStore<IAlarmsConfiguration>;
 
-  // the resources will be scanned every __MONITOR_FREQUENCY seconds
-  const __MONITOR_FREQUENCY = 120;
-  let __monitorInterval: NodeJS.Timeout;
+  // the resources will be scanned every __REFETCH_FREQUENCY seconds
+  const __REFETCH_FREQUENCY = 120;
+  let __refetchInterval: NodeJS.Timeout;
 
 
 
@@ -40,6 +42,34 @@ const serverServiceFactory = (): IServerService => {
    ********************************************************************************************** */
 
   // ...
+
+  const __refetchState = async (runningVersion?: string): Promise<void> => {
+    // scan the resources
+    const resources = await scanResources();
+
+    // check the current values against the alarms' configuration
+    // @TODO
+
+    // set / update the state accordingly
+    if (runningVersion) {
+      __state = {
+        uptime: resources.uptime,
+        environment: ENVIRONMENT.NODE_ENV,
+        version: runningVersion,
+        cpu: resources.cpu,
+        memory: resources.memory,
+        fileSystem: resources.fileSystem,
+        refetchTime: Date.now(),
+      };
+    } else {
+      __state.uptime = resources.uptime;
+      __state.cpu = resources.cpu;
+      __state.memory = resources.memory;
+      __state.fileSystem = resources.fileSystem;
+      __state.refetchTime = Date.now();
+    }
+  };
+
 
 
 
@@ -83,13 +113,13 @@ const serverServiceFactory = (): IServerService => {
     __alarms = await recordStoreServiceFactory('SERVER_ALARMS', buildDefaultAlarms());
 
     // initialize the monitor interval
-    __monitorInterval = setInterval(async () => {
+    __refetchInterval = setInterval(async () => {
       try {
         // @TODO
       } catch (e) {
         // APIErrorService.save('VersionService.initialize.__buildVersion', e);
       }
-    }, __MONITOR_FREQUENCY * 1000);
+    }, __REFETCH_FREQUENCY * 1000);
   };
 
   /**
@@ -97,8 +127,8 @@ const serverServiceFactory = (): IServerService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    if (__monitorInterval) {
-      clearInterval(__monitorInterval);
+    if (__refetchInterval) {
+      clearInterval(__refetchInterval);
     }
   };
 
