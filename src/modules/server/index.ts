@@ -1,6 +1,7 @@
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { recordStoreServiceFactory, IRecordStore } from '../shared/record-store/index.js';
 import { APIErrorService } from '../api-error/index.js';
+import { NotificationService } from '../shared/notification/index.js';
 import { buildDefaultAlarms } from './utils.js';
 import { canAlarmsBeUpdated } from './validations.js';
 import { scanResources } from './scanner.js';
@@ -50,17 +51,35 @@ const serverServiceFactory = (): IServerService => {
    * @param state
    */
   const __checkCPUState = (state: ICPUState): void => {
-    if (state.avgLoad > __alarms.value.maxCPULoad || state.avgLoad > __alarms.value.maxCPULoad) {
-      // ...
+    if (
+      state.avgLoad > __alarms.value.maxCPULoad
+      || state.currentLoad > __alarms.value.maxCPULoad
+    ) {
+      NotificationService.highCPULoad(
+        state.avgLoad > state.currentLoad ? state.avgLoad : state.currentLoad,
+        __alarms.value.maxCPULoad,
+      );
     }
   };
 
+  /**
+   * Checks if the Memory is in an acceptable state, otherwise, it broadcasts a notification.
+   * @param state
+   */
   const __checkMemoryState = (state: IMemoryState): void => {
-
+    if (state.usage > __alarms.value.maxMemoryUsage) {
+      NotificationService.highMemoryUsage(state.usage, __alarms.value.maxMemoryUsage);
+    }
   };
 
+  /**
+   * Checks if the File System is in an acceptable state, otherwise, it broadcasts a notification.
+   * @param state
+   */
   const __checkFileSystemState = (state: IFileSystemState): void => {
-
+    if (state.use > __alarms.value.maxFileSystemUsage) {
+      NotificationService.highFileSystemUsage(state.use, __alarms.value.maxFileSystemUsage);
+    }
   };
 
   /**
