@@ -157,11 +157,13 @@ const serverServiceFactory = (): IServerService => {
 
     // initialize the state
     await __refetchState(runningVersion);
+    console.log(__state);
 
     // initialize the refetch interval
     __refetchInterval = setInterval(async () => {
       try {
         await __refetchState();
+        console.log(__state);
       } catch (e) {
         APIErrorService.save('ServerService.initialize.__refetchState', e);
       }

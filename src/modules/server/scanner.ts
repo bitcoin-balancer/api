@@ -81,7 +81,7 @@ const scanResources = async (): Promise<{
     fsSize: 'fs, type, size, used, available, use, mount',
   });
   return {
-    uptime: <number>data.uptime,
+    uptime: <number>data.time,
     cpu: __buildCPUState(<IRecord<any>>data.currentLoad),
     memory: __buildMemoryState(<IRecord<any>>data.mem),
     fileSystem: __buildFileSystemStates(<IRecord<any>[]>data.fsSize)[0],
