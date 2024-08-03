@@ -160,6 +160,47 @@ const notificationServiceFactory = (): INotificationService => {
 
 
   /* **********************************************************************************************
+   *                                        SERVER ALARMS                                         *
+   ********************************************************************************************** */
+
+  /**
+   * Broadcasts a message notifying users the CPU is overloaded.
+   * @param current
+   * @param limit
+   */
+  const highCPULoad = (current: number, limit: number): void => __addToQueue({
+    sender: 'SERVER',
+    title: 'High CPU Load!',
+    description: `The CPU’s load is currently at ${current}% which exceeds the limit of ${limit}%.`,
+  });
+
+  /**
+   * Broadcasts a message notifying users the RAM is overused.
+   * @param current
+   * @param limit
+   */
+  const highMemoryUsage = (current: number, limit: number): void => __addToQueue({
+    sender: 'SERVER',
+    title: 'High Memory Usage!',
+    description: `The Virtual Memory's usage is currently at ${current}% which exceeds the limit of ${limit}%.`,
+  });
+
+  /**
+   * Broadcasts a message notifying users the File System is overused.
+   * @param current
+   * @param limit
+   */
+  const highFileSystemUsage = (current: number, limit: number): void => __addToQueue({
+    sender: 'SERVER',
+    title: 'High File System Usage!',
+    description: `The File System's usage is currently at ${current}% which exceeds the limit of ${limit}%.`,
+  });
+
+
+
+
+
+  /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
   return Object.freeze({
@@ -176,6 +217,11 @@ const notificationServiceFactory = (): INotificationService => {
     // api initializer
     apiInit,
     apiInitError,
+
+    // server alarms
+    highCPULoad,
+    highMemoryUsage,
+    highFileSystemUsage,
   });
 };
 

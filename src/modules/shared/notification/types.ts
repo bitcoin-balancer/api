@@ -22,6 +22,11 @@ type INotificationService = {
   // api initializer
   apiInit: () => void;
   apiInitError: (error: any) => Promise<void>;
+
+  // server alarms
+  highCPULoad: (current: number, limit: number) => void;
+  highMemoryUsage: (current: number, limit: number) => void;
+  highFileSystemUsage: (current: number, limit: number) => void;
 };
 
 
@@ -36,7 +41,7 @@ type INotificationService = {
  * Notification Sender
  * The sender can be a module or even a specific event.
  */
-type INotificationSender = 'AUTOMATED_TEST' | 'API_ERROR' | 'API_INITIALIZER';
+type INotificationSender = 'AUTOMATED_TEST' | 'API_ERROR' | 'API_INITIALIZER' | 'SERVER';
 
 /**
  * Notification

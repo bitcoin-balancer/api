@@ -1,9 +1,16 @@
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { recordStoreServiceFactory, IRecordStore } from '../shared/record-store/index.js';
+import { APIErrorService } from '../api-error/index.js';
 import { buildDefaultAlarms } from './utils.js';
-import { IServerService, IAlarmsConfiguration, IServerState } from './types.js';
 import { canAlarmsBeUpdated } from './validations.js';
 import { scanResources } from './scanner.js';
+import {
+  IServerService,
+  IAlarmsConfiguration,
+  IServerState, ICPUState,
+  IMemoryState,
+  IFileSystemState,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -19,9 +26,6 @@ const serverServiceFactory = (): IServerService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
-
-  // the running version of the API
-  let __runningVersion: string;
 
   // server's runtime environment and resources info
   let __state: IServerState;
@@ -41,14 +45,37 @@ const serverServiceFactory = (): IServerService => {
    *                                       STATE PROCESSING                                       *
    ********************************************************************************************** */
 
-  // ...
+  /**
+   * Checks if the CPU is in an acceptable state, otherwise, it broadcasts a notification.
+   * @param state
+   */
+  const __checkCPUState = (state: ICPUState): void => {
+    if (state.avgLoad > __alarms.value.maxCPULoad || state.avgLoad > __alarms.value.maxCPULoad) {
+      // ...
+    }
+  };
 
+  const __checkMemoryState = (state: IMemoryState): void => {
+
+  };
+
+  const __checkFileSystemState = (state: IFileSystemState): void => {
+
+  };
+
+  /**
+   * Scans, checks and updates the state for the resources.
+   * @param runningVersion?
+   * @returns Promise<void>
+   */
   const __refetchState = async (runningVersion?: string): Promise<void> => {
     // scan the resources
     const resources = await scanResources();
 
     // check the current values against the alarms' configuration
-    // @TODO
+    __checkCPUState(resources.cpu);
+    __checkMemoryState(resources.memory);
+    __checkFileSystemState(resources.fileSystem);
 
     // set / update the state accordingly
     if (runningVersion) {
@@ -106,24 +133,24 @@ const serverServiceFactory = (): IServerService => {
    * @returns Promise<void>
    */
   const initialize = async (runningVersion: string): Promise<void> => {
-    // initialize the running version
-    __runningVersion = runningVersion;
-
     // initialize the alarms' configuration
     __alarms = await recordStoreServiceFactory('SERVER_ALARMS', buildDefaultAlarms());
 
-    // initialize the monitor interval
+    // initialize the state
+    await __refetchState(runningVersion);
+
+    // initialize the refetch interval
     __refetchInterval = setInterval(async () => {
       try {
-        // @TODO
+        await __refetchState();
       } catch (e) {
-        // APIErrorService.save('VersionService.initialize.__buildVersion', e);
+        APIErrorService.save('ServerService.initialize.__refetchState', e);
       }
     }, __REFETCH_FREQUENCY * 1000);
   };
 
   /**
-   * Tears down the Version Module if it was initialized.
+   * Tears down the Server Module if it was initialized.
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
