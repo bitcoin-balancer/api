@@ -74,17 +74,22 @@ const scanResources = async (): Promise<{
   memory: IMemoryState,
   fileSystem: IFileSystemState,
 }> => {
-  const data: IRecord<number | IRecord<any> | IRecord<any>[]> = await systeminformation.get({
+  const data: {
+    time: { uptime: number },
+    currentLoad: IRecord<any>,
+    mem: IRecord<any>,
+    fsSize: IRecord<any>[],
+  } = await systeminformation.get({
     time: 'uptime',
     currentLoad: 'avgLoad, currentLoad, currentLoadUser, currentLoadSystem',
     mem: 'total, free, active',
     fsSize: 'fs, type, size, used, available, use, mount',
   });
   return {
-    uptime: <number>data.time,
-    cpu: __buildCPUState(<IRecord<any>>data.currentLoad),
-    memory: __buildMemoryState(<IRecord<any>>data.mem),
-    fileSystem: __buildFileSystemStates(<IRecord<any>[]>data.fsSize)[0],
+    uptime: data.time.uptime,
+    cpu: __buildCPUState(data.currentLoad),
+    memory: __buildMemoryState(data.mem),
+    fileSystem: __buildFileSystemStates(data.fsSize)[0],
   };
 };
 

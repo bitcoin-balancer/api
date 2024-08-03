@@ -126,6 +126,7 @@ type IServerState = {
 /* ************************************************************************************************
  *                                             ALARMS                                             *
  ************************************************************************************************ */
+
 /**
  * Alarms Configuration
  * Object containing the limits to what is considered 'Acceptable'. Breaking any of these limits
