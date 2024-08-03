@@ -15,12 +15,12 @@ const ServerRouter = Router();
  * Retrieves the current state of the server.
  * @returns IAPIResponse<IServerState>
  * @requirements
- * - authority: 3
+ * - authority: 2
  */
 ServerRouter.route('/').get(lowRiskLimit, async (req: Request, res: Response) => {
   let reqUid: string | undefined;
   try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 3);
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
     res.json(buildResponse(ServerService.state));
   } catch (e) {
     APIErrorService.save('ServerRouter.get', e, reqUid, req.ip);
@@ -32,12 +32,12 @@ ServerRouter.route('/').get(lowRiskLimit, async (req: Request, res: Response) =>
  * Retrieves the alarms' configuration.
  * @returns IAPIResponse<IAlarmsConfiguration>
  * @requirements
- * - authority: 3
+ * - authority: 2
  */
 ServerRouter.route('/alarms').get(lowRiskLimit, async (req: Request, res: Response) => {
   let reqUid: string | undefined;
   try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 3);
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
     res.json(buildResponse(ServerService.alarms));
   } catch (e) {
     APIErrorService.save('ServerRouter.get.alarms', e, reqUid, req.ip);

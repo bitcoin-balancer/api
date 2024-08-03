@@ -35,7 +35,7 @@ const serverServiceFactory = (): IServerService => {
   let __alarms: IRecordStore<IAlarmsConfiguration>;
 
   // the resources will be scanned every __REFETCH_FREQUENCY seconds
-  const __REFETCH_FREQUENCY = 120;
+  const __REFETCH_FREQUENCY = 60;
   let __refetchInterval: NodeJS.Timeout;
 
 
@@ -157,13 +157,11 @@ const serverServiceFactory = (): IServerService => {
 
     // initialize the state
     await __refetchState(runningVersion);
-    console.log(__state);
 
     // initialize the refetch interval
     __refetchInterval = setInterval(async () => {
       try {
         await __refetchState();
-        console.log(__state);
       } catch (e) {
         APIErrorService.save('ServerService.initialize.__refetchState', e);
       }
