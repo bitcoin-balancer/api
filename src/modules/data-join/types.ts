@@ -5,8 +5,6 @@ import { IVersion } from '../shared/version/index.js';
  *                                            SERVICE                                             *
  ************************************************************************************************ */
 
-
-
 /**
  * Data Join Server
  * Object in charge of combining multiple data sources into one in order to reduce the number of
@@ -19,6 +17,8 @@ type IDataJoinService = {
   // retrievers
   // ...
 };
+
+
 
 
 
@@ -50,6 +50,20 @@ type IAppEssentials = {
   // ...
 };
 
+/**
+ * Compact App Essentials
+ * The compact version of the App Essentials which is broadcasted through websockets.
+ */
+type ICompactAppEssentials = {
+  // the number of unread errors
+  unreadAPIErrors: number;
+
+  // the current state of the market
+  // ...
+
+  // the active position record (if any)
+  // ...
+};
 
 
 
@@ -63,4 +77,5 @@ export type {
 
   // app essentials
   IAppEssentials,
+  ICompactAppEssentials,
 };
