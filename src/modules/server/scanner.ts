@@ -1,5 +1,5 @@
 import systeminformation from 'systeminformation';
-import { calculatePercentageRepresentation } from 'bignumber-utils';
+import { calculatePercentageRepresentation, processValue } from 'bignumber-utils';
 import { sortRecords } from '../shared/utils/index.js';
 import { ICPUState, IMemoryState, IFileSystemState } from './types.js';
 import { IRecord } from '../shared/types.js';
@@ -14,10 +14,10 @@ import { IRecord } from '../shared/types.js';
  * @returns ICPUState
  */
 const __buildCPUState = (raw: IRecord<any>): ICPUState => ({
-  avgLoad: raw.avgLoad ?? 0,
-  currentLoad: raw.currentLoad ?? 0,
-  currentLoadUser: raw.currentLoadUser ?? 0,
-  currentLoadSystem: raw.currentLoadSystem ?? 0,
+  avgLoad: typeof raw.avgLoad === 'number' ? processValue(raw.avgLoad) : 0,
+  currentLoad: typeof raw.currentLoad === 'number' ? processValue(raw.currentLoad) : 0,
+  currentLoadUser: typeof raw.currentLoadUser === 'number' ? processValue(raw.currentLoadUser) : 0,
+  currentLoadSystem: typeof raw.currentLoadSystem === 'number' ? processValue(raw.currentLoadSystem) : 0,
 });
 
 /**

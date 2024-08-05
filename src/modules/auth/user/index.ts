@@ -78,11 +78,10 @@ const userServiceFactory = (): IUserService => {
    * - 3003: if there isn't a user matching the uid
    */
   const getUser = (uid: string): IUser => {
-    const user = listUsers().find((u) => u.uid === uid);
-    if (user === undefined) {
+    if (!__users[uid]) {
       throw new Error(encodeError(`The user '${uid}' could not be found in the local users' object.`, 3003));
     }
-    return user;
+    return __users[uid];
   };
 
   /**
@@ -500,9 +499,10 @@ const UserService = userServiceFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  // types
-  type IAuthority,
-
   // service
   UserService,
+
+  // types
+  type IUser,
+  type IAuthority,
 };

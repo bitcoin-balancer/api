@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { buildResponse } from 'api-response-utils';
-import { mediumRiskLimit, veryHighRiskLimit } from '../../middlewares/rate-limit/index.js';
+import { veryLowRiskLimit, veryHighRiskLimit } from '../../middlewares/rate-limit/index.js';
 import { checkRequest } from '../shared/request-guard/index.js';
 import { APIErrorService } from '../api-error/index.js';
 
@@ -18,7 +18,7 @@ const APIErrorRouter = Router();
  * @requirements
  * - authority: 2
  */
-APIErrorRouter.route('/').get(mediumRiskLimit, async (req: Request, res: Response) => {
+APIErrorRouter.route('/').get(veryLowRiskLimit, async (req: Request, res: Response) => {
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 2, ['limit'], req.query);
