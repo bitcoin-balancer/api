@@ -15,7 +15,11 @@ type IDataJoinService = {
   // ...
 
   // retrievers
-  // ...
+  getAppEssentials: (uid: string) => IAppEssentials;
+
+  // initializer
+  initialize: () => Promise<void>;
+  teardown: () => Promise<void>;
 };
 
 
