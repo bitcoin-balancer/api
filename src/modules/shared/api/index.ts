@@ -12,6 +12,7 @@ import { JWTService } from '../../auth/jwt/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
 import { VersionService } from '../version/index.js';
 import { ServerService } from '../../server/index.js';
+import { DataJoinService } from '../../data-join/index.js';
 import {
   IHTTPServer,
   ITerminationSignal,
@@ -106,6 +107,13 @@ const apiServiceFactory = (): IAPIService => {
         await ServerService.teardown();
       } catch (e) {
         console.error('ServerService.teardown()', e);
+      }
+
+      // Data Join Module
+      try {
+        await DataJoinService.teardown();
+      } catch (e) {
+        console.error('DataJoinService.teardown()', e);
       }
 
       // Database Module
@@ -237,6 +245,17 @@ const apiServiceFactory = (): IAPIService => {
         throw new Error(`ServerService.initialize() -> ${extractMessage(e)}`);
       }
       console.log('7/10) Server Module: done');
+
+
+
+      // Data Join Module
+      console.log('10/10) Data Join Module: started');
+      try {
+        await DataJoinService.initialize();
+      } catch (e) {
+        throw new Error(`DataJoinService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('10/10) Data Join Module: done');
     }
   };
 
