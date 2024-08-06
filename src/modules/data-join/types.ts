@@ -6,7 +6,7 @@ import { IVersion } from '../shared/version/index.js';
  ************************************************************************************************ */
 
 /**
- * Data Join Server
+ * Data Join Service
  * Object in charge of combining multiple data sources into one in order to reduce the number of
  * requests.
  */
