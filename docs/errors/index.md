@@ -220,3 +220,25 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **8252:** `The maxMemoryUsage must be a number ranging 30-99. Received: ${config.maxMemoryUsage}`
 - **8253:** `The maxCPULoad must be a number ranging 30-99. Received: ${config.maxMemoryUsage}`
 - **8254:** ``
+
+
+
+
+
+<br/><br/><br/>
+
+## `Socket IO` (9000 - 9999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **9000:** ``
+
+### `utils.ts`
+
+- **9250:** `The socker's handshake doesn't contain cookies. Received: ${cookie}`
+- **9251:** `The Refresh JWT could not be extracted from the signed cookie. Received: ${jwt}`
+- **9252:** ``

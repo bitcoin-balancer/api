@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-import { Server } from 'socket.io';
-import { decodeError } from 'error-message-utils';
+import { Server, Socket, ServerOptions } from 'socket.io';
 import { IHTTPServer } from '../types.js';
-import { JWTService } from '../../auth/jwt/index.js';
-import { ISocketIOService } from './types.js';
 import { ENVIRONMENT } from '../environment/index.js';
+import { JWTService } from '../../auth/jwt/index.js';
+import { extractRefreshJWT, shouldDisconnect } from './utils.js';
+import { ISocketIOService } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -20,8 +20,49 @@ const socketIOServiceFactory = (): ISocketIOService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // ...
+  // the config that will be used to instantiate the server
+  const __SERVER_OPTIONS: Partial<ServerOptions> = {
+    path: '/stream/',
+    cors: {
+      origin: [ENVIRONMENT.GUI_URL],
+      credentials: true,
+    },
+  };
+
+  // the instance of the server
   let __io: Server;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                          MIDDLEWARES                                         *
+   ********************************************************************************************** */
+
+  /**
+   * Ensures only authenticated users can proceed and establish a connection.
+   * @param socket
+   * @param next
+   * @returns Promise<void>
+   * @throws
+   * - 9250: if the auth cookie was not included in the headers
+   * - 9251: if the signed refresh JWT could not be extracted from the cookie
+   */
+  const __authMiddleware = async (socket: Socket, next: (err?: Error) => void): Promise<void> => {
+    try {
+      const refreshJWT = extractRefreshJWT(socket.handshake.headers.cookie);
+      console.log('handshake', socket.handshake);
+      console.log('refreshJWT', refreshJWT);
+
+      // const refreshJWT: string = __extractRefreshJWT(socket.handshake.headers.cookie);
+      // console.log('refreshJWT', refreshJWT);
+      // await JWTService.verifyAccessToken(refreshJWT);
+      return next();
+    } catch (e) {
+      return next(<Error>e);
+    }
+  };
 
 
 
@@ -37,38 +78,18 @@ const socketIOServiceFactory = (): ISocketIOService => {
    */
   const initialize = async (server: IHTTPServer): Promise<void> => {
     // initialize the server
-    __io = new Server(server, {
-      path: '/stream/',
-      cors: {
-        origin: [ENVIRONMENT.GUI_URL],
-        credentials: true,
-      },
-    });
+    __io = new Server(server, __SERVER_OPTIONS);
 
     /**
      * Authentication Middleware
      * Only authenticated users can establish a connection with the stream.
      */
-    __io.use(async (socket, next) => {
-      try {
-        console.log('handshake', socket.handshake);
-        await JWTService.verifyAccessToken('');
-        return next();
-      } catch (e) {
-        return next(<Error>e);
-      }
-    });
+    __io.use(__authMiddleware);
 
-    // subscribe to the connections
+    // subscribe to the connections and handle errors accordingly
     __io.on('connection', (socket) => {
-      /**
-       * Disconnect the client if unauthenticated or unauthorized.
-       * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
-       * - 4253: if the decoded data is an invalid object or does not contain the uid
-       */
       socket.on('error', (e) => {
-        const { code } = decodeError(e);
-        if (code === 4252 || code === 4253) {
+        if (shouldDisconnect(e)) {
           socket.disconnect();
         }
       });
@@ -84,6 +105,7 @@ const socketIOServiceFactory = (): ISocketIOService => {
       __io.close();
     }
   };
+
 
 
 
