@@ -1,3 +1,23 @@
+import { Server, IncomingMessage, ServerResponse } from 'http';
+
+/* ************************************************************************************************
+ *                                         NODE.JS TYPES                                          *
+ ************************************************************************************************ */
+
+/**
+ * HTTP Server
+ * The instanec of a Node.js HTTP Server.
+ */
+type IHTTPServer = Server<typeof IncomingMessage, typeof ServerResponse>;
+
+/**
+ * Termination Signal
+ * The signal that is emitted once the process is being shutdown.
+ */
+type ITerminationSignal = 'SIGINT' | 'SIGTERM';
+
+
+
 
 
 /* ************************************************************************************************
@@ -43,6 +63,11 @@ type IPackageFile = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
+  // node.js types
+  IHTTPServer,
+  ITerminationSignal,
+
+  // utility types
   IRecord,
   IPackageFile,
 };

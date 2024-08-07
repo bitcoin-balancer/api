@@ -1,23 +1,20 @@
-import { Express } from 'express';
-import { IHTTPServer, IPackageFile } from '../types.js';
+import { IHTTPServer } from '../types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
  ************************************************************************************************ */
 
 /**
- * API Service
- * This object is instantiated on start up and is in charge of managing the initialization and
- * teardown of API modules as well as the Node.js HTTP Server.
+ * Socket IO Service
+ * Object in charge of exposing a Socket.IO instance to all of Balancer's modules.
  */
-type IAPIService = {
+type ISocketIOService = {
   // properties
-  server: IHTTPServer;
-  initialized: boolean,
-  packageFile: IPackageFile,
+  // ...
 
-  // initialization
-  initialize: (app: Express, retryDelaySchedule?: number[]) => Promise<void>,
+  // initializer
+  initialize: (server: IHTTPServer) => Promise<void>;
+  teardown: () => Promise<void>;
 };
 
 
@@ -33,13 +30,12 @@ type IAPIService = {
 
 
 
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
   // service
-  IAPIService,
+  ISocketIOService,
 
   // types
   // ...

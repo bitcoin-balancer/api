@@ -3,8 +3,9 @@ import process from 'node:process';
 import { Express } from 'express';
 import { extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../environment/index.js';
-import { IPackageFile } from '../types.js';
+import { IPackageFile, IHTTPServer, ITerminationSignal } from '../types.js';
 import { delay } from '../utils/index.js';
+import { SocketIOService } from '../socket-io/index.js';
 import { DatabaseService } from '../../database/index.js';
 import { NotificationService } from '../notification/index.js';
 import { UserService } from '../../auth/user/index.js';
@@ -13,11 +14,7 @@ import { IPBlacklistService } from '../../ip-blacklist/index.js';
 import { VersionService } from '../version/index.js';
 import { ServerService } from '../../server/index.js';
 import { DataJoinService } from '../../data-join/index.js';
-import {
-  IHTTPServer,
-  ITerminationSignal,
-  IAPIService,
-} from './types.js';
+import { IAPIService } from './types.js';
 import {
   readPackageFile,
   printInitializationHeader,
@@ -67,6 +64,13 @@ const apiServiceFactory = (): IAPIService => {
    */
   const __teardownModules = async (): Promise<void> => {
     if (!ENVIRONMENT.TEST_MODE) {
+      // Socket IO Module
+      try {
+        await SocketIOService.teardown();
+      } catch (e) {
+        console.error('SocketIOService.teardown()', e);
+      }
+
       // Notification Module
       try {
         await NotificationService.teardown();
@@ -183,68 +187,77 @@ const apiServiceFactory = (): IAPIService => {
    */
   const __initializeModules = async (): Promise<void> => {
     if (!ENVIRONMENT.TEST_MODE) {
+      // Socket IO Module
+      console.log('1/10) Socket IO Module: started');
+      try {
+        await SocketIOService.initialize(__server);
+      } catch (e) {
+        throw new Error(`SocketIOService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('1/10) Socket IO Module: done');
+
       // Database Module
-      console.log('1/10) Database Module: started');
+      console.log('2/10) Database Module: started');
       try {
         await DatabaseService.initialize();
       } catch (e) {
         throw new Error(`DatabaseService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('1/10) Database Module: done');
+      console.log('2/10) Database Module: done');
 
       // Notification Module
-      console.log('2/10) Notification Module: started');
+      console.log('3/10) Notification Module: started');
       try {
         await NotificationService.initialize();
       } catch (e) {
         throw new Error(`NotificationService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('2/10) Notification Module: done');
+      console.log('3/10) Notification Module: done');
 
       // User Module
-      console.log('3/10) User Module: started');
+      console.log('4/10) User Module: started');
       try {
         await UserService.initialize();
       } catch (e) {
         throw new Error(`UserService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('3/10) User Module: done');
+      console.log('4/10) User Module: done');
 
       // JWT Module
-      console.log('4/10) JWT Module: started');
+      console.log('5/10) JWT Module: started');
       try {
         await JWTService.initialize();
       } catch (e) {
         throw new Error(`JWTService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('4/10) JWT Module: done');
+      console.log('5/10) JWT Module: done');
 
       // IP Blacklist Module
-      console.log('5/10) IP Blacklist Module: started');
+      console.log('6/10) IP Blacklist Module: started');
       try {
         await IPBlacklistService.initialize();
       } catch (e) {
         throw new Error(`IPBlacklistService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('5/10) IP Blacklist Module: done');
+      console.log('6/10) IP Blacklist Module: done');
 
       // Version Module
-      console.log('6/10) Version Module: started');
+      console.log('7/10) Version Module: started');
       try {
         await VersionService.initialize(__packageFile.version);
       } catch (e) {
         throw new Error(`VersionService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('6/10) Version Module: done');
+      console.log('7/10) Version Module: done');
 
       // Server Module
-      console.log('7/10) Server Module: started');
+      console.log('8/10) Server Module: started');
       try {
         await ServerService.initialize(__packageFile.version);
       } catch (e) {
         throw new Error(`ServerService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('7/10) Server Module: done');
+      console.log('8/10) Server Module: done');
 
 
 
