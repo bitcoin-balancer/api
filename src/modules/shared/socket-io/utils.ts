@@ -1,4 +1,4 @@
-import cookieParser from 'cookie-parser';
+import { signedCookie } from 'cookie-parser';
 import { decodeError, encodeError } from 'error-message-utils';
 import { ENVIRONMENT } from '../environment/index.js';
 import { JWTService } from '../../auth/jwt/index.js';
@@ -6,6 +6,15 @@ import { JWTService } from '../../auth/jwt/index.js';
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
+
+/**
+ * Cleans and generates the URL-decoded Refresh JWT from the raw cookie.
+ * @param cookie
+ * @returns string
+ */
+const __decodeRefreshJWTCookie = (cookie: string): string => (
+  decodeURIComponent(cookie.replace(`${JWTService.REFRESH_JWT_COOKIE_NAME}=`, ''))
+);
 
 /**
  * Extracts the Refresh JWT from the request's cookie and unsigns it.
@@ -19,14 +28,11 @@ const extractRefreshJWT = (cookie: string | undefined): string => {
   if (typeof cookie !== 'string' || !cookie.length) {
     throw new Error(encodeError(`The socker's handshake doesn't contain cookies. Received: ${cookie}`, 9250));
   }
-  const jwt = cookieParser.signedCookie(
-    `s:${cookie.replace(`${JWTService.REFRESH_JWT_COOKIE_NAME}=`, '')}`,
-    ENVIRONMENT.COOKIE_SECRET,
-  );
-  if (typeof jwt !== 'string') {
-    throw new Error(encodeError(`The Refresh JWT could not be extracted from the signed cookie. Received: ${jwt}`, 9251));
+  const unsignedJWT = signedCookie(__decodeRefreshJWTCookie(cookie), ENVIRONMENT.COOKIE_SECRET);
+  if (typeof unsignedJWT !== 'string') {
+    throw new Error(encodeError(`The Refresh JWT could not be extracted from the signed cookie. Received: ${unsignedJWT}`, 9251));
   }
-  return jwt;
+  return unsignedJWT;
 };
 
 /**
