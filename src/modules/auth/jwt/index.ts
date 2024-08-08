@@ -161,7 +161,7 @@ const jwtServiceFactory = (): IJWTService => {
 
   /**
    * Decodes a Refresh JWT and returns the UID.
-   * @param accessJWT
+   * @param refreshJWT
    * @returns Promise<string>
    * @throws
    * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)

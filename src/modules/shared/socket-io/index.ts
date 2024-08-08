@@ -41,23 +41,21 @@ const socketIOServiceFactory = (): ISocketIOService => {
    ********************************************************************************************** */
 
   /**
-   * Ensures only authenticated users can proceed and establish a connection.
+   * Ensures only authenticated users can proceed and establish a connection. In order to do so,
+   * it extracts the Refresh JWT from the credentials cookie and verifies it. If an error is thrown,
+   * it means the user is not authenticated or the Refresh JWT expired.
    * @param socket
    * @param next
    * @returns Promise<void>
    * @throws
    * - 9250: if the auth cookie was not included in the headers
    * - 9251: if the signed refresh JWT could not be extracted from the cookie
+   * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
+   * - 4253: if the decoded data is an invalid object or does not contain the uid
    */
   const __authMiddleware = async (socket: Socket, next: (err?: Error) => void): Promise<void> => {
     try {
-      const refreshJWT = extractRefreshJWT(socket.handshake.headers.cookie);
-      console.log('handshake', socket.handshake);
-      console.log('refreshJWT', refreshJWT);
-
-      // const refreshJWT: string = __extractRefreshJWT(socket.handshake.headers.cookie);
-      // console.log('refreshJWT', refreshJWT);
-      // await JWTService.verifyAccessToken(refreshJWT);
+      await JWTService.verifyRefreshToken(extractRefreshJWT(socket.handshake.headers.cookie));
       return next();
     } catch (e) {
       return next(<Error>e);
@@ -80,10 +78,7 @@ const socketIOServiceFactory = (): ISocketIOService => {
     // initialize the server
     __io = new Server(server, __SERVER_OPTIONS);
 
-    /**
-     * Authentication Middleware
-     * Only authenticated users can establish a connection with the stream.
-     */
+    // install the authentication middleware
     __io.use(__authMiddleware);
 
     // subscribe to the connections and handle errors accordingly
