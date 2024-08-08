@@ -1,6 +1,7 @@
 import { APIErrorService } from '../api-error/index.js';
 import { UserService } from '../auth/user/index.js';
 import { VersionService } from '../shared/version/index.js';
+import { SocketIOService } from '../shared/socket-io/index.js';
 import { IDataJoinService, IAppEssentials, ICompactAppEssentials } from './types.js';
 
 /* ************************************************************************************************
@@ -18,7 +19,9 @@ const dataJoinServiceFactory = (): IDataJoinService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // ...
+  // the compact app essentials will be emitted every __emitFrequency seconds
+  const __emitFrequency: number = 5;
+  let __emitInterval: NodeJS.Timeout;
 
 
 
@@ -29,7 +32,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
    ********************************************************************************************** */
 
   /**
-   * Retrieves the App Essentials for a given user.
+   * Builds the App Essentials for a given user.
    * @param uid
    * @returns IAppEssentials
    */
@@ -39,6 +42,14 @@ const dataJoinServiceFactory = (): IDataJoinService => {
     unreadAPIErrors: APIErrorService.unreadCount,
     user: UserService.getUser(uid),
     // ...
+  });
+
+  /**
+   * Builds the Compact App Essentials ready to emitted.
+   * @returns ICompactAppEssentials
+   */
+  const __getCompactAppEssentials = (): ICompactAppEssentials => ({
+    unreadAPIErrors: APIErrorService.unreadCount,
   });
 
 
@@ -54,7 +65,13 @@ const dataJoinServiceFactory = (): IDataJoinService => {
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
-    // ...
+    __emitInterval = setInterval(() => {
+      try {
+        SocketIOService.emitCompactAppEssentials(__getCompactAppEssentials());
+      } catch (e) {
+        APIErrorService.save('DataJoinService.initialize.emitCompactAppEssentials', e);
+      }
+    }, __emitFrequency * 1000);
   };
 
   /**
@@ -62,7 +79,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    // ...
+    clearInterval(__emitInterval);
   };
 
 

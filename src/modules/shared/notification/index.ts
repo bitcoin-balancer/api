@@ -122,9 +122,7 @@ const notificationServiceFactory = (): INotificationService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    if (__broadcastInterval) {
-      clearInterval(__broadcastInterval);
-    }
+    clearInterval(__broadcastInterval);
   };
 
 
