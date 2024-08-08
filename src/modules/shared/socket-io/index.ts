@@ -1,10 +1,19 @@
 /* eslint-disable no-console */
 import { Server, Socket, ServerOptions } from 'socket.io';
+import { encodeError } from 'error-message-utils';
 import { IHTTPServer } from '../types.js';
 import { ENVIRONMENT } from '../environment/index.js';
 import { JWTService } from '../../auth/jwt/index.js';
+import type { ICompactAppEssentials } from '../../data-join/index.js';
 import { extractRefreshJWT, shouldDisconnect } from './utils.js';
-import { ISocketIOService } from './types.js';
+import {
+  ISocketIOService,
+  IEventName,
+  IServerToClientEvents,
+  IClientToServerEvents,
+  IInterServerEvents,
+  ISocketData,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -31,6 +40,38 @@ const socketIOServiceFactory = (): ISocketIOService => {
 
   // the instance of the server
   let __io: Server;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                        EVENT EMITTERS                                        *
+   ********************************************************************************************** */
+
+  /**
+   * Emits an event with optional payload.
+   * @param name
+   * @param payload?
+   * @throws
+   * - 9000: if the event cannot be emitted for any reason
+   */
+  const __emit = (name: IEventName, payload?: any): void => {
+    const emitted = __io.emit(name, payload);
+    if (!emitted) {
+      throw new Error(encodeError(`The event ${name} could not be emitted.`, 9000));
+    }
+  };
+
+  /**
+   * Emits the up-to-date state of the compact app essentials.
+   * @param payload
+   * @throws
+   * - 9000: if the event cannot be emitted for any reason
+   */
+  const emitCompactAppEssentials = (payload: ICompactAppEssentials): void => (
+    __emit('compact_app_essentials', payload)
+  );
 
 
 
@@ -76,7 +117,12 @@ const socketIOServiceFactory = (): ISocketIOService => {
    */
   const initialize = async (server: IHTTPServer): Promise<void> => {
     // initialize the server
-    __io = new Server(server, __SERVER_OPTIONS);
+    __io = new Server<
+    IClientToServerEvents,
+    IServerToClientEvents,
+    IInterServerEvents,
+    ISocketData
+    >(server, __SERVER_OPTIONS);
 
     // install the authentication middleware
     __io.use(__authMiddleware);
@@ -111,6 +157,9 @@ const socketIOServiceFactory = (): ISocketIOService => {
   return Object.freeze({
     // properties
     // ...
+
+    // event emitters
+    emitCompactAppEssentials,
 
     // initializer
     initialize,

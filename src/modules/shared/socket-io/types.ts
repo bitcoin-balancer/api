@@ -1,4 +1,5 @@
 import { IHTTPServer } from '../types.js';
+import type { ICompactAppEssentials } from '../../data-join/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -11,6 +12,9 @@ import { IHTTPServer } from '../types.js';
 type ISocketIOService = {
   // properties
   // ...
+
+  // event emitters
+  emitCompactAppEssentials: (payload: ICompactAppEssentials) => void;
 
   // initializer
   initialize: (server: IHTTPServer) => Promise<void>;
@@ -25,7 +29,44 @@ type ISocketIOService = {
  *                                             TYPES                                              *
  ************************************************************************************************ */
 
-// ...
+/**
+ * Event Name
+ * Each event has a unique name that is used when emiting or listening to values.
+ */
+type IEventName = 'compact_app_essentials';
+
+/**
+ * Server To Client Events
+ * Events that are broadcasted only from the server.
+ */
+type IServerToClientEvents = {
+  compact_app_essentials: (payload: ICompactAppEssentials) => void;
+};
+
+/**
+ * Client To Server Events
+ * Events that are broadcasted only from the client.
+ */
+type IClientToServerEvents = {
+
+};
+
+/**
+ * Inter Server Events
+ * Events that are broadcated from the server and/or the client.
+ */
+type IInterServerEvents = {
+  ping: () => void;
+};
+
+/**
+ * Socket Data
+ * Metadata that can be included in a connected socket.
+ */
+type ISocketData = {
+
+};
+
 
 
 
@@ -38,5 +79,9 @@ export type {
   ISocketIOService,
 
   // types
-  // ...
+  IEventName,
+  IServerToClientEvents,
+  IClientToServerEvents,
+  IInterServerEvents,
+  ISocketData,
 };

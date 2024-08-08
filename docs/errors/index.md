@@ -235,7 +235,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `index.ts`
 
-- **9000:** ``
+- **9000:** `The event ${name} could not be emitted.`
 
 ### `utils.ts`
 

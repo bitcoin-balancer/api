@@ -1,7 +1,7 @@
 import { APIErrorService } from '../api-error/index.js';
 import { UserService } from '../auth/user/index.js';
 import { VersionService } from '../shared/version/index.js';
-import { IDataJoinService, IAppEssentials } from './types.js';
+import { IDataJoinService, IAppEssentials, ICompactAppEssentials } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -106,5 +106,5 @@ export {
   DataJoinService,
 
   // types
-  // ...
+  type ICompactAppEssentials,
 };
