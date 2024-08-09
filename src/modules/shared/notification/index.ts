@@ -1,7 +1,8 @@
+/* eslint-disable no-console */
 import { extractMessage } from 'error-message-utils';
 import { sendPOST } from 'fetch-request-node';
 import { ENVIRONMENT, ITelegramConfig } from '../environment/index.js';
-import { delay } from '../utils/index.js';
+import { invokeFuncPersistently } from '../utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { buildRequestInput, toMessage } from './utils.js';
 import { INotificationService, INotification } from './types.js';
@@ -42,46 +43,24 @@ const notificationServiceFactory = (): INotificationService => {
    ********************************************************************************************** */
 
   /**
-   * If Telegram has been integrated, it attempts to broadcast a message.
-   * @param notification
-   * @returns Promise<void>
-   */
-  const __executeBroadcast = async (notification: INotification): Promise<void> => {
-    if (__CONFIG) {
-      await sendPOST(buildRequestInput(
-        __CONFIG.token,
-        __CONFIG.chatID,
-        toMessage(notification),
-      ));
-    }
-  };
-
-  /**
    * Attempts to broadcast a message persistently. Keep in mind this is a safe function to invoke.
    * In case all the attempts fail, the error is saved in by the APIError Module and the promise is
    * resolved.
    * @param notification
-   * @param retryDelaySchedule
    * @returns Promise<void>
    */
-  const broadcast = async (
-    notification: INotification,
-    retryDelaySchedule: number[] = [3, 5],
-  ): Promise<void> => {
-    // attempt to broadcast the message
-    try {
-      return await __executeBroadcast(notification);
-    } catch (e) {
-      console.error('Notification.broadcast(...)', e);
-
-      // stop the execution if there are no attempts left. Otherwise, try again
-      if (retryDelaySchedule.length === 0) {
+  const broadcast = async (notification: INotification): Promise<void> => {
+    if (__CONFIG) {
+      try {
+        await invokeFuncPersistently(
+          sendPOST,
+          [buildRequestInput(__CONFIG.token, __CONFIG.chatID, toMessage(notification))],
+          [3, 5],
+        );
+      } catch (e) {
+        console.error('Notification.broadcast(...)', e);
         APIErrorService.save('Notification.broadcast', e, undefined, undefined, notification);
-        return undefined;
       }
-      console.log(`Retrying in ~${retryDelaySchedule[0]} seconds...`);
-      await delay(retryDelaySchedule[0]);
-      return broadcast(notification, retryDelaySchedule.slice(1));
     }
   };
 
