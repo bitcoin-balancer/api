@@ -14,7 +14,6 @@ import { IPBlacklistService } from '../../ip-blacklist/index.js';
 import { VersionService } from '../version/index.js';
 import { ServerService } from '../../server/index.js';
 import { DataJoinService } from '../../data-join/index.js';
-import { IAPIService } from './types.js';
 import {
   readPackageFile,
   printInitializationHeader,
@@ -22,6 +21,7 @@ import {
   printTeardownHeader,
 } from './utils.js';
 import { canBeInitialized } from './validations.js';
+import { IAPIService } from './types.js';
 
 
 /* ************************************************************************************************
