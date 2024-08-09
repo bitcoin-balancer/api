@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
 import { sendGET } from 'fetch-request-node';
-import { delay } from '../utils/index.js';
+import { delay, invokeFuncPersistently } from '../utils/index.js';
 import {
   arrayValid,
   objectValid,
@@ -131,9 +132,9 @@ const versionServiceFactory = (): IVersionService => {
    */
   const __buildVersion = async (runningVersion?: string): Promise<void> => {
     // retrieve the service versions
-    const gui = await __getServiceVersion(__URLS.gui);
+    const gui = await invokeFuncPersistently(__getServiceVersion, [__URLS.gui], [3, 5, 10]);
     await delay(__REQUEST_DELAY);
-    const api = await __getServiceVersion(__URLS.api);
+    const api = await invokeFuncPersistently(__getServiceVersion, [__URLS.api], [3, 5, 10]);
 
     // if the module has not been init, set the version object. Otherwise, just update the services
     if (runningVersion) {
