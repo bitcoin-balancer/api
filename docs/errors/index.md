@@ -239,6 +239,6 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `utils.ts`
 
-- **9250:** `The socker's handshake doesn't contain cookies. Received: ${cookie}`
+- **9250:** `The socket's handshake doesn't contain cookies. Received: ${cookie}`
 - **9251:** `The Refresh JWT could not be extracted from the signed cookie. Received: ${jwt}`
 - **9252:** ``

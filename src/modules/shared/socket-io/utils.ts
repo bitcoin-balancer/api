@@ -26,7 +26,7 @@ const __decodeRefreshJWTCookie = (cookie: string): string => (
  */
 const extractRefreshJWT = (cookie: string | undefined): string => {
   if (typeof cookie !== 'string' || !cookie.length) {
-    throw new Error(encodeError(`The socker's handshake doesn't contain cookies. Received: ${cookie}`, 9250));
+    throw new Error(encodeError(`The socket's handshake doesn't contain cookies. Received: ${cookie}`, 9250));
   }
   const unsignedJWT = signedCookie(__decodeRefreshJWTCookie(cookie), ENVIRONMENT.COOKIE_SECRET);
   if (typeof unsignedJWT !== 'string') {
