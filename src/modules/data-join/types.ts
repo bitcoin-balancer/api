@@ -41,6 +41,9 @@ type IAppEssentials = {
   // the current version of the platform
   version: IVersion;
 
+  // the number of unread notifications
+  unreadNotifications: number;
+
   // the number of unread errors
   unreadAPIErrors: number;
 
@@ -59,6 +62,9 @@ type IAppEssentials = {
  * The compact version of the App Essentials which is broadcasted through websockets.
  */
 type ICompactAppEssentials = {
+  // the number of unread notifications
+  unreadNotifications: number;
+
   // the number of unread errors
   unreadAPIErrors: number;
 

@@ -1,4 +1,5 @@
 import { APIErrorService } from '../api-error/index.js';
+import { NotificationService } from '../notification/index.js';
 import { UserService } from '../auth/user/index.js';
 import { VersionService } from '../shared/version/index.js';
 import { SocketIOService } from '../shared/socket-io/index.js';
@@ -39,6 +40,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
   const getAppEssentials = (uid: string): IAppEssentials => ({
     serverTime: Date.now(),
     version: VersionService.version,
+    unreadNotifications: NotificationService.unreadCount,
     unreadAPIErrors: APIErrorService.unreadCount,
     user: UserService.getUser(uid),
     // ...
@@ -49,6 +51,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
    * @returns ICompactAppEssentials
    */
   const __getCompactAppEssentials = (): ICompactAppEssentials => ({
+    unreadNotifications: NotificationService.unreadCount,
     unreadAPIErrors: APIErrorService.unreadCount,
   });
 
