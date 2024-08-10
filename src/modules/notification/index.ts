@@ -5,7 +5,7 @@ import { ENVIRONMENT, ITelegramConfig } from '../shared/environment/index.js';
 import { invokeFuncPersistently } from '../shared/utils/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { buildRequestInput, toMessage } from './utils.js';
-import { INotificationService, INotification } from './types.js';
+import { INotificationService, INotification, IPreSaveNotification } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -29,7 +29,7 @@ const notificationServiceFactory = (): INotificationService => {
   );
 
   // notifications are broadcasted in a queue because modules like APIErrors can spam messages
-  const __queue: INotification[] = [];
+  const __queue: IPreSaveNotification[] = [];
   const __queueLimit: number = 7;
   const __broadcastFrequencySeconds: number = 10;
   let __broadcastInterval: NodeJS.Timeout;
@@ -49,7 +49,7 @@ const notificationServiceFactory = (): INotificationService => {
    * @param notification
    * @returns Promise<void>
    */
-  const broadcast = async (notification: INotification): Promise<void> => {
+  const broadcast = async (notification: IPreSaveNotification): Promise<void> => {
     if (__CONFIG) {
       try {
         await invokeFuncPersistently(
@@ -68,7 +68,7 @@ const notificationServiceFactory = (): INotificationService => {
    * Adds a notification to the queue if Telegram has been integrated.
    * @param notification
    */
-  const __addToQueue = (notification: INotification): void => {
+  const __addToQueue = (notification: IPreSaveNotification): void => {
     if (__CONFIG && __queue.length < __queueLimit) {
       __queue.push(notification);
     }

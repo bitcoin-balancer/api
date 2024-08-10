@@ -1,6 +1,5 @@
-import { IRecord } from '../shared/types.js';
 import { DatabaseService } from '../database/index.js';
-import { IAPIError, IAPIErrorOrigin } from './types.js';
+import { INotification, INotificationSender } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -9,13 +8,13 @@ import { IAPIError, IAPIErrorOrigin } from './types.js';
 /**
  * Retrieves a record by ID. If the record is not found it returns null.
  * @param id
- * @returns Promise<IAPIError | null>
+ * @returns Promise<INotification | null>
  */
-const getRecord = async (id: number): Promise<IAPIError | null> => {
+const getRecord = async (id: number): Promise<INotification | null> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
-      SELECT id, origin, error, event_time, uid, ip, args 
-      FROM ${DatabaseService.tn.api_errors} 
+      SELECT id, sender, title, description, event_time
+      FROM ${DatabaseService.tn.notifications} 
       WHERE id = $1;
     `,
     values: [id],
@@ -24,15 +23,15 @@ const getRecord = async (id: number): Promise<IAPIError | null> => {
 };
 
 /**
- * Retrieves a list of existing API Errors constrained by a limit.
+ * Retrieves a list of existing records constrained by a limit.
  * @param limit
- * @returns Promise<IAPIError[]>
+ * @returns Promise<INotification[]>
  */
-const __listRecords = async (limit: number): Promise<IAPIError[]> => {
+const __listRecords = async (limit: number): Promise<INotification[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
-      SELECT id, origin, error, event_time, uid, ip, args 
-      FROM ${DatabaseService.tn.api_errors} 
+      SELECT id, sender, title, description, event_time
+      FROM ${DatabaseService.tn.notifications} 
       ORDER BY id DESC
       LIMIT $1;
     `,
@@ -42,17 +41,17 @@ const __listRecords = async (limit: number): Promise<IAPIError[]> => {
 };
 
 /**
- * Retrieves the list of API Errors starting at the given point. Note: the startAtID record will not
+ * Retrieves the list of records starting at the given point. Note: the startAtID record will not
  * be included in the result.
  * @param limit
  * @param startAtID
- * @returns Promise<IAPIError[]>
+ * @returns Promise<INotification[]>
  */
-const __listNextRecords = async (limit: number, startAtID: number): Promise<IAPIError[]> => {
+const __listNextRecords = async (limit: number, startAtID: number): Promise<INotification[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
-      SELECT id, origin, error, event_time, uid, ip, args 
-      FROM ${DatabaseService.tn.api_errors} 
+      SELECT id, sender, title, description, event_time
+      FROM ${DatabaseService.tn.notifications} 
       WHERE id < $1
       ORDER BY id DESC
       LIMIT $2;
@@ -63,39 +62,37 @@ const __listNextRecords = async (limit: number, startAtID: number): Promise<IAPI
 };
 
 /**
- * Retrieves a list of API Errors from the database. If a startAtID is provided, it will only
+ * Retrieves a list of records from the database. If a startAtID is provided, it will only
  * retrieve records that are older than the passed ID (exclusive).
  * @param limit
  * @param startAtID?
- * @returns Promise<IAPIError[]>
+ * @returns Promise<INotification[]>
  */
-const listRecords = (limit: number, startAtID?: number): Promise<IAPIError[]> => (
+const listRecords = (limit: number, startAtID?: number): Promise<INotification[]> => (
   typeof startAtID === 'number' ? __listNextRecords(limit, startAtID) : __listRecords(limit)
 );
 
 /**
  * Saves a record and returns its identifier.
- * @param origin
- * @param error
- * @param uid
- * @param ip
- * @param args
+ * @param sender
+ * @param title
+ * @param description
+ * @param eventTime
  * @returns Promise<number>
  */
 const saveRecord = async (
-  origin: IAPIErrorOrigin,
-  error: string,
-  uid: string | undefined,
-  ip: string | undefined,
-  args: IRecord<any> | undefined,
+  sender: INotificationSender,
+  title: string,
+  description: string,
+  eventTime: number,
 ): Promise<number> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
-      INSERT INTO ${DatabaseService.tn.api_errors} (origin, error, event_time, uid, ip, args) 
-      VALUES ($1, $2, $3, $4, $5, $6) 
+      INSERT INTO ${DatabaseService.tn.notifications} (sender, title, description, event_time) 
+      VALUES ($1, $2, $3, $4) 
       RETURNING id;
     `,
-    values: [origin, error, Date.now(), uid, ip, args],
+    values: [sender, title, description, eventTime],
   });
   return rows[0].id;
 };
@@ -106,7 +103,7 @@ const saveRecord = async (
  */
 const deleteAllRecords = async (): Promise<void> => {
   await DatabaseService.pool.query({
-    text: `DELETE FROM ${DatabaseService.tn.api_errors};`,
+    text: `DELETE FROM ${DatabaseService.tn.notifications};`,
   });
 };
 

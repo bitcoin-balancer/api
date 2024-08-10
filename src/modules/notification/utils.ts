@@ -1,5 +1,5 @@
 import { IRequestInput } from 'fetch-request-node';
-import { INotification } from './types.js';
+import { IPreSaveNotification } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -10,7 +10,7 @@ import { INotification } from './types.js';
  * @param notification
  * @returns string
  */
-const toMessage = (notification: INotification): string => {
+const toMessage = (notification: IPreSaveNotification): string => {
   let _ = '';
   _ += `${notification.sender}%0A`;
   _ += `${notification.title}%0A`;

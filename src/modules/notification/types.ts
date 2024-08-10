@@ -48,6 +48,9 @@ type INotificationSender = 'AUTOMATED_TEST' | 'API_ERROR' | 'API_INITIALIZER' | 
  * A message can be broadcasted from any module, for any reason, at any time.
  */
 type INotification = {
+  // the identifier of the record
+  id: number;
+
   // the origin of the event
   sender: INotificationSender;
 
@@ -59,7 +62,8 @@ type INotification = {
   event_time: number;
 };
 
-
+// partial notification utility type
+type IPreSaveNotification = Omit<INotification, 'id'>;
 
 
 
@@ -73,4 +77,5 @@ export type {
   // types
   INotificationSender,
   INotification,
+  IPreSaveNotification,
 };
