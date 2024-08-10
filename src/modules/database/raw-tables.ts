@@ -73,6 +73,22 @@ export const RAW_TABLES: IRawTable[] = [
   },
 
   /**
+   * notifications
+   * every record corresponds to an important event that was broadcasted to all users.
+   */
+  {
+    name: 'notifications',
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('notifications')} (
+        id          BIGSERIAL PRIMARY KEY,
+        sender      VARCHAR(500) NOT NULL,
+        title       VARCHAR(500) NOT NULL,
+        description VARCHAR(3000) NOT NULL,
+        event_time  BIGINT NOT NULL
+      );`,
+  },
+
+  /**
    * ip_blacklist
    * every record corresponds to an IP Address that has been blacklisted.
    */

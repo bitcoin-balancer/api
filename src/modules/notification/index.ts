@@ -89,6 +89,7 @@ const notificationServiceFactory = (): INotificationService => {
     sender: 'API_INITIALIZER',
     title: 'API Initialized',
     description: 'The API has been initialized successfully and is ready to accept requests.',
+    event_time: Date.now(),
   });
 
   /**
@@ -100,6 +101,7 @@ const notificationServiceFactory = (): INotificationService => {
     sender: 'API_INITIALIZER',
     title: 'API Initialization Failed',
     description: extractMessage(error),
+    event_time: Date.now(),
   });
 
 
@@ -119,6 +121,7 @@ const notificationServiceFactory = (): INotificationService => {
     sender: 'SERVER',
     title: 'High CPU Load!',
     description: `The CPU’s load is currently at ${current}% which exceeds the limit of ${limit}%.`,
+    event_time: Date.now(),
   });
 
   /**
@@ -130,6 +133,7 @@ const notificationServiceFactory = (): INotificationService => {
     sender: 'SERVER',
     title: 'High Memory Usage!',
     description: `The Virtual Memory's usage is currently at ${current}% which exceeds the limit of ${limit}%.`,
+    event_time: Date.now(),
   });
 
   /**
@@ -141,6 +145,7 @@ const notificationServiceFactory = (): INotificationService => {
     sender: 'SERVER',
     title: 'High File System Usage!',
     description: `The File System's usage is currently at ${current}% which exceeds the limit of ${limit}%.`,
+    event_time: Date.now(),
   });
 
 

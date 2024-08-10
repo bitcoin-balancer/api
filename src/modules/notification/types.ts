@@ -54,6 +54,9 @@ type INotification = {
   // information regarding the event that took place
   title: string;
   description: string;
+
+  // the date in which the event took place
+  event_time: number;
 };
 
 
