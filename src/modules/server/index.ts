@@ -1,7 +1,7 @@
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { recordStoreServiceFactory, IRecordStore } from '../shared/record-store/index.js';
 import { APIErrorService } from '../api-error/index.js';
-import { NotificationService } from '../shared/notification/index.js';
+import { NotificationService } from '../notification/index.js';
 import { buildDefaultAlarms } from './utils.js';
 import { canAlarmsBeUpdated } from './validations.js';
 import { scanResources } from './scanner.js';

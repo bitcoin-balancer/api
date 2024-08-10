@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 import { extractMessage } from 'error-message-utils';
 import { sendPOST } from 'fetch-request-node';
-import { ENVIRONMENT, ITelegramConfig } from '../environment/index.js';
-import { invokeFuncPersistently } from '../utils/index.js';
-import { APIErrorService } from '../../api-error/index.js';
+import { ENVIRONMENT, ITelegramConfig } from '../shared/environment/index.js';
+import { invokeFuncPersistently } from '../shared/utils/index.js';
+import { APIErrorService } from '../api-error/index.js';
 import { buildRequestInput, toMessage } from './utils.js';
 import { INotificationService, INotification } from './types.js';
 
@@ -72,36 +72,6 @@ const notificationServiceFactory = (): INotificationService => {
     if (__CONFIG && __queue.length < __queueLimit) {
       __queue.push(notification);
     }
-  };
-
-
-
-
-
-  /* **********************************************************************************************
-   *                                          INITIALIZER                                         *
-   ********************************************************************************************** */
-
-  /**
-   * Initializes the Notification Module if the configuration was provided.
-   * @returns Promise<void>
-   */
-  const initialize = async (): Promise<void> => {
-    if (__CONFIG) {
-      __broadcastInterval = setInterval(async () => {
-        if (__queue.length) {
-          await broadcast(<INotification>__queue.shift());
-        }
-      }, __broadcastFrequencySeconds * 1000);
-    }
-  };
-
-  /**
-   * Tears down the Notification Module if it was initialized.
-   * @returns Promise<void>
-   */
-  const teardown = async (): Promise<void> => {
-    clearInterval(__broadcastInterval);
   };
 
 
@@ -178,6 +148,36 @@ const notificationServiceFactory = (): INotificationService => {
 
 
   /* **********************************************************************************************
+   *                                          INITIALIZER                                         *
+   ********************************************************************************************** */
+
+  /**
+   * Initializes the Notification Module if the configuration was provided.
+   * @returns Promise<void>
+   */
+  const initialize = async (): Promise<void> => {
+    if (__CONFIG) {
+      __broadcastInterval = setInterval(async () => {
+        if (__queue.length) {
+          await broadcast(<INotification>__queue.shift());
+        }
+      }, __broadcastFrequencySeconds * 1000);
+    }
+  };
+
+  /**
+   * Tears down the Notification Module if it was initialized.
+   * @returns Promise<void>
+   */
+  const teardown = async (): Promise<void> => {
+    clearInterval(__broadcastInterval);
+  };
+
+
+
+
+
+  /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
   return Object.freeze({
@@ -187,10 +187,6 @@ const notificationServiceFactory = (): INotificationService => {
     // broadcaster
     broadcast,
 
-    // initializer
-    initialize,
-    teardown,
-
     // api initializer
     apiInit,
     apiInitError,
@@ -199,6 +195,10 @@ const notificationServiceFactory = (): INotificationService => {
     highCPULoad,
     highMemoryUsage,
     highFileSystemUsage,
+
+    // initializer
+    initialize,
+    teardown,
   });
 };
 

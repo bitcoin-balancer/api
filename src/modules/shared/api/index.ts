@@ -7,7 +7,7 @@ import { IPackageFile, IHTTPServer, ITerminationSignal } from '../types.js';
 import { delay } from '../utils/index.js';
 import { SocketIOService } from '../socket-io/index.js';
 import { DatabaseService } from '../../database/index.js';
-import { NotificationService } from '../notification/index.js';
+import { NotificationService } from '../../notification/index.js';
 import { UserService } from '../../auth/user/index.js';
 import { JWTService } from '../../auth/jwt/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
