@@ -5,6 +5,8 @@ import { ENVIRONMENT, ITelegramConfig } from '../shared/environment/index.js';
 import { invokeFuncPersistently } from '../shared/utils/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { buildRequestInput, toMessage } from './utils.js';
+import { canRecordsBeListed } from './validations.js';
+import { listRecords, saveRecord } from './model.js';
 import { INotificationService, INotification, IPreSaveNotification } from './types.js';
 
 /* ************************************************************************************************
@@ -20,6 +22,9 @@ const notificationServiceFactory = (): INotificationService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
+
+  // the number of notifications that have not been read by the users
+  let __unreadCount: number = 0;
 
   // since Telegram's integration is optional, if the values aren't valid, msgs aren't broadcasted
   const __CONFIG: ITelegramConfig | undefined = (
@@ -39,6 +44,31 @@ const notificationServiceFactory = (): INotificationService => {
 
 
   /* **********************************************************************************************
+   *                                           RETRIEVERS                                         *
+   ********************************************************************************************** */
+
+  /**
+   * Retrieves a series of records. If the startAtID is provided, it will start at that point
+   * exclusively.
+   * @param limit
+   * @param startAtID
+   * @returns Promise<INotification[]>
+   * @throws
+   * - 10500: if the startAtID was provided and is not a valid identifier
+   * - 10501: if the query limit is larger than the limit
+   */
+  const list = async (limit: number, startAtID: number | undefined): Promise<INotification[]> => {
+    canRecordsBeListed(limit, startAtID);
+    const records = await listRecords(limit, startAtID);
+    __unreadCount = 0;
+    return records;
+  };
+
+
+
+
+
+  /* **********************************************************************************************
    *                                          BROADCASTER                                         *
    ********************************************************************************************** */
 
@@ -52,6 +82,13 @@ const notificationServiceFactory = (): INotificationService => {
   const broadcast = async (notification: IPreSaveNotification): Promise<void> => {
     if (__CONFIG) {
       try {
+        await saveRecord(
+          notification.sender,
+          notification.title,
+          notification.description,
+          notification.event_time,
+        );
+        __unreadCount += 1;
         await invokeFuncPersistently(
           sendPOST,
           [buildRequestInput(__CONFIG.token, __CONFIG.chatID, toMessage(notification))],
@@ -187,7 +224,12 @@ const notificationServiceFactory = (): INotificationService => {
    ********************************************************************************************** */
   return Object.freeze({
     // properties
-    // ...
+    get unreadCount() {
+      return __unreadCount;
+    },
+
+    // retrievers
+    list,
 
     // broadcaster
     broadcast,

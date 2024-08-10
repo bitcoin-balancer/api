@@ -6,6 +6,7 @@ import { JWTRouter } from './modules/auth/jwt/router.js';
 import { DataJoinRouter } from './modules/data-join/router.js';
 import { DatabaseRouter } from './modules/database/router.js';
 import { IPBlacklistRouter } from './modules/ip-blacklist/router.js';
+import { NotificationRouter } from './modules/notification/router.js';
 import { ServerRouter } from './modules/server/router.js';
 import { PingRouter } from './modules/ping/router.js';
 
@@ -25,6 +26,7 @@ const mountRoutes = (app: Express): void => {
   app.use('/data-join', DataJoinRouter);
   app.use('/database', DatabaseRouter);
   app.use('/ip-blacklist', IPBlacklistRouter);
+  app.use('/notification', NotificationRouter);
   app.use('/server', ServerRouter);
   app.use('/ping', PingRouter);
 

@@ -21,8 +21,8 @@ const __QUERY_LIMIT: number = 30;
  * @param limit
  * @param startAtID
  * @throws
- * - 1000: if the startAtID was provided and is not a valid identifier
- * - 1001: if the query limit is larger than the limit
+ * - 10500: if the startAtID was provided and is not a valid identifier
+ * - 10501: if the query limit is larger than the limit
  */
 const canRecordsBeListed = (limit: number, startAtID: number | undefined): void => {
   if (!integerValid(limit, 1, __QUERY_LIMIT)) {

@@ -10,14 +10,17 @@
  */
 type INotificationService = {
   // properties
-  // ...
+  unreadCount: number;
+
+  // retrievers
+  list: (limit: number, startAtID: number | undefined) => Promise<INotification[]>;
 
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;
 
   // broadcaster
-  broadcast: (notification: INotification, retryDelaySchedule?: number[]) => Promise<void>;
+  broadcast: (notification: IPreSaveNotification, retryDelaySchedule?: number[]) => Promise<void>;
 
   // api initializer
   apiInit: () => void;

@@ -10,6 +10,7 @@ describe('broadcast', () => {
       sender: 'AUTOMATED_TEST',
       title: 'Integration Test',
       description: 'Hi! If you\'re reading this message it\'s because the Telegram Module has been implemented correctly and is ready to be used in production.',
+      event_time: Date.now(),
     })).resolves.toBeUndefined();
   }, 15000);
 });

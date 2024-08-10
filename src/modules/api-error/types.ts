@@ -45,7 +45,8 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'JWTRouter.post.sign-in' | 'JWTRouter.post.refresh-jwt' | 'JWTRouter.post.sign-out'
 | 'VersionService.initialize.__buildVersion' | 'ServerRouter.get' | 'ServerRouter.get.alarms'
 | 'ServerRouter.put.alarms' | 'ServerService.initialize.__refetchState' | 'DatabaseRouter.get.summary'
-| 'DataJoinRouter.get.app-essentials' | 'DataJoinService.initialize.emitCompactAppEssentials';
+| 'DataJoinRouter.get.app-essentials' | 'DataJoinService.initialize.emitCompactAppEssentials'
+| 'NotificationRouter.get';
 
 /**
  * API Error
