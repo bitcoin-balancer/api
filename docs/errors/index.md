@@ -242,3 +242,29 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **9250:** `The socket's handshake doesn't contain cookies. Received: ${cookie}`
 - **9251:** `The Refresh JWT could not be extracted from the signed cookie. Received: ${jwt}`
 - **9252:** ``
+
+
+
+
+
+
+<br/><br/><br/>
+
+## `Notification` (10000 - 10999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **10000:** ``
+
+### `utils.ts`
+
+- **10250:** ``
+
+### `validations.ts`
+
+- **10500:** `The maximum number of API Errors that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`
+- **10501:** `The API Errors cannot be listed with an invalid startAtID. Received: ${startAtID}.`
