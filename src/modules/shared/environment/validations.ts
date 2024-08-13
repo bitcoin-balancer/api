@@ -94,6 +94,7 @@ const validateJWTSecretConfig = (config: IJWTSecretConfig): void => {
 
 /**
  * Validates the credentials for an Exchange ID.
+ * @param module
  * @param id
  * @param credentials
  * @throws
@@ -101,18 +102,19 @@ const validateJWTSecretConfig = (config: IJWTSecretConfig): void => {
  * - if the credentials for the exchange weren't provided or are invalid
  */
 const __validateExchangeCredentials = (
+  module: 'window' | 'liquidity' | 'coins' | 'trading',
   id: IExchangeID,
   credentials: IExchangesCredentials,
 ): void => {
   if (!stringValid(id, 1) || !EXCHANGE_IDS.includes(id)) {
-    throw new Error(`The Exchange ID '${id}' is not suported by Balancer.`);
+    throw new Error(`The Exchange ID '${id}' (${module}) is not supported by Balancer.`);
   }
   if (
     !objectValid(credentials[id])
-    || !stringValid(credentials[id].key)
-    || !stringValid(credentials[id].secret)
+    || !stringValid(credentials[id].key, 1)
+    || !stringValid(credentials[id].secret, 1)
   ) {
-    throw new Error(`The credentials for the exchange '${id}' are invalid or were not provided.`);
+    throw new Error(`The credentials for the exchange '${id}' (${module}) are invalid or were not provided.`);
   }
 };
 
@@ -136,10 +138,10 @@ const validateExchangesConfigAndCreds = (
   if (!objectValid(credentials)) {
     throw new Error('The environment property EXCHANGES_CREDENTIALS is not a valid object.');
   }
-  __validateExchangeCredentials(config.window, credentials);
-  __validateExchangeCredentials(config.liquidity, credentials);
-  __validateExchangeCredentials(config.coins, credentials);
-  __validateExchangeCredentials(config.trading, credentials);
+  __validateExchangeCredentials('window', config.window, credentials);
+  __validateExchangeCredentials('liquidity', config.liquidity, credentials);
+  __validateExchangeCredentials('coins', config.coins, credentials);
+  __validateExchangeCredentials('trading', config.trading, credentials);
 };
 
 
