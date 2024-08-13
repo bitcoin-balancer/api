@@ -1,22 +1,26 @@
 import {
-  INodeEnv,
-  IRootAccountConfig,
-  ITelegramConfig,
-  IJWTSecretConfig,
-  IEnvironment,
-} from './types.js';
-import {
   getString,
   getInteger,
   getBoolean,
   getSecretString,
   getSecretObject,
+  getObject,
 } from './utils.js';
 import {
   validateRootAccountConfig,
   validateTelegramConfig,
   validateJWTSecretConfig,
+  validateExchangesConfigAndCreds,
 } from './validations.js';
+import {
+  INodeEnv,
+  IRootAccountConfig,
+  ITelegramConfig,
+  IJWTSecretConfig,
+  IEnvironment,
+  IExchangesConfig,
+  IExchangesCredentials,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -40,12 +44,18 @@ const ENVIRONMENT: IEnvironment = {
   ALTCHA_SECRET: getSecretString('ALTCHA_SECRET'),
   JWT_SECRET: <IJWTSecretConfig>getSecretObject('JWT_SECRET'),
   COOKIE_SECRET: getSecretString('COOKIE_SECRET'),
+  EXCHANGES_CONFIGURATION: <IExchangesConfig>getObject('EXCHANGES_CONFIGURATION'),
+  EXCHANGES_CREDENTIALS: <IExchangesCredentials>getSecretObject('EXCHANGES_CREDENTIALS'),
 };
 
 // validate objects & arrays
 validateRootAccountConfig(ENVIRONMENT.ROOT_ACCOUNT);
 validateTelegramConfig(ENVIRONMENT.TELEGRAM);
 validateJWTSecretConfig(ENVIRONMENT.JWT_SECRET);
+validateExchangesConfigAndCreds(
+  ENVIRONMENT.EXCHANGES_CONFIGURATION,
+  ENVIRONMENT.EXCHANGES_CREDENTIALS,
+);
 
 
 
@@ -56,8 +66,10 @@ validateJWTSecretConfig(ENVIRONMENT.JWT_SECRET);
  ************************************************************************************************ */
 export {
   // types
-  INodeEnv,
-  ITelegramConfig,
+  type INodeEnv,
+  type ITelegramConfig,
+  type IExchangesConfig,
+  type IExchangesCredentials,
 
   // implementation
   ENVIRONMENT,
