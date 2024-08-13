@@ -48,6 +48,20 @@ npm run build
 
 ## @TODO
 
+
+### High Priority
+
+- [ ] ...
+
+
+### Medium Priority
+
+- [ ] ...
+
+
+
+### Low Priority
+
 - [ ] Create a benchmarking system to improve the database’s performance
 - [ ] Store server metrics (usage%, load%, temperature°) in OHLC format 
 - [ ] Expand the automated tests' coverage (unit & integration)
