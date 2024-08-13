@@ -6,10 +6,28 @@ import {
   passwordValid,
   otpSecretValid,
 } from '../validations/index.js';
-import { IRootAccountConfig, ITelegramConfig, IJWTSecretConfig } from './types.js';
+import {
+  IRootAccountConfig,
+  ITelegramConfig,
+  IJWTSecretConfig,
+  IExchangeID,
+  IExchangesCredentials,
+  IExchangesConfig,
+} from './types.js';
 
 /* ************************************************************************************************
- *                                         IMPLEMENTATION                                         *
+ *                                           CONSTANTS                                            *
+ ************************************************************************************************ */
+
+// the list of exchange ids supported by Balancer
+const EXCHANGE_IDS: IExchangeID[] = ['binance', 'bitfinex', 'coinbase', 'kraken', 'okx'];
+
+
+
+
+
+/* ************************************************************************************************
+ *                                          ROOT ACCOUNT                                          *
  ************************************************************************************************ */
 
 /**
@@ -26,6 +44,14 @@ const validateRootAccountConfig = (config: IRootAccountConfig): void => {
   if (!otpSecretValid(config.otpSecret)) throw new Error(`The environment property ROOT_ACCOUNT.otpSecret is not a valid secret. Received: ${config.otpSecret}`);
 };
 
+
+
+
+
+/* ************************************************************************************************
+ *                                            TELEGRAM                                            *
+ ************************************************************************************************ */
+
 /**
  * Validates the telegram's configuration object.
  * @param config
@@ -37,6 +63,14 @@ const validateTelegramConfig = (config: ITelegramConfig): void => {
   if (typeof config.token !== 'string') throw new Error(`The environment property TELEGRAM.token is not a valid string. Received: ${config.token}`);
   if (typeof config.chatID !== 'number') throw new Error(`The environment property TELEGRAM.chatID is not a valid number. Received: ${config.chatID}`);
 };
+
+
+
+
+
+/* ************************************************************************************************
+ *                                           JWT SECRET                                           *
+ ************************************************************************************************ */
 
 /**
  * Validates the JWT Secret's configuration object.
@@ -55,10 +89,76 @@ const validateJWTSecretConfig = (config: IJWTSecretConfig): void => {
 
 
 /* ************************************************************************************************
+ *                                            EXCHANGE                                            *
+ ************************************************************************************************ */
+
+/**
+ * Validates the credentials for an Exchange ID.
+ * @param id
+ * @param credentials
+ * @throws
+ * - if the ID is invalid or unsupported
+ * - if the credentials for the exchange weren't provided or are invalid
+ */
+const __validateExchangeCredentials = (
+  id: IExchangeID,
+  credentials: IExchangesCredentials,
+): void => {
+  if (!stringValid(id, 1) || !EXCHANGE_IDS.includes(id)) {
+    throw new Error(`The Exchange ID '${id}' is not suported by Balancer.`);
+  }
+  if (
+    !objectValid(credentials[id])
+    || !stringValid(credentials[id].key)
+    || !stringValid(credentials[id].secret)
+  ) {
+    throw new Error(`The credentials for the exchange '${id}' are invalid or were not provided.`);
+  }
+};
+
+/**
+ * Validates the exchanges' configuration and credentials.
+ * @param config
+ * @param credentials
+ * @throws
+ * - if the EXCHANGES_CONFIGURATION is not a valid object
+ * - if the EXCHANGES_CREDENTIALS is not a valid object
+ * - if any of the IDs is invalid or unsupported
+ * - if any of the credentials for the exchange weren't provided or are invalid
+ */
+const validateExchangesConfigAndCreds = (
+  config: IExchangesConfig,
+  credentials: IExchangesCredentials,
+): void => {
+  if (!objectValid(config)) {
+    throw new Error(`The environment property EXCHANGES_CONFIGURATION is not a valid object. Received: ${JSON.stringify(config)}`);
+  }
+  if (!objectValid(credentials)) {
+    throw new Error('The environment property EXCHANGES_CREDENTIALS is not a valid object.');
+  }
+  __validateExchangeCredentials(config.window, credentials);
+  __validateExchangeCredentials(config.liquidity, credentials);
+  __validateExchangeCredentials(config.coins, credentials);
+  __validateExchangeCredentials(config.trading, credentials);
+};
+
+
+
+
+
+/* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // root account
   validateRootAccountConfig,
+
+  // telegram
   validateTelegramConfig,
+
+  // jwt secret
   validateJWTSecretConfig,
+
+  // exchanges
+  validateExchangesConfigAndCreds,
 };
