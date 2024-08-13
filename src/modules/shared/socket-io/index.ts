@@ -22,7 +22,7 @@ import {
 /**
  * Socket IO Service Factory
  * Generates the object in charge of exposing a Socket.IO instance to all of Balancer's modules.
- * @returns ISomeService
+ * @returns ISocketIOService
  */
 const socketIOServiceFactory = (): ISocketIOService => {
   /* **********************************************************************************************
