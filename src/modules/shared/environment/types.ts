@@ -1,7 +1,7 @@
 
 
 /* ************************************************************************************************
- *                                             TYPES                                              *
+ *                                          PROCESS ENV                                           *
  ************************************************************************************************ */
 
 /**
@@ -9,6 +9,14 @@
  * The name of the kinds of environments that can be used when running Node.js processes.
  */
 type INodeEnv = 'development' | 'production';
+
+
+
+
+
+/* ************************************************************************************************
+ *                                         ROOT ACCOUNT                                           *
+ ************************************************************************************************ */
 
 /**
  * Root Account
@@ -29,6 +37,11 @@ type IRootAccountConfig = {
   otpSecret: string;
 };
 
+
+/* ************************************************************************************************
+ *                                           TELEGRAM                                             *
+ ************************************************************************************************ */
+
 /**
  * Telegram
  * The configuration that will be used to initialize the Telegram instance in order to be able to
@@ -43,6 +56,14 @@ type ITelegramConfig = {
   chatID: number;
 };
 
+
+
+
+
+/* ************************************************************************************************
+ *                                              JWT                                               *
+ ************************************************************************************************ */
+
 /**
  * JWT Secret
  * The secrets that will be used to generate Access and Refresh Tokens.
@@ -54,6 +75,63 @@ type IJWTSecretConfig = {
   // the secret that will be used to generate access tokens
   access: string;
 };
+
+
+
+
+
+/* ************************************************************************************************
+ *                                           EXCHANGE                                             *
+ ************************************************************************************************ */
+
+/**
+ * Exchange ID
+ * Each exchange is identified by an ID and can be installed in any of the modules.
+ */
+type IExchangeID = 'binance' | 'bitfinex' | 'coinbase' | 'kraken' | 'okx';
+
+/**
+ * Exchanges Configuration
+ * The object that determines what exchange is used by which module.
+ */
+type IExchangesConfig = {
+  // the exchange that will be used in the Market State's Window Module
+  window: IExchangeID;
+
+  // the exchange that will be used in the Market State's Liquidity Module
+  liquidity: IExchangeID;
+
+  // the exchange that will be used in the Market State's Coins Module
+  coins: IExchangeID;
+
+  // the exchange that will be used in the Trading Module
+  trading: IExchangeID;
+};
+
+/**
+ * Exchange Credentials
+ * The object that contains the API key and secret so Balancer can interact with the exchange.
+ */
+type IExchangeCredentials = {
+  key: string;
+  secret: string;
+};
+
+/**
+ * Exchanges Credentials
+ * The object containing the credentials for all the exchanges listed in IExchangesConfig.
+ */
+type IExchangesCredentials = {
+  [key in IExchangeID]: IExchangeCredentials;
+};
+
+
+
+
+
+/* ************************************************************************************************
+ *                                          ENVIRONMENT                                           *
+ ************************************************************************************************ */
 
 /**
  * Environment
@@ -97,6 +175,12 @@ type IEnvironment = {
   // the secrets that will be used to generate access and refresh auth tokens
   JWT_SECRET: IJWTSecretConfig;
 
+  // the configuration that will be used to determine the exchanges used by module
+  EXCHANGES_CONFIGURATION: IExchangesConfig;
+
+  // the credentials for the exchange/s listed in EXCHANGES_CONFIGURATION
+  EXCHANGES_CREDENTIALS: IExchangesCredentials;
+
   // the secret that will be used to sign the cookies used by the platform
   COOKIE_SECRET: string;
 };
@@ -109,9 +193,24 @@ type IEnvironment = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
+  // process env
   INodeEnv,
+
+  // root account
   IRootAccountConfig,
+
+  // telegram
   ITelegramConfig,
+
+  // jwt
   IJWTSecretConfig,
+
+  // exchange
+  IExchangeID,
+  IExchangesConfig,
+  IExchangeCredentials,
+  IExchangesCredentials,
+
+  // environment
   IEnvironment,
 };
