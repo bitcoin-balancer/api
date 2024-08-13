@@ -46,32 +46,6 @@ npm run build
 
 <br/>
 
-## @TODO
-
-
-### High Priority
-
-- [ ] ...
-
-
-### Medium Priority
-
-- [ ] ...
-
-
-
-### Low Priority
-
-- [ ] Create a benchmarking system to improve the database’s performance
-- [ ] Store server metrics (usage%, load%, temperature°) in OHLC format 
-- [ ] Expand the automated tests' coverage (unit & integration)
-- [ ] ...
-
-
-
-
-<br/>
-
 ## Tests
 
 **Important:** these tests are to be executed from [Balancer CLI](https://github.com/bitcoin-balancer/cli) as they must run in a containerized environment.
