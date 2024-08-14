@@ -85,6 +85,20 @@ type IJWTSecretConfig = {
  ************************************************************************************************ */
 
 /**
+ * Base Asset
+ * Refers to the asset that is the quantity of a symbol. For the symbol BTCUSDT, BTC would be the
+ * base asset.
+ */
+type IBaseAsset = 'BTC';
+
+/**
+ * Quote Asset
+ * Refers to the asset that is the price of a symbol. For the symbol BTCUSDT, USDT would be the
+ * quote asset.
+ */
+type IQuoteAsset = 'USDT' | 'USDC' | 'DAI' | 'FDUSD' | 'PYUSD' | 'USDD' | 'TUSD';
+
+/**
  * Exchange ID
  * Each exchange is identified by an ID and can be installed in any of the modules.
  */
@@ -95,6 +109,9 @@ type IExchangeID = 'binance' | 'bitfinex' | 'coinbase' | 'kraken' | 'okx';
  * The object that determines what exchange is used by which module.
  */
 type IExchangesConfig = {
+  // the asset that will be used to exchange against the base asset (BTC)
+  quoteAsset: IQuoteAsset;
+
   // the exchange that will be used in the Market State's Window Module
   window: IExchangeID;
 
@@ -206,6 +223,8 @@ export type {
   IJWTSecretConfig,
 
   // exchange
+  IBaseAsset,
+  IQuoteAsset,
   IExchangeID,
   IExchangesConfig,
   IExchangeCredentials,

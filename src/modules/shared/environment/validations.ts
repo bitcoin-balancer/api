@@ -19,6 +19,9 @@ import {
  *                                           CONSTANTS                                            *
  ************************************************************************************************ */
 
+// the list of supported quote assets
+const QUOTE_ASSETS = ['USDT', 'USDC', 'DAI', 'FDUSD', 'PYUSD', 'USDD', 'TUSD'];
+
 // the list of exchange ids supported by Balancer
 const EXCHANGE_IDS: IExchangeID[] = ['binance', 'bitfinex', 'coinbase', 'kraken', 'okx'];
 
@@ -132,12 +135,20 @@ const validateExchangesConfigAndCreds = (
   config: IExchangesConfig,
   credentials: IExchangesCredentials,
 ): void => {
+  // ensure the config and the credentials are valid objects
   if (!objectValid(config)) {
     throw new Error(`The environment property EXCHANGES_CONFIGURATION is not a valid object. Received: ${JSON.stringify(config)}`);
   }
   if (!objectValid(credentials)) {
     throw new Error('The environment property EXCHANGES_CREDENTIALS is not a valid object.');
   }
+
+  // ensure a valid quote asset was provided
+  if (!stringValid(config.quoteAsset) || !QUOTE_ASSETS.includes(config.quoteAsset)) {
+    throw new Error(`The quote asset '${config.quoteAsset}' is invalid. Supported quote assets are: ${JSON.stringify(QUOTE_ASSETS)}`);
+  }
+
+  // ensure all the credentials were provided
   __validateExchangeCredentials('window', config.window, credentials);
   __validateExchangeCredentials('liquidity', config.liquidity, credentials);
   __validateExchangeCredentials('coins', config.coins, credentials);
