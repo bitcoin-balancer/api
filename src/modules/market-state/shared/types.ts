@@ -13,6 +13,18 @@
  */
 type IState = -2 | -1 | 0 | 1 | 2;
 
+/**
+ * State Result
+ * The object containing the results of the state calculation.
+ */
+type IStateResult = {
+  // the mean of all of the split states
+  mean: IState;
+
+  // the states for each split
+  splits: ISplitStates;
+};
+
 
 
 
@@ -78,6 +90,7 @@ type ICompactSplitStates = {
 export type {
   // state
   IState,
+  IStateResult,
 
   // split states
   ISplitStateID,
