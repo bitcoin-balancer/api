@@ -19,13 +19,24 @@ const marketStateServiceFactory = (): IMarketStateService => {
 
 
 
-
   /* **********************************************************************************************
-   *                                            ACTIONS                                           *
+   *                                         INITIALIZER                                          *
    ********************************************************************************************** */
 
-  const someAction = () => {
-    // ...
+  /**
+   * Initializes the Market State Module.
+   * @returns Promise<void>
+   */
+  const initialize = async (): Promise<void> => {
+
+  };
+
+  /**
+   * Tears down the Market State Module.
+   * @returns Promise<void>
+   */
+  const teardown = async (): Promise<void> => {
+
   };
 
 
@@ -38,8 +49,9 @@ const marketStateServiceFactory = (): IMarketStateService => {
     // properties
     // ...
 
-    // ...
-    someAction,
+    // initializer
+    initialize,
+    teardown,
   });
 };
 

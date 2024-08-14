@@ -13,6 +13,7 @@ import { JWTService } from '../../auth/jwt/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
 import { VersionService } from '../version/index.js';
 import { ServerService } from '../../server/index.js';
+import { MarketStateService } from '../../market-state/index.js';
 import { DataJoinService } from '../../data-join/index.js';
 import {
   readPackageFile,
@@ -113,6 +114,20 @@ const apiServiceFactory = (): IAPIService => {
         console.error('ServerService.teardown()', e);
       }
 
+      // Market State Module
+      try {
+        await MarketStateService.teardown();
+      } catch (e) {
+        console.error('MarketStateService.teardown()', e);
+      }
+
+      // Position Module
+      try {
+        // await PositionService.teardown(); @TODO
+      } catch (e) {
+        console.error('PositionService.teardown()', e);
+      }
+
       // Data Join Module
       try {
         await DataJoinService.teardown();
@@ -188,87 +203,103 @@ const apiServiceFactory = (): IAPIService => {
   const __initializeModules = async (): Promise<void> => {
     if (!ENVIRONMENT.TEST_MODE) {
       // Socket IO Module
-      console.log('1/10) Socket IO Module: started');
+      console.log('1/11) Socket IO Module: started');
       try {
         await SocketIOService.initialize(__server);
       } catch (e) {
         throw new Error(`SocketIOService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('1/10) Socket IO Module: done');
+      console.log('1/11) Socket IO Module: done');
 
       // Database Module
-      console.log('2/10) Database Module: started');
+      console.log('2/11) Database Module: started');
       try {
         await DatabaseService.initialize();
       } catch (e) {
         throw new Error(`DatabaseService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('2/10) Database Module: done');
+      console.log('2/11) Database Module: done');
 
       // Notification Module
-      console.log('3/10) Notification Module: started');
+      console.log('3/11) Notification Module: started');
       try {
         await NotificationService.initialize();
       } catch (e) {
         throw new Error(`NotificationService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('3/10) Notification Module: done');
+      console.log('3/11) Notification Module: done');
 
       // User Module
-      console.log('4/10) User Module: started');
+      console.log('4/11) User Module: started');
       try {
         await UserService.initialize();
       } catch (e) {
         throw new Error(`UserService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('4/10) User Module: done');
+      console.log('4/11) User Module: done');
 
       // JWT Module
-      console.log('5/10) JWT Module: started');
+      console.log('5/11) JWT Module: started');
       try {
         await JWTService.initialize();
       } catch (e) {
         throw new Error(`JWTService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('5/10) JWT Module: done');
+      console.log('5/11) JWT Module: done');
 
       // IP Blacklist Module
-      console.log('6/10) IP Blacklist Module: started');
+      console.log('6/11) IP Blacklist Module: started');
       try {
         await IPBlacklistService.initialize();
       } catch (e) {
         throw new Error(`IPBlacklistService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('6/10) IP Blacklist Module: done');
+      console.log('6/11) IP Blacklist Module: done');
 
       // Version Module
-      console.log('7/10) Version Module: started');
+      console.log('7/11) Version Module: started');
       try {
         await VersionService.initialize(__packageFile.version);
       } catch (e) {
         throw new Error(`VersionService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('7/10) Version Module: done');
+      console.log('7/11) Version Module: done');
 
       // Server Module
-      console.log('8/10) Server Module: started');
+      console.log('8/11) Server Module: started');
       try {
         await ServerService.initialize(__packageFile.version);
       } catch (e) {
         throw new Error(`ServerService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('8/10) Server Module: done');
+      console.log('8/11) Server Module: done');
 
+      // Market State Module
+      console.log('9/11) Market State Module: started');
+      try {
+        await MarketStateService.initialize();
+      } catch (e) {
+        throw new Error(`ServerService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('9/11) Market State Module: done');
 
+      // Position Module
+      console.log('10/11) Position Module: started');
+      try {
+        // await PositionService.initialize(); @TODO
+      } catch (e) {
+        throw new Error(`PositionService.initialize() -> ${extractMessage(e)}`);
+      }
+      console.log('10/11) Position Module: done');
 
       // Data Join Module
-      console.log('10/10) Data Join Module: started');
+      console.log('11/11) Data Join Module: started');
       try {
         await DataJoinService.initialize();
       } catch (e) {
         throw new Error(`DataJoinService.initialize() -> ${extractMessage(e)}`);
       }
-      console.log('10/10) Data Join Module: done');
+      console.log('11/11) Data Join Module: done');
     }
   };
 
