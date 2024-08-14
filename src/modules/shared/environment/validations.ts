@@ -19,6 +19,9 @@ import {
  *                                           CONSTANTS                                            *
  ************************************************************************************************ */
 
+// the list of supported base assets
+const BASE_ASSETS = ['BTC'];
+
 // the list of supported quote assets
 const QUOTE_ASSETS = ['USDT', 'USDC', 'DAI', 'FDUSD', 'PYUSD', 'USDD', 'TUSD'];
 
@@ -143,7 +146,10 @@ const validateExchangesConfigAndCreds = (
     throw new Error('The environment property EXCHANGES_CREDENTIALS is not a valid object.');
   }
 
-  // ensure a valid quote asset was provided
+  // ensure the base and quote assets were provided
+  if (!stringValid(config.baseAsset) || !BASE_ASSETS.includes(config.baseAsset)) {
+    throw new Error(`The base asset '${config.baseAsset}' is invalid. Supported base assets are: ${JSON.stringify(BASE_ASSETS)}`);
+  }
   if (!stringValid(config.quoteAsset) || !QUOTE_ASSETS.includes(config.quoteAsset)) {
     throw new Error(`The quote asset '${config.quoteAsset}' is invalid. Supported quote assets are: ${JSON.stringify(QUOTE_ASSETS)}`);
   }
