@@ -135,17 +135,14 @@ const windowServiceFactory = (): IWindowService => {
    * @param startTime?
    * @returns Promise<void>
    */
-  const __fetchCandlesticks = async (startTime?: number): Promise<void> => {
-    // retrieve the klines
-    const candlesticks = await ExchangeService.getCandlesticks(
+  const __fetchCandlesticks = async (startTime?: number): Promise<void> => __onCandlestickChanges(
+    startTime,
+    await ExchangeService.getCandlesticks(
       __config.value.interval,
       __config.value.size,
       startTime,
-    );
-
-    // sync the local state
-    __onCandlestickChanges(startTime, candlesticks);
-  };
+    ),
+  );
 
 
 
