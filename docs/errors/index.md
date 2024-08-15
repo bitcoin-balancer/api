@@ -320,6 +320,15 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **13000:** ``
 
+### `utils.ts`
+
+- **13250:** ``
+
+### `validations.ts`
+
+- **13500:** `Binance returned an invalid HTTP response code '${res.code}'. ${__extractErrorPayload(res.data)}`
+- **13501:** `Binance returned an invalid list of candlesticks.`
+
 
 
 

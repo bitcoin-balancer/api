@@ -1,3 +1,9 @@
+import { sendGET } from 'fetch-request-node';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
+import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
+import { ICandlestickInterval } from '../types.js';
+import { validateCandlesticksResponse } from './validations.js';
+import { transformCandlesticks } from './transformers.js';
 import { IBinanceService } from './types.js';
 
 /* ************************************************************************************************
@@ -14,19 +20,45 @@ const binanceServiceFactory = (): IBinanceService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // ...
+  // the main symbol comprised by the base and quote asset
+  const __SYMBOL = `${ENVIRONMENT.EXCHANGES_CONFIGURATION.baseAsset}${ENVIRONMENT.EXCHANGES_CONFIGURATION.quoteAsset}`;
 
 
 
 
 
   /* **********************************************************************************************
-   *                                            ACTIONS                                           *
+   *                                          MARKET DATA                                         *
    ********************************************************************************************** */
 
-  const someAction = () => {
-    // ...
+  /**
+   * Retrieves the candlestick records from Binance's API.
+   * @param interval
+   * @param limit
+   * @param startTime?
+   * @throws
+   * - 13500: if the HTTP response code is not in the acceptedCodes
+   * - 13501: if the response doesn't include a valid series of candlesticks
+   */
+  const getCandlesticks = async (
+    interval: ICandlestickInterval,
+    limit: number,
+    startTime?: number,
+  ): Promise<ICompactCandlestickRecords> => {
+    // build the url
+    let url: string = `https://data-api.binance.vision/api/v3/klines?symbol=${__SYMBOL}&interval=${interval}&limit=${limit}`;
+    if (startTime) {
+      url += `&startTime=${startTime}`;
+    }
+
+    // send and validate the req
+    const res = await sendGET(url);
+    validateCandlesticksResponse(res);
+
+    // finally, return the transformed candlesticks
+    return transformCandlesticks(res.data);
   };
+
 
 
 
@@ -38,8 +70,8 @@ const binanceServiceFactory = (): IBinanceService => {
     // properties
     // ...
 
-    // actions
-    someAction,
+    // market data
+    getCandlesticks,
   });
 };
 
