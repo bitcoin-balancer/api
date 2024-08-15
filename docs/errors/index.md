@@ -408,3 +408,5 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **21502:** `The requirement '${newConfig.requirement}' is invalid as it must be a valid number ranging 1 and 100.`
 - **21503:** `The strongRequirement '${newConfig.strongRequirement}' is invalid as it must be a valid number ranging 1 and 100.`
 - **21504:** `The requirement '${newConfig.requirement}' must be less than the strong requirement '${newConfig.strongRequirement}'.`
+- **21505:** `The size '${newConfig.size}' is invalid as it must be a valid integer ranging 128 and 512.`
+- **21506:** `The candlestick interval '${newConfig.interval}' is invalid. Supported values include: ${JSON.stringify(ExchangeService.CANDLESTICK_INTERVALS)}.`

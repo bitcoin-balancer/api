@@ -10,7 +10,7 @@ import { ICompactCandlestickRecords } from '../candlestick/index.js';
  */
 type IExchangeService = {
   // properties
-  // ...
+  CANDLESTICK_INTERVALS: ICandlestickInterval[];
 
   // market data
   getCandlesticks: IGetCandlesticks;

@@ -1,3 +1,4 @@
+import { buildPristineCompactCandlestickRecords } from './utils.js';
 import { ICandlestick, ICandlestickRecord, ICompactCandlestickRecords } from './types.js';
 
 /* ************************************************************************************************
@@ -53,6 +54,9 @@ const candlestickFactory = (): ICandlestick => {
 export {
   // factory
   candlestickFactory,
+
+  // utilities
+  buildPristineCompactCandlestickRecords,
 
   // types
   ICandlestickRecord,

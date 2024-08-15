@@ -1,5 +1,5 @@
 import { assembleGetCandlesticks } from './assembler.js';
-import { IExchangeService } from './types.js';
+import { ICandlestickInterval, IExchangeService } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -15,7 +15,8 @@ const exchangeServiceFactory = (): IExchangeService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // ...
+  // the list of intervals supported
+  const CANDLESTICK_INTERVALS: ICandlestickInterval[] = ['1m', '5m', '15m', '30m', '1h', '1d', '1w'];
 
 
 
@@ -69,7 +70,7 @@ const exchangeServiceFactory = (): IExchangeService => {
    ********************************************************************************************** */
   return Object.freeze({
     // properties
-    // ...
+    CANDLESTICK_INTERVALS,
 
     // market data
     getCandlesticks,

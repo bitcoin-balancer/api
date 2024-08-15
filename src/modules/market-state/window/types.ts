@@ -1,4 +1,6 @@
-
+import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
+import { ICandlestickInterval } from '../../shared/exchange/types.js';
+import { ISplitStates, IState } from '../shared/types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -13,7 +15,10 @@ type IWindowService = {
   // properties
   config: IWindowConfig;
 
-  // configurtion
+  // state calculator
+  getPristineState: () => IWindowState;
+
+  // configuration
   updateConfiguration: (newConfig: IWindowConfig) => Promise<void>;
 
   // initializer
@@ -26,7 +31,30 @@ type IWindowService = {
 
 
 /* ************************************************************************************************
- *                                             TYPES                                              *
+ *                                             STATE                                              *
+ ************************************************************************************************ */
+
+/**
+ * Window State
+ * The current state of the window as well as the payload.
+ */
+type IWindowState = {
+  // the state mean of the window
+  state: IState;
+
+  // the state result for each split
+  splitStates: ISplitStates;
+
+  // the candlesticks that comprise the window
+  window: ICompactCandlestickRecords; // the compact state only includes the last 2 records
+};
+
+
+
+
+
+/* ************************************************************************************************
+ *                                         CONFIGURATION                                          *
  ************************************************************************************************ */
 
 /**
@@ -37,6 +65,12 @@ type IWindowService = {
 type IWindowConfig = {
   // the candlesticks will be re-fetched every refetchFrequency seconds
   refetchFrequency: number;
+
+  // the number of candlesticks that comprise the window
+  size: number;
+
+  // the time interval that is contained by a single candlestick
+  interval: ICandlestickInterval;
 
   // the % change required for the window splits to be stateful (1 | -1)
   requirement: number;
@@ -56,6 +90,9 @@ export type {
   // service
   IWindowService,
 
-  // types
+  // state
+  IWindowState,
+
+  // configuration
   IWindowConfig,
 };

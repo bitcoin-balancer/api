@@ -1,6 +1,12 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
-import { numberValid, objectValid } from '../../shared/validations/index.js';
+import {
+  integerValid,
+  numberValid,
+  objectValid,
+  stringValid,
+} from '../../shared/validations/index.js';
+import { ExchangeService } from '../../shared/exchange/index.js';
 import { IWindowConfig } from './types.js';
 
 /* ************************************************************************************************
@@ -16,6 +22,8 @@ import { IWindowConfig } from './types.js';
  * - 21502: if the requirement is invalid
  * - 21503: if the strong requirement is invalid
  * - 21504: if the requirement is greater than or equals to the strong requirement
+ * - 21505: if the size of the window is an invalid integer
+ * - 21506: if the interval is not supported
  */
 const canConfigBeUpdated = (newConfig: IWindowConfig): void => {
   if (!objectValid(newConfig)) {
@@ -24,6 +32,15 @@ const canConfigBeUpdated = (newConfig: IWindowConfig): void => {
   }
   if (!numberValid(newConfig.refetchFrequency, 2.5, 60)) {
     throw new Error(encodeError(`The refetchFrequency '${newConfig.refetchFrequency}' is invalid as it must be a valid number ranging 2.5 and 60.`, 21501));
+  }
+  if (!integerValid(newConfig.size, 128, 512)) {
+    throw new Error(encodeError(`The size '${newConfig.size}' is invalid as it must be a valid integer ranging 128 and 512.`, 21505));
+  }
+  if (
+    !stringValid(newConfig.interval, 2)
+    || ExchangeService.CANDLESTICK_INTERVALS.includes(newConfig.interval)
+  ) {
+    throw new Error(encodeError(`The candlestick interval '${newConfig.interval}' is invalid. Supported values include: ${JSON.stringify(ExchangeService.CANDLESTICK_INTERVALS)}.`, 21506));
   }
   if (!numberValid(newConfig.requirement, 0.01, 100)) {
     throw new Error(encodeError(`The requirement '${newConfig.requirement}' is invalid as it must be a valid number ranging 1 and 100.`, 21502));

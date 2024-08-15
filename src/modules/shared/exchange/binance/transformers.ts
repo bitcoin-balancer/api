@@ -1,4 +1,7 @@
-import { ICompactCandlestickRecords } from '../../candlestick/index.js';
+import {
+  ICompactCandlestickRecords,
+  buildPristineCompactCandlestickRecords,
+} from '../../candlestick/index.js';
 import { IBinanceCandlestick } from './types.js';
 
 /* ************************************************************************************************
@@ -20,13 +23,7 @@ const transformCandlesticks = (source: IBinanceCandlestick[]): ICompactCandlesti
       prev.close.push(Number(current[4]));
       return prev;
     },
-    <ICompactCandlestickRecords>{
-      id: [],
-      open: [],
-      high: [],
-      low: [],
-      close: [],
-    },
+    buildPristineCompactCandlestickRecords(),
   )
 );
 
