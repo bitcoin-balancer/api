@@ -379,3 +379,32 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 ### `index.ts`
 
 - **20000:** ``
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Window` (21000 - 21999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **21000:** ``
+
+### `utils.ts`
+
+- **21250:** ``
+
+### `validations.ts`
+
+- **21500:** `The provided window configuration is not a valid object.`
+- **21501:** `The refetchFrequency '${newConfig.refetchFrequency}' is invalid as it must be a valid number ranging 2.5 and 60.`
+- **21502:** `The requirement '${newConfig.requirement}' is invalid as it must be a valid number ranging 1 and 100.`
+- **21503:** `The strongRequirement '${newConfig.strongRequirement}' is invalid as it must be a valid number ranging 1 and 100.`
+- **21504:** `The requirement '${newConfig.requirement}' must be less than the strong requirement '${newConfig.strongRequirement}'.`
