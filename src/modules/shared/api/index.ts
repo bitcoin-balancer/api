@@ -13,7 +13,7 @@ import { JWTService } from '../../auth/jwt/index.js';
 import { IPBlacklistService } from '../../ip-blacklist/index.js';
 import { VersionService } from '../version/index.js';
 import { ServerService } from '../../server/index.js';
-import { ExchangeService } from '../../exchange/index.js';
+import { ExchangeService } from '../exchange/index.js';
 import { MarketStateService } from '../../market-state/index.js';
 import { DataJoinService } from '../../data-join/index.js';
 import {

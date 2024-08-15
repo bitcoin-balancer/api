@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
 import { IRequestResponse } from 'fetch-request-node';
-import { objectValid, stringValid } from '../../shared/validations/index.js';
+import { objectValid, stringValid } from '../../validations/index.js';
 
 /* ************************************************************************************************
  *                                            HELPERS                                             *

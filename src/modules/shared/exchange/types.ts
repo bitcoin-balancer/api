@@ -1,4 +1,4 @@
-import { ICompactCandlestickRecords } from '../shared/candlestick/index.js';
+import { ICompactCandlestickRecords } from '../candlestick/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *

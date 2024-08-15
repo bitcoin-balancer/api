@@ -1,6 +1,6 @@
 import { sendGET } from 'fetch-request-node';
-import { ENVIRONMENT } from '../../shared/environment/index.js';
-import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
+import { ENVIRONMENT } from '../../environment/index.js';
+import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import { ICandlestickInterval } from '../types.js';
 import { validateCandlesticksResponse } from './validations.js';
 import { transformCandlesticks } from './transformers.js';

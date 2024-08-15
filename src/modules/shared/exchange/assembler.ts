@@ -1,4 +1,4 @@
-import { ENVIRONMENT } from '../shared/environment/index.js';
+import { ENVIRONMENT } from '../environment/index.js';
 import { BinanceService } from './binance/index.js';
 import { IGetCandlesticks } from './types.js';
 
