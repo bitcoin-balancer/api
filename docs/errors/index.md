@@ -19,7 +19,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
 
 ## `APIError` (1000 - 1999)
 
@@ -37,7 +37,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
 
 ## `Altcha` (2000 - 2999)
 
@@ -54,7 +54,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
 
 ## `Auth/User` (3000 - 3999)
 
@@ -100,7 +100,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
 
 ## `Auth/JWT` (4000 - 4999)
 
@@ -133,7 +133,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
 
 ## `IPBlacklist` (5000 - 5999)
 
@@ -159,7 +159,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
 
 ## `RequestGuard` (6000 - 6999)
 
@@ -184,7 +184,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
 
 ## `Version` (7000 - 7999)
 
@@ -201,7 +201,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
 
 ## `Server` (8000 - 8999)
 
@@ -225,7 +225,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
 
 ## `Socket IO` (9000 - 9999)
 
@@ -248,7 +248,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
 
 ## `Notification` (10000 - 10999)
 
@@ -268,3 +268,88 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **10500:** `The maximum number of API Errors that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`
 - **10501:** `The API Errors cannot be listed with an invalid startAtID. Received: ${startAtID}.`
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Exchange` (11000 - 11999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **11000:** ``
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Binance` (12000 - 12999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **12000:** ``
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Bitfinex` (13000 - 13999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **13000:** ``
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Kraken` (14000 - 14999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **14000:** ``
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Market State` (20000 - 20999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **20000:** ``
