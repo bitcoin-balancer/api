@@ -395,7 +395,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `index.ts`
 
-- **21000:** `The number of candlesticks retrieved from the exchange '${candlesticks.id.length}' doesn't match the window size set in the configuration '${__config.value.size}'`
+- **21000:** ``
 - **21001:** ``
 
 ### `utils.ts`
@@ -411,3 +411,4 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **21504:** `The requirement '${newConfig.requirement}' must be less than the strong requirement '${newConfig.strongRequirement}'.`
 - **21505:** `The size '${newConfig.size}' is invalid as it must be a valid integer ranging 128 and 512.`
 - **21506:** `The candlestick interval '${newConfig.interval}' is invalid. Supported values include: ${JSON.stringify(ExchangeService.CANDLESTICK_INTERVALS)}.`
+- **21507:** `The number of candlesticks retrieved from the exchange '${candlesticks.id.length}' doesn't match the window size set in the configuration '${config.size}'`

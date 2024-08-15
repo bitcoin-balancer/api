@@ -1,5 +1,4 @@
 import { BehaviorSubject } from 'rxjs';
-import { encodeError } from 'error-message-utils';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
@@ -7,7 +6,7 @@ import { NotificationService } from '../../notification/index.js';
 import { ICompactCandlestickRecords, buildPristineCompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService } from '../../shared/exchange/index.js';
 import { buildDefaultConfig, buildPristineState } from './utils.js';
-import { canConfigBeUpdated } from './validations.js';
+import { canConfigBeUpdated, validateInitialCandlesticks } from './validations.js';
 import { IWindowConfig, IWindowService, IWindowState } from './types.js';
 
 
@@ -27,10 +26,8 @@ const windowServiceFactory = (): IWindowService => {
    ********************************************************************************************** */
 
   // the compact candlestick records that comprise the window
-  let __windowVal: ICompactCandlestickRecords;
-  const __window = new BehaviorSubject<ICompactCandlestickRecords>(
-    buildPristineCompactCandlestickRecords(),
-  );
+  let __windowVal: ICompactCandlestickRecords = buildPristineCompactCandlestickRecords();
+  const __window = new BehaviorSubject<ICompactCandlestickRecords>(__windowVal);
 
   // the module's configuration
   let __config: IRecordStore<IWindowConfig>;
@@ -69,9 +66,7 @@ const windowServiceFactory = (): IWindowService => {
    * @param candlesticks
    */
   const __handleInitialCandlesticks = (candlesticks: ICompactCandlestickRecords): void => {
-    if (candlesticks.id.length !== __config.value.size) {
-      throw new Error(encodeError(`The number of candlesticks retrieved from the exchange '${candlesticks.id.length}' doesn't match the window size set in the configuration '${__config.value.size}'`, 21000));
-    }
+    validateInitialCandlesticks(candlesticks, __config.value);
     __windowVal = candlesticks;
   };
 
@@ -151,7 +146,6 @@ const windowServiceFactory = (): IWindowService => {
     // sync the local state
     __onCandlestickChanges(startTime, candlesticks);
   };
-
 
 
 

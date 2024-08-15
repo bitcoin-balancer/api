@@ -6,12 +6,29 @@ import {
   objectValid,
   stringValid,
 } from '../../shared/validations/index.js';
+import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService } from '../../shared/exchange/index.js';
 import { IWindowConfig } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
+
+/**
+ * Ensures the candlesticks match the requirements and can be used to initialize the state.
+ * @param candlesticks
+ * @param config
+ * @throws
+ * - 21507: if the number of candlesticks doesn't match the window size
+ */
+const validateInitialCandlesticks = (
+  candlesticks: ICompactCandlestickRecords,
+  config: IWindowConfig,
+): void => {
+  if (candlesticks.id.length !== config.size) {
+    throw new Error(encodeError(`The number of candlesticks retrieved from the exchange '${candlesticks.id.length}' doesn't match the window size set in the configuration '${config.size}'`, 21507));
+  }
+};
 
 /**
  * Ensures the window configuration object can be updated.
@@ -61,5 +78,6 @@ const canConfigBeUpdated = (newConfig: IWindowConfig): void => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  validateInitialCandlesticks,
   canConfigBeUpdated,
 };
