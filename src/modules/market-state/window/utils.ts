@@ -1,3 +1,4 @@
+import { buildPristineCompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { IWindowConfig, IWindowState } from './types.js';
 
 /* ************************************************************************************************
@@ -32,13 +33,7 @@ const buildPristineState = (): IWindowState => ({
     s5: { state: 0, change: 0 },
     s2: { state: 0, change: 0 },
   },
-  window: {
-    id: [],
-    open: [],
-    high: [],
-    low: [],
-    close: [],
-  },
+  window: buildPristineCompactCandlestickRecords(),
 });
 
 

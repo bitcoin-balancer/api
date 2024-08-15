@@ -395,7 +395,8 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `index.ts`
 
-- **21000:** ``
+- **21000:** `The number of candlesticks retrieved from the exchange '${candlesticks.id.length}' doesn't match the window size set in the configuration '${__config.value.size}'`
+- **21001:** ``
 
 ### `utils.ts`
 
