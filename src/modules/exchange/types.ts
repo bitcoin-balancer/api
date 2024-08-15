@@ -1,4 +1,4 @@
-
+import { ICompactCandlestickRecords } from '../shared/candlestick/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -12,10 +12,28 @@ type IExchangeService = {
   // properties
   // ...
 
+  // market data
+  getCandlesticks: IGetCandlesticks;
+
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;
 };
+
+
+
+
+
+/* ************************************************************************************************
+ *                                            METHODS                                             *
+ ************************************************************************************************ */
+
+// getCandlesticks
+type IGetCandlesticks = (
+  interval: ICandlestickInterval,
+  limit: number,
+  startTime?: number,
+) => Promise<ICompactCandlestickRecords>;
 
 
 
@@ -45,6 +63,9 @@ type ICandlestickInterval =
 export type {
   // service
   IExchangeService,
+
+  // methods
+  IGetCandlesticks,
 
   // candlestick
   ICandlestickInterval,

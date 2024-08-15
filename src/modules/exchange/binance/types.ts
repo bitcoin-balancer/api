@@ -1,4 +1,5 @@
-
+import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
+import { ICandlestickInterval } from '../types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -9,7 +10,15 @@
  * Object in charge of exposing Binance's API in a modular manner.
  */
 type IBinanceService = {
+  // properties
+  // ...
 
+  // market data
+  getCandlesticks: (
+    interval: ICandlestickInterval,
+    limit: number,
+    startTime?: number,
+  ) => Promise<ICompactCandlestickRecords>
 };
 
 

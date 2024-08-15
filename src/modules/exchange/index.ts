@@ -1,3 +1,4 @@
+import { assembleGetCandlesticks } from './assembler.js';
 import { IExchangeService } from './types.js';
 
 /* ************************************************************************************************
@@ -15,6 +16,26 @@ const exchangeServiceFactory = (): IExchangeService => {
    ********************************************************************************************** */
 
   // ...
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                          MARKET DATA                                         *
+   ********************************************************************************************** */
+
+  /**
+   * Retrieves the candlestick records from Binance's API.
+   * @param interval
+   * @param limit
+   * @param startTime?
+   * @throws (binance)
+   * - 13500: if the HTTP response code is not in the acceptedCodes
+   * - 13501: if the response doesn't include a valid series of candlesticks
+   */
+  const getCandlesticks = assembleGetCandlesticks();
+
 
 
 
@@ -49,6 +70,9 @@ const exchangeServiceFactory = (): IExchangeService => {
   return Object.freeze({
     // properties
     // ...
+
+    // market data
+    getCandlesticks,
 
     // initializer
     initialize,
