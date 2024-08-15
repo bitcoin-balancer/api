@@ -276,7 +276,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 <br/><br/><br/><br/><br/><br/>
 
-## `Exchange` (11000 - 11999)
+## `Candlestick` (11000 - 11999)
 
 - ...
 - ...
@@ -293,7 +293,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 <br/><br/><br/><br/><br/><br/>
 
-## `Binance` (12000 - 12999)
+## `Exchange` (12000 - 12999)
 
 - ...
 - ...
@@ -310,7 +310,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 <br/><br/><br/><br/><br/><br/>
 
-## `Bitfinex` (13000 - 13999)
+## `Binance` (13000 - 13999)
 
 - ...
 - ...
@@ -327,7 +327,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 <br/><br/><br/><br/><br/><br/>
 
-## `Kraken` (14000 - 14999)
+## `Bitfinex` (14000 - 14999)
 
 - ...
 - ...
@@ -336,6 +336,23 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 ### `index.ts`
 
 - **14000:** ``
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Kraken` (15000 - 15999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **15000:** ``
 
 
 

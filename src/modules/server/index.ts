@@ -1,5 +1,5 @@
 import { ENVIRONMENT } from '../shared/environment/index.js';
-import { recordStoreServiceFactory, IRecordStore } from '../shared/record-store/index.js';
+import { recordStoreFactory, IRecordStore } from '../shared/record-store/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { NotificationService } from '../notification/index.js';
 import { buildDefaultAlarms } from './utils.js';
@@ -153,7 +153,7 @@ const serverServiceFactory = (): IServerService => {
    */
   const initialize = async (runningVersion: string): Promise<void> => {
     // initialize the alarms' configuration
-    __alarms = await recordStoreServiceFactory('SERVER_ALARMS', buildDefaultAlarms());
+    __alarms = await recordStoreFactory('SERVER_ALARMS', buildDefaultAlarms());
 
     // initialize the state
     await __refetchState(runningVersion);

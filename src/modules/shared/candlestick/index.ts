@@ -1,32 +1,20 @@
-import { readRecord, writeRecord } from './model.js';
-import { IRecordStoreFactory, IStoreID, IRecordStore } from './types.js';
+import { ICandlestick, ICandlestickRecord, ICompactCandlestickRecords } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
 /**
- * Record Store Factory
- * Generates the object in charge of persistently storing records.
- * @returns Promise<IRecordStore<T>>
+ * Candlestick Factory
+ * Generates the object in charge of creating and storing data in OHLC format.
+ * @returns ICandlestick
  */
-const recordStoreFactory: IRecordStoreFactory = async <T>(
-  storeID: IStoreID,
-  defaultValue: T,
-): Promise<IRecordStore<T>> => {
+const candlestickFactory = (): ICandlestick => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // the store's identifier
-  const __id: IStoreID = storeID;
-
-  // the store's current value - initialize it in case it hasn't been
-  let __value = <T> await readRecord(__id);
-  if (__value === null) {
-    await writeRecord(__id, defaultValue, true);
-    __value = defaultValue;
-  }
+  // ...
 
 
 
@@ -36,16 +24,9 @@ const recordStoreFactory: IRecordStoreFactory = async <T>(
    *                                            ACTIONS                                           *
    ********************************************************************************************** */
 
-  /**
-   * Updates the value of the store.
-   * @param newValue
-   * @returns Promise<void>
-   */
-  const update = async (newValue: T): Promise<void> => {
-    await writeRecord(__id, newValue);
-    __value = newValue;
+  const someAction = () => {
+    // ...
   };
-
 
 
 
@@ -55,15 +36,10 @@ const recordStoreFactory: IRecordStoreFactory = async <T>(
    ********************************************************************************************** */
   return Object.freeze({
     // properties
-    get id() {
-      return __id;
-    },
-    get value() {
-      return __value;
-    },
+    // ...
 
     // actions
-    update,
+    someAction,
   });
 };
 
@@ -76,8 +52,9 @@ const recordStoreFactory: IRecordStoreFactory = async <T>(
  ************************************************************************************************ */
 export {
   // factory
-  recordStoreFactory,
+  candlestickFactory,
 
   // types
-  type IRecordStore,
+  ICandlestickRecord,
+  ICompactCandlestickRecords,
 };
