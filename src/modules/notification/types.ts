@@ -39,6 +39,37 @@ type INotificationService = {
 
 
 
+/* ************************************************************************************************
+ *                                            FACTORY                                             *
+ ************************************************************************************************ */
+
+/**
+ * Throttleable Notification Factory
+ * Function in charge of generating ThrottleableNotification objects.
+ */
+type IThrottleableNotificationFactory = (
+  // the notification function that will be used to broadcast
+  func: () => void,
+
+  // the duration of the throttle in minutes
+  duration: number,
+) => IThrottleableNotification;
+
+/**
+ * Throttleable Notification
+ * Object in charge of throttling the broadcasting of a notification.
+ */
+type IThrottleableNotification = {
+  // properties
+  // ...
+
+  // actions
+  broadcast: (args?: any[]) => void;
+};
+
+
+
+
 
 /* ************************************************************************************************
  *                                             TYPES                                              *
@@ -75,12 +106,18 @@ type IPreSaveNotification = Omit<INotification, 'id'>;
 
 
 
+
+
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
   // service
   INotificationService,
+
+  // factory
+  IThrottleableNotificationFactory,
+  IThrottleableNotification,
 
   // types
   INotificationSender,
