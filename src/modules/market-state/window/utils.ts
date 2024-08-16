@@ -1,5 +1,25 @@
 import { buildPristineCompactCandlestickRecords } from '../../shared/candlestick/index.js';
+import { ICandlestickInterval } from '../../shared/exchange/index.js';
 import { IWindowConfig, IWindowState } from './types.js';
+
+/* ************************************************************************************************
+ *                                           CONSTANTS                                            *
+ ************************************************************************************************ */
+
+// the number of ms each of the supported intervals last
+const __INTERVAL_DURATION: { [key in ICandlestickInterval]: number } = {
+  '1m': 60 * 1000,
+  '5m': 300 * 1000,
+  '15m': 900 * 1000,
+  '30m': 1800 * 1000,
+  '1h': 3600 * 1000,
+  '1d': 86400 * 1000,
+  '1w': 604800 * 1000,
+};
+
+
+
+
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -56,6 +76,21 @@ const getConfigUpdatePostActions = (
   shouldFetchInitialCandlesticks: oldConfig.size !== newConfig.size,
 });
 
+/**
+ * Calculates the number (float) of candlestick bars the local window is currently behind by. Keep
+ * in mind it is normal for the candlesticks to be ~1 bar behind. If the lag is >= 1.1 there could
+ * be an issue.
+ * @param interval
+ * @param currentOpenTime
+ * @returns number
+ */
+const calculateSyncLag = (interval: ICandlestickInterval, currentOpenTime: number): number => {
+  // calculate the difference in secs between the current time and the last candlestick's open time
+  const diff = Date.now() - currentOpenTime;
+
+  // calculate the number of bars the window is currently behind by
+  return diff / __INTERVAL_DURATION[interval];
+};
 
 
 
@@ -67,4 +102,5 @@ export {
   buildDefaultConfig,
   buildPristineState,
   getConfigUpdatePostActions,
+  calculateSyncLag,
 };

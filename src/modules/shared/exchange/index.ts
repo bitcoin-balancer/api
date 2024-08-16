@@ -102,5 +102,5 @@ export {
   ExchangeService,
 
   // types
-  // ...
+  type ICandlestickInterval,
 };
