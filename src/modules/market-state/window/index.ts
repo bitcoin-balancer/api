@@ -1,13 +1,17 @@
+import { subMinutes } from 'date-fns';
 import { BehaviorSubject } from 'rxjs';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
+import { NotificationService } from '../../notification/index.js';
 import { ICompactCandlestickRecords, buildPristineCompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService } from '../../shared/exchange/index.js';
+import { IState } from '../shared/types.js';
 import { calculateState as calculateStateUtils } from '../shared/utils.js';
 import { buildDefaultConfig, buildPristineState, getConfigUpdatePostActions } from './utils.js';
 import { canConfigBeUpdated, validateInitialCandlesticks } from './validations.js';
 import { IWindowConfig, IWindowService, IWindowState } from './types.js';
+
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -34,6 +38,36 @@ const windowServiceFactory = (): IWindowService => {
   // the candlesticks will be refetched every __config.refetchFrequency seconds
   let __refetchInterval: NodeJS.Timeout;
 
+  // if the window has a strong state, a notification will be sent every __THROTTLE_DURATION minutes
+  const __THROTTLE_DURATION = 60;
+  let lastBroadcastedNotification: number | undefined;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                        NOTIFICATIONS                                         *
+   ********************************************************************************************** */
+
+  /**
+   * Sends a notification to users when the market is moving strongly and is not being throttled.
+   * @param price
+   * @param change
+   */
+  const __sendStrongStateNotification = (state: IState, change: number): void => {
+    if (
+      (state === 2 || state === -2)
+      && (
+        lastBroadcastedNotification === undefined
+        || lastBroadcastedNotification < subMinutes(new Date(), __THROTTLE_DURATION).getTime()
+      )
+    ) {
+      NotificationService.strongWindowState(__windowVal.close.at(-1)!, change);
+      lastBroadcastedNotification = Date.now();
+    }
+  };
+
 
 
 
@@ -55,10 +89,8 @@ const windowServiceFactory = (): IWindowService => {
       __config.value.strongRequirement,
     );
 
-    // check if a notification should be broadcasted
-    if (mean === 2 || mean === -2) {
-      // ...
-    }
+    // send a notification if the market is moving strongly
+    __sendStrongStateNotification(mean, splits.s100.change);
 
     // finally, return the state
     return { state: mean, splitStates: splits, window: __windowVal };

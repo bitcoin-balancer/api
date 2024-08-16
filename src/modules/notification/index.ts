@@ -201,7 +201,7 @@ const notificationServiceFactory = (): INotificationService => {
   const strongWindowState = (price: number, change: number): void => __addToQueue({
     sender: 'MARKET_STATE',
     title: `Bitcoin is ${change > 0 ? 'increasing' : 'decreasing'}`,
-    description: `The price has changed ${change > 0 ? '+' : ''}${change}% in the current window and is currently at ${prettifyDollarValue(price)}.`,
+    description: `The price has changed ${change > 0 ? '+' : ''}${change}% in the window and is currently at ${prettifyDollarValue(price)}.`,
     event_time: Date.now(),
   });
 
