@@ -1,5 +1,6 @@
 import { IUser } from '../auth/user/index.js';
 import { IVersion } from '../shared/version/index.js';
+import { IMarketState } from '../market-state/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -51,7 +52,7 @@ type IAppEssentials = {
   user: IUser;
 
   // the current state of the market
-  // ...
+  marketState: IMarketState;
 
   // the active position record (if any)
   // ...
@@ -69,7 +70,7 @@ type ICompactAppEssentials = {
   unreadAPIErrors: number;
 
   // the current state of the market
-  // ...
+  marketState: IMarketState;
 
   // the active position record (if any)
   // ...

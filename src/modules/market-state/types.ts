@@ -31,7 +31,7 @@ type IMarketStateService = {
  * The object containing the up-to-date state for all Market State's submodules.
  */
 type IMarketState = {
-  window: IWindowState;
+  windowState: IWindowState;
 };
 
 

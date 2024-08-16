@@ -1,9 +1,12 @@
+import { Subscription } from 'rxjs';
 import { APIErrorService } from '../api-error/index.js';
 import { NotificationService } from '../notification/index.js';
 import { UserService } from '../auth/user/index.js';
 import { VersionService } from '../shared/version/index.js';
 import { SocketIOService } from '../shared/socket-io/index.js';
+import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { IDataJoinService, IAppEssentials, ICompactAppEssentials } from './types.js';
+import { sliceWindow } from './utils.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -20,9 +23,9 @@ const dataJoinServiceFactory = (): IDataJoinService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // the compact app essentials will be emitted every __emitFrequency seconds
-  const __emitFrequency: number = 5;
-  let __emitInterval: NodeJS.Timeout;
+  // the market state object
+  let __marketState: IMarketState;
+  let __marketStateSub: Subscription;
 
 
 
@@ -43,6 +46,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
     unreadNotifications: NotificationService.unreadCount,
     unreadAPIErrors: APIErrorService.unreadCount,
     user: UserService.getUser(uid),
+    marketState: __marketState,
     // ...
   });
 
@@ -53,6 +57,12 @@ const dataJoinServiceFactory = (): IDataJoinService => {
   const __getCompactAppEssentials = (): ICompactAppEssentials => ({
     unreadNotifications: NotificationService.unreadCount,
     unreadAPIErrors: APIErrorService.unreadCount,
+    marketState: {
+      windowState: {
+        ...__marketState.windowState,
+        window: sliceWindow(__marketState.windowState.window),
+      },
+    },
   });
 
 
@@ -64,17 +74,27 @@ const dataJoinServiceFactory = (): IDataJoinService => {
    ********************************************************************************************** */
 
   /**
+   * Fires whenever there is a new market state object.
+   * @param marketState
+   */
+  const __onMarketStateChanges = (marketState: IMarketState): void => {
+    try {
+      __marketState = marketState;
+      SocketIOService.emitCompactAppEssentials(__getCompactAppEssentials());
+    } catch (e) {
+      APIErrorService.save('DataJoinService.initialize.emitCompactAppEssentials', e);
+    }
+  };
+
+  /**
    * Initializes the Data Join Module.
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
-    __emitInterval = setInterval(() => {
-      try {
-        SocketIOService.emitCompactAppEssentials(__getCompactAppEssentials());
-      } catch (e) {
-        APIErrorService.save('DataJoinService.initialize.emitCompactAppEssentials', e);
-      }
-    }, __emitFrequency * 1000);
+    // subscribe to the market state
+    __marketStateSub = MarketStateService.state.subscribe(__onMarketStateChanges);
+
+    // ...
   };
 
   /**
@@ -82,7 +102,9 @@ const dataJoinServiceFactory = (): IDataJoinService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    clearInterval(__emitInterval);
+    if (__marketStateSub) {
+      __marketStateSub.unsubscribe();
+    }
   };
 
 

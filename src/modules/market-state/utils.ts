@@ -10,7 +10,7 @@ import { IMarketState } from './types.js';
  * @returns IMarketState
  */
 const buildPristineState = (): IMarketState => ({
-  window: WindowService.getPristineState(),
+  windowState: WindowService.getPristineState(),
 });
 
 

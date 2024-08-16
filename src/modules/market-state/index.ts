@@ -5,7 +5,7 @@ import { APIErrorService } from '../api-error/index.js';
 import { NotificationService } from '../notification/index.js';
 import { WindowService } from './window/index.js';
 import { buildPristineState } from './utils.js';
-import { IMarketStateService } from './types.js';
+import { IMarketStateService, IMarketState } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -55,7 +55,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
 
       // finally, broadcast the next state
       __state.next({
-        window: windowState,
+        windowState,
       });
     } catch (e) {
       console.error(e);
@@ -188,5 +188,9 @@ const MarketStateService = marketStateServiceFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // service
   MarketStateService,
+
+  // types
+  type IMarketState,
 };
