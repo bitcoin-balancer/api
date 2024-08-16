@@ -212,7 +212,8 @@ const windowServiceFactory = (): IWindowService => {
     canConfigBeUpdated(newConfig);
     await __config.update(newConfig);
     // refetch the whole window @TODO
-    // if the refetchFrequency changed, teardown and initialize again
+    // if the refetchFrequency changed, teardown and initialize again. If unable to re-initialize,
+    // make sure to start the interval regardless
   };
 
 
