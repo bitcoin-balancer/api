@@ -4,7 +4,7 @@ import { sendPOST } from 'fetch-request-node';
 import { ENVIRONMENT, ITelegramConfig } from '../shared/environment/index.js';
 import { invokeFuncPersistently } from '../shared/utils/index.js';
 import { APIErrorService } from '../api-error/index.js';
-import { buildRequestInput, toMessage } from './utils.js';
+import { buildRequestInput, toMessage, prettifyDollarValue } from './utils.js';
 import { canRecordsBeListed } from './validations.js';
 import { listRecords, saveRecord } from './model.js';
 import { INotificationService, INotification, IPreSaveNotification } from './types.js';
@@ -190,6 +190,26 @@ const notificationServiceFactory = (): INotificationService => {
 
 
   /* **********************************************************************************************
+   *                                         MARKET STATE                                         *
+   ********************************************************************************************** */
+
+  /**
+   * Broadcasts a message notifying users the Bitcoin price is moving strongly.
+   * @param price
+   * @param change
+   */
+  const strongWindowState = (price: number, change: number): void => __addToQueue({
+    sender: 'MARKET_STATE',
+    title: `Bitcoin is ${change > 0 ? 'increasing' : 'decreasing'}`,
+    description: `The price has changed ${change > 0 ? '+' : ''}${change}% in the current window and is currently at ${prettifyDollarValue(price)}.`,
+    event_time: Date.now(),
+  });
+
+
+
+
+
+  /* **********************************************************************************************
    *                                          INITIALIZER                                         *
    ********************************************************************************************** */
 
@@ -242,6 +262,9 @@ const notificationServiceFactory = (): INotificationService => {
     highCPULoad,
     highMemoryUsage,
     highFileSystemUsage,
+
+    // market state
+    strongWindowState,
 
     // initializer
     initialize,

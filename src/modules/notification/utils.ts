@@ -1,3 +1,4 @@
+import { prettifyValue } from 'bignumber-utils';
 import { IRequestInput } from 'fetch-request-node';
 import { IPreSaveNotification } from './types.js';
 
@@ -29,6 +30,15 @@ const buildRequestInput = (token: string, chatID: number, message: string): IReq
   `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatID}&text=${message}`
 );
 
+/**
+ * Prettifies a dollar value so it can be easily read by users.
+ * @param value
+ * @returns string
+ */
+const prettifyDollarValue = (value: number): string => (
+  prettifyValue(value, { processing: { decimalPlaces: 2 }, format: { prefix: '$' } })
+);
+
 
 
 
@@ -39,4 +49,5 @@ const buildRequestInput = (token: string, chatID: number, message: string): IReq
 export {
   toMessage,
   buildRequestInput,
+  prettifyDollarValue,
 };

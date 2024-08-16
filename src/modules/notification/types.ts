@@ -15,10 +15,6 @@ type INotificationService = {
   // retrievers
   list: (limit: number, startAtID: number | undefined) => Promise<INotification[]>;
 
-  // initializer
-  initialize: () => Promise<void>;
-  teardown: () => Promise<void>;
-
   // broadcaster
   broadcast: (notification: IPreSaveNotification, retryDelaySchedule?: number[]) => Promise<void>;
 
@@ -30,6 +26,13 @@ type INotificationService = {
   highCPULoad: (current: number, limit: number) => void;
   highMemoryUsage: (current: number, limit: number) => void;
   highFileSystemUsage: (current: number, limit: number) => void;
+
+  // market state
+  strongWindowState: (price: number, change: number) => void;
+
+  // initializer
+  initialize: () => Promise<void>;
+  teardown: () => Promise<void>;
 };
 
 
@@ -44,7 +47,8 @@ type INotificationService = {
  * Notification Sender
  * The sender can be a module or even a specific event.
  */
-type INotificationSender = 'AUTOMATED_TEST' | 'API_ERROR' | 'API_INITIALIZER' | 'SERVER';
+type INotificationSender = 'AUTOMATED_TEST' | 'API_ERROR' | 'API_INITIALIZER' | 'SERVER'
+| 'MARKET_STATE';
 
 /**
  * Notification
