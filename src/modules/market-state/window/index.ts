@@ -29,8 +29,8 @@ const windowServiceFactory = (): IWindowService => {
    ********************************************************************************************** */
 
   // the compact candlestick records that comprise the window
-  let __windowVal: ICompactCandlestickRecords = buildPristineCompactCandlestickRecords();
-  const __window = new BehaviorSubject<ICompactCandlestickRecords>(__windowVal);
+  let __windowVal = buildPristineCompactCandlestickRecords();
+  const __window = new BehaviorSubject(__windowVal);
 
   // the module's configuration
   let __config: IRecordStore<IWindowConfig>;
@@ -262,14 +262,26 @@ const windowServiceFactory = (): IWindowService => {
         await teardown();
         await initialize();
       } catch (e) {
-        APIErrorService.save('WindowService.updateConfiguration.shouldReInitialize', e);
+        APIErrorService.save(
+          'WindowService.updateConfiguration.shouldReInitialize',
+          e,
+          undefined,
+          undefined,
+          { shouldReInitialize, shouldFetchInitialCandlesticks },
+        );
         __initializeRefetchInterval();
       }
     } else if (shouldFetchInitialCandlesticks) {
       try {
         await invokeFuncPersistently(__fetchCandlesticks, undefined, [3, 5, 15, 45, 120]);
       } catch (e) {
-        APIErrorService.save('WindowService.updateConfiguration.shouldFetchInitialCandlesticks', e);
+        APIErrorService.save(
+          'WindowService.updateConfiguration.shouldFetchInitialCandlesticks',
+          e,
+          undefined,
+          undefined,
+          { shouldReInitialize, shouldFetchInitialCandlesticks },
+        );
       }
     }
   };

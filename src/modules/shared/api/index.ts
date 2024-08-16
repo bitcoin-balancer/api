@@ -296,7 +296,7 @@ const apiServiceFactory = (): IAPIService => {
       try {
         await MarketStateService.initialize();
       } catch (e) {
-        throw new Error(`ServerService.initialize() -> ${extractMessage(e)}`);
+        throw new Error(`MarketStateService.initialize() -> ${extractMessage(e)}`);
       }
       console.log('10/12) Market State Module: done');
 

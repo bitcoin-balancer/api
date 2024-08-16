@@ -1,4 +1,5 @@
-
+import { BehaviorSubject } from 'rxjs';
+import { IWindowState } from './window/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -10,11 +11,11 @@
  */
 type IMarketStateService = {
   // properties
-  // ...
+  state: BehaviorSubject<IMarketState>;
 
   // initializer
-  initialize: () => Promise<void>;
   teardown: () => Promise<void>;
+  initialize: () => Promise<void>;
 };
 
 
@@ -25,6 +26,13 @@ type IMarketStateService = {
  *                                             TYPES                                              *
  ************************************************************************************************ */
 
+/**
+ * Market State
+ * The object containing the up-to-date state for all Market State's submodules.
+ */
+type IMarketState = {
+  window: IWindowState;
+};
 
 
 
@@ -37,5 +45,5 @@ export type {
   IMarketStateService,
 
   // types
-  // ...
+  IMarketState,
 };
