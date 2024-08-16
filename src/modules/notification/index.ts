@@ -105,9 +105,9 @@ const notificationServiceFactory = (): INotificationService => {
    * Adds a notification to the queue if Telegram has been integrated.
    * @param notification
    */
-  const __addToQueue = (notification: IPreSaveNotification): void => {
+  const __addToQueue = (notification: Omit<IPreSaveNotification, 'event_time'>): void => {
     if (__CONFIG && __queue.length < __queueLimit) {
-      __queue.push(notification);
+      __queue.push({ ...notification, event_time: Date.now() });
     }
   };
 
@@ -124,9 +124,8 @@ const notificationServiceFactory = (): INotificationService => {
    */
   const apiInit = (): void => __addToQueue({
     sender: 'API_INITIALIZER',
-    title: 'API Initialized',
+    title: 'API initialized',
     description: 'The API has been initialized successfully and is ready to accept requests.',
-    event_time: Date.now(),
   });
 
   /**
@@ -136,7 +135,7 @@ const notificationServiceFactory = (): INotificationService => {
    */
   const apiInitError = (error: any): Promise<void> => broadcast({
     sender: 'API_INITIALIZER',
-    title: 'API Initialization Failed',
+    title: 'API initialization failed',
     description: extractMessage(error),
     event_time: Date.now(),
   });
@@ -156,9 +155,8 @@ const notificationServiceFactory = (): INotificationService => {
    */
   const highCPULoad = (current: number, limit: number): void => __addToQueue({
     sender: 'SERVER',
-    title: 'High CPU Load!',
+    title: 'High CPU load!',
     description: `The CPU’s load is currently at ${current}% which exceeds the limit of ${limit}%.`,
-    event_time: Date.now(),
   });
 
   /**
@@ -168,9 +166,8 @@ const notificationServiceFactory = (): INotificationService => {
    */
   const highMemoryUsage = (current: number, limit: number): void => __addToQueue({
     sender: 'SERVER',
-    title: 'High Memory Usage!',
-    description: `The Virtual Memory's usage is currently at ${current}% which exceeds the limit of ${limit}%.`,
-    event_time: Date.now(),
+    title: 'High memory usage!',
+    description: `The virtual memory's usage is currently at ${current}% which exceeds the limit of ${limit}%.`,
   });
 
   /**
@@ -180,9 +177,8 @@ const notificationServiceFactory = (): INotificationService => {
    */
   const highFileSystemUsage = (current: number, limit: number): void => __addToQueue({
     sender: 'SERVER',
-    title: 'High File System Usage!',
-    description: `The File System's usage is currently at ${current}% which exceeds the limit of ${limit}%.`,
-    event_time: Date.now(),
+    title: 'High file system usage!',
+    description: `The file system's usage is currently at ${current}% which exceeds the limit of ${limit}%.`,
   });
 
 
@@ -194,6 +190,16 @@ const notificationServiceFactory = (): INotificationService => {
    ********************************************************************************************** */
 
   /**
+   * Triggers whenever an error is thrown during the calculation of the market state.
+   * @param errorMessage
+   */
+  const marketStateError = (errorMessage: string): void => __addToQueue({
+    sender: 'MARKET_STATE',
+    title: 'State calculation error',
+    description: errorMessage,
+  });
+
+  /**
    * Broadcasts a message notifying users the Bitcoin price is moving strongly.
    * @param price
    * @param change
@@ -202,7 +208,6 @@ const notificationServiceFactory = (): INotificationService => {
     sender: 'MARKET_STATE',
     title: `Bitcoin is ${change > 0 ? 'increasing' : 'decreasing'}`,
     description: `The price has changed ${change > 0 ? '+' : ''}${change}% in the window and is currently at ${prettifyDollarValue(price)}.`,
-    event_time: Date.now(),
   });
 
 
@@ -264,6 +269,7 @@ const notificationServiceFactory = (): INotificationService => {
     highFileSystemUsage,
 
     // market state
+    marketStateError,
     strongWindowState,
 
     // initializer

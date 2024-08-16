@@ -28,6 +28,7 @@ type INotificationService = {
   highFileSystemUsage: (current: number, limit: number) => void;
 
   // market state
+  marketStateError: (errorMessage: string) => void;
   strongWindowState: (price: number, change: number) => void;
 
   // initializer

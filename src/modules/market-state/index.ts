@@ -2,6 +2,7 @@
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { extractMessage } from 'error-message-utils';
 import { APIErrorService } from '../api-error/index.js';
+import { NotificationService } from '../notification/index.js';
 import { WindowService } from './window/index.js';
 import { buildPristineState } from './utils.js';
 import { IMarketStateService } from './types.js';
@@ -58,7 +59,9 @@ const marketStateServiceFactory = (): IMarketStateService => {
       });
     } catch (e) {
       console.error(e);
-      APIErrorService.save('MarketStateService.__onWindowChanges', e);
+      const msg = extractMessage(e);
+      APIErrorService.save('MarketStateService.__onWindowChanges', msg);
+      NotificationService.marketStateError(msg);
     }
   };
 
