@@ -1,24 +1,24 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
 import { IRequestResponse } from 'fetch-request-node';
-import { validateResponse } from '../validations.js';
+import { extractErrorPayload } from './utils.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
 /**
- * Ensures the candlestick's endpoint returned a valid list of candlesticks.
+ * Verifies the validity of a response object. If invalid, it will attempt to extract the error data
+ * sent back.
  * @param res
+ * @param acceptedCodes?
  * @throws
  * - 12500: if the HTTP response code is not in the acceptedCodes
- * - 13500: if the response doesn't include a valid series of candlesticks
  */
-const validateCandlesticksResponse = (res: IRequestResponse): void => {
-  validateResponse(res);
-  if (!Array.isArray(res.data) || !res.data.length) {
+const validateResponse = (res: IRequestResponse, acceptedCodes: number[] = [200]): void => {
+  if (!acceptedCodes.includes(res.code)) {
     console.log(res);
-    throw new Error(encodeError('Binance returned an invalid list of candlesticks.', 13500));
+    throw new Error(encodeError(`The exchange returned an invalid HTTP response code '${res.code}'. ${extractErrorPayload(res.data)}`, 12500));
   }
 };
 
@@ -30,5 +30,5 @@ const validateCandlesticksResponse = (res: IRequestResponse): void => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  validateCandlesticksResponse,
+  validateResponse,
 };

@@ -31,9 +31,9 @@ const exchangeServiceFactory = (): IExchangeService => {
    * @param interval
    * @param limit
    * @param startTime?
-   * @throws (binance)
-   * - 13500: if the HTTP response code is not in the acceptedCodes
-   * - 13501: if the response doesn't include a valid series of candlesticks
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13500: if the response doesn't include a valid series of candlesticks (binance)
    */
   const getCandlesticks = assembleGetCandlesticks();
 

@@ -37,8 +37,8 @@ const binanceServiceFactory = (): IBinanceService => {
    * @param limit
    * @param startTime?
    * @throws
-   * - 13500: if the HTTP response code is not in the acceptedCodes
-   * - 13501: if the response doesn't include a valid series of candlesticks
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13500: if the response doesn't include a valid series of candlesticks
    */
   const getCandlesticks = async (
     interval: ICandlestickInterval,
@@ -52,7 +52,7 @@ const binanceServiceFactory = (): IBinanceService => {
     }
 
     // send and validate the req
-    const res = await sendGET(url);
+    const res = await sendGET(url, { skipStatusCodeValidation: true });
     validateCandlesticksResponse(res);
 
     // finally, return the transformed candlesticks
