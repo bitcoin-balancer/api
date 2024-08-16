@@ -4,10 +4,10 @@ import { recordStoreFactory, IRecordStore } from '../../shared/record-store/inde
 import { APIErrorService } from '../../api-error/index.js';
 import { ICompactCandlestickRecords, buildPristineCompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService } from '../../shared/exchange/index.js';
+import { calculateState as calculateStateUtils } from '../shared/utils.js';
 import { buildDefaultConfig, buildPristineState, getConfigUpdatePostActions } from './utils.js';
 import { canConfigBeUpdated, validateInitialCandlesticks } from './validations.js';
 import { IWindowConfig, IWindowService, IWindowState } from './types.js';
-
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -42,7 +42,27 @@ const windowServiceFactory = (): IWindowService => {
    *                                       STATE CALCULATOR                                       *
    ********************************************************************************************** */
 
-  const calculateState = (): IWindowState => <IWindowState>{};
+  /**
+   * Calculates the current window state and returns it. If the state is strong, it will send a
+   * notification.
+   * @returns IWindowState
+   */
+  const calculateState = (): IWindowState => {
+    // calculate the state
+    const { mean, splits } = calculateStateUtils(
+      __windowVal.close,
+      __config.value.requirement,
+      __config.value.strongRequirement,
+    );
+
+    // check if a notification should be broadcasted
+    if (mean === 2 || mean === -2) {
+      // ...
+    }
+
+    // finally, return the state
+    return { state: mean, splitStates: splits, window: __windowVal };
+  };
 
 
   /**
@@ -299,9 +319,6 @@ const WindowService = windowServiceFactory();
 export {
   // service
   WindowService,
-
-  // utils
-  // ...
 
   // types
   type IWindowState,
