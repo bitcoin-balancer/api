@@ -47,7 +47,8 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'ServerRouter.put.alarms' | 'ServerService.initialize.__refetchState' | 'DatabaseRouter.get.summary'
 | 'DataJoinRouter.get.app-essentials' | 'DataJoinService.initialize.emitCompactAppEssentials'
 | 'NotificationRouter.get' | 'WindowService.__refetchInterval' | 'WindowService.updateConfiguration.shouldReInitialize'
-| 'WindowService.updateConfiguration.shouldFetchInitialCandlesticks' | 'MarketStateService.__onWindowChanges';
+| 'WindowService.updateConfiguration.shouldFetchInitialCandlesticks' | 'MarketStateService.__onWindowChanges'
+| 'MarketStateRouter.get.window.config' | 'MarketStateRouter.put.window.config';
 
 /**
  * API Error
