@@ -29,7 +29,7 @@ type INotificationService = {
 
   // market state
   marketStateError: (errorMessage: string) => void;
-  strongWindowState: (price: number, change: number) => void;
+  windowState: (price: number, change: number) => void;
 
   // initializer
   initialize: () => Promise<void>;
@@ -49,7 +49,7 @@ type INotificationService = {
  */
 type IThrottleableNotificationFactory = (
   // the notification function that will be used to broadcast
-  func: () => void,
+  func: (...args: any[]) => void,
 
   // the duration of the throttle in minutes
   duration: number,

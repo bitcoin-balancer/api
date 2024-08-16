@@ -7,6 +7,7 @@ import { APIErrorService } from '../api-error/index.js';
 import { buildRequestInput, toMessage, prettifyDollarValue } from './utils.js';
 import { canRecordsBeListed } from './validations.js';
 import { listRecords, saveRecord } from './model.js';
+import { throttleableNotificationFactory } from './throttleable-notification.js';
 import { INotificationService, INotification, IPreSaveNotification } from './types.js';
 
 /* ************************************************************************************************
@@ -204,7 +205,7 @@ const notificationServiceFactory = (): INotificationService => {
    * @param price
    * @param change
    */
-  const strongWindowState = (price: number, change: number): void => __addToQueue({
+  const windowState = (price: number, change: number): void => __addToQueue({
     sender: 'MARKET_STATE',
     title: `Bitcoin is ${change > 0 ? 'increasing' : 'decreasing'}`,
     description: `The price has changed ${change > 0 ? '+' : ''}${change}% in the window and is currently at ${prettifyDollarValue(price)}.`,
@@ -270,7 +271,7 @@ const notificationServiceFactory = (): INotificationService => {
 
     // market state
     marketStateError,
-    strongWindowState,
+    windowState,
 
     // initializer
     initialize,
@@ -295,5 +296,9 @@ const NotificationService = notificationServiceFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // service
   NotificationService,
+
+  // factory
+  throttleableNotificationFactory,
 };

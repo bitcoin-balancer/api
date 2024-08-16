@@ -2,7 +2,7 @@
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { extractMessage } from 'error-message-utils';
 import { APIErrorService } from '../api-error/index.js';
-import { NotificationService } from '../notification/index.js';
+import { NotificationService, throttleableNotificationFactory } from '../notification/index.js';
 import { WindowService } from './window/index.js';
 import { buildPristineState } from './utils.js';
 import { IMarketStateService, IMarketState } from './types.js';
@@ -27,7 +27,11 @@ const marketStateServiceFactory = (): IMarketStateService => {
   // the market state stream that will be calculated and broadcasted on window changes
   const __state = new BehaviorSubject(buildPristineState());
 
-
+  // if there is an error during the calculation of the market state, a notification is sent
+  const __errorNotification = throttleableNotificationFactory(
+    NotificationService.marketStateError,
+    5,
+  );
 
 
 
@@ -61,7 +65,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
       console.error(e);
       const msg = extractMessage(e);
       APIErrorService.save('MarketStateService.__onWindowChanges', msg);
-      NotificationService.marketStateError(msg);
+      __errorNotification.broadcast([msg]);
     }
   };
 
