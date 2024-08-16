@@ -36,6 +36,26 @@ const buildPristineState = (): IWindowState => ({
   window: buildPristineCompactCandlestickRecords(),
 });
 
+/**
+ * When the configuration is updated, additional actions may be required based on the properties
+ * that changed.
+ * - The module should be reinitialized if the refetchFrequency or interval changed
+ * - The candlesticks should be refetched anew if the window size changed
+ * @param oldConfig
+ * @param newConfig
+ * @returns { shouldReInitialize: boolean, shouldFetchInitialCandlesticks: boolean }
+ */
+const getConfigUpdatePostActions = (
+  oldConfig: IWindowConfig,
+  newConfig: IWindowConfig,
+): { shouldReInitialize: boolean, shouldFetchInitialCandlesticks: boolean } => ({
+  shouldReInitialize: (
+    oldConfig.refetchFrequency !== newConfig.refetchFrequency
+    || oldConfig.interval !== newConfig.interval
+  ),
+  shouldFetchInitialCandlesticks: oldConfig.size !== newConfig.size,
+});
+
 
 
 
@@ -46,4 +66,5 @@ const buildPristineState = (): IWindowState => ({
 export {
   buildDefaultConfig,
   buildPristineState,
+  getConfigUpdatePostActions,
 };

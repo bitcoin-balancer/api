@@ -5,7 +5,7 @@ import { APIErrorService } from '../../api-error/index.js';
 import { NotificationService } from '../../notification/index.js';
 import { ICompactCandlestickRecords, buildPristineCompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService } from '../../shared/exchange/index.js';
-import { buildDefaultConfig, buildPristineState } from './utils.js';
+import { buildDefaultConfig, buildPristineState, getConfigUpdatePostActions } from './utils.js';
 import { canConfigBeUpdated, validateInitialCandlesticks } from './validations.js';
 import { IWindowConfig, IWindowService, IWindowState } from './types.js';
 
@@ -197,6 +197,33 @@ const windowServiceFactory = (): IWindowService => {
    ********************************************************************************************** */
 
   /**
+   * Fires whenever the configuration changes and executes the post update actions (if any).
+   * @param shouldReInitialize
+   * @param shouldFetchInitialCandlesticks
+   * @returns Promise<void>
+   */
+  const __onConfigChanges = async (
+    shouldReInitialize: boolean,
+    shouldFetchInitialCandlesticks: boolean,
+  ): Promise<void> => {
+    if (shouldReInitialize) {
+      try {
+        await teardown();
+        await initialize();
+      } catch (e) {
+        APIErrorService.save('WindowService.updateConfiguration.shouldReInitialize', e);
+        __initializeRefetchInterval();
+      }
+    } else if (shouldFetchInitialCandlesticks) {
+      try {
+        await invokeFuncPersistently(__fetchCandlesticks, undefined, [3, 5, 15, 45, 120]);
+      } catch (e) {
+        APIErrorService.save('WindowService.updateConfiguration.shouldFetchInitialCandlesticks', e);
+      }
+    }
+  };
+
+  /**
    * Updates the configuration of the module.
    * @param newConfig
    * @throws
@@ -209,11 +236,20 @@ const windowServiceFactory = (): IWindowService => {
    * - 21506: if the interval is not supported
    */
   const updateConfiguration = async (newConfig: IWindowConfig): Promise<void> => {
+    // validate the request
     canConfigBeUpdated(newConfig);
+
+    // retrieve the post update actions
+    const {
+      shouldReInitialize,
+      shouldFetchInitialCandlesticks,
+    } = getConfigUpdatePostActions(__config.value, newConfig);
+
+    // update the config
     await __config.update(newConfig);
-    // refetch the whole window @TODO
-    // if the refetchFrequency changed, teardown and initialize again. If unable to re-initialize,
-    // make sure to start the interval regardless
+
+    // execute post actions
+    __onConfigChanges(shouldReInitialize, shouldFetchInitialCandlesticks);
   };
 
 
