@@ -144,7 +144,9 @@ const windowServiceFactory = (): IWindowService => {
     // apply the changes on the local window
     if (startTime === undefined) {
       __handleInitialCandlesticks(candlesticks);
-    } else if (__windowVal.id.at(-1) !== candlesticks.id.at(-1)) {
+    } else if (
+      __windowVal.id[__windowVal.id.length - 1] !== candlesticks.id[candlesticks.id.length - 1]
+    ) {
       __handleNewCandlestick(candlesticks);
     } else {
       __handleCanclestickUpdate(candlesticks);

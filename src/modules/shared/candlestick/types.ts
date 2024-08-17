@@ -62,7 +62,7 @@ type ICompactCandlestickRecords = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
-  // service
+  // factory
   ICandlestick,
 
   // candlestick
