@@ -47,7 +47,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
     unreadNotifications: NotificationService.unreadCount,
     unreadAPIErrors: APIErrorService.unreadCount,
     user: UserService.getUser(uid),
-    exchangesConfig: ENVIRONMENT.EXCHANGES_CONFIGURATION,
+    exchangeConfig: ENVIRONMENT.EXCHANGE_CONFIGURATION,
     marketState: __marketState,
     // ...
   });

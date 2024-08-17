@@ -12,7 +12,7 @@ import {
   IJWTSecretConfig,
   IExchangeID,
   IExchangesCredentials,
-  IExchangesConfig,
+  IExchangeConfig,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -135,7 +135,7 @@ const __validateExchangeCredentials = (
  * - if any of the credentials for the exchange weren't provided or are invalid
  */
 const validateExchangesConfigAndCreds = (
-  config: IExchangesConfig,
+  config: IExchangeConfig,
   credentials: IExchangesCredentials,
 ): void => {
   // ensure the config and the credentials are valid objects

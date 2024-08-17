@@ -21,7 +21,7 @@ const binanceServiceFactory = (): IBinanceService => {
    ********************************************************************************************** */
 
   // the main symbol comprised by the base and quote asset
-  const __SYMBOL = `${ENVIRONMENT.EXCHANGES_CONFIGURATION.baseAsset}${ENVIRONMENT.EXCHANGES_CONFIGURATION.quoteAsset}`;
+  const __SYMBOL = `${ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset}${ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset}`;
 
 
 

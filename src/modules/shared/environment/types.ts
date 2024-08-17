@@ -108,7 +108,7 @@ type IExchangeID = 'binance' | 'bitfinex' | 'coinbase' | 'kraken' | 'okx';
  * Exchanges Configuration
  * The object that determines what exchange is used by which module.
  */
-type IExchangesConfig = {
+type IExchangeConfig = {
   // the main asset that will be traded (e.g. BTC)
   baseAsset: IBaseAsset;
 
@@ -196,10 +196,10 @@ type IEnvironment = {
   JWT_SECRET: IJWTSecretConfig;
 
   // the configuration that will be used to determine the exchanges used by module
-  EXCHANGES_CONFIGURATION: IExchangesConfig;
+  EXCHANGE_CONFIGURATION: IExchangeConfig;
 
   // the credentials for the exchange/s listed in EXCHANGES_CONFIGURATION
-  EXCHANGES_CREDENTIALS: IExchangesCredentials;
+  EXCHANGE_CREDENTIALS: IExchangesCredentials;
 
   // the secret that will be used to sign the cookies used by the platform
   COOKIE_SECRET: string;
@@ -229,7 +229,7 @@ export type {
   IBaseAsset,
   IQuoteAsset,
   IExchangeID,
-  IExchangesConfig,
+  IExchangeConfig,
   IExchangeCredentials,
   IExchangesCredentials,
 

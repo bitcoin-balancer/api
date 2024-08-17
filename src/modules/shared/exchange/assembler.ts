@@ -11,11 +11,11 @@ import { IGetCandlesticks } from './types.js';
  * @returns IGetCandlesticks
  */
 const assembleGetCandlesticks = (): IGetCandlesticks => {
-  switch (ENVIRONMENT.EXCHANGES_CONFIGURATION.window) {
+  switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.window) {
     case 'binance':
       return BinanceService.getCandlesticks;
     default:
-      throw new Error(`The function assembleGetCandlesticks could not be assembled because the exchange '${ENVIRONMENT.EXCHANGES_CONFIGURATION.window}' is not supported.`);
+      throw new Error(`The function assembleGetCandlesticks could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.window}' is not supported.`);
   }
 };
 

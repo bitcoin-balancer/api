@@ -18,7 +18,7 @@ import {
   ITelegramConfig,
   IJWTSecretConfig,
   IEnvironment,
-  IExchangesConfig,
+  IExchangeConfig,
   IExchangesCredentials,
 } from './types.js';
 
@@ -44,8 +44,8 @@ const ENVIRONMENT: IEnvironment = {
   ALTCHA_SECRET: getSecretString('ALTCHA_SECRET'),
   JWT_SECRET: <IJWTSecretConfig>getSecretObject('JWT_SECRET'),
   COOKIE_SECRET: getSecretString('COOKIE_SECRET'),
-  EXCHANGES_CONFIGURATION: <IExchangesConfig>getObject('EXCHANGES_CONFIGURATION'),
-  EXCHANGES_CREDENTIALS: <IExchangesCredentials>getSecretObject('EXCHANGES_CREDENTIALS'),
+  EXCHANGE_CONFIGURATION: <IExchangeConfig>getObject('EXCHANGE_CONFIGURATION'),
+  EXCHANGE_CREDENTIALS: <IExchangesCredentials>getSecretObject('EXCHANGE_CREDENTIALS'),
 };
 
 // validate objects & arrays
@@ -53,8 +53,8 @@ validateRootAccountConfig(ENVIRONMENT.ROOT_ACCOUNT);
 validateTelegramConfig(ENVIRONMENT.TELEGRAM);
 validateJWTSecretConfig(ENVIRONMENT.JWT_SECRET);
 validateExchangesConfigAndCreds(
-  ENVIRONMENT.EXCHANGES_CONFIGURATION,
-  ENVIRONMENT.EXCHANGES_CREDENTIALS,
+  ENVIRONMENT.EXCHANGE_CONFIGURATION,
+  ENVIRONMENT.EXCHANGE_CREDENTIALS,
 );
 
 
@@ -68,7 +68,7 @@ export {
   // types
   type INodeEnv,
   type ITelegramConfig,
-  type IExchangesConfig,
+  type IExchangeConfig,
   type IExchangesCredentials,
 
   // implementation

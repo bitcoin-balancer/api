@@ -1,7 +1,7 @@
 import { IUser } from '../auth/user/index.js';
 import { IVersion } from '../shared/version/index.js';
 import { IMarketState } from '../market-state/index.js';
-import { IExchangesConfig } from '../shared/environment/types.js';
+import { IExchangeConfig } from '../shared/environment/types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -53,7 +53,7 @@ type IAppEssentials = {
   user: IUser;
 
   // the configuration that will be used when interacting with exchanges
-  exchangesConfig: IExchangesConfig;
+  exchangeConfig: IExchangeConfig;
 
   // the current state of the market
   marketState: IMarketState;
