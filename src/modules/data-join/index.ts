@@ -1,4 +1,5 @@
 import { Subscription } from 'rxjs';
+import { ENVIRONMENT } from '../shared/environment/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { NotificationService } from '../notification/index.js';
 import { UserService } from '../auth/user/index.js';
@@ -46,6 +47,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
     unreadNotifications: NotificationService.unreadCount,
     unreadAPIErrors: APIErrorService.unreadCount,
     user: UserService.getUser(uid),
+    exchangesConfig: ENVIRONMENT.EXCHANGES_CONFIGURATION,
     marketState: __marketState,
     // ...
   });
