@@ -107,7 +107,6 @@ const windowServiceFactory = (): IWindowService => {
     __windowVal.close.shift();
 
     // update the last existing candlestick
-    __windowVal.open[__windowVal.id.length - 1] = candlesticks.open[candlesticks.id.length - 2];
     __windowVal.high[__windowVal.id.length - 1] = candlesticks.high[candlesticks.id.length - 2];
     __windowVal.low[__windowVal.id.length - 1] = candlesticks.low[candlesticks.id.length - 2];
     __windowVal.close[__windowVal.id.length - 1] = candlesticks.close[candlesticks.id.length - 2];
@@ -125,7 +124,6 @@ const windowServiceFactory = (): IWindowService => {
    * @param candlesticks
    */
   const __handleCanclestickUpdate = (candlesticks: ICompactCandlestickRecords): void => {
-    __windowVal.open[__windowVal.id.length - 1] = candlesticks.open[candlesticks.id.length - 1];
     __windowVal.high[__windowVal.id.length - 1] = candlesticks.high[candlesticks.id.length - 1];
     __windowVal.low[__windowVal.id.length - 1] = candlesticks.low[candlesticks.id.length - 1];
     __windowVal.close[__windowVal.id.length - 1] = candlesticks.close[candlesticks.id.length - 1];
