@@ -55,7 +55,7 @@ const canConfigBeUpdated = (newConfig: IWindowConfig): void => {
   }
   if (
     !stringValid(newConfig.interval, 2)
-    || ExchangeService.CANDLESTICK_INTERVALS.includes(newConfig.interval)
+    || !ExchangeService.CANDLESTICK_INTERVALS.includes(newConfig.interval)
   ) {
     throw new Error(encodeError(`The candlestick interval '${newConfig.interval}' is invalid. Supported values include: ${JSON.stringify(ExchangeService.CANDLESTICK_INTERVALS)}.`, 21506));
   }
