@@ -380,6 +380,17 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **15000:** ``
 
+### `utils.ts`
+
+- **15250:** ``
+
+### `validations.ts`
+
+- **15500:** `The Kraken API returned an invalid response object.`
+- **15501:** `The Kraken API returned the following errors: ${res.error.join(' | ')}.`
+- **15502:** `The Kraken API returned a response object with an invalid \'result\' property.`
+- **15503:** `Kraken returned an invalid list of candlesticks.`
+
 
 
 

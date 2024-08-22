@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
 import { IRequestResponse } from 'fetch-request-node';
+import { arrayValid } from '../../validations/index.js';
 import { validateResponse } from '../validations.js';
 
 /* ************************************************************************************************
@@ -16,7 +17,7 @@ import { validateResponse } from '../validations.js';
  */
 const validateCandlesticksResponse = (res: IRequestResponse): void => {
   validateResponse(res);
-  if (!Array.isArray(res.data) || !res.data.length) {
+  if (!arrayValid(res.data)) {
     console.log(res);
     throw new Error(encodeError('Bitfinex returned an invalid list of candlesticks.', 14500));
   }

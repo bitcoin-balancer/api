@@ -27,7 +27,7 @@ const exchangeServiceFactory = (): IExchangeService => {
    ********************************************************************************************** */
 
   /**
-   * Retrieves the candlestick records from Binance's API.
+   * Retrieves the candlestick records from the Exchange's API.
    * @param interval
    * @param limit
    * @param startTime?
@@ -35,6 +35,10 @@ const exchangeServiceFactory = (): IExchangeService => {
    * - 12500: if the HTTP response code is not in the acceptedCodes
    * - 13500: if the response doesn't include a valid series of candlesticks (binance)
    * - 14500: if the response doesn't include a valid series of candlesticks (bitfinex)
+   * - 15500: if the response is not an object or it is missing the error property (kraken)
+   * - 15501: if the response contains errors (kraken)
+   * - 15502: if the response does not contain a valid result property (kraken)
+   * - 15503: if the response doesn't include a valid series of candlesticks (kraken)
    */
   const getCandlesticks = assembleGetCandlesticks();
 

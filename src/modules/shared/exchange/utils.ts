@@ -1,4 +1,31 @@
-import { objectValid, stringValid } from '../validations/index.js';
+import { IRecord } from '../types.js';
+import { arrayValid, objectValid, stringValid } from '../validations/index.js';
+
+/* ************************************************************************************************
+ *                                            HELPERS                                             *
+ ************************************************************************************************ */
+
+/**
+ * Checks if an error payload was returned by the Binance API.
+ * @param payload
+ * @returns boolean
+ */
+const __isBinanceError = (payload: IRecord<any>): boolean => typeof payload.msg === 'string';
+
+/**
+ * Checks if an error payload was returned by the Bitfinex API.
+ * @param payload
+ * @returns boolean
+ */
+const __isBitfinexError = (payload: any[]): boolean => (
+  payload[0] === 'error'
+  && typeof payload[1] === 'number'
+  && typeof payload[2] === 'string'
+);
+
+
+
+
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -15,16 +42,19 @@ const extractErrorPayload = (payload: unknown): string => {
     return `Error Payload: ${payload}`;
   }
   if (objectValid(payload)) {
-    // binance error payload
-    if (typeof payload.msg === 'string') {
+    // binance error payload - e.g. { "code": -1120, "msg": "Invalid interval." }
+    if (__isBinanceError(payload)) {
       return `Error Payload: ${payload.msg} (${payload.code ?? -1})`;
     }
 
-    // bitfinex error payload
-    // the api returns an array like: ["error", 10020, "limit: invalid"] - no action is needed
-
     // kraken error payload
     // ...
+  }
+  if (arrayValid(payload)) {
+    // bitfinex error payload - e.g. ["error", 10020, "limit: invalid"]
+    if (__isBitfinexError(payload)) {
+      return `Error Payload: ${payload[2]} (${payload[1]})`;
+    }
   }
 
   // otherwise, stringify the whole payload

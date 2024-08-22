@@ -1,4 +1,5 @@
-
+import { ICompactCandlestickRecords } from '../../candlestick/index.js';
+import { ICandlestickInterval } from '../types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -9,7 +10,39 @@
  * Object in charge of exposing Kraken's API in a modular manner.
  */
 type IKrakenService = {
+  // properties
+  // ...
 
+  // market data
+  getCandlesticks: (
+    interval: ICandlestickInterval,
+    limit: number,
+    startTime?: number,
+  ) => Promise<ICompactCandlestickRecords>;
+};
+
+
+
+
+
+/* ************************************************************************************************
+ *                                            RESPONSE                                            *
+ ************************************************************************************************ */
+
+/**
+ * Kraken API Response
+ * The exchange doesn't make use of HTTP error codes. Instead, it provides two top-level keys
+ * (result & error).
+ * Unsuccessful requests will only contain the error property while the successful ones will contain
+ * both, result and error (it may include warnings in successful requests).
+ * https://docs.kraken.com/rest/#section/General-Usage
+ */
+type IKrakenAPIResponse = {
+  // the list of errors or warnings
+  error: string[];
+
+  // the data retrieved from the API
+  result: any;
 };
 
 
@@ -46,6 +79,14 @@ type IKrakenCandlestick = [
   number, // 5 = count      e.g. 162
 ];
 
+/**
+ * Supported Candlestick Intervals
+ * Object containing the supported candlestick intervals as well as the Kraken equivalent.
+ */
+type ISupportedCandlestickIntervals = {
+  [key in ICandlestickInterval]: IKrakenCandlestickInterval;
+};
+
 
 
 
@@ -57,7 +98,11 @@ export type {
   // service
   IKrakenService,
 
+  // api response
+  IKrakenAPIResponse,
+
   // candlestick
   IKrakenCandlestickInterval,
   IKrakenCandlestick,
+  ISupportedCandlestickIntervals,
 };

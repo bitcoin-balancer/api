@@ -1,6 +1,7 @@
 import { ENVIRONMENT } from '../environment/index.js';
 import { BinanceService } from './binance/index.js';
 import { BitfinexService } from './bitfinex/index.js';
+import { KrakenService } from './kraken/index.js';
 import { IGetCandlesticks } from './types.js';
 
 /* ************************************************************************************************
@@ -17,6 +18,8 @@ const assembleGetCandlesticks = (): IGetCandlesticks => {
       return BinanceService.getCandlesticks;
     case 'bitfinex':
       return BitfinexService.getCandlesticks;
+    case 'kraken':
+      return KrakenService.getCandlesticks;
     default:
       throw new Error(`The function assembleGetCandlesticks could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.window}' is not supported.`);
   }
