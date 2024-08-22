@@ -34,6 +34,7 @@ const exchangeServiceFactory = (): IExchangeService => {
    * @throws
    * - 12500: if the HTTP response code is not in the acceptedCodes
    * - 13500: if the response doesn't include a valid series of candlesticks (binance)
+   * - 14500: if the response doesn't include a valid series of candlesticks (bitfinex)
    */
   const getCandlesticks = assembleGetCandlesticks();
 

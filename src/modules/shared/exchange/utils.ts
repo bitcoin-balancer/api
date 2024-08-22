@@ -10,18 +10,25 @@ import { objectValid, stringValid } from '../validations/index.js';
  * @returns string
  */
 const extractErrorPayload = (payload: unknown): string => {
+  // if the payload is a string, return it right away
   if (stringValid(payload, 1)) {
-    return payload;
+    return `Error Payload: ${payload}`;
   }
   if (objectValid(payload)) {
-    if (objectValid(payload.data)) {
-      return typeof payload.data.msg === 'string'
-        ? `Error Payload: ${payload.data.msg} (${payload.data.code ?? -1})`
-        : `Error Payload: ${JSON.stringify(payload.data)}`;
+    // binance error payload
+    if (typeof payload.msg === 'string') {
+      return `Error Payload: ${payload.msg} (${payload.code ?? -1})`;
     }
-    return `Error Payload: ${JSON.stringify(payload)}`;
+
+    // bitfinex error payload
+    // the api returns an array like: ["error", 10020, "limit: invalid"] - no action is needed
+
+    // kraken error payload
+    // ...
   }
-  return 'Error Payload: unknown (-1)';
+
+  // otherwise, stringify the whole payload
+  return `Error Payload: ${JSON.stringify(payload)}`;
 };
 
 

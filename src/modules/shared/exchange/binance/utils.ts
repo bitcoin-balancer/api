@@ -5,7 +5,7 @@ import { ICandlestickInterval } from '../types.js';
  ************************************************************************************************ */
 
 /**
- * Builds the endpoint to retrieve candlesticks from the Binance API.
+ * Builds the URL for the endpoint to retrieve candlesticks from the Binance API.
  * @param symbol
  * @param interval
  * @param limit
