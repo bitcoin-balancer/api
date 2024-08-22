@@ -1,4 +1,5 @@
-
+import { ICompactCandlestickRecords } from '../../candlestick/index.js';
+import { ICandlestickInterval } from '../types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -9,8 +10,18 @@
  * Object in charge of exposing Bitfinex's API in a modular manner.
  */
 type IBitfinexService = {
+  // properties
+  // ...
 
+  // market data
+  getCandlesticks: (
+    interval: ICandlestickInterval,
+    limit: number,
+    startTime?: number,
+  ) => Promise<ICompactCandlestickRecords>;
 };
+
+
 
 
 
@@ -43,6 +54,14 @@ type IBitfinexCandlestick = [
   number, // 5 = volume     e.g. 0.25133369
 ];
 
+/**
+ * Supported Candlestick Intervals
+ * Object containing the supported candlestick intervals as well as the Bitfinex equivalent.
+ */
+type ISupportedCandlestickIntervals = {
+  [key in ICandlestickInterval]: IBitfinexCandlestickInterval;
+};
+
 
 
 
@@ -57,4 +76,5 @@ export type {
   // candlestick
   IBitfinexCandlestickInterval,
   IBitfinexCandlestick,
+  ISupportedCandlestickIntervals,
 };
