@@ -67,6 +67,41 @@ type ISupportedCandlestickIntervals = {
 
 
 /* ************************************************************************************************
+ *                                           ORDER BOOK                                           *
+ ************************************************************************************************ */
+
+// ...
+
+
+
+
+/* ************************************************************************************************
+ *                                             TICKER                                             *
+ ************************************************************************************************ */
+
+/**
+ * Coin Ticker
+ * The 24 hour rolling window price change statistics.
+ */
+type IBitfinexCoinTicker = [
+  string, // 0: the symbol of the requested ticker data                             e.g. "tETHUSD
+  number, // 1: price of last highest bid                                           e.g. 2667.9
+  number, // 2: sum of the 25 highest bid sizes                                     e.g. 227.1685628
+  number, // 3: price of last lowest ask                                            e.g. 2668
+  number, // 4: sum of the 25 lowest ask sizes                                      e.g. 348.8036471
+  number, // 5: amount that the last price has changed since yesterday              e.g. 36.8
+  number, // 6: relative price change since yesterday (*100 for percentage change)  e.g. 0.01399293
+  number, // 7: price of the last trade                                             e.g. 2666.7
+  number, // 8: daily volume                                                        e.g. 1657.337749
+  number, // 9: daily high                                                          e.g. 2694
+  number, // 10: daily low                                                          e.g. 2595.2
+];
+
+
+
+
+
+/* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
@@ -77,4 +112,10 @@ export type {
   IBitfinexCandlestickInterval,
   IBitfinexCandlestick,
   ISupportedCandlestickIntervals,
+
+  // order book
+  // ...
+
+  // ticker
+  IBitfinexCoinTicker,
 };
