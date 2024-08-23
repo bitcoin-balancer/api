@@ -2,10 +2,10 @@ import { sendGET } from 'fetch-request-node';
 import { ENVIRONMENT } from '../../environment/index.js';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import { ICandlestickInterval } from '../types.js';
-import { buildGetCandlesticksURL } from './utils.js';
-import { validateCandlesticksResponse } from './validations.js';
+import { buildGetCandlesticksURL, buildWhitelist, tickersSortFunc } from './utils.js';
+import { validateCandlesticksResponse, validateTickersResponse } from './validations.js';
 import { transformCandlesticks } from './transformers.js';
-import { IBinanceService } from './types.js';
+import { IBinanceService, IBinanceCoinTicker } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -33,6 +33,10 @@ const binanceServiceFactory = (): IBinanceService => {
    ********************************************************************************************** */
 
   /**
+   * Candlesticks
+   */
+
+  /**
    * Retrieves the candlestick records from Binance's API.
    * @param interval
    * @param limit
@@ -57,6 +61,60 @@ const binanceServiceFactory = (): IBinanceService => {
     return transformCandlesticks(res.data);
   };
 
+  /**
+   * Tickers
+   */
+
+  /**
+   * Retrieves the dollar-based tickers ordered by volume descendingly from Binance's API.
+   * @returns Promise<IBinanceCoinTicker[]>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13501: if the response doesn't include a valid series of tickers
+   */
+  const __getTickers = async (): Promise<IBinanceCoinTicker[]> => {
+    const res = await sendGET(
+      'https://data-api.binance.vision/api/v3/ticker/24hr?type=MINI',
+      { skipStatusCodeValidation: true },
+    );
+    validateTickersResponse(res);
+    res.data.sort(tickersSortFunc);
+    return res.data;
+  };
+
+  /**
+   * Retrieves the top coins by trading volume based on a whitelist.
+   * @param whitelistedSymbols
+   * @param limit
+   * @returns Promise<string[]>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13501: if the response doesn't include a valid series of tickers
+   */
+  const getTopCoins = async (whitelistedSymbols: string[], limit: number): Promise<string[]> => {
+    // init values
+    const whitelist = buildWhitelist(
+      whitelistedSymbols,
+      ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset,
+    );
+    const coins = [];
+
+    // retrieve the tickers
+    const tickers = await __getTickers();
+
+    // iterate until the optimal number of coins have been selected
+    let i = 0;
+    while (i < tickers.length && coins.length < limit) {
+      if (whitelist[tickers[i].symbol]) {
+        coins.push(whitelist[tickers[i].symbol]);
+      }
+      i += 1;
+    }
+
+    // return only the top based on their volume
+    return coins.slice(0, limit);
+  };
+
 
 
 
@@ -70,6 +128,7 @@ const binanceServiceFactory = (): IBinanceService => {
 
     // market data
     getCandlesticks,
+    getTopCoins,
   });
 };
 

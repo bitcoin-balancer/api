@@ -80,8 +80,9 @@ type ISupportedCandlestickIntervals = {
  ************************************************************************************************ */
 
 /**
- * Coin Ticker
+ * Bitfinex Coin Ticker
  * The 24 hour rolling window price change statistics.
+ * GET https://api-pub.bitfinex.com/v2/tickers
  */
 type IBitfinexCoinTicker = [
   string, // 0: the symbol of the requested ticker data                             e.g. "tETHUSD

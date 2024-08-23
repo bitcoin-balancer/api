@@ -18,7 +18,8 @@ type IBinanceService = {
     interval: ICandlestickInterval,
     limit: number,
     startTime?: number,
-  ) => Promise<ICompactCandlestickRecords>
+  ) => Promise<ICompactCandlestickRecords>;
+  getTopCoins: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
 };
 
 
@@ -81,6 +82,7 @@ type IBinanceCandlestick = [
 /**
  * Binance Coin Ticker
  * The 24 hour rolling window price change statistics.
+ * GET /api/v3/ticker/24hr
  */
 type IBinanceCoinTicker = {
   symbol: string; // trading pair                                         e.g. "ETHUSDT"

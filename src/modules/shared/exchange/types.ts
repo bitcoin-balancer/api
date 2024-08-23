@@ -14,6 +14,7 @@ type IExchangeService = {
 
   // market data
   getCandlesticks: IGetCandlesticks;
+  getTopCoins: IGetTopCoins;
 
   // initializer
   initialize: () => Promise<void>;
@@ -34,6 +35,9 @@ type IGetCandlesticks = (
   limit: number,
   startTime?: number,
 ) => Promise<ICompactCandlestickRecords>;
+
+// getTopCoins
+type IGetTopCoins = (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
 
 
 
@@ -66,6 +70,7 @@ export type {
 
   // methods
   IGetCandlesticks,
+  IGetTopCoins,
 
   // candlestick
   ICandlestickInterval,

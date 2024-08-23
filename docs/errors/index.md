@@ -335,7 +335,8 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 ### `validations.ts`
 
 - **13500:** `Binance returned an invalid list of candlesticks.`
-- **13501:** ``
+- **13501:** `Binance returned an invalid list of tickers.`
+- **13502:** ``
 
 
 

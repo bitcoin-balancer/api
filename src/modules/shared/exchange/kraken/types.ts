@@ -66,7 +66,7 @@ type IKrakenCandlestickInterval =
 /**
  * Kraken Candlestick
  * The Kline object retrieved from Kraken's API.
- * GET https://api-pub.bitfinex.com/v2/candles/{candle}/{section}
+ * GET https://api.kraken.com/0/public/OHLC
  */
 type IKrakenCandlestick = [
   number, // 0 = open time  e.g. 1688671200 (seconds)
@@ -92,6 +92,42 @@ type ISupportedCandlestickIntervals = {
 
 
 /* ************************************************************************************************
+ *                                           ORDER BOOK                                           *
+ ************************************************************************************************ */
+
+// ...
+
+
+
+
+/* ************************************************************************************************
+ *                                             TICKER                                             *
+ ************************************************************************************************ */
+
+/**
+ * Kraken Coin Ticker
+ * The 24 hour rolling window price change statistics.
+ * GET https://api.kraken.com/0/public/Ticker
+ */
+type IKrakenCoinTickers = {
+  [pair: string]: IKrakenCoinTicker;
+};
+type IKrakenCoinTicker = {
+  a: [string, string, string]; // ask
+  b: [string, string, string]; // bid
+  c: [string, string]; // last trade closed
+  v: [string, string]; // volume
+  p: [string, string]; // volume weighted average price
+  t: [number, number]; // number of trades
+  l: [string, string]; // low
+  h: [string, string]; // high
+  o: string; // today's opening price
+};
+
+
+
+
+/* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
@@ -105,4 +141,11 @@ export type {
   IKrakenCandlestickInterval,
   IKrakenCandlestick,
   ISupportedCandlestickIntervals,
+
+  // order book
+  // ...
+
+  // ticker
+  IKrakenCoinTickers,
+  IKrakenCoinTicker,
 };

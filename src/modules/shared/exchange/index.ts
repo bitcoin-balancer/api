@@ -1,4 +1,4 @@
-import { assembleGetCandlesticks } from './assembler.js';
+import { assembleGetCandlesticks, assembleGetTopCoins } from './assembler.js';
 import { ICandlestickInterval, IExchangeService } from './types.js';
 
 /* ************************************************************************************************
@@ -42,6 +42,17 @@ const exchangeServiceFactory = (): IExchangeService => {
    */
   const getCandlesticks = assembleGetCandlesticks();
 
+  /**
+   * Retrieves the top coins by trading volume based on a whitelist.
+   * @param whitelistedSymbols
+   * @param limit
+   * @returns Promise<string[]>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13501: if the response doesn't include a valid series of tickers (binance)
+   */
+  const getTopCoins = assembleGetTopCoins();
+
 
 
 
@@ -79,6 +90,7 @@ const exchangeServiceFactory = (): IExchangeService => {
 
     // market data
     getCandlesticks,
+    getTopCoins,
 
     // initializer
     initialize,
