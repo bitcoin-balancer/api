@@ -4,6 +4,8 @@ import { extractMessage } from 'error-message-utils';
 import { APIErrorService } from '../api-error/index.js';
 import { NotificationService, throttleableNotificationFactory } from '../notification/index.js';
 import { WindowService } from './window/index.js';
+
+import { CoinsService } from './coins/index.js';
 import { buildPristineState } from './utils.js';
 import { IMarketStateService, IMarketState } from './types.js';
 
@@ -101,7 +103,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
 
     // Coins Module
     try {
-      // await CoinsService.teardown(); @TODO
+      await CoinsService.teardown();
     } catch (e) {
       console.error('CoinsService.teardown()', e);
     }
@@ -136,7 +138,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
 
       // Coins Module
       try {
-        // await CoinsService.initialize();
+        await CoinsService.initialize();
       } catch (e) {
         throw new Error(`CoinsService.initialize() -> ${extractMessage(e)}`);
       }
