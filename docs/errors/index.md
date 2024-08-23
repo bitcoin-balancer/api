@@ -441,3 +441,63 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **21505:** `The size '${newConfig.size}' is invalid as it must be a valid integer ranging 128 and 512.`
 - **21506:** `The candlestick interval '${newConfig.interval}' is invalid. Supported values include: ${JSON.stringify(ExchangeService.CANDLESTICK_INTERVALS)}.`
 - **21507:** `The number of candlesticks retrieved from the exchange '${candlesticks.id.length}' doesn't match the window size set in the configuration '${config.size}'`
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Liquidity` (22000 - 22999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **22000:** ``
+
+### `utils.ts`
+
+- **22250:** ``
+
+### `validations.ts`
+
+- **22500:** ``
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Coins` (23000 - 23999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **23000:** ``
+
+### `utils.ts`
+
+- **23250:** ``
+
+### `validations.ts`
+
+- **23500:** `The provided coins configuration is not a valid object.`
+- **23501:** `The size '${newConfig.size}' is invalid as it must be a valid number ranging 128 and 512.`
+- **23502:** `The interval '${newConfig.interval}' is invalid as it must be a valid number ranging 5 and 3600 seconds.`
+- **23503:** `The requirement '${newConfig.requirement}' is invalid as it must be a valid number ranging 1 and 100.`
+- **23504:** `The strongRequirement '${newConfig.strongRequirement}' is invalid as it must be a valid number ranging 1 and 100.`
+- **23505:** `The whitelistedSymbols property is not a valid array.`
+- **23506:** ``
+
+
+
+

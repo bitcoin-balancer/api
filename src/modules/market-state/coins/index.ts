@@ -1,4 +1,6 @@
-import { ICoinsService } from './types.js';
+import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
+import { buildDefaultConfig } from './utils.js';
+import { ICoinsService, ICoinsConfig } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -14,7 +16,8 @@ const coinsServiceFactory = (): ICoinsService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // ...
+  // the module's configuration
+  let __config: IRecordStore<ICoinsConfig>;
 
 
 
@@ -33,20 +36,32 @@ const coinsServiceFactory = (): ICoinsService => {
    ********************************************************************************************** */
 
   /**
-   * Initializes the Coins Module.
-   * @returns Promise<void>
-   */
-  const initialize = async (): Promise<void> => {
-
-  };
-
-  /**
    * Tears down the Coins Module.
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
 
   };
+
+  /**
+   * Initializes the Coins Module.
+   * @returns Promise<void>
+   */
+  const initialize = async (): Promise<void> => {
+    // initialize the configuration
+    __config = await recordStoreFactory('COINS', buildDefaultConfig());
+
+    //
+  };
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                        CONFIGURATION                                         *
+   ********************************************************************************************** */
+
 
 
 
@@ -56,11 +71,16 @@ const coinsServiceFactory = (): ICoinsService => {
    ********************************************************************************************** */
   return Object.freeze({
     // properties
-    // ...
+    get config() {
+      return __config.value;
+    },
 
     // initializer
     initialize,
     teardown,
+
+    // configuration
+
   });
 };
 
