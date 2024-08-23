@@ -496,7 +496,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **23503:** `The requirement '${newConfig.requirement}' is invalid as it must be a valid number ranging 1 and 100.`
 - **23504:** `The strongRequirement '${newConfig.strongRequirement}' is invalid as it must be a valid number ranging 1 and 100.`
 - **23505:** `The whitelistedSymbols property is not a valid array.`
-- **23506:** ``
+- **23506:** `The whitelisted symbol '${symbol}' is invalid as it must only contain uppercased letters and/or numbers.`
 
 
 

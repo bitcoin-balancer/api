@@ -16,6 +16,9 @@ type ICoinsService = {
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;
+
+  // configuration
+  updateConfiguration: (newConfig: ICoinsConfig) => Promise<void>;
 };
 
 

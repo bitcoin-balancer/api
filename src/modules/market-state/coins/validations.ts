@@ -1,6 +1,11 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
-import { arrayValid, numberValid, objectValid } from '../../shared/validations/index.js';
+import {
+  arrayValid,
+  numberValid,
+  objectValid,
+  symbolValid,
+} from '../../shared/validations/index.js';
 import { ICoinsConfig } from './types.js';
 
 /* ************************************************************************************************
@@ -11,7 +16,13 @@ import { ICoinsConfig } from './types.js';
  * Ensures the window configuration object can be updated.
  * @param newConfig
  * @throws
- * - 
+ * - 23500: if the config isn't a valid object
+ * - 23501: if the window size is invalid
+ * - 23502: if the interval is invalid
+ * - 23503: if the state requirement is invalid
+ * - 23504: if the strong state requirement is invalid
+ * - 23505: if the whitelisted symbols is an invalid array
+ * - 23506: if any of the whitelisted symbols is invalid
  */
 const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
   if (!objectValid(newConfig)) {
@@ -34,8 +45,11 @@ const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
     console.log(newConfig.whitelistedSymbols);
     throw new Error(encodeError('The whitelistedSymbols property is not a valid array.', 23505));
   }
-  // validate the symbols
-  // @TODO
+  newConfig.whitelistedSymbols.forEach((symbol) => {
+    if (!symbolValid(symbol)) {
+      throw new Error(encodeError(`The whitelisted symbol '${symbol}' is invalid as it must only contain uppercased letters and/or numbers.`, 23506));
+    }
+  });
 };
 
 

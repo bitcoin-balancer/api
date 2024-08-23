@@ -48,7 +48,8 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'DataJoinRouter.get.app-essentials' | 'DataJoinService.initialize.emitCompactAppEssentials'
 | 'NotificationRouter.get' | 'WindowService.__refetchInterval' | 'WindowService.updateConfiguration.shouldReInitialize'
 | 'WindowService.updateConfiguration.shouldFetchInitialCandlesticks' | 'MarketStateService.__onWindowChanges'
-| 'MarketStateRouter.get.window.config' | 'MarketStateRouter.put.window.config';
+| 'MarketStateRouter.get.window.config' | 'MarketStateRouter.put.window.config' | 'CoinsService.updateConfiguration.postActions'
+| 'MarketStateRouter.get.coins.config' | 'MarketStateRouter.put.coins.config';
 
 /**
  * API Error
