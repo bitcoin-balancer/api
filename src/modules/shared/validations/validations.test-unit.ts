@@ -19,6 +19,7 @@ import {
   ipValid,
   ipNotesValid,
   semverValid,
+  symbolValid,
 } from './index.js';
 
 /* ************************************************************************************************
@@ -648,5 +649,42 @@ describe('semverValid', () => {
     ['a.a.a', false],
   ])('semverValid(%s) -> %s', (a, expected) => {
     expect(semverValid(a)).toBe(expected);
+  });
+
+
+
+
+
+  describe('symbolValid', () => {
+    test.each([
+      // valid
+      ['BTC', true],
+      ['ETH', true],
+      ['1INCH', true],
+      ['NEO1546212121ASD112', true],
+
+      // invalid
+      [undefined, false],
+      [null, false],
+      [{}, false],
+      [[{}], false],
+      ['', false],
+      ['5^', false],
+      ['......', false],
+      ['@45654A', false],
+      ['a1234567', false],
+      [true, false],
+      [123456, false],
+      [6541, false],
+      ['v1.0.0', false],
+      ['..', false],
+      ['...', false],
+      ['a.a.a', false],
+      ['BTCCCCCCCCCCCCCCCCCCC', false],
+      ['btc', false],
+      ['BTc', false],
+    ])('symbolValid(%s) -> %s', (a, expected) => {
+      expect(symbolValid(a)).toBe(expected);
+    });
   });
 });

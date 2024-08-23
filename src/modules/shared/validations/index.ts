@@ -195,13 +195,23 @@ const ipValid = (value: any): value is string => stringValid(value, 5, 300);
 const ipNotesValid = (value: any): value is string => stringValid(value, 5, 25000);
 
 /**
- * Verifies if a value is a value that complies with semantic versioning.
+ * Verifies if a value complies with semantic versioning.
  * @param value
  * @returns boolean
  */
 const semverValid = (value: any): value is string => (
   typeof value === 'string'
   && /^[0-9]{1,5}\.[0-9]{1,5}\.[0-9]{1,5}$/.test(value)
+);
+
+/**
+ * Verifies if a value is (or could be) an asset's symbol.
+ * @param value
+ * @returns boolean
+ */
+const symbolValid = (value: any): value is string => (
+  typeof value === 'string'
+  && /^[A-Z0-9]{1,20}$/.test(value)
 );
 
 
@@ -230,4 +240,5 @@ export {
   ipValid,
   ipNotesValid,
   semverValid,
+  symbolValid,
 };
