@@ -10,10 +10,10 @@ import { ICoinsConfig } from './types.js';
  * @returns ICoinsConfig
  */
 const buildDefaultConfig = (): ICoinsConfig => ({
-  size: 2.5,
-  interval: 128,
-  requirement: 0,
-  strongRequirement: 0.025,
+  size: 128,
+  interval: 15,
+  requirement: 0.01,
+  strongRequirement: 0.3,
   whitelistedSymbols: WHITELISTED_SYMBOLS,
 });
 
