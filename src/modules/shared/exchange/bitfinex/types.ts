@@ -1,3 +1,4 @@
+import { IRecord } from '../../types.js';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import { ICandlestickInterval } from '../types.js';
 
@@ -20,6 +21,57 @@ type IBitfinexService = {
     startTime?: number,
   ) => Promise<ICompactCandlestickRecords>;
 };
+
+
+
+
+
+/* ************************************************************************************************
+ *                                           WEBSOCKET                                            *
+ ************************************************************************************************ */
+
+/**
+ * Channel ID
+ * Utility type to differentiate IDs from traditional numbers.
+ */
+type IChannelID = number;
+
+/**
+ * Bitfinex Websocket Channel
+ * The name of the channel the API subscribed to.
+ */
+type IBitfinexWebsocketChannel = 'ticker';
+
+/**
+ * Bitfinex Websocket Event
+ * The action being executed to interact with the stream.
+ */
+type IBitfinexWebsocketEvent = 'error' | 'info' | 'subscribe' | 'subscribed';
+
+/**
+ * Bitfinex Info Websocket Message
+ * The object sent by the stream when the connection is established.
+ */
+type IBitfinexInfoWebsocketMessage = {
+  event: IBitfinexWebsocketEvent,
+  version: number; // e.g. 2
+  serverId: string; // e.g. '517720c6-d168-4be6-b720-f44c7eb9877e'
+  platform: IRecord<unknown>; // e.g. { status: 1 }
+};
+
+/**
+ * Bifinex Heartbeat Websocket Message
+ * The object sent every certain period of time to ensure there is a healthy connection to the
+ * stream.
+ */
+type IBitfinexHeartbeatWebsocketMessage = [IChannelID, 'hb'];
+
+/**
+ * Bitfinex Websocket Message
+ * The possible objects that are sent when subscribing to the on('message') event.
+ */
+type IBitfinexWebsocketMessage = IBitfinexInfoWebsocketMessage | IBitfinexHeartbeatWebsocketMessage
+| IBitfinexTickerSubscriptionMessage | IBitfinexTickerWebsocketMessage;
 
 
 
@@ -98,6 +150,36 @@ type IBitfinexCoinTicker = [
   number, // 10: daily low                                                          e.g. 2595.2
 ];
 
+/**
+ * Bitfinex Ticker Websocket Subscription
+ * The object that will be sent in a message in order to subscribe to the ticker stream. More info:
+ * https://docs.bitfinex.com/reference/ws-public-ticker
+ */
+type IBitfinexTickerWebsocketSubscription = {
+  event: IBitfinexWebsocketEvent; // e.g. 'subscribe'
+  channel: IBitfinexWebsocketChannel; // e.g. 'ticker'
+  symbol: string; // e.g. 'tBTCUSD'
+};
+
+/**
+ * Bitfinex Ticker Susbcription Message
+ * The object sent by the stream when a subscription to a channel is successful.
+ */
+type IBitfinexTickerSubscriptionMessage = {
+  event: IBitfinexWebsocketEvent;
+  channel: IBitfinexWebsocketChannel;
+  chanId: number; // e.g. 662780
+  symbol: string; // e.g. 'tBTCUSD'
+  pair: string; // e.g. 'BTCUSD'
+};
+
+/**
+ * Bitfinex Ticker Websocket Message
+ * The object sent by the stream whenever a trade is executed for a subscribed symbol.
+ */
+type IBitfinexTickerWebsocketMessageData = [];
+type IBitfinexTickerWebsocketMessage = [IChannelID, IBitfinexTickerWebsocketMessageData];
+
 
 
 
@@ -109,6 +191,9 @@ export type {
   // service
   IBitfinexService,
 
+  // websocket
+  IBitfinexWebsocketMessage,
+
   // candlestick
   IBitfinexCandlestickInterval,
   IBitfinexCandlestick,
@@ -119,4 +204,5 @@ export type {
 
   // ticker
   IBitfinexCoinTicker,
+  IBitfinexTickerWebsocketSubscription,
 };
