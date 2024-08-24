@@ -1,5 +1,6 @@
+import { Observable } from 'rxjs';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
-import { ICandlestickInterval } from '../types.js';
+import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -19,7 +20,8 @@ type IBinanceService = {
     limit: number,
     startTime?: number,
   ) => Promise<ICompactCandlestickRecords>;
-  getTopCoins: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
+  getTopSymbols: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
+  getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 };
 
 

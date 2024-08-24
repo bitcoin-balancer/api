@@ -2,7 +2,7 @@ import { ENVIRONMENT } from '../environment/index.js';
 import { BinanceService } from './binance/index.js';
 import { BitfinexService } from './bitfinex/index.js';
 import { KrakenService } from './kraken/index.js';
-import { IGetCandlesticks, IGetTopCoins } from './types.js';
+import { IGetCandlesticks, IGetTopSymbols } from './types.js';
 
 /* ************************************************************************************************
  *                                          MARKET DATA                                           *
@@ -26,15 +26,15 @@ const assembleGetCandlesticks = (): IGetCandlesticks => {
 };
 
 /**
- * Assembles the getTopCoins method based on the configuration set in the environment.
- * @returns IGetTopCoins
+ * Assembles the getTopSymbols method based on the configuration set in the environment.
+ * @returns IGetTopSymbols
  */
-const assembleGetTopCoins = (): IGetTopCoins => {
+const assembleGetTopSymbols = (): IGetTopSymbols => {
   switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.coins) {
     case 'binance':
-      return BinanceService.getTopCoins;
+      return BinanceService.getTopSymbols;
     default:
-      throw new Error(`The function assembleGetTopCoins could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`);
+      throw new Error(`The function assembleGetTopSymbols could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`);
   }
 };
 
@@ -48,5 +48,5 @@ const assembleGetTopCoins = (): IGetTopCoins => {
 export {
   // market data
   assembleGetCandlesticks,
-  assembleGetTopCoins,
+  assembleGetTopSymbols,
 };

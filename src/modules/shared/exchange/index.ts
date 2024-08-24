@@ -1,4 +1,4 @@
-import { assembleGetCandlesticks, assembleGetTopCoins } from './assembler.js';
+import { assembleGetCandlesticks, assembleGetTopSymbols } from './assembler.js';
 import { ICandlestickInterval, IExchangeService } from './types.js';
 
 /* ************************************************************************************************
@@ -51,7 +51,7 @@ const exchangeServiceFactory = (): IExchangeService => {
    * - 12500: if the HTTP response code is not in the acceptedCodes
    * - 13501: if the response doesn't include a valid series of tickers (binance)
    */
-  const getTopCoins = assembleGetTopCoins();
+  const getTopSymbols = assembleGetTopSymbols();
 
 
 
@@ -90,7 +90,7 @@ const exchangeServiceFactory = (): IExchangeService => {
 
     // market data
     getCandlesticks,
-    getTopCoins,
+    getTopSymbols,
 
     // initializer
     initialize,

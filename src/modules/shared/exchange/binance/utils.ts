@@ -1,3 +1,4 @@
+import { ENVIRONMENT } from '../../environment/index.js';
 import { IRecord } from '../../types.js';
 import { ICandlestickInterval } from '../types.js';
 import { IBinanceCoinTicker } from './types.js';
@@ -50,7 +51,18 @@ const tickersSortFunc = (a: IBinanceCoinTicker, b: IBinanceCoinTicker): number =
   Number(b.quoteVolume) - Number(a.quoteVolume)
 );
 
-
+/**
+ * Builds the pairs object based on the top symbols.
+ * @param topSymbols
+ * @returns <IRecord<string>>
+ */
+const buildTopPairsObject = (topSymbols: string[]): IRecord<string> => topSymbols.reduce(
+  (previous, current) => ({
+    ...previous,
+    [`${current}${ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset}`]: current,
+  }),
+  <IRecord<string>>{},
+);
 
 
 
@@ -61,4 +73,5 @@ export {
   buildGetCandlesticksURL,
   buildWhitelist,
   tickersSortFunc,
+  buildTopPairsObject,
 };

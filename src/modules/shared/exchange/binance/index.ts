@@ -1,11 +1,18 @@
+import { Observable } from 'rxjs';
 import { sendGET } from 'fetch-request-node';
 import { ENVIRONMENT } from '../../environment/index.js';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
-import { ICandlestickInterval } from '../types.js';
-import { buildGetCandlesticksURL, buildWhitelist, tickersSortFunc } from './utils.js';
+import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
+import { websocketFactory } from '../../websocket/index.js';
+import {
+  buildGetCandlesticksURL,
+  buildWhitelist,
+  tickersSortFunc,
+  buildTopPairsObject,
+} from './utils.js';
 import { validateCandlesticksResponse, validateTickersResponse } from './validations.js';
-import { transformCandlesticks } from './transformers.js';
-import { IBinanceService, IBinanceCoinTicker } from './types.js';
+import { transformCandlesticks, transformTickers } from './transformers.js';
+import { IBinanceService, IBinanceCoinTicker, IBinanceTickerWebSocketMessage } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -91,7 +98,7 @@ const binanceServiceFactory = (): IBinanceService => {
    * - 12500: if the HTTP response code is not in the acceptedCodes
    * - 13501: if the response doesn't include a valid series of tickers
    */
-  const getTopCoins = async (whitelistedSymbols: string[], limit: number): Promise<string[]> => {
+  const getTopSymbols = async (whitelistedSymbols: string[], limit: number): Promise<string[]> => {
     // init values
     const whitelist = buildWhitelist(
       whitelistedSymbols,
@@ -115,6 +122,27 @@ const binanceServiceFactory = (): IBinanceService => {
     return coins.slice(0, limit);
   };
 
+  /**
+   * Retrieves the tickers' stream for a list of topSymbols.
+   * @param topSymbols
+   * @returns Observable<ITickerWebSocketMessage>
+   */
+  const getTickersStream = (topSymbols: string[]): Observable<ITickerWebSocketMessage> => (
+    new Observable<ITickerWebSocketMessage>((subscriber) => {
+      // build the pairs object
+      const topPairs = buildTopPairsObject(topSymbols);
+
+      // instantiate the websocket
+      const ws = websocketFactory<IBinanceTickerWebSocketMessage>(
+        'COINS',
+        'wss://data-stream.binance.vision:9443/ws/!miniTicker@arr',
+        (tickers) => subscriber.next(transformTickers(topPairs, tickers)),
+      );
+      return function unsubscribe() {
+        ws.off();
+      };
+    })
+  );
 
 
 
@@ -128,7 +156,8 @@ const binanceServiceFactory = (): IBinanceService => {
 
     // market data
     getCandlesticks,
-    getTopCoins,
+    getTopSymbols,
+    getTickersStream,
   });
 };
 

@@ -1,3 +1,4 @@
+import { IRecord } from '../types.js';
 import { ICompactCandlestickRecords } from '../candlestick/index.js';
 
 /* ************************************************************************************************
@@ -14,7 +15,7 @@ type IExchangeService = {
 
   // market data
   getCandlesticks: IGetCandlesticks;
-  getTopCoins: IGetTopCoins;
+  getTopSymbols: IGetTopSymbols;
 
   // initializer
   initialize: () => Promise<void>;
@@ -36,8 +37,8 @@ type IGetCandlesticks = (
   startTime?: number,
 ) => Promise<ICompactCandlestickRecords>;
 
-// getTopCoins
-type IGetTopCoins = (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
+// getTopSymbols
+type IGetTopSymbols = (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
 
 
 
@@ -62,6 +63,20 @@ type ICandlestickInterval =
 
 
 /* ************************************************************************************************
+ *                                             TICKER                                             *
+ ************************************************************************************************ */
+
+/**
+ * Ticker
+ * The object that is broadcasted via the ticker stream.
+ */
+type ITickerWebSocketMessage = IRecord<number>; // e.g. { 'BTC': 61555.65, 'ETH': 2455.21 }
+
+
+
+
+
+/* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
@@ -70,8 +85,11 @@ export type {
 
   // methods
   IGetCandlesticks,
-  IGetTopCoins,
+  IGetTopSymbols,
 
   // candlestick
   ICandlestickInterval,
+
+  // ticker
+  ITickerWebSocketMessage,
 };
