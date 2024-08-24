@@ -27,6 +27,10 @@ type INotificationService = {
   highMemoryUsage: (current: number, limit: number) => void;
   highFileSystemUsage: (current: number, limit: number) => void;
 
+  // websocket
+  websocketError: (name: string, error: unknown) => void;
+  websocketConnectionIssue: (name: string) => void;
+
   // market state
   marketStateError: (errorMessage: string) => void;
   windowState: (price: number, change: number) => void;
@@ -80,7 +84,7 @@ type IThrottleableNotification = {
  * The sender can be a module or even a specific event.
  */
 type INotificationSender = 'AUTOMATED_TEST' | 'API_ERROR' | 'API_INITIALIZER' | 'SERVER'
-| 'MARKET_STATE';
+| 'WEBSOCKET' | 'MARKET_STATE';
 
 /**
  * Notification
