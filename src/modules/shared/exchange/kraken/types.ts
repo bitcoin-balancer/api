@@ -216,7 +216,7 @@ type IKrakenTickerWebsocketSubscription = {
 /**
  * Kraken Ticker Websocket Message
  * This object is received from the stream whenever a trade is executed for a symbol the API is
- * subscribed tos.
+ * subscribed to.
  */
 type IKrakenTickerWebsocketMessageData = {
   symbol: string; // e.g. 'BTC/USD'

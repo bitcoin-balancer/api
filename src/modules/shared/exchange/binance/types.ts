@@ -27,6 +27,20 @@ type IBinanceService = {
 
 
 /* ************************************************************************************************
+ *                                           WEBSOCKET                                            *
+ ************************************************************************************************ */
+
+/**
+ * Binance Websocket Message
+ * The possible objects that are sent when subscribing to the on('message') event.
+ */
+type IBinanceWebsocketMessage = IBinanceTickerWebsocketMessage;
+
+
+
+
+
+/* ************************************************************************************************
  *                                          CANDLESTICK                                           *
  ************************************************************************************************ */
 
@@ -99,6 +113,23 @@ type IBinanceCoinTicker = {
   count: number; // the number of trades in the interval                  e.g. 1059466
 };
 
+/**
+ * Binance Ticker Websocket Message
+ * The object sent by the stream whenever a trade is executed for a top symbol.
+ */
+type IBinanceTickerWebsocketMessageData = {
+  e: string; // event type. e.g. '24hrMiniTicker'
+  E: number; // event time. e.g. 1724518380063
+  s: string; // symbol. e.g. 'ETHUSDT'
+  c: string; // close price. e.g. '2810.07000000'
+  o: string; // open price. e.g. '2674.70000000'
+  h: string; // high price. e.g. '2820.00000000'
+  l: string; // low price. e.g. '2670.32000000'
+  v: string; // total traded base asset volume. e.g. '335374.51790000'
+  q: string; // total traded quote asset volume. e.g. '923325368.12662400'
+};
+type IBinanceTickerWebsocketMessage = IBinanceTickerWebsocketMessageData[];
+
 
 
 
@@ -110,6 +141,9 @@ export type {
   // service
   IBinanceService,
 
+  // websocket
+  IBinanceWebsocketMessage,
+
   // candlestick
   IBinanceCandlestickInterval,
   IBinanceCandlestick,
@@ -119,4 +153,5 @@ export type {
 
   // ticker
   IBinanceCoinTicker,
+  IBinanceTickerWebsocketMessage,
 };

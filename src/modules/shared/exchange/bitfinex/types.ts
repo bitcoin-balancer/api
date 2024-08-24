@@ -175,7 +175,7 @@ type IBitfinexTickerSubscriptionMessage = {
 
 /**
  * Bitfinex Ticker Websocket Message
- * The object sent by the stream whenever a trade is executed for a subscribed symbol.
+ * The object sent by the stream whenever a trade is executed for a top symbol.
  */
 type IBitfinexTickerWebsocketMessageData = [
   number, // 0: price of last highest bid . e.g. 64055
