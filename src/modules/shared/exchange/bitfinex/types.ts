@@ -177,7 +177,18 @@ type IBitfinexTickerSubscriptionMessage = {
  * Bitfinex Ticker Websocket Message
  * The object sent by the stream whenever a trade is executed for a subscribed symbol.
  */
-type IBitfinexTickerWebsocketMessageData = [];
+type IBitfinexTickerWebsocketMessageData = [
+  number, // 0: price of last highest bid . e.g. 64055
+  number, // 1: sum of the 25 highest bid sizes . e.g. 7.9772258
+  number, // 2: price of last lowest ask . e.g. 64056
+  number, // 3: sum of the 25 lowest ask sizes . e.g. 7.2144803
+  number, // 4: amount that the last price has changed since yesterday . e.g. 2316
+  number, // 5: relative price change since yesterday (*100 for percentage change) . e.g. 0.03751215
+  number, // 6: price of the last trade. e.g. 64056
+  number, // 7: daily volume . e.g. 584.77979901
+  number, // 8: daily high . e.g. 65074
+  number, // 9: daily low . e.g. 61472
+];
 type IBitfinexTickerWebsocketMessage = [IChannelID, IBitfinexTickerWebsocketMessageData];
 
 
