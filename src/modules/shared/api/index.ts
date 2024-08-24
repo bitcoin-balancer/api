@@ -189,7 +189,9 @@ const apiServiceFactory = (): IAPIService => {
 
     // close the server
     console.log('3/3) Close the HTTP Server: started');
-    await __closeServer();
+    if (__server.listening) {
+      await __closeServer();
+    }
     console.log('3/3) Close the HTTP Server: done');
   };
 

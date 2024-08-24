@@ -139,6 +139,7 @@ const socketIOServiceFactory = (): ISocketIOService => {
 
   /**
    * Tears down the Socket IO Module.
+   * IMPORTANT: when __io.close() is invoked, it also closes the underlying HTTP server.
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
