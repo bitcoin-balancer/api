@@ -2,7 +2,7 @@ import { ENVIRONMENT } from '../environment/index.js';
 import { BinanceService } from './binance/index.js';
 import { BitfinexService } from './bitfinex/index.js';
 import { KrakenService } from './kraken/index.js';
-import { IGetCandlesticks, IGetTopSymbols } from './types.js';
+import { IGetCandlesticks, IGetTopSymbols, IGetTickersStream } from './types.js';
 
 /* ************************************************************************************************
  *                                          MARKET DATA                                           *
@@ -38,6 +38,19 @@ const assembleGetTopSymbols = (): IGetTopSymbols => {
   }
 };
 
+/**
+ * Assembles the getTickersStream method based on the configuration set in the environment.
+ * @returns IGetTickersStream
+ */
+const assembleGetTickersStream = (): IGetTickersStream => {
+  switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.coins) {
+    case 'binance':
+      return BinanceService.getTickersStream;
+    default:
+      throw new Error(`The function assembleGetTickersStream could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`);
+  }
+};
+
 
 
 
@@ -49,4 +62,5 @@ export {
   // market data
   assembleGetCandlesticks,
   assembleGetTopSymbols,
+  assembleGetTickersStream,
 };

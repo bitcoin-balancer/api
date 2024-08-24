@@ -1,4 +1,4 @@
-import { assembleGetCandlesticks, assembleGetTopSymbols } from './assembler.js';
+import { assembleGetCandlesticks, assembleGetTickersStream, assembleGetTopSymbols } from './assembler.js';
 import { ICandlestickInterval, IExchangeService } from './types.js';
 
 /* ************************************************************************************************
@@ -53,6 +53,13 @@ const exchangeServiceFactory = (): IExchangeService => {
    */
   const getTopSymbols = assembleGetTopSymbols();
 
+  /**
+   * Retrieves the tickers' stream for a list of topSymbols.
+   * @param topSymbols
+   * @returns Observable<ITickerWebSocketMessage>
+   */
+  const getTickersStream = assembleGetTickersStream();
+
 
 
 
@@ -91,6 +98,7 @@ const exchangeServiceFactory = (): IExchangeService => {
     // market data
     getCandlesticks,
     getTopSymbols,
+    getTickersStream,
 
     // initializer
     initialize,

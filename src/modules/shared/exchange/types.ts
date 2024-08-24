@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { IRecord } from '../types.js';
 import { ICompactCandlestickRecords } from '../candlestick/index.js';
 
@@ -16,6 +17,7 @@ type IExchangeService = {
   // market data
   getCandlesticks: IGetCandlesticks;
   getTopSymbols: IGetTopSymbols;
+  getTickersStream: IGetTickersStream;
 
   // initializer
   initialize: () => Promise<void>;
@@ -39,6 +41,9 @@ type IGetCandlesticks = (
 
 // getTopSymbols
 type IGetTopSymbols = (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
+
+// getTickersStream
+type IGetTickersStream = (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 
 
 
@@ -86,6 +91,7 @@ export type {
   // methods
   IGetCandlesticks,
   IGetTopSymbols,
+  IGetTickersStream,
 
   // candlestick
   ICandlestickInterval,
