@@ -14,6 +14,7 @@ const buildDefaultConfig = (): ICoinsConfig => ({
   interval: 15,
   requirement: 0.01,
   strongRequirement: 0.3,
+  limit: 24,
   whitelistedSymbols: WHITELISTED_SYMBOLS,
 });
 

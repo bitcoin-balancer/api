@@ -47,6 +47,9 @@ type ICoinsConfig = {
   // the % change required for the window splits to have a strong state (2 | -2)
   strongRequirement: number;
 
+  // the maximum number of symbols that will be selected from the whitelist
+  limit: number;
+
   // the list of symbols that can be selected
   whitelistedSymbols: string[];
 };

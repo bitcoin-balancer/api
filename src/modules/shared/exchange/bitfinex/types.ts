@@ -31,10 +31,10 @@ type IBitfinexService = {
  ************************************************************************************************ */
 
 /**
- * Channel ID
+ * Bitfinex Channel ID
  * Utility type to differentiate IDs from traditional numbers.
  */
-type IChannelID = number;
+type IBitfinexChannelID = number;
 
 /**
  * Bitfinex Websocket Channel
@@ -64,7 +64,7 @@ type IBitfinexInfoWebsocketMessage = {
  * The object sent every certain period of time to ensure there is a healthy connection to the
  * stream.
  */
-type IBitfinexHeartbeatWebsocketMessage = [IChannelID, 'hb'];
+type IBitfinexHeartbeatWebsocketMessage = [IBitfinexChannelID, 'hb'];
 
 /**
  * Bitfinex Websocket Message
@@ -168,7 +168,7 @@ type IBitfinexTickerWebsocketSubscription = {
 type IBitfinexTickerSubscriptionMessage = {
   event: IBitfinexWebsocketEvent;
   channel: IBitfinexWebsocketChannel;
-  chanId: number; // e.g. 662780
+  chanId: IBitfinexChannelID; // e.g. 662780
   symbol: string; // e.g. 'tBTCUSD'
   pair: string; // e.g. 'BTCUSD'
 };
@@ -189,7 +189,7 @@ type IBitfinexTickerWebsocketMessageData = [
   number, // 8: daily high . e.g. 65074
   number, // 9: daily low . e.g. 61472
 ];
-type IBitfinexTickerWebsocketMessage = [IChannelID, IBitfinexTickerWebsocketMessageData];
+type IBitfinexTickerWebsocketMessage = [IBitfinexChannelID, IBitfinexTickerWebsocketMessageData];
 
 
 

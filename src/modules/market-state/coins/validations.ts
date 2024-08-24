@@ -2,6 +2,7 @@
 import { encodeError } from 'error-message-utils';
 import {
   arrayValid,
+  integerValid,
   numberValid,
   objectValid,
   symbolValid,
@@ -23,6 +24,7 @@ import { ICoinsConfig } from './types.js';
  * - 23504: if the strong state requirement is invalid
  * - 23505: if the whitelisted symbols is an invalid array
  * - 23506: if any of the whitelisted symbols is invalid
+ * - 23507: if the limit is invalid
  */
 const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
   if (!objectValid(newConfig)) {
@@ -40,6 +42,9 @@ const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
   }
   if (!numberValid(newConfig.strongRequirement, 0.01, 100)) {
     throw new Error(encodeError(`The strongRequirement '${newConfig.strongRequirement}' is invalid as it must be a valid number ranging 1 and 100.`, 23504));
+  }
+  if (!integerValid(newConfig.limit, 1, 24)) {
+    throw new Error(encodeError(`The limit '${newConfig.limit}' is invalid as it must be a valid integer ranging 1 and 24.`, 23507));
   }
   if (!arrayValid(newConfig.whitelistedSymbols)) {
     console.log(newConfig.whitelistedSymbols);
