@@ -192,22 +192,22 @@ const notificationServiceFactory = (): INotificationService => {
 
   /**
    * Broadcasts a message notifying users there is an issue with a specific websocket.
-   * @param name
+   * @param id
    * @param error
    */
-  const websocketError = (name: string, error: unknown): void => __addToQueue({
+  const websocketError = (id: string, error: unknown): void => __addToQueue({
     sender: 'WEBSOCKET',
-    title: `${name} Websocket error`,
+    title: `${id} Websocket error`,
     description: extractMessage(error),
   });
 
   /**
    * Broadcasts a message notifying users there are issues with the websocket connection.
-   * @param name
+   * @param id
    */
-  const websocketConnectionIssue = (name: string): void => __addToQueue({
+  const websocketConnectionIssue = (id: string): void => __addToQueue({
     sender: 'WEBSOCKET',
-    title: `${name} Websocket issue`,
+    title: `${id} Websocket issue`,
     description: 'The websocket has not broadcasted data in an irregular period of time. Balancer will attempt to restore the connection in a few seconds.',
   });
 

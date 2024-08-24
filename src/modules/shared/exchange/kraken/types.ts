@@ -54,58 +54,58 @@ type IKrakenAPIResponse = {
  ************************************************************************************************ */
 
 /**
- * Kraken Websocket Channel
+ * Kraken WebSocket Channel
  * The name of the channel the API subscribed to. The following channels are always present:
  * status: https://docs.kraken.com/api/docs/websocket-v2/status
  * heartbeat: https://docs.kraken.com/api/docs/websocket-v2/heartbeat
  */
-type IKrakenWebsocketChannel = 'status' | 'heartbeat' | 'ticker';
+type IKrakenWebSocketChannel = 'status' | 'heartbeat' | 'ticker';
 
 /**
- * Kraken Websocket Method
+ * Kraken WebSocket Method
  * The method that will be used to interact with the stream.
  */
-type IKrakenWebsocketMethod = 'subscribe';
+type IKrakenWebSocketMethod = 'subscribe';
 
 /**
- * Kraken Websocket Message Type
+ * Kraken WebSocket Message Type
  * The snapshot type is generally received upon subscription. Future changes will have the
  * 'update' type.
  */
-type IKrakenWebsocketMessageType = 'snapshot' | 'update';
+type IKrakenWebSocketMessageType = 'snapshot' | 'update';
 
 /**
- * Kraken Websocket Subscription Result
+ * Kraken WebSocket Subscription Result
  * The object sent when a subscription is attempted. If success is true, the connection is live.
  */
-type IKrakenWebsocketSubscriptionResult = {
-  'method': IKrakenWebsocketMethod,
-  'result': IKrakenTickerWebsocketSubscriptionParams, // params used to subscribe to channel
+type IKrakenWebSocketSubscriptionResult = {
+  'method': IKrakenWebSocketMethod,
+  'result': IKrakenTickerWebSocketSubscriptionParams, // params used to subscribe to channel
   'success': boolean; // e.g. true
   'time_in': string; // e.g. '2024-08-24T13:54:49.279970Z'
   'time_out': string; // e.g. '2024-08-24T13:54:49.280032Z'
 };
 
 /**
- * Kraken Websocket Message
+ * Kraken WebSocket Message
  * The message objects sent by Kraken's stream.
  */
-type IKrakenWebsocketMessage = {
-  channel: IKrakenWebsocketChannel;
+type IKrakenWebSocketMessage = {
+  channel: IKrakenWebSocketChannel;
 } & (
   | {
     channel: 'heartbeat';
   }
-  | IKrakenStatusWebsocketMessage
-  | IKrakenTickerWebsocketMessage
+  | IKrakenStatusWebSocketMessage
+  | IKrakenTickerWebSocketMessage
 );
 
 /**
- * Kraken Status Websocket Message
+ * Kraken Status WebSocket Message
  * The object that is sent when subscribing to the 'status' channel or the very first message
  * when subscribing to any other channel.
  */
-type IKrakenStatusWebsocketMessage = {
+type IKrakenStatusWebSocketMessage = {
   channel: 'status';
   data: [
     {
@@ -115,7 +115,7 @@ type IKrakenStatusWebsocketMessage = {
       version: string; // e.g. '2.0.8'
     },
   ],
-  type: IKrakenWebsocketMessageType; // e.g. 'update'
+  type: IKrakenWebSocketMessageType; // e.g. 'update'
 };
 
 
@@ -198,27 +198,27 @@ type IKrakenCoinTicker = {
 };
 
 /**
- * Kraken Ticker Websocket Subscription
+ * Kraken Ticker WebSocket Subscription
  * The object that will be sent in a message in order to subscribe to the ticker stream. More info:
  * https://docs.kraken.com/api/docs/websocket-v2/ticker
  */
-type IKrakenTickerWebsocketSubscriptionParams = {
-  channel: IKrakenWebsocketChannel;
+type IKrakenTickerWebSocketSubscriptionParams = {
+  channel: IKrakenWebSocketChannel;
   symbol: string[];
   event_trigger: 'bbo' | 'trades';
   snapshot: true;
 };
-type IKrakenTickerWebsocketSubscription = {
-  method: IKrakenWebsocketMethod;
-  params: IKrakenTickerWebsocketSubscriptionParams;
+type IKrakenTickerWebSocketSubscription = {
+  method: IKrakenWebSocketMethod;
+  params: IKrakenTickerWebSocketSubscriptionParams;
 };
 
 /**
- * Kraken Ticker Websocket Message
+ * Kraken Ticker WebSocket Message
  * This object is received from the stream whenever a trade is executed for a symbol the API is
  * subscribed to.
  */
-type IKrakenTickerWebsocketMessageData = {
+type IKrakenTickerWebSocketMessageData = {
   symbol: string; // e.g. 'BTC/USD'
   bid: number; // e.g. 64258.3
   bid_qty: number; // e.g. 0.50598910
@@ -232,10 +232,10 @@ type IKrakenTickerWebsocketMessageData = {
   change: number; // e.g. 3207.7
   change_pct: number; // e.g. 5.25
 };
-type IKrakenTickerWebsocketMessage = {
+type IKrakenTickerWebSocketMessage = {
   channel: 'ticker';
-  data: [IKrakenTickerWebsocketMessageData],
-  type: IKrakenWebsocketMessageType; // e.g. 'snapshot'
+  data: [IKrakenTickerWebSocketMessageData],
+  type: IKrakenWebSocketMessageType; // e.g. 'snapshot'
 };
 
 
@@ -253,8 +253,8 @@ export type {
   IKrakenAPIResponse,
 
   // websocket
-  IKrakenWebsocketMessage,
-  IKrakenWebsocketSubscriptionResult,
+  IKrakenWebSocketMessage,
+  IKrakenWebSocketSubscriptionResult,
 
   // candlestick
   IKrakenCandlestickInterval,
@@ -267,5 +267,5 @@ export type {
   // ticker
   IKrakenCoinTickers,
   IKrakenCoinTicker,
-  IKrakenTickerWebsocketSubscription,
+  IKrakenTickerWebSocketSubscription,
 };

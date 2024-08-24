@@ -37,41 +37,41 @@ type IBitfinexService = {
 type IBitfinexChannelID = number;
 
 /**
- * Bitfinex Websocket Channel
+ * Bitfinex WebSocket Channel
  * The name of the channel the API subscribed to.
  */
-type IBitfinexWebsocketChannel = 'ticker';
+type IBitfinexWebSocketChannel = 'ticker';
 
 /**
- * Bitfinex Websocket Event
+ * Bitfinex WebSocket Event
  * The action being executed to interact with the stream.
  */
-type IBitfinexWebsocketEvent = 'error' | 'info' | 'subscribe' | 'subscribed';
+type IBitfinexWebSocketEvent = 'error' | 'info' | 'subscribe' | 'subscribed';
 
 /**
- * Bitfinex Info Websocket Message
+ * Bitfinex Info WebSocket Message
  * The object sent by the stream when the connection is established.
  */
-type IBitfinexInfoWebsocketMessage = {
-  event: IBitfinexWebsocketEvent,
+type IBitfinexInfoWebSocketMessage = {
+  event: IBitfinexWebSocketEvent,
   version: number; // e.g. 2
   serverId: string; // e.g. '517720c6-d168-4be6-b720-f44c7eb9877e'
   platform: IRecord<unknown>; // e.g. { status: 1 }
 };
 
 /**
- * Bifinex Heartbeat Websocket Message
+ * Bifinex Heartbeat WebSocket Message
  * The object sent every certain period of time to ensure there is a healthy connection to the
  * stream.
  */
-type IBitfinexHeartbeatWebsocketMessage = [IBitfinexChannelID, 'hb'];
+type IBitfinexHeartbeatWebSocketMessage = [IBitfinexChannelID, 'hb'];
 
 /**
- * Bitfinex Websocket Message
+ * Bitfinex WebSocket Message
  * The possible objects that are sent when subscribing to the on('message') event.
  */
-type IBitfinexWebsocketMessage = IBitfinexInfoWebsocketMessage | IBitfinexHeartbeatWebsocketMessage
-| IBitfinexTickerSubscriptionMessage | IBitfinexTickerWebsocketMessage;
+type IBitfinexWebSocketMessage = IBitfinexInfoWebSocketMessage | IBitfinexHeartbeatWebSocketMessage
+| IBitfinexTickerSubscriptionMessage | IBitfinexTickerWebSocketMessage;
 
 
 
@@ -151,13 +151,13 @@ type IBitfinexCoinTicker = [
 ];
 
 /**
- * Bitfinex Ticker Websocket Subscription
+ * Bitfinex Ticker WebSocket Subscription
  * The object that will be sent in a message in order to subscribe to the ticker stream. More info:
  * https://docs.bitfinex.com/reference/ws-public-ticker
  */
-type IBitfinexTickerWebsocketSubscription = {
-  event: IBitfinexWebsocketEvent; // e.g. 'subscribe'
-  channel: IBitfinexWebsocketChannel; // e.g. 'ticker'
+type IBitfinexTickerWebSocketSubscription = {
+  event: IBitfinexWebSocketEvent; // e.g. 'subscribe'
+  channel: IBitfinexWebSocketChannel; // e.g. 'ticker'
   symbol: string; // e.g. 'tBTCUSD'
 };
 
@@ -166,18 +166,18 @@ type IBitfinexTickerWebsocketSubscription = {
  * The object sent by the stream when a subscription to a channel is successful.
  */
 type IBitfinexTickerSubscriptionMessage = {
-  event: IBitfinexWebsocketEvent;
-  channel: IBitfinexWebsocketChannel;
+  event: IBitfinexWebSocketEvent;
+  channel: IBitfinexWebSocketChannel;
   chanId: IBitfinexChannelID; // e.g. 662780
   symbol: string; // e.g. 'tBTCUSD'
   pair: string; // e.g. 'BTCUSD'
 };
 
 /**
- * Bitfinex Ticker Websocket Message
+ * Bitfinex Ticker WebSocket Message
  * The object sent by the stream whenever a trade is executed for a top symbol.
  */
-type IBitfinexTickerWebsocketMessageData = [
+type IBitfinexTickerWebSocketMessageData = [
   number, // 0: price of last highest bid . e.g. 64055
   number, // 1: sum of the 25 highest bid sizes . e.g. 7.9772258
   number, // 2: price of last lowest ask . e.g. 64056
@@ -189,7 +189,7 @@ type IBitfinexTickerWebsocketMessageData = [
   number, // 8: daily high . e.g. 65074
   number, // 9: daily low . e.g. 61472
 ];
-type IBitfinexTickerWebsocketMessage = [IBitfinexChannelID, IBitfinexTickerWebsocketMessageData];
+type IBitfinexTickerWebSocketMessage = [IBitfinexChannelID, IBitfinexTickerWebSocketMessageData];
 
 
 
@@ -203,7 +203,7 @@ export type {
   IBitfinexService,
 
   // websocket
-  IBitfinexWebsocketMessage,
+  IBitfinexWebSocketMessage,
 
   // candlestick
   IBitfinexCandlestickInterval,
@@ -215,5 +215,5 @@ export type {
 
   // ticker
   IBitfinexCoinTicker,
-  IBitfinexTickerWebsocketSubscription,
+  IBitfinexTickerWebSocketSubscription,
 };

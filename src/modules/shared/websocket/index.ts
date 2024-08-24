@@ -1,51 +1,63 @@
-import { readRecord, writeRecord } from './model.js';
-import { IRecordStoreFactory, IStoreID, IRecordStore } from './types.js';
+import { WebSocket } from 'ws';
+import { Subject, Observer, Subscription } from 'rxjs';
+import { IWebSocketFactory, IWebSocketID, IWebSocket } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
 /**
- * Record Store Factory
- * Generates the object in charge of persistently storing records.
- * @param storeID
- * @param defaultValue
- * @returns Promise<IRecordStore<T>>
+ * WebSocket Factory
+ * Generates the object in charge of connecting to external streams and managing the connectons.
+ * @param websocketID
+ * @param streamURL
+ * @returns IWebSocket<T>
  */
-const recordStoreFactory: IRecordStoreFactory = async <T>(
-  storeID: IStoreID,
-  defaultValue: T,
-): Promise<IRecordStore<T>> => {
+const websocketFactory: IWebSocketFactory = <T>(
+  websocketID: IWebSocketID,
+  streamURL: string,
+): IWebSocket<T> => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
   // the store's identifier
-  const __id: IStoreID = storeID;
+  const __id: IWebSocketID = websocketID;
 
-  // the store's current value - initialize it in case it hasn't been
-  let __value = <T> await readRecord(__id);
-  if (__value === null) {
-    await writeRecord(__id, defaultValue, true);
-    __value = defaultValue;
-  }
+  // the multicast observable containing the stream
+  const __stream = new Subject<T>();
+
+  // health check system
+  const __HEALTH_CHECK_FREQUENCY = 30;
+  let __healthCheckInterval: NodeJS.Timeout;
+  let __lastMessage: number;
+
+  // websocket instance
+  let __ws: WebSocket;
 
 
 
 
 
   /* **********************************************************************************************
-   *                                            ACTIONS                                           *
+   *                                     CONNECTION MANAGEMENT                                    *
    ********************************************************************************************** */
 
   /**
-   * Updates the value of the store.
-   * @param newValue
-   * @returns Promise<void>
+   * Retrieves an instance of a subscription to the stream.
+   * @returns (obs?: Partial<Observer<T>> | ((value: T) => void)) => Subscription
    */
-  const update = async (newValue: T): Promise<void> => {
-    await writeRecord(__id, newValue);
-    __value = newValue;
+  const subscribe = (): (obs?: Partial<Observer<T>> | ((value: T) => void)) => Subscription => (
+    __stream.subscribe
+  );
+
+  /**
+   * Disconnects and destroys the websocket connection.
+   */
+  const unsubscribe = (streamSubscription: Subscription | undefined): void => {
+    streamSubscription?.unsubscribe();
+    clearInterval(__healthCheckInterval);
+    // ..
   };
 
 
@@ -60,12 +72,10 @@ const recordStoreFactory: IRecordStoreFactory = async <T>(
     get id() {
       return __id;
     },
-    get value() {
-      return __value;
-    },
 
-    // actions
-    update,
+    // connection management
+    subscribe,
+    unsubscribe,
   });
 };
 
@@ -78,8 +88,8 @@ const recordStoreFactory: IRecordStoreFactory = async <T>(
  ************************************************************************************************ */
 export {
   // factory
-  recordStoreFactory,
+  websocketFactory,
 
   // types
-  type IRecordStore,
+  type IWebSocket,
 };

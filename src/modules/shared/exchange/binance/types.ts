@@ -31,10 +31,10 @@ type IBinanceService = {
  ************************************************************************************************ */
 
 /**
- * Binance Websocket Message
+ * Binance WebSocket Message
  * The possible objects that are sent when subscribing to the on('message') event.
  */
-type IBinanceWebsocketMessage = IBinanceTickerWebsocketMessage;
+type IBinanceWebSocketMessage = IBinanceTickerWebSocketMessage;
 
 
 
@@ -114,10 +114,10 @@ type IBinanceCoinTicker = {
 };
 
 /**
- * Binance Ticker Websocket Message
+ * Binance Ticker WebSocket Message
  * The object sent by the stream whenever a trade is executed for a top symbol.
  */
-type IBinanceTickerWebsocketMessageData = {
+type IBinanceTickerWebSocketMessageData = {
   e: string; // event type. e.g. '24hrMiniTicker'
   E: number; // event time. e.g. 1724518380063
   s: string; // symbol. e.g. 'ETHUSDT'
@@ -128,7 +128,7 @@ type IBinanceTickerWebsocketMessageData = {
   v: string; // total traded base asset volume. e.g. '335374.51790000'
   q: string; // total traded quote asset volume. e.g. '923325368.12662400'
 };
-type IBinanceTickerWebsocketMessage = IBinanceTickerWebsocketMessageData[];
+type IBinanceTickerWebSocketMessage = IBinanceTickerWebSocketMessageData[];
 
 
 
@@ -142,7 +142,7 @@ export type {
   IBinanceService,
 
   // websocket
-  IBinanceWebsocketMessage,
+  IBinanceWebSocketMessage,
 
   // candlestick
   IBinanceCandlestickInterval,
@@ -153,5 +153,5 @@ export type {
 
   // ticker
   IBinanceCoinTicker,
-  IBinanceTickerWebsocketMessage,
+  IBinanceTickerWebSocketMessage,
 };
