@@ -1,4 +1,4 @@
-import { Observer, Subscription } from 'rxjs';
+import { WebSocket } from 'ws';
 
 /* ************************************************************************************************
  *                                            FACTORY                                             *
@@ -11,20 +11,26 @@ import { Observer, Subscription } from 'rxjs';
 type IWebSocketFactory = <T>(
   id: IWebSocketID,
   streamURL: string,
+  onMessage: (value: T) => any,
+  onOpen?: (ws: WebSocket) => any,
+  onError?: (error: Error) => any,
+  onClose?: () => any,
 ) => IWebSocket<T>;
 
 /**
  * WebSocket
  * Object in charge of connecting to external streams and managing the connectons.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type IWebSocket<T> = {
   // properties
   id: IWebSocketID;
 
   // connection management
-  subscribe: () => (obs?: Partial<Observer<T>> | ((value: T) => void)) => Subscription;
-  unsubscribe: (streamSubscription: Subscription) => void;
+  off: () => void;
 };
+
+
 
 
 

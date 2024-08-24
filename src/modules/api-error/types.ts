@@ -49,7 +49,8 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'NotificationRouter.get' | 'WindowService.__refetchInterval' | 'WindowService.updateConfiguration.shouldReInitialize'
 | 'WindowService.updateConfiguration.shouldFetchInitialCandlesticks' | 'MarketStateService.__onWindowChanges'
 | 'MarketStateRouter.get.window.config' | 'MarketStateRouter.put.window.config' | 'CoinsService.updateConfiguration.postActions'
-| 'MarketStateRouter.get.coins.config' | 'MarketStateRouter.put.coins.config';
+| 'MarketStateRouter.get.coins.config' | 'MarketStateRouter.put.coins.config' | 'WebSocket.COINS.error'
+| 'WebSocket.LIQUIDITY.error' | 'WebSocket.COINS.close' | 'WebSocket.LIQUIDITY.close';
 
 /**
  * API Error

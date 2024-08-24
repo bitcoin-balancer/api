@@ -28,8 +28,8 @@ type INotificationService = {
   highFileSystemUsage: (current: number, limit: number) => void;
 
   // websocket
-  websocketError: (name: string, error: unknown) => void;
-  websocketConnectionIssue: (name: string) => void;
+  websocketError: (id: string, error: string) => void;
+  websocketConnectionIssue: (id: string) => void;
 
   // market state
   marketStateError: (errorMessage: string) => void;
