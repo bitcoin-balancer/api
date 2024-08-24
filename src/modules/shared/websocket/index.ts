@@ -4,7 +4,7 @@ import { extractMessage } from 'error-message-utils';
 import { delay } from '../utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { NotificationService } from '../../notification/index.js';
-import { formatConnectionClosePayload } from './utils.js';
+import { formatConnectionClosePayload, exceededIdleLimit } from './utils.js';
 import { IWebSocketFactory, IWebSocketID, IWebSocket } from './types.js';
 
 /* ************************************************************************************************
@@ -122,13 +122,7 @@ const websocketFactory: IWebSocketFactory = <T>(
    * users and try to repair it.
    */
   setInterval(async () => {
-    if (
-      __ws
-        && (
-          typeof __lastMessage !== 'number'
-          || (Date.now() - (__IDLE_LIMIT * 1000)) > __lastMessage
-        )
-    ) {
+    if (__ws && exceededIdleLimit(__lastMessage, __IDLE_LIMIT)) {
       NotificationService.websocketConnectionIssue(__id);
       off();
       await delay(__RESTART_DELAY);
