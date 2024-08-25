@@ -1,5 +1,13 @@
-import { assembleGetCandlesticks, assembleGetTickersStream, assembleGetTopSymbols } from './assembler.js';
-import { ICandlestickInterval, IExchangeService } from './types.js';
+import {
+  assembleGetCandlesticks,
+  assembleGetTickersStream,
+  assembleGetTopSymbols,
+} from './assembler.js';
+import {
+  ICandlestickInterval,
+  IExchangeService,
+  ITickerWebSocketMessage,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -128,4 +136,5 @@ export {
 
   // types
   type ICandlestickInterval,
+  type ITickerWebSocketMessage,
 };

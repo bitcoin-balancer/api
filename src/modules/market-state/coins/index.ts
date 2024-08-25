@@ -1,5 +1,8 @@
+import { Observable } from 'rxjs';
+import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
+import { ExchangeService, ITickerWebSocketMessage } from '../../shared/exchange/index.js';
 import { buildDefaultConfig } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
 import { ICoinsService, ICoinsConfig } from './types.js';
@@ -20,6 +23,12 @@ const coinsServiceFactory = (): ICoinsService => {
 
   // the module's configuration
   let __config: IRecordStore<ICoinsConfig>;
+
+  // the list of symbols that will be used by the module. e.g. 'BTC', 'ETH', ...
+  let __topSymbols: string[];
+
+  // the subscription to the tickers stream
+  let __stream: Observable<ITickerWebSocketMessage>;
 
 
 
@@ -46,6 +55,16 @@ const coinsServiceFactory = (): ICoinsService => {
   };
 
   /**
+   * Retrieves the top symbols based on the module's configuration.
+   * @returns Promise<string[]>
+   */
+  const __getTopSymbols = (): Promise<string[]> => invokeFuncPersistently(
+    ExchangeService.getTopSymbols,
+    [__config.value.whitelistedSymbols, __config.value.limit],
+    [3, 5, 15, 60],
+  );
+
+  /**
    * Initializes the Coins Module.
    * @returns Promise<void>
    */
@@ -53,7 +72,10 @@ const coinsServiceFactory = (): ICoinsService => {
     // initialize the configuration
     __config = await recordStoreFactory('COINS', buildDefaultConfig());
 
-    //
+    // retrieve the exchange's top symbols
+    __topSymbols = await __getTopSymbols();
+
+
   };
 
 
