@@ -297,11 +297,13 @@ const windowServiceFactory = (): IWindowService => {
    ********************************************************************************************** */
   return Object.freeze({
     // properties
-    get window() {
-      return __window;
-    },
     get config() {
       return __config.value;
+    },
+
+    // stream
+    get subscribe() {
+      return __window.subscribe;
     },
 
     // state calculator

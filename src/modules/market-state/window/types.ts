@@ -1,4 +1,4 @@
-import { BehaviorSubject } from 'rxjs';
+import { IStreamSubscription } from '../../shared/types.js';
 import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ICandlestickInterval } from '../../shared/exchange/index.js';
 import { ISplitStates, IState } from '../shared/types.js';
@@ -14,8 +14,10 @@ import { ISplitStates, IState } from '../shared/types.js';
  */
 type IWindowService = {
   // properties
-  window: BehaviorSubject<ICompactCandlestickRecords>;
   config: IWindowConfig;
+
+  // stream
+  subscribe: IStreamSubscription<ICompactCandlestickRecords>;
 
   // state calculator
   calculateState: () => IWindowState;
@@ -28,8 +30,6 @@ type IWindowService = {
   // configuration
   updateConfiguration: (newConfig: IWindowConfig) => Promise<void>;
 };
-
-
 
 
 

@@ -151,7 +151,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
       }
 
       // subscribe to the window
-      __windowSub = WindowService.window.subscribe(__onWindowChanges);
+      __windowSub = WindowService.subscribe(__onWindowChanges);
     } catch (e) {
       await teardown();
       throw e;

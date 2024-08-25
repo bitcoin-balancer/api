@@ -1,4 +1,5 @@
 import { Server, IncomingMessage, ServerResponse } from 'http';
+import { Observer, Subscription } from 'rxjs';
 
 /* ************************************************************************************************
  *                                         NODE.JS TYPES                                          *
@@ -55,6 +56,12 @@ type IPackageFile = {
   dependencies: { [key: string]: string };
 };
 
+/**
+ * Stream Susbcription
+ * The type when only the subscribe method is exposed.
+ */
+type IStreamSubscription<T> = (o?: Partial<Observer<T>> | ((v: T) => void)) => Subscription;
+
 
 
 
@@ -70,4 +77,5 @@ export type {
   // utility types
   IRecord,
   IPackageFile,
+  IStreamSubscription,
 };
