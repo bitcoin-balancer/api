@@ -11,7 +11,7 @@ import {
   ICoinsService,
   ICoinsConfig,
   ICoinsState,
-  ICoinsStates,
+  ICompactCoinsStates,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -61,7 +61,7 @@ const coinsServiceFactory = (): ICoinsService => {
    * Builds the default coins states.
    * @returns ICoinsStates
    */
-  const getPristineState = (): ICoinsStates => buildPristineCoinsStates();
+  const getPristineState = (): ICompactCoinsStates => buildPristineCoinsStates();
 
 
 
@@ -241,5 +241,5 @@ export {
   CoinsService,
 
   // types
-  type ICoinsStates,
+  type ICompactCoinsStates,
 };

@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs';
 import { IWindowState } from './window/index.js';
-import { ICoinsStates } from './coins/index.js';
+import { ICompactCoinsStates } from './coins/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -42,7 +42,7 @@ type IMarketState = {
   // liquidity: ILiquidityState;
 
   // the state of the coins module
-  coinsStates: ICoinsStates;
+  coinsStates: ICompactCoinsStates;
 };
 
 

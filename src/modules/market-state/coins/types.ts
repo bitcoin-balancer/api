@@ -13,7 +13,7 @@ type ICoinsService = {
   config: ICoinsConfig;
 
   // state calculator
-  getPristineState: () => ICoinsStates;
+  getPristineState: () => ICompactCoinsStates;
 
   // initializer
   initialize: () => Promise<void>;
@@ -65,11 +65,25 @@ type ICompactCoinState = {
 
 /**
  * Coins State
- * The object containing the compact state for all the coins. Keep in mind this object a single
+ * The object containing the full state for all the coins. Keep in mind this object a single
  * quote asset. One is needed for the quote asset (e.g. BTCUSDT) and one for the
  * base asset (e.g. ETHBTC).
  */
 type ICoinsState = {
+  // the state mean of the coins
+  state: IState;
+
+  // the state for each of the coins
+  statesBySymbol: { [symbol:string]: ICoinState };
+};
+
+/**
+ * Compact Coins State
+ * The object containing the compact state for all the coins. Keep in mind this object a single
+ * quote asset. One is needed for the quote asset (e.g. BTCUSDT) and one for the
+ * base asset (e.g. ETHBTC).
+ */
+type ICompactCoinsState = {
   // the state mean of the coins
   state: IState;
 
@@ -78,15 +92,15 @@ type ICoinsState = {
 };
 
 /**
- * Coins States
+ * Compact Coins States
  * The object containing the compact states for each of the assets (quote and base).
  */
-type ICoinsStates = {
+type ICompactCoinsStates = {
   // *USD*
-  quote: ICoinsState;
+  quote: ICompactCoinsState;
 
   // BTC
-  base: ICoinsState;
+  base: ICompactCoinsState;
 };
 
 
@@ -138,7 +152,8 @@ export type {
   ISemiCompactCoinState,
   ICompactCoinState,
   ICoinsState,
-  ICoinsStates,
+  ICompactCoinsState,
+  ICompactCoinsStates,
 
   // configuration
   ICoinsConfig,
