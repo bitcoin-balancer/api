@@ -1,5 +1,10 @@
 import { WHITELISTED_SYMBOLS } from './data.js';
-import { ICoinsConfig, ICompactCoinsStates, ICoinState } from './types.js';
+import {
+  ICoinsConfig,
+  ICompactCoinsStates,
+  ICoinState,
+  ICoinsState,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -38,6 +43,19 @@ const buildPristineCoinState = (): ICoinState => ({
 });
 
 /**
+ * Builds the pristine state object based on the top symbols.
+ * @param topSymbols
+ * @returns ICoinsState
+ */
+const buildPristineCoinsState = (topSymbols: string[]): ICoinsState => ({
+  state: 0,
+  statesBySymbol: topSymbols.reduce(
+    (previous, current) => ({ ...previous, [current]: buildPristineCoinState() }),
+    {},
+  ),
+});
+
+/**
  * Builds the pristine state object for coins in both assets.
  * @returns ICompactCoinsStates
  */
@@ -55,5 +73,6 @@ const buildPristineCoinsStates = (): ICompactCoinsStates => ({
  ************************************************************************************************ */
 export {
   buildDefaultConfig,
+  buildPristineCoinsState,
   buildPristineCoinsStates,
 };

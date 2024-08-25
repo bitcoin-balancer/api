@@ -5,7 +5,7 @@ import { APIErrorService } from '../../api-error/index.js';
 import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService, ITickerWebSocketMessage } from '../../shared/exchange/index.js';
 import { WindowService } from '../window/index.js';
-import { buildDefaultConfig, buildPristineCoinsStates } from './utils.js';
+import { buildDefaultConfig, buildPristineCoinsState, buildPristineCoinsStates } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
 import {
   ICoinsService,
@@ -13,6 +13,7 @@ import {
   ICoinsState,
   ICompactCoinsStates,
 } from './types.js';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -30,9 +31,6 @@ const coinsServiceFactory = (): ICoinsService => {
 
   // the module's configuration
   let __config: IRecordStore<ICoinsConfig>;
-
-  // the list of symbols that will be used by the module. e.g. 'BTC', 'ETH', ...
-  let __topSymbols: string[];
 
   // the subscription to the window stream and the current BTC price
   let __windowStreamSub: Subscription;
@@ -146,13 +144,16 @@ const coinsServiceFactory = (): ICoinsService => {
     __config = await recordStoreFactory('COINS', buildDefaultConfig());
 
     // retrieve the exchange's top symbols
-    __topSymbols = await __getTopSymbols();
+    const topSymbols = await __getTopSymbols();
 
     // initialize the state
-    // @TODO
+    __quoteState = buildPristineCoinsState(topSymbols);
+    __baseState = buildPristineCoinsState(
+      topSymbols.filter((symbol) => symbol !== ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset),
+    );
 
     // subscribe to the tickers stream
-    __streamSub = ExchangeService.getTickersStream(__topSymbols).subscribe(__onTickersChanges);
+    __streamSub = ExchangeService.getTickersStream(topSymbols).subscribe(__onTickersChanges);
 
     // check if any of the top symbols need to be removed
     setTimeout(__evaluateInitialization, __INITIALIZATION_EVALUATION_DELAY * (60 * 1000));
