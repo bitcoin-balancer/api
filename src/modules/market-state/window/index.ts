@@ -320,9 +320,6 @@ const windowServiceFactory = (): IWindowService => {
 
     // stream
     subscribe,
-    /* get subscribe() {
-      return __window.subscribe;
-    }, */
 
     // state calculator
     calculateState,

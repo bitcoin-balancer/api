@@ -73,9 +73,10 @@ type ICandlestickInterval =
 
 /**
  * Ticker
- * The object that is broadcasted via the ticker stream.
+ * The object that is broadcasted via the ticker stream and contains the price for symbols that
+ * have experienced changes. e.g. { 'BTC': 61555.65, 'ETH': 2455.21 }
  */
-type ITickerWebSocketMessage = IRecord<number>; // e.g. { 'BTC': 61555.65, 'ETH': 2455.21 }
+type ITickerWebSocketMessage = IRecord<number>;
 
 
 

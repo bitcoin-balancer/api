@@ -1,11 +1,18 @@
-import { Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
+import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService, ITickerWebSocketMessage } from '../../shared/exchange/index.js';
-import { buildDefaultConfig } from './utils.js';
+import { WindowService } from '../window/index.js';
+import { buildDefaultConfig, buildPristineCoinsStates } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
-import { ICoinsService, ICoinsConfig } from './types.js';
+import {
+  ICoinsService,
+  ICoinsConfig,
+  ICoinsState,
+  ICoinsStates,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -27,16 +34,74 @@ const coinsServiceFactory = (): ICoinsService => {
   // the list of symbols that will be used by the module. e.g. 'BTC', 'ETH', ...
   let __topSymbols: string[];
 
+  // the subscription to the window stream and the current BTC price
+  let __windowStreamSub: Subscription;
+  let __btcPrice: number;
+
   // the subscription to the tickers stream
-  let __stream: Observable<ITickerWebSocketMessage>;
+  let __streamSub: Subscription;
+
+  // the number of minutes the system will wait before evaluating the initialization and taking
+  // actions if needed
+  const __INITIALIZATION_EVALUATION_DELAY = 5;
+
+  // the state in both assets, '*USD*' & 'BTC'
+  let __quoteState: ICoinsState; // e.g. BTCUSDT
+  let __baseState: ICoinsState; // e.g. ETHBTC
 
 
 
 
 
   /* **********************************************************************************************
-   *                                            ACTIONS                                           *
+   *                                      STATE CALCULATOR                                        *
    ********************************************************************************************** */
+
+  /**
+   * Builds the default coins states.
+   * @returns ICoinsStates
+   */
+  const getPristineState = (): ICoinsStates => buildPristineCoinsStates();
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                       STREAM HANDLERS                                        *
+   ********************************************************************************************** */
+
+  /**
+   * Fires whenever there is new BTC's candlesticks data.
+   * @param candlesticks
+   */
+  const __onWindowChanges = (candlesticks: ICompactCandlestickRecords): void => {
+    __btcPrice = candlesticks.close[candlesticks.id.length - 1];
+  };
+
+  /**
+   * Fires whenever the price of one of many symbols changes.
+   * @param data
+   */
+  const __onTickersChanges = (data: ITickerWebSocketMessage): void => {
+
+  };
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                  INITIALIZATION EVALUATION                                   *
+   ********************************************************************************************** */
+
+  /**
+   * This function is invoked a few minutes after the module is initialized. It checks all of the
+   * symbols to ensure they have received data. Otherwise, they will be removed.
+   */
+  const __evaluateInitialization = (): void => {
+    // @TODO
+  };
 
 
 
@@ -51,7 +116,12 @@ const coinsServiceFactory = (): ICoinsService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-
+    if (__windowStreamSub) {
+      __windowStreamSub.unsubscribe();
+    }
+    if (__streamSub) {
+      __streamSub.unsubscribe();
+    }
   };
 
   /**
@@ -69,13 +139,23 @@ const coinsServiceFactory = (): ICoinsService => {
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
+    // subscribe to the BTC price
+    __windowStreamSub = WindowService.subscribe(__onWindowChanges);
+
     // initialize the configuration
     __config = await recordStoreFactory('COINS', buildDefaultConfig());
 
     // retrieve the exchange's top symbols
     __topSymbols = await __getTopSymbols();
 
+    // initialize the state
+    // @TODO
 
+    // subscribe to the tickers stream
+    __streamSub = ExchangeService.getTickersStream(__topSymbols).subscribe(__onTickersChanges);
+
+    // check if any of the top symbols need to be removed
+    setTimeout(__evaluateInitialization, __INITIALIZATION_EVALUATION_DELAY * (60 * 1000));
   };
 
 
@@ -128,6 +208,9 @@ const coinsServiceFactory = (): ICoinsService => {
       return __config.value;
     },
 
+    // state calculator
+    getPristineState,
+
     // initializer
     initialize,
     teardown,
@@ -154,5 +237,9 @@ const CoinsService = coinsServiceFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // service
   CoinsService,
+
+  // types
+  type ICoinsStates,
 };

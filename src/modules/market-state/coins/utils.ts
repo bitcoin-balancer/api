@@ -1,5 +1,5 @@
 import { WHITELISTED_SYMBOLS } from './data.js';
-import { ICoinsConfig } from './types.js';
+import { ICoinsConfig, ICoinsStates } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -18,6 +18,15 @@ const buildDefaultConfig = (): ICoinsConfig => ({
   whitelistedSymbols: WHITELISTED_SYMBOLS,
 });
 
+/**
+ * Builds the pristine state object for coins in both assets.
+ * @returns ICoinsStates
+ */
+const buildPristineCoinsStates = (): ICoinsStates => ({
+  quote: { state: 0, statesBySymbol: {} },
+  base: { state: 0, statesBySymbol: {} },
+});
+
 
 
 
@@ -27,4 +36,5 @@ const buildDefaultConfig = (): ICoinsConfig => ({
  ************************************************************************************************ */
 export {
   buildDefaultConfig,
+  buildPristineCoinsStates,
 };
