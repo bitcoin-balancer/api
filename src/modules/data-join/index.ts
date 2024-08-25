@@ -94,7 +94,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
    */
   const initialize = async (): Promise<void> => {
     // subscribe to the market state
-    __marketStateSub = MarketStateService.state.subscribe(__onMarketStateChanges);
+    __marketStateSub = MarketStateService.subscribe(__onMarketStateChanges);
 
     // ...
   };

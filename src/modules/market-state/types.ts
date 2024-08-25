@@ -1,4 +1,4 @@
-import { BehaviorSubject } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { IWindowState } from './window/index.js';
 
 /* ************************************************************************************************
@@ -11,7 +11,10 @@ import { IWindowState } from './window/index.js';
  */
 type IMarketStateService = {
   // properties
-  state: BehaviorSubject<IMarketState>;
+  // ...
+
+  // stream
+  subscribe: (callback: (value: IMarketState) => any) => Subscription;
 
   // initializer
   teardown: () => Promise<void>;

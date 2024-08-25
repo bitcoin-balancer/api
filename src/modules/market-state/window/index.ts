@@ -1,4 +1,4 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
@@ -38,6 +38,23 @@ const windowServiceFactory = (): IWindowService => {
 
   // if the window has a strong state, a notification will be sent every ~60 minutes
   const __stateNotification = throttleableNotificationFactory(NotificationService.windowState, 60);
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                            STREAM                                            *
+   ********************************************************************************************** */
+
+  /**
+   * Generates a subscription to the window stream.
+   * @param callback
+   * @returns Subscription
+   */
+  const subscribe = (callback: (value: ICompactCandlestickRecords) => any): Subscription => (
+    __window.subscribe(callback)
+  );
 
 
 
@@ -302,9 +319,10 @@ const windowServiceFactory = (): IWindowService => {
     },
 
     // stream
-    get subscribe() {
+    subscribe,
+    /* get subscribe() {
       return __window.subscribe;
-    },
+    }, */
 
     // state calculator
     calculateState,

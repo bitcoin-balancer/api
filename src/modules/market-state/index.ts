@@ -4,7 +4,6 @@ import { extractMessage } from 'error-message-utils';
 import { APIErrorService } from '../api-error/index.js';
 import { NotificationService, throttleableNotificationFactory } from '../notification/index.js';
 import { WindowService } from './window/index.js';
-
 import { CoinsService } from './coins/index.js';
 import { buildPristineState } from './utils.js';
 import { IMarketStateService, IMarketState } from './types.js';
@@ -34,6 +33,25 @@ const marketStateServiceFactory = (): IMarketStateService => {
     NotificationService.marketStateError,
     5,
   );
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                            STREAM                                            *
+   ********************************************************************************************** */
+
+  /**
+   * Generates a subscription to the window stream.
+   * @param callback
+   * @returns Subscription
+   */
+  const subscribe = (callback: (value: IMarketState) => any): Subscription => (
+    __state.subscribe(callback)
+  );
+
+
 
 
 
@@ -167,9 +185,10 @@ const marketStateServiceFactory = (): IMarketStateService => {
    ********************************************************************************************** */
   return Object.freeze({
     // properties
-    get state() {
-      return __state;
-    },
+    // ...
+
+    // stream
+    subscribe,
 
     // initializer
     teardown,
