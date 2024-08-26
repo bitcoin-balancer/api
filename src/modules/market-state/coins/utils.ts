@@ -8,6 +8,7 @@ import {
   ICoinsState,
   ICompactCoinState,
   ICoinsStates,
+  ISemiCompactCoinState,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -108,7 +109,24 @@ const isIntervalActive = (startTime: number, duration: number, currentTime: numb
   typeof startTime === 'number' && (startTime + (duration * 1000)) < currentTime
 );
 
-
+/**
+ * Converts a state object into the semi-compact variant.
+ * @param state
+ * @returns ICoinsState<ISemiCompactCoinState>
+ */
+const toSemiCompact = (state: ICoinsState<ICoinState>): ICoinsState<ISemiCompactCoinState> => ({
+  state: state.state,
+  statesBySymbol: Object.keys(state.statesBySymbol).reduce(
+    (previous, current) => ({
+      ...previous,
+      [current]: {
+        state: state.statesBySymbol[current].state,
+        splitStates: state.statesBySymbol[current].splitStates,
+      },
+    }),
+    {},
+  ),
+});
 
 
 
@@ -123,4 +141,5 @@ export {
   buildPristineCoinsStates,
   calculateSymbolPriceInBaseAsset,
   isIntervalActive,
+  toSemiCompact,
 };

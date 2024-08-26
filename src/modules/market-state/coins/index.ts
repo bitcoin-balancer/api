@@ -15,6 +15,7 @@ import {
   calculateSymbolPriceInBaseAsset,
   isIntervalActive,
   buildPristineSplitStates,
+  toSemiCompact,
 } from './utils.js';
 import { validateStateAsset, validateSymbol, canConfigBeUpdated } from './validations.js';
 import {
@@ -83,7 +84,7 @@ const coinsServiceFactory = (): ICoinsService => {
    * - 23508: if the state asset is invalid
    * - 23510: if the symbol is not in the asset's statesBySymbol object
    */
-  const getState = (symbol: string, asset: ICoinStateAsset): ICoinState => {
+  const getStateForSymbol = (symbol: string, asset: ICoinStateAsset): ICoinState => {
     validateSymbol(
       symbol,
       asset,
@@ -91,6 +92,20 @@ const coinsServiceFactory = (): ICoinsService => {
     );
     return asset === 'quote' ? __quote.statesBySymbol[symbol] : __base.statesBySymbol[symbol];
   };
+
+  /**
+   * Retrieves the semi compact state for an asset.
+   * @param asset
+   * @throws
+   * - 23508: if the state asset is invalid
+   */
+  const getSemiCompactStateForAsset = (
+    asset: ICoinStateAsset,
+  ): ICoinsState<ISemiCompactCoinState> => {
+    validateStateAsset(asset);
+    return toSemiCompact(asset === 'quote' ? __quote : __base);
+  };
+
 
 
 
@@ -417,7 +432,8 @@ const coinsServiceFactory = (): ICoinsService => {
     },
 
     // retrievers
-    getState,
+    getStateForSymbol,
+    getSemiCompactStateForAsset,
 
     // state calculator
     calculateState,

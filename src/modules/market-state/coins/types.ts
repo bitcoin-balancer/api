@@ -13,7 +13,8 @@ type ICoinsService = {
   config: ICoinsConfig;
 
   // retrievers
-  getState: (symbol: string, asset: ICoinStateAsset) => ICoinState;
+  getStateForSymbol: (symbol: string, asset: ICoinStateAsset) => ICoinState;
+  getSemiCompactStateForAsset: (asset: ICoinStateAsset) => ICoinsState<ISemiCompactCoinState>;
 
   // state calculator
   calculateState: () => ICoinsStatesCalculationPayload;
@@ -92,11 +93,7 @@ type ICoinsState<T> = {
  * The object containing the state for all the coins and assets (quote and base).
  */
 type ICoinsStates<T> = {
-  // *USD*
-  quote: ICoinsState<T>;
-
-  // BTC
-  base: ICoinsState<T>;
+  [key in ICoinStateAsset]: ICoinsState<T>;
 };
 
 /**
