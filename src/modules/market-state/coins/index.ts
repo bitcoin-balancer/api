@@ -161,7 +161,12 @@ const coinsServiceFactory = (): ICoinsService => {
    * symbols to ensure they have received data. Otherwise, they are removed.
    */
   const __evaluateInitialization = (): void => {
-    // @TODO
+    Object.keys(__base).forEach((symbol) => {
+      if (__quote.statesBySymbol[symbol].window.length === 0) {
+        delete __quote.statesBySymbol[symbol];
+        delete __base.statesBySymbol[symbol];
+      }
+    });
   };
 
 
