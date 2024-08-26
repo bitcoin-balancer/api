@@ -1,5 +1,6 @@
 import { calculateExchange } from 'bignumber-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
+import { ISplitStates } from '../shared/types.js';
 import { WHITELISTED_SYMBOLS } from './data.js';
 import {
   ICoinsConfig,
@@ -36,21 +37,27 @@ const buildDefaultConfig = (): ICoinsConfig => ({
 });
 
 /**
+ * Builds the pristine state object for the split states.
+ * @returns ISplitStates
+ */
+const buildPristineSplitStates = (): ISplitStates => ({
+  s100: { state: 0, change: 0 },
+  s75: { state: 0, change: 0 },
+  s50: { state: 0, change: 0 },
+  s25: { state: 0, change: 0 },
+  s15: { state: 0, change: 0 },
+  s10: { state: 0, change: 0 },
+  s5: { state: 0, change: 0 },
+  s2: { state: 0, change: 0 },
+});
+
+/**
  * Builds the pristine state object for a single symbol.
  * @returns ICoinState
  */
 const buildPristineCoinState = (): ICoinState => ({
   state: 0,
-  splitStates: {
-    s100: { state: 0, change: 0 },
-    s75: { state: 0, change: 0 },
-    s50: { state: 0, change: 0 },
-    s25: { state: 0, change: 0 },
-    s15: { state: 0, change: 0 },
-    s10: { state: 0, change: 0 },
-    s5: { state: 0, change: 0 },
-    s2: { state: 0, change: 0 },
-  },
+  splitStates: buildPristineSplitStates(),
   window: [],
 });
 
@@ -111,6 +118,7 @@ const isIntervalActive = (startTime: number, duration: number, currentTime: numb
 export {
   isBaseAsset,
   buildDefaultConfig,
+  buildPristineSplitStates,
   buildPristineCoinsState,
   buildPristineCoinsStates,
   calculateSymbolPriceInBaseAsset,

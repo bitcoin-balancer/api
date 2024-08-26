@@ -14,6 +14,7 @@ import {
   buildPristineCoinsStates,
   calculateSymbolPriceInBaseAsset,
   isIntervalActive,
+  buildPristineSplitStates,
 } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
 import {
@@ -78,7 +79,13 @@ const coinsServiceFactory = (): ICoinsService => {
    * @returns IStateResult
    */
   const __calculateStateForWindow = (window: ISplitStateItem[]): IStateResult => (
-    calculateStateForSeries(window, __config.value.requirement, __config.value.strongRequirement)
+    window.length === __config.value.size
+      ? calculateStateForSeries(
+        window,
+        __config.value.requirement,
+        __config.value.strongRequirement,
+      )
+      : { mean: 0, splits: buildPristineSplitStates() }
   );
 
   /**
