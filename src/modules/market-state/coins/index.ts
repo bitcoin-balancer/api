@@ -77,14 +77,14 @@ const coinsServiceFactory = (): ICoinsService => {
 
   /**
    * Retrieves the state object for a coin based on an asset.
-   * @param symbol
    * @param asset
+   * @param symbol
    * @returns ICoinState
    * @throws
    * - 23508: if the state asset is invalid
    * - 23510: if the symbol is not in the asset's statesBySymbol object
    */
-  const getStateForSymbol = (symbol: string, asset: ICoinStateAsset): ICoinState => {
+  const getStateForSymbol = (asset: ICoinStateAsset, symbol: string): ICoinState => {
     validateSymbol(
       symbol,
       asset,

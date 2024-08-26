@@ -76,8 +76,8 @@ MarketStateRouter.route('/coins/state/:asset/:symbol').get(lowRiskLimit, async (
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
     res.json(buildResponse(CoinsService.getStateForSymbol(
-      req.params.symbol,
       <ICoinStateAsset>req.params.asset,
+      req.params.symbol,
     )));
   } catch (e) {
     APIErrorService.save('MarketStateRouter.get.coins.state.asset.symbol', e, reqUid, req.ip, req.params);

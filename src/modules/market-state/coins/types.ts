@@ -13,7 +13,7 @@ type ICoinsService = {
   config: ICoinsConfig;
 
   // retrievers
-  getStateForSymbol: (symbol: string, asset: ICoinStateAsset) => ICoinState;
+  getStateForSymbol: (asset: ICoinStateAsset, symbol: string) => ICoinState;
   getSemiCompactStateForAsset: (asset: ICoinStateAsset) => ICoinsState<ISemiCompactCoinState>;
 
   // state calculator
