@@ -60,6 +60,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
     unreadNotifications: NotificationService.unreadCount,
     unreadAPIErrors: APIErrorService.unreadCount,
     marketState: {
+      ...__marketState,
       windowState: {
         ...__marketState.windowState,
         window: sliceWindow(__marketState.windowState.window),
