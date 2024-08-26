@@ -19,6 +19,8 @@ import {
   ICoinsConfig,
   ICoinsState,
   ICompactCoinsStates,
+  ISemiCompactCoinsStates,
+  ICoinsStateCalculationPayload,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -64,6 +66,17 @@ const coinsServiceFactory = (): ICoinsService => {
   /* **********************************************************************************************
    *                                      STATE CALCULATOR                                        *
    ********************************************************************************************** */
+
+  /**
+   * Calculates the current state of the coins module and returns it in its compact and semi compact
+   * variants.
+   * @returns ICoinsStateCalculationPayload
+   */
+  const calculateState = (): ICoinsStateCalculationPayload => {
+
+    // finally, return the state in the required formats
+    return { compact: <ICompactCoinsStates>{}, semiCompact: <ISemiCompactCoinsStates>{} };
+  };
 
   /**
    * Builds the default coins states.
@@ -278,6 +291,7 @@ const coinsServiceFactory = (): ICoinsService => {
     },
 
     // state calculator
+    calculateState,
     getPristineState,
 
     // initializer
