@@ -91,6 +91,15 @@ type ICoinsStates<T> = {
 };
 
 /**
+ * States By Symbol
+ * Utility type used to build the state calculation payload that will be passed to the market state.
+ */
+type IStatesBySymbol = {
+  compact: { [symbol:string]: ICompactCoinState },
+  semiCompact: { [symbol:string]: ISemiCompactCoinState },
+};
+
+/**
  * State Calculation Payload
  * The object containing the state in both compact variants that is returned when calculating the
  * state.
@@ -150,6 +159,7 @@ export type {
   ICompactCoinState,
   ICoinsState,
   ICoinsStates,
+  IStatesBySymbol,
   ICoinsStatesCalculationPayload,
 
   // configuration

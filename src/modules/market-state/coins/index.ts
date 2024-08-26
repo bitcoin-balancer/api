@@ -22,9 +22,10 @@ import {
   ISemiCompactCoinState,
   ICompactCoinState,
   ICoinsState,
+  ICoinsStates,
+  IStatesBySymbol,
   ICoinsStatesCalculationPayload,
   ICoinsConfig,
-  ICoinsStates,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -81,7 +82,7 @@ const coinsServiceFactory = (): ICoinsService => {
   );
 
   /**
-   * Calculates the state for a symbol, mutates the local copy and returns the quote and base
+   * Calculates the state for a symbol, mutates the local copy and returns the new quote and base
    * states.
    * @param symbol
    * @returns { quoteResult: IStateResult, baseResult: IStateResult | undefined }
@@ -113,10 +114,8 @@ const coinsServiceFactory = (): ICoinsService => {
    */
   const calculateState = (): ICoinsStatesCalculationPayload => {
     // init values
-    const quoteStatesBySymbol: {
-      compact: { [symbol:string]: ICompactCoinState },
-      semiCompact: { [symbol:string]: ISemiCompactCoinState },
-    } = { compact: {}, semiCompact: {} };
+    const quoteStatesBySymbol: IStatesBySymbol = { compact: {}, semiCompact: {} };
+    const baseStatesBySymbol: IStatesBySymbol = { compact: {}, semiCompact: {} };
     const quoteStates: IState[] = [];
     const baseStates: IState[] = [];
 
@@ -125,7 +124,7 @@ const coinsServiceFactory = (): ICoinsService => {
       // calculate the states for both pairs
       const { quoteResult, baseResult } = __calculateAndUpdateStateForSymbol(symbol);
 
-      //
+      // include the state payload for the quote pair
       quoteStatesBySymbol.compact[symbol] = { state: quoteResult.mean };
       quoteStatesBySymbol.semiCompact[symbol] = {
         state: quoteResult.mean,
@@ -133,8 +132,13 @@ const coinsServiceFactory = (): ICoinsService => {
       };
       quoteStates.push(quoteResult.mean);
 
-      //
+      // include the state payload for the base pair (if any)
       if (baseResult) {
+        baseStatesBySymbol.compact[symbol] = { state: baseResult.mean };
+        baseStatesBySymbol.semiCompact[symbol] = {
+          state: baseResult.mean,
+          splitStates: baseResult.splits,
+        };
         baseStates.push(baseResult.mean);
       }
     });
@@ -152,7 +156,7 @@ const coinsServiceFactory = (): ICoinsService => {
         },
         base: {
           state: __base.state,
-          statesBySymbol: {},
+          statesBySymbol: baseStatesBySymbol.compact,
         },
       },
       semiCompact: {
@@ -162,7 +166,7 @@ const coinsServiceFactory = (): ICoinsService => {
         },
         base: {
           state: __base.state,
-          statesBySymbol: {},
+          statesBySymbol: baseStatesBySymbol.semiCompact,
         },
       },
     };
