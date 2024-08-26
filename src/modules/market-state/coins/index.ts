@@ -5,7 +5,13 @@ import { APIErrorService } from '../../api-error/index.js';
 import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService, ITickerWebSocketMessage } from '../../shared/exchange/index.js';
 import { WindowService } from '../window/index.js';
-import { buildDefaultConfig, buildPristineCoinsState, buildPristineCoinsStates } from './utils.js';
+import {
+  buildDefaultConfig,
+  buildPristineCoinsState,
+  buildPristineCoinsStates,
+  calculateSymbolPriceInBaseAsset,
+  isIntervalActive,
+} from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
 import {
   ICoinsService,
@@ -32,9 +38,9 @@ const coinsServiceFactory = (): ICoinsService => {
   // the module's configuration
   let __config: IRecordStore<ICoinsConfig>;
 
-  // the subscription to the window stream and the current BTC price
+  // the subscription to the window stream and the current base asset price
   let __windowStreamSub: Subscription;
-  let __btcPrice: number;
+  let __baseAssetPrice: number;
 
   // the subscription to the tickers stream
   let __streamSub: Subscription;
@@ -43,9 +49,13 @@ const coinsServiceFactory = (): ICoinsService => {
   // actions if needed
   const __INITIALIZATION_EVALUATION_DELAY = 5;
 
+  // the number of decimal places that will be used to calculate the price in base asset
+  // e.g. ETHBTC, XRPBTC, etc ... this is needed because some coins are worth less than 1 satoshi
+  const BASE_ASSET_PRICE_DP = 12;
+
   // the state in both assets, '*USD*' & 'BTC'
-  let __quoteState: ICoinsState; // e.g. BTCUSDT
-  let __baseState: ICoinsState; // e.g. ETHBTC
+  let __quote: ICoinsState; // e.g. BTCUSDT
+  let __base: ICoinsState; // e.g. ETHBTC
 
 
 
@@ -70,19 +80,72 @@ const coinsServiceFactory = (): ICoinsService => {
    ********************************************************************************************** */
 
   /**
-   * Fires whenever there is new BTC's candlesticks data.
+   * Fires whenever there is new base asset's pricing data.
    * @param candlesticks
    */
   const __onWindowChanges = (candlesticks: ICompactCandlestickRecords): void => {
-    __btcPrice = candlesticks.close[candlesticks.id.length - 1];
+    __baseAssetPrice = candlesticks.close[candlesticks.id.length - 1];
   };
 
   /**
-   * Fires whenever the price of one of many symbols changes.
+   * Fires whenever the price for a symbol changes. It checks the current window and handles the
+   * changes accordingly for both, the quote and the base states.
+   * NOTE: the base state does not contain the base asset (Bitcoin).
+   * @param symbol
+   * @param newPrice
+   * @param currentTime
+   */
+  const __onPriceChanges = (symbol: string, newPrice: number, currentTime: number): void => {
+    // if the interval is active, update the latest price. Otherwise, append it
+    const lastIdx = __quote.statesBySymbol[symbol].window.length - 1;
+    if (isIntervalActive(
+      __quote.statesBySymbol[symbol].window[lastIdx]?.x,
+      __config.value.interval,
+      currentTime,
+    )) {
+      __quote.statesBySymbol[symbol].window[lastIdx].y = newPrice;
+      if (symbol !== ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset) {
+        __base.statesBySymbol[symbol].window[lastIdx].y = calculateSymbolPriceInBaseAsset(
+          newPrice,
+          __baseAssetPrice,
+          BASE_ASSET_PRICE_DP,
+        );
+      }
+    } else {
+      __quote.statesBySymbol[symbol].window.push({ x: currentTime, y: newPrice });
+      if (symbol !== ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset) {
+        __base.statesBySymbol[symbol].window.push({
+          x: currentTime,
+          y: calculateSymbolPriceInBaseAsset(newPrice, __baseAssetPrice, BASE_ASSET_PRICE_DP),
+        });
+      }
+    }
+
+    // make sure the size of the window is maintained
+    if (__quote.statesBySymbol[symbol].window.length > __config.value.size) {
+      __quote.statesBySymbol[symbol].window = __quote.statesBySymbol[symbol].window.slice(
+        -(__config.value.size),
+      );
+      if (symbol !== ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset) {
+        __base.statesBySymbol[symbol].window = __quote.statesBySymbol[symbol].window.slice(
+          -(__config.value.size),
+        );
+      }
+    }
+  };
+
+  /**
+   * Fires whenever the price of one of many symbols changes. It checks if the symbol/s are
+   * currently supported and updates the price.
    * @param data
    */
   const __onTickersChanges = (data: ITickerWebSocketMessage): void => {
-
+    const ts = Date.now();
+    Object.entries(data).forEach(([symbol, price]) => {
+      if (__quote.statesBySymbol[symbol]) {
+        __onPriceChanges(symbol, price, ts);
+      }
+    });
   };
 
 
@@ -95,7 +158,7 @@ const coinsServiceFactory = (): ICoinsService => {
 
   /**
    * This function is invoked a few minutes after the module is initialized. It checks all of the
-   * symbols to ensure they have received data. Otherwise, they will be removed.
+   * symbols to ensure they have received data. Otherwise, they are removed.
    */
   const __evaluateInitialization = (): void => {
     // @TODO
@@ -147,8 +210,8 @@ const coinsServiceFactory = (): ICoinsService => {
     const topSymbols = await __getTopSymbols();
 
     // initialize the state
-    __quoteState = buildPristineCoinsState(topSymbols);
-    __baseState = buildPristineCoinsState(
+    __quote = buildPristineCoinsState(topSymbols);
+    __base = buildPristineCoinsState(
       topSymbols.filter((symbol) => symbol !== ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset),
     );
 

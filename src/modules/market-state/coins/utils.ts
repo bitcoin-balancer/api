@@ -1,3 +1,4 @@
+import { calculateExchange } from 'bignumber-utils';
 import { WHITELISTED_SYMBOLS } from './data.js';
 import {
   ICoinsConfig,
@@ -64,6 +65,31 @@ const buildPristineCoinsStates = (): ICompactCoinsStates => ({
   base: { state: 0, statesBySymbol: { ETH: { state: 0 }, XRP: { state: 0 } } },
 });
 
+/**
+ * Calculates the price of a symbol in base asset. For example, say BTC is worth $63,666 while ETH
+ * is worth $2,728. The ETH price in base asset would be ~0.042848616 BTC.
+ * @param assetPrice
+ * @param baseAssetPrice
+ * @param decimalPlaces
+ * @returns number
+ */
+const calculateSymbolPriceInBaseAsset = (
+  assetPrice: number,
+  baseAssetPrice: number,
+  decimalPlaces: number,
+): number => calculateExchange(assetPrice, baseAssetPrice, { decimalPlaces });
+
+/**
+ * Verifies if the interval for a window item is still active.
+ * @param startTime
+ * @param duration
+ * @param currentTime
+ * @returns boolean
+ */
+const isIntervalActive = (startTime: number, duration: number, currentTime: number): boolean => (
+  typeof startTime === 'number' && (startTime + (duration * 1000)) < currentTime
+);
+
 
 
 
@@ -75,4 +101,6 @@ export {
   buildDefaultConfig,
   buildPristineCoinsState,
   buildPristineCoinsStates,
+  calculateSymbolPriceInBaseAsset,
+  isIntervalActive,
 };
