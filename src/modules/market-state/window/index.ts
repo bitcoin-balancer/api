@@ -5,7 +5,7 @@ import { APIErrorService } from '../../api-error/index.js';
 import { NotificationService, throttleableNotificationFactory } from '../../notification/index.js';
 import { ICompactCandlestickRecords, buildPristineCompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService } from '../../shared/exchange/index.js';
-import { calculateState as calculateStateUtils } from '../shared/utils.js';
+import { calculateStateForSeries } from '../shared/utils.js';
 import { buildDefaultConfig, buildPristineState, getConfigUpdatePostActions } from './utils.js';
 import { canConfigBeUpdated, validateInitialCandlesticks } from './validations.js';
 import { IWindowConfig, IWindowService, IWindowState } from './types.js';
@@ -71,7 +71,7 @@ const windowServiceFactory = (): IWindowService => {
    */
   const calculateState = (): IWindowState => {
     // calculate the state
-    const { mean, splits } = calculateStateUtils(
+    const { mean, splits } = calculateStateForSeries(
       __windowVal.close,
       __config.value.requirement,
       __config.value.strongRequirement,

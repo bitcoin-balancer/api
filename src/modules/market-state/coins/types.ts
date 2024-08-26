@@ -13,8 +13,8 @@ type ICoinsService = {
   config: ICoinsConfig;
 
   // state calculator
-  calculateState: () => ICoinsStateCalculationPayload;
-  getPristineState: () => ICompactCoinsStates;
+  calculateState: () => ICoinsStatesCalculationPayload;
+  getPristineState: () => ICoinsStates<ICompactCoinState>;
 
   // initializer
   initialize: () => Promise<void>;
@@ -66,68 +66,28 @@ type ICompactCoinState = {
 
 /**
  * Coins State
- * The object containing the full state for all the coins. Keep in mind this object a single
+ * The object containing the state for all the coins. Keep in mind this object a single
  * quote asset. One is needed for the quote asset (e.g. BTCUSDT) and one for the
  * base asset (e.g. ETHBTC).
  */
-type ICoinsState = {
+type ICoinsState<T> = {
   // the state mean of the coins
   state: IState;
 
   // the state for each of the coins
-  statesBySymbol: { [symbol:string]: ICoinState };
+  statesBySymbol: { [symbol:string]: T };
 };
 
 /**
- * Semi Compact Coins State
- * The object containing the semi compact state for all the coins. Keep in mind this object a single
- * quote asset. One is needed for the quote asset (e.g. BTCUSDT) and one for the
- * base asset (e.g. ETHBTC).
+ * Coins States
+ * The object containing the state for all the coins and assets (quote and base).
  */
-type ISemiCompactCoinsState = {
-  // the state mean of the coins
-  state: IState;
-
-  // the compact state for each of the coins
-  statesBySymbol: { [symbol:string]: ISemiCompactCoinState };
-};
-
-/**
- * Compact Coins State
- * The object containing the compact state for all the coins. Keep in mind this object a single
- * quote asset. One is needed for the quote asset (e.g. BTCUSDT) and one for the
- * base asset (e.g. ETHBTC).
- */
-type ICompactCoinsState = {
-  // the state mean of the coins
-  state: IState;
-
-  // the compact state for each of the coins
-  statesBySymbol: { [symbol:string]: ICompactCoinState };
-};
-
-/**
- * Semi Compact Coins States
- * The object containing the semi compact states for each of the assets (quote and base).
- */
-type ISemiCompactCoinsStates = {
+type ICoinsStates<T> = {
   // *USD*
-  quote: ISemiCompactCoinsState;
+  quote: ICoinsState<T>;
 
   // BTC
-  base: ISemiCompactCoinsState;
-};
-
-/**
- * Compact Coins States
- * The object containing the compact states for each of the assets (quote and base).
- */
-type ICompactCoinsStates = {
-  // *USD*
-  quote: ICompactCoinsState;
-
-  // BTC
-  base: ICompactCoinsState;
+  base: ICoinsState<T>;
 };
 
 /**
@@ -135,9 +95,9 @@ type ICompactCoinsStates = {
  * The object containing the state in both compact variants that is returned when calculating the
  * state.
  */
-type ICoinsStateCalculationPayload = {
-  compact: ICompactCoinsStates,
-  semiCompact: ISemiCompactCoinsStates,
+type ICoinsStatesCalculationPayload = {
+  compact: ICoinsStates<ICompactCoinState>;
+  semiCompact: ICoinsStates<ISemiCompactCoinState>;
 };
 
 
@@ -189,11 +149,8 @@ export type {
   ISemiCompactCoinState,
   ICompactCoinState,
   ICoinsState,
-  ISemiCompactCoinsState,
-  ICompactCoinsState,
-  ISemiCompactCoinsStates,
-  ICompactCoinsStates,
-  ICoinsStateCalculationPayload,
+  ICoinsStates,
+  ICoinsStatesCalculationPayload,
 
   // configuration
   ICoinsConfig,

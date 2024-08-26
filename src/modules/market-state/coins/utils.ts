@@ -3,9 +3,10 @@ import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { WHITELISTED_SYMBOLS } from './data.js';
 import {
   ICoinsConfig,
-  ICompactCoinsStates,
   ICoinState,
   ICoinsState,
+  ICompactCoinState,
+  ICoinsStates,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -58,7 +59,7 @@ const buildPristineCoinState = (): ICoinState => ({
  * @param topSymbols
  * @returns ICoinsState
  */
-const buildPristineCoinsState = (topSymbols: string[]): ICoinsState => ({
+const buildPristineCoinsState = (topSymbols: string[]): ICoinsState<ICoinState> => ({
   state: 0,
   statesBySymbol: topSymbols.reduce(
     (previous, current) => ({ ...previous, [current]: buildPristineCoinState() }),
@@ -70,7 +71,7 @@ const buildPristineCoinsState = (topSymbols: string[]): ICoinsState => ({
  * Builds the pristine state object for coins in both assets.
  * @returns ICompactCoinsStates
  */
-const buildPristineCoinsStates = (): ICompactCoinsStates => ({
+const buildPristineCoinsStates = (): ICoinsStates<ICompactCoinState> => ({
   quote: { state: 0, statesBySymbol: { BTC: { state: 0 }, ETH: { state: 0 }, XRP: { state: 0 } } },
   base: { state: 0, statesBySymbol: { ETH: { state: 0 }, XRP: { state: 0 } } },
 });

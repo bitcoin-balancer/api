@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { IState, IStateResult } from './types.js';
-import { calculateSplitState, calculateState, calculateStateMean } from './utils.js';
+import { calculateSplitState, calculateStateForSeries, calculateStateMean } from './utils.js';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
@@ -70,14 +70,14 @@ describe('calculateStateMean', () => {
 
 
 
-describe('calculateState', () => {
+describe('calculateStateForSeries', () => {
   test('can calculate the state of a list of numeric values', () => {
-    expect(calculateState(SERIES, 40, 55)).toStrictEqual(STATE_RESULT);
+    expect(calculateStateForSeries(SERIES, 40, 55)).toStrictEqual(STATE_RESULT);
   });
 
   test('can calculate the state of a list of split state items', () => {
     expect(
-      calculateState(
+      calculateStateForSeries(
         SERIES.map((value, i) => ({ x: Date.now() + (i * 60000), y: value })),
         40,
         55,

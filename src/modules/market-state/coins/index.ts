@@ -4,6 +4,8 @@ import { IRecordStore, recordStoreFactory } from '../../shared/record-store/inde
 import { APIErrorService } from '../../api-error/index.js';
 import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService, ITickerWebSocketMessage } from '../../shared/exchange/index.js';
+import { ISplitStateItem, IState, IStateResult } from '../shared/types.js';
+import { calculateStateForSeries, calculateStateMean } from '../shared/utils.js';
 import { WindowService } from '../window/index.js';
 import {
   isBaseAsset,
@@ -16,11 +18,13 @@ import {
 import { canConfigBeUpdated } from './validations.js';
 import {
   ICoinsService,
-  ICoinsConfig,
+  ICoinState,
+  ISemiCompactCoinState,
+  ICompactCoinState,
   ICoinsState,
-  ICompactCoinsStates,
-  ISemiCompactCoinsStates,
-  ICoinsStateCalculationPayload,
+  ICoinsStatesCalculationPayload,
+  ICoinsConfig,
+  ICoinsStates,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -56,8 +60,8 @@ const coinsServiceFactory = (): ICoinsService => {
   const BASE_ASSET_PRICE_DP = 12;
 
   // the state in both assets, '*USD*' & 'BTC'
-  let __quote: ICoinsState; // e.g. BTCUSDT
-  let __base: ICoinsState; // e.g. ETHBTC
+  let __quote: ICoinsState<ICoinState>; // e.g. BTCUSDT
+  let __base: ICoinsState<ICoinState>; // e.g. ETHBTC
 
 
 
@@ -68,21 +72,107 @@ const coinsServiceFactory = (): ICoinsService => {
    ********************************************************************************************** */
 
   /**
-   * Calculates the current state of the coins module and returns it in its compact and semi compact
-   * variants.
-   * @returns ICoinsStateCalculationPayload
+   * Calculates the state for a symbol's window.
+   * @param window
+   * @returns IStateResult
    */
-  const calculateState = (): ICoinsStateCalculationPayload => {
+  const __calculateStateForWindow = (window: ISplitStateItem[]): IStateResult => (
+    calculateStateForSeries(window, __config.value.requirement, __config.value.strongRequirement)
+  );
+
+  /**
+   * Calculates the state for a symbol, mutates the local copy and returns the quote and base
+   * states.
+   * @param symbol
+   * @returns { quoteResult: IStateResult, baseResult: IStateResult | undefined }
+   */
+  const __calculateAndUpdateStateForSymbol = (
+    symbol: string,
+  ): { quoteResult: IStateResult, baseResult: IStateResult | undefined } => {
+    // calculate the state for the quote pair
+    const quoteResult = __calculateStateForWindow(__quote.statesBySymbol[symbol].window);
+    __quote.statesBySymbol[symbol].state = quoteResult.mean;
+    __quote.statesBySymbol[symbol].splitStates = quoteResult.splits;
+
+    // calculate the state for the base pair (if possible)
+    let baseResult: IStateResult | undefined;
+    if (!isBaseAsset(symbol)) {
+      baseResult = __calculateStateForWindow(__base.statesBySymbol[symbol].window);
+      __base.statesBySymbol[symbol].state = baseResult.mean;
+      __base.statesBySymbol[symbol].splitStates = baseResult.splits;
+    }
+
+    // finally, return both states
+    return { quoteResult, baseResult };
+  };
+
+  /**
+   * Calculates the current state of the coins module and returns it in its compact and semi-compact
+   * variants.
+   * @returns ICoinsStatesCalculationPayload
+   */
+  const calculateState = (): ICoinsStatesCalculationPayload => {
+    // init values
+    const quoteStatesBySymbol: {
+      compact: { [symbol:string]: ICompactCoinState },
+      semiCompact: { [symbol:string]: ISemiCompactCoinState },
+    } = { compact: {}, semiCompact: {} };
+    const quoteStates: IState[] = [];
+    const baseStates: IState[] = [];
+
+    // calculate the state for each symbol and update the local copy
+    Object.keys(__quote.statesBySymbol).forEach((symbol) => {
+      // calculate the states for both pairs
+      const { quoteResult, baseResult } = __calculateAndUpdateStateForSymbol(symbol);
+
+      //
+      quoteStatesBySymbol.compact[symbol] = { state: quoteResult.mean };
+      quoteStatesBySymbol.semiCompact[symbol] = {
+        state: quoteResult.mean,
+        splitStates: quoteResult.splits,
+      };
+      quoteStates.push(quoteResult.mean);
+
+      //
+      if (baseResult) {
+        baseStates.push(baseResult.mean);
+      }
+    });
+
+    // calculate the top level states
+    __quote.state = calculateStateMean(quoteStates);
+    __base.state = calculateStateMean(baseStates);
 
     // finally, return the state in the required formats
-    return { compact: <ICompactCoinsStates>{}, semiCompact: <ISemiCompactCoinsStates>{} };
+    return {
+      compact: {
+        quote: {
+          state: __quote.state,
+          statesBySymbol: quoteStatesBySymbol.compact,
+        },
+        base: {
+          state: __base.state,
+          statesBySymbol: {},
+        },
+      },
+      semiCompact: {
+        quote: {
+          state: __quote.state,
+          statesBySymbol: quoteStatesBySymbol.semiCompact,
+        },
+        base: {
+          state: __base.state,
+          statesBySymbol: {},
+        },
+      },
+    };
   };
 
   /**
    * Builds the default coins states.
-   * @returns ICoinsStates
+   * @returns ICoinsStates<ICompactCoinState>
    */
-  const getPristineState = (): ICompactCoinsStates => buildPristineCoinsStates();
+  const getPristineState = (): ICoinsStates<ICompactCoinState> => buildPristineCoinsStates();
 
 
 
@@ -154,9 +244,9 @@ const coinsServiceFactory = (): ICoinsService => {
    */
   const __onTickersChanges = (data: ITickerWebSocketMessage): void => {
     const ts = Date.now();
-    Object.entries(data).forEach(([symbol, price]) => {
+    Object.keys(data).forEach((symbol) => {
       if (__quote.statesBySymbol[symbol]) {
-        __onPriceChanges(symbol, price, ts);
+        __onPriceChanges(symbol, data[symbol], ts);
       }
     });
   };
@@ -229,9 +319,7 @@ const coinsServiceFactory = (): ICoinsService => {
 
     // initialize the state
     __quote = buildPristineCoinsState(topSymbols);
-    __base = buildPristineCoinsState(
-      topSymbols.filter((symbol) => !isBaseAsset(symbol)),
-    );
+    __base = buildPristineCoinsState(topSymbols.filter((symbol) => !isBaseAsset(symbol)));
 
     // subscribe to the tickers stream
     __streamSub = ExchangeService.getTickersStream(topSymbols).subscribe(__onTickersChanges);
@@ -324,5 +412,8 @@ export {
   CoinsService,
 
   // types
-  type ICompactCoinsStates,
+  type ICoinState,
+  type ISemiCompactCoinState,
+  type ICompactCoinState,
+  type ICoinsStates,
 };

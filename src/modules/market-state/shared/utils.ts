@@ -153,7 +153,7 @@ const calculateStateMean = (states: IState[]): IState => {
  * @param strongRequirement
  * @returns IStateResult
  */
-const calculateState = (
+const calculateStateForSeries = (
   series: number[] | ISplitStateItem[],
   requirement: number,
   strongRequirement: number,
@@ -185,7 +185,7 @@ export {
   // state calculators
   calculateSplitState,
   calculateStateMean,
-  calculateState,
+  calculateStateForSeries,
 
   // ...
 };
