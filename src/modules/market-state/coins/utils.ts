@@ -1,4 +1,5 @@
 import { calculateExchange } from 'bignumber-utils';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { WHITELISTED_SYMBOLS } from './data.js';
 import {
   ICoinsConfig,
@@ -10,6 +11,15 @@ import {
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
+
+/**
+ * Verifies if a symbol belongs to the base asset (Bitcoin).
+ * @param symbol
+ * @returns boolean
+ */
+const isBaseAsset = (symbol: string): boolean => (
+  symbol === ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset
+);
 
 /**
  * Builds the default configuration object.
@@ -98,6 +108,7 @@ const isIntervalActive = (startTime: number, duration: number, currentTime: numb
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  isBaseAsset,
   buildDefaultConfig,
   buildPristineCoinsState,
   buildPristineCoinsStates,

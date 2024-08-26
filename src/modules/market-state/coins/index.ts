@@ -6,6 +6,7 @@ import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService, ITickerWebSocketMessage } from '../../shared/exchange/index.js';
 import { WindowService } from '../window/index.js';
 import {
+  isBaseAsset,
   buildDefaultConfig,
   buildPristineCoinsState,
   buildPristineCoinsStates,
@@ -19,7 +20,6 @@ import {
   ICoinsState,
   ICompactCoinsStates,
 } from './types.js';
-import { ENVIRONMENT } from '../../shared/environment/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -104,7 +104,7 @@ const coinsServiceFactory = (): ICoinsService => {
       currentTime,
     )) {
       __quote.statesBySymbol[symbol].window[lastIdx].y = newPrice;
-      if (symbol !== ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset) {
+      if (!isBaseAsset(symbol)) {
         __base.statesBySymbol[symbol].window[lastIdx].y = calculateSymbolPriceInBaseAsset(
           newPrice,
           __baseAssetPrice,
@@ -113,7 +113,7 @@ const coinsServiceFactory = (): ICoinsService => {
       }
     } else {
       __quote.statesBySymbol[symbol].window.push({ x: currentTime, y: newPrice });
-      if (symbol !== ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset) {
+      if (!isBaseAsset(symbol)) {
         __base.statesBySymbol[symbol].window.push({
           x: currentTime,
           y: calculateSymbolPriceInBaseAsset(newPrice, __baseAssetPrice, BASE_ASSET_PRICE_DP),
@@ -126,7 +126,7 @@ const coinsServiceFactory = (): ICoinsService => {
       __quote.statesBySymbol[symbol].window = __quote.statesBySymbol[symbol].window.slice(
         -(__config.value.size),
       );
-      if (symbol !== ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset) {
+      if (!isBaseAsset(symbol)) {
         __base.statesBySymbol[symbol].window = __quote.statesBySymbol[symbol].window.slice(
           -(__config.value.size),
         );
@@ -217,7 +217,7 @@ const coinsServiceFactory = (): ICoinsService => {
     // initialize the state
     __quote = buildPristineCoinsState(topSymbols);
     __base = buildPristineCoinsState(
-      topSymbols.filter((symbol) => symbol !== ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset),
+      topSymbols.filter((symbol) => !isBaseAsset(symbol)),
     );
 
     // subscribe to the tickers stream
