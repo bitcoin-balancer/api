@@ -127,7 +127,7 @@ const coinsServiceFactory = (): ICoinsService => {
         -(__config.value.size),
       );
       if (!isBaseAsset(symbol)) {
-        __base.statesBySymbol[symbol].window = __quote.statesBySymbol[symbol].window.slice(
+        __base.statesBySymbol[symbol].window = __base.statesBySymbol[symbol].window.slice(
           -(__config.value.size),
         );
       }
