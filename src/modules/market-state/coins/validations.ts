@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
 import {
   arrayValid,
   integerValid,
@@ -7,11 +8,48 @@ import {
   objectValid,
   symbolValid,
 } from '../../shared/validations/index.js';
-import { ICoinsConfig } from './types.js';
+import {
+  ICoinsConfig,
+  ICoinState,
+  ICoinStateAsset,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
+
+/**
+ * Ensures the coin state asset is valid.
+ * @param asset
+ * @throws
+ * - 23508: if the state asset is invalid
+ */
+const validateStateAsset = (asset: ICoinStateAsset): void => {
+  if (asset !== 'base' && asset !== 'quote') {
+    throw new Error(encodeError(`The state asset '${asset}' is not supported.`, 23508));
+  }
+};
+
+/**
+ * Ensures the state asset and the symbol are val
+ * @param symbol
+ * @param asset
+ * @param statesBySymbol
+ * @throws
+ * - 23508: if the state asset is invalid
+ * - 23510: if the symbol is not in the asset's statesBySymbol object
+ */
+const validateSymbol = (
+  symbol: string,
+  asset: ICoinStateAsset,
+  statesBySymbol: { [symbol:string]: ICoinState },
+): void => {
+  validateStateAsset(asset);
+  if (!statesBySymbol[symbol]) {
+    throw new Error(encodeError(`The symbol '${asset}' is not listed in the ${asset}'s symbols.`, 23510));
+  }
+};
+
 
 /**
  * Ensures the window configuration object can be updated.
@@ -25,6 +63,7 @@ import { ICoinsConfig } from './types.js';
  * - 23505: if the whitelisted symbols is an invalid array
  * - 23506: if any of the whitelisted symbols is invalid
  * - 23507: if the limit is invalid
+ * - 23509: if the whitelist doesn't include the base asset
  */
 const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
   if (!objectValid(newConfig)) {
@@ -55,6 +94,9 @@ const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
       throw new Error(encodeError(`The whitelisted symbol '${symbol}' is invalid as it must only contain uppercased letters and/or numbers.`, 23506));
     }
   });
+  if (!newConfig.whitelistedSymbols.includes(ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset)) {
+    throw new Error(encodeError(`The symbols whitelist does not include the base asset '${ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset}'.`, 23509));
+  }
 };
 
 
@@ -65,5 +107,7 @@ const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  validateStateAsset,
+  validateSymbol,
   canConfigBeUpdated,
 };

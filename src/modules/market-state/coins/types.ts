@@ -12,6 +12,9 @@ type ICoinsService = {
   // properties
   config: ICoinsConfig;
 
+  // retrievers
+  getState: (symbol: string, asset: ICoinStateAsset) => ICoinState;
+
   // state calculator
   calculateState: () => ICoinsStatesCalculationPayload;
   getPristineState: () => ICoinsStates<ICompactCoinState>;
@@ -31,6 +34,12 @@ type ICoinsService = {
 /* ************************************************************************************************
  *                                             STATE                                              *
  ************************************************************************************************ */
+
+/**
+ * Coin State Asset
+ * The state of a coin could be based on the quote (e.g. ETHUSDT) or the base (e.g. ETHBTC) asset.
+ */
+type ICoinStateAsset = 'quote' | 'base';
 
 /**
  * Coin State
@@ -154,6 +163,7 @@ export type {
   ICoinsService,
 
   // state
+  ICoinStateAsset,
   ICoinState,
   ISemiCompactCoinState,
   ICompactCoinState,

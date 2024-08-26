@@ -16,9 +16,10 @@ import {
   isIntervalActive,
   buildPristineSplitStates,
 } from './utils.js';
-import { canConfigBeUpdated } from './validations.js';
+import { validateStateAsset, validateSymbol, canConfigBeUpdated } from './validations.js';
 import {
   ICoinsService,
+  ICoinStateAsset,
   ICoinState,
   ISemiCompactCoinState,
   ICompactCoinState,
@@ -65,6 +66,31 @@ const coinsServiceFactory = (): ICoinsService => {
   let __quote: ICoinsState<ICoinState>; // e.g. BTCUSDT
   let __base: ICoinsState<ICoinState>; // e.g. ETHBTC
 
+
+
+
+
+  /* **********************************************************************************************
+   *                                         RETRIEVERS                                           *
+   ********************************************************************************************** */
+
+  /**
+   * Retrieves the state object for a coin based on an asset.
+   * @param symbol
+   * @param asset
+   * @returns ICoinState
+   * @throws
+   * - 23508: if the state asset is invalid
+   * - 23510: if the symbol is not in the asset's statesBySymbol object
+   */
+  const getState = (symbol: string, asset: ICoinStateAsset): ICoinState => {
+    validateSymbol(
+      symbol,
+      asset,
+      asset === 'quote' ? __quote.statesBySymbol : __base.statesBySymbol,
+    );
+    return asset === 'quote' ? __quote.statesBySymbol[symbol] : __base.statesBySymbol[symbol];
+  };
 
 
 
@@ -359,6 +385,7 @@ const coinsServiceFactory = (): ICoinsService => {
    * - 23505: if the whitelisted symbols is an invalid array
    * - 23506: if any of the whitelisted symbols is invalid
    * - 23507: if the limit is invalid
+   * - 23509: if the whitelist doesn't include the base asset
    */
   const updateConfiguration = async (newConfig: ICoinsConfig): Promise<void> => {
     // validate the request
@@ -388,6 +415,9 @@ const coinsServiceFactory = (): ICoinsService => {
     get config() {
       return __config.value;
     },
+
+    // retrievers
+    getState,
 
     // state calculator
     calculateState,
