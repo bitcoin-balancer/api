@@ -94,7 +94,7 @@ const coinsServiceFactory = (): ICoinsService => {
   };
 
   /**
-   * Retrieves the semi compact state for an asset.
+   * Retrieves the semi-compact state for an asset.
    * @param asset
    * @throws
    * - 23508: if the state asset is invalid
@@ -469,6 +469,7 @@ export {
   CoinsService,
 
   // types
+  type ICoinStateAsset,
   type ICoinState,
   type ISemiCompactCoinState,
   type ICompactCoinState,

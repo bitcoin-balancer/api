@@ -5,7 +5,7 @@ import { checkRequest } from '../shared/request-guard/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { WindowService } from './window/index.js';
 
-import { CoinsService } from './coins/index.js';
+import { CoinsService, ICoinStateAsset } from './coins/index.js';
 
 const MarketStateRouter = Router();
 
@@ -64,6 +64,45 @@ MarketStateRouter.route('/window/config').put(mediumRiskLimit, async (req: Reque
 /* ************************************************************************************************
  *                                             COINS                                              *
  ************************************************************************************************ */
+
+/**
+ * Retrieves the state object for a coin based on an asset.
+ * @returns IAPIResponse<ICoinState>
+ * @requirements
+ * - authority: 1
+ */
+MarketStateRouter.route('/coins/state/:asset/:symbol').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+    res.json(buildResponse(CoinsService.getStateForSymbol(
+      req.params.symbol,
+      <ICoinStateAsset>req.params.asset,
+    )));
+  } catch (e) {
+    APIErrorService.save('MarketStateRouter.get.coins.state.asset.symbol', e, reqUid, req.ip, req.params);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
+ * Retrieves the semi-compact state for an asset.
+ * @returns IAPIResponse<ICoinsState<ISemiCompactCoinState>>
+ * @requirements
+ * - authority: 1
+ */
+MarketStateRouter.route('/coins/state/:asset').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+    res.json(buildResponse(CoinsService.getSemiCompactStateForAsset(
+      <ICoinStateAsset>req.params.asset,
+    )));
+  } catch (e) {
+    APIErrorService.save('MarketStateRouter.get.coins.state.asset', e, reqUid, req.ip, req.params);
+    res.json(buildResponse(undefined, e));
+  }
+});
 
 /**
  * Retrieves the coins module's configuration.
