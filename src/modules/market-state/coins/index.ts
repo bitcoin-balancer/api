@@ -401,6 +401,7 @@ const coinsServiceFactory = (): ICoinsService => {
    * - 23506: if any of the whitelisted symbols is invalid
    * - 23507: if the limit is invalid
    * - 23509: if the whitelist doesn't include the base asset
+   * - 23511: if the requirement is equals or larger than the strongRequirement
    */
   const updateConfiguration = async (newConfig: ICoinsConfig): Promise<void> => {
     // validate the request

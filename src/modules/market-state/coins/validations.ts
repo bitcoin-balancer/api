@@ -64,6 +64,7 @@ const validateSymbol = (
  * - 23506: if any of the whitelisted symbols is invalid
  * - 23507: if the limit is invalid
  * - 23509: if the whitelist doesn't include the base asset
+ * - 23511: if the requirement is equals or larger than the strongRequirement
  */
 const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
   if (!objectValid(newConfig)) {
@@ -81,6 +82,9 @@ const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
   }
   if (!numberValid(newConfig.strongRequirement, 0.01, 100)) {
     throw new Error(encodeError(`The strongRequirement '${newConfig.strongRequirement}' is invalid as it must be a valid number ranging 1 and 100.`, 23504));
+  }
+  if (newConfig.requirement >= newConfig.strongRequirement) {
+    throw new Error(encodeError(`The requirement '${newConfig.requirement}' must be less than the strong requirement '${newConfig.strongRequirement}'.`, 23511));
   }
   if (!integerValid(newConfig.limit, 1, 24)) {
     throw new Error(encodeError(`The limit '${newConfig.limit}' is invalid as it must be a valid integer ranging 1 and 24.`, 23507));

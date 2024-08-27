@@ -501,6 +501,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **23508:** `The state asset '${asset}' is not supported.`
 - **23509:** `The symbols whitelist does not include the base asset '${ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset}'.`
 - **23510:** `The symbol '${asset}' is not listed in the ${asset}'s symbols.`
+- **23511:** `The requirement '${newConfig.requirement}' must be less than the strong requirement '${newConfig.strongRequirement}'.`
 
 
 
