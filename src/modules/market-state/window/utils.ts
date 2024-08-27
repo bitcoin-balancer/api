@@ -1,4 +1,5 @@
 import { buildPristineCompactCandlestickRecords } from '../../shared/candlestick/index.js';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { IWindowConfig, IWindowState } from './types.js';
 
 /* ************************************************************************************************
@@ -6,11 +7,25 @@ import { IWindowConfig, IWindowState } from './types.js';
  ************************************************************************************************ */
 
 /**
+ * Retrieves the default re-fetch frequency based on the exchange set for the window and their
+ * rate limitting.
+ * @returns number
+ */
+const __getDefaultRefetchFrequency = (): number => {
+  switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.window) {
+    case 'kraken':
+      return 10;
+    default:
+      return 2.5;
+  }
+};
+
+/**
  * Builds the default configuration object.
  * @returns IWindowConfig
  */
 const buildDefaultConfig = (): IWindowConfig => ({
-  refetchFrequency: 2.5,
+  refetchFrequency: __getDefaultRefetchFrequency(),
   size: 128,
   interval: '15m',
   requirement: 0.025,
