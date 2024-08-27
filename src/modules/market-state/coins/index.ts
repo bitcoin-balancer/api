@@ -1,7 +1,9 @@
 import { Subscription } from 'rxjs';
+import { extractMessage } from 'error-message-utils';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
+import { NotificationService } from '../../notification/index.js';
 import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService, ITickerWebSocketMessage } from '../../shared/exchange/index.js';
 import { ISplitStateItem, IState, IStateResult } from '../shared/types.js';
@@ -415,7 +417,9 @@ const coinsServiceFactory = (): ICoinsService => {
       await teardown();
       await initialize();
     } catch (e) {
-      APIErrorService.save('CoinsService.updateConfiguration.postActions', e);
+      const msg = extractMessage(e);
+      APIErrorService.save('CoinsService.updateConfiguration.postActions', msg);
+      NotificationService.coinsReInitError(msg);
     }
   };
 

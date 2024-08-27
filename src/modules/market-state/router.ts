@@ -140,7 +140,7 @@ MarketStateRouter.route('/coins/config').put(mediumRiskLimit, async (req: Reques
       req.body,
       req.get('otp-token') || '',
     );
-    await WindowService.updateConfiguration(req.body.newConfig);
+    await CoinsService.updateConfiguration(req.body.newConfig);
     res.json(buildResponse());
   } catch (e) {
     APIErrorService.save('MarketStateRouter.put.coins.config', e, reqUid, req.ip, req.body);

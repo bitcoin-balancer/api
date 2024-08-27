@@ -245,6 +245,24 @@ const notificationServiceFactory = (): INotificationService => {
 
 
   /* **********************************************************************************************
+   *                                            COINS                                             *
+   ********************************************************************************************** */
+
+  /**
+   * Broadcasts a message notifying users the Coins module could not be re-initialized.
+   * @param error
+   */
+  const coinsReInitError = (error: string): void => __addToQueue({
+    sender: 'COINS',
+    title: 'Error during re-initialization',
+    description: `${error} - Please restart Balancer in order to fix the issue.`,
+  });
+
+
+
+
+
+  /* **********************************************************************************************
    *                                          INITIALIZER                                         *
    ********************************************************************************************** */
 
@@ -305,6 +323,9 @@ const notificationServiceFactory = (): INotificationService => {
     // market state
     marketStateError,
     windowState,
+
+    // coins
+    coinsReInitError,
 
     // initializer
     initialize,
