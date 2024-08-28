@@ -63,7 +63,7 @@ const coinsServiceFactory = (): ICoinsService => {
 
   // the number of decimal places that will be used to calculate the price in base asset
   // e.g. ETHBTC, XRPBTC, etc ... this is needed because some coins are worth less than 1 satoshi
-  const BASE_ASSET_PRICE_DP = 12;
+  const BASE_ASSET_PRICE_DP = 16;
 
   // the state in both assets, '*USD*' & 'BTC'
   let __quote: ICoinsState<ICoinState>; // e.g. BTCUSDT
