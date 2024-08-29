@@ -1,6 +1,7 @@
+import { Observable } from 'rxjs';
 import { IRecord } from '../../types.js';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
-import { ICandlestickInterval } from '../types.js';
+import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -21,6 +22,7 @@ type IBitfinexService = {
     startTime?: number,
   ) => Promise<ICompactCandlestickRecords>;
   getTopSymbols: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
+  getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 };
 
 
@@ -54,7 +56,7 @@ type IBitfinexWebSocketEvent = 'error' | 'info' | 'subscribe' | 'subscribed';
  * The object sent by the stream when the connection is established.
  */
 type IBitfinexInfoWebSocketMessage = {
-  event: IBitfinexWebSocketEvent,
+  event: 'info',
   version: number; // e.g. 2
   serverId: string; // e.g. '517720c6-d168-4be6-b720-f44c7eb9877e'
   platform: IRecord<unknown>; // e.g. { status: 1 }
@@ -167,7 +169,7 @@ type IBitfinexTickerWebSocketSubscription = {
  * The object sent by the stream when a subscription to a channel is successful.
  */
 type IBitfinexTickerSubscriptionMessage = {
-  event: IBitfinexWebSocketEvent;
+  event: 'subscribed';
   channel: IBitfinexWebSocketChannel;
   chanId: IBitfinexChannelID; // e.g. 662780
   symbol: string; // e.g. 'tBTCUSD'
@@ -217,4 +219,5 @@ export type {
   // ticker
   IBitfinexCoinTicker,
   IBitfinexTickerWebSocketSubscription,
+  IBitfinexTickerWebSocketMessageData,
 };

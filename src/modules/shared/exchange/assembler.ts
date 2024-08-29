@@ -48,6 +48,8 @@ const assembleGetTickersStream = (): IGetTickersStream => {
   switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.coins) {
     case 'binance':
       return BinanceService.getTickersStream;
+    case 'bitfinex':
+      return BitfinexService.getTickersStream;
     default:
       throw new Error(`The function assembleGetTickersStream could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`);
   }

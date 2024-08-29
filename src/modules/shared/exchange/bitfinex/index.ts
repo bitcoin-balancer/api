@@ -1,15 +1,25 @@
+import { Observable } from 'rxjs';
 import { sendGET } from 'fetch-request-node';
 import { ENVIRONMENT } from '../../environment/index.js';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
-import { ICandlestickInterval } from '../types.js';
-import { buildGetCandlesticksURL, buildWhitelist, tickersSortFunc } from './utils.js';
+import { websocketFactory } from '../../websocket/index.js';
+import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
+import {
+  buildGetCandlesticksURL,
+  buildSubscriptionForTicker,
+  buildTopPairsObject,
+  buildWhitelist,
+  tickersSortFunc,
+} from './utils.js';
 import { validateCandlesticksResponse, validateTickersResponse } from './validations.js';
-import { transformCandlesticks } from './transformers.js';
+import { transformCandlesticks, transformTicker } from './transformers.js';
 import {
   IBitfinexCoinTicker,
   IBitfinexService,
+  IBitfinexWebSocketMessage,
   ISupportedCandlestickIntervals,
 } from './types.js';
+
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -133,6 +143,45 @@ const bitfinexServiceFactory = (): IBitfinexService => {
     return coins.slice(0, limit);
   };
 
+  /**
+   * Retrieves the tickers' stream for a list of topSymbols.
+   * @param topSymbols
+   * @returns Observable<ITickerWebSocketMessage>
+   */
+  const getTickersStream = (topSymbols: string[]): Observable<ITickerWebSocketMessage> => (
+    new Observable<ITickerWebSocketMessage>((subscriber) => {
+      // init values
+      const topPairs = buildTopPairsObject(topSymbols, 'USD');
+      const channels: { [id: string]: string } = {};
+
+      // instantiate the websocket
+      const ws = websocketFactory<IBitfinexWebSocketMessage>(
+        'COINS',
+        'wss://api-pub.bitfinex.com/ws/2',
+        (msg) => {
+          // handle the message accordingly
+          // - if the msg is an array and the second item is a tuple, it is a ticker
+          // - if the msg's event is 'subscribed', a connection to a symbol has been established
+          if (msg) {
+            if (Array.isArray(msg)) {
+              if (Array.isArray(msg[1])) {
+                subscriber.next(transformTicker(channels[msg[0]], msg[1]));
+              }
+            } else if (msg.event === 'subscribed') {
+              channels[msg.chanId] = topPairs[msg.symbol];
+            }
+          }
+        },
+        (__ws) => Object.keys(topPairs).forEach(
+          (symbol) => __ws.send(buildSubscriptionForTicker(symbol)),
+        ),
+      );
+      return function unsubscribe() {
+        ws.off();
+      };
+    })
+  );
+
 
 
 
@@ -147,6 +196,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
     // market data
     getCandlesticks,
     getTopSymbols,
+    getTickersStream,
   });
 };
 
