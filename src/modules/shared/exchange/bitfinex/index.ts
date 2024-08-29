@@ -158,10 +158,12 @@ const bitfinexServiceFactory = (): IBitfinexService => {
       const ws = websocketFactory<IBitfinexWebSocketMessage>(
         'COINS',
         'wss://api-pub.bitfinex.com/ws/2',
+        /**
+         * onMessage: handle messages appropriately:
+         * - if the msg is an array and the second item is a tuple, it is a ticker
+         * - if the msg's event is 'subscribed', a connection to a symbol has been established
+         */
         (msg) => {
-          // handle the message accordingly
-          // - if the msg is an array and the second item is a tuple, it is a ticker
-          // - if the msg's event is 'subscribed', a connection to a symbol has been established
           if (msg) {
             if (Array.isArray(msg)) {
               if (Array.isArray(msg[1])) {
@@ -172,6 +174,10 @@ const bitfinexServiceFactory = (): IBitfinexService => {
             }
           }
         },
+
+        /**
+         * onOpen: subscribe to every symbol's stream
+         */
         (__ws) => Object.keys(topPairs).forEach(
           (symbol) => __ws.send(buildSubscriptionForTicker(symbol)),
         ),
