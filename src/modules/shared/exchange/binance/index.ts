@@ -69,6 +69,12 @@ const binanceServiceFactory = (): IBinanceService => {
   };
 
   /**
+   * Order Book
+   */
+
+  // ...
+
+  /**
    * Tickers
    */
 
@@ -143,6 +149,7 @@ const binanceServiceFactory = (): IBinanceService => {
       };
     })
   );
+
 
 
 

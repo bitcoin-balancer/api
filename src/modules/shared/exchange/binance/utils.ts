@@ -29,7 +29,17 @@ const buildGetCandlesticksURL = (
 };
 
 /**
- * builds the whitelist object from a list of symbols.
+ * Sorts the tickers by volume descendingly.
+ * @param a
+ * @param b
+ * @returns number
+ */
+const tickersSortFunc = (a: IBinanceCoinTicker, b: IBinanceCoinTicker): number => (
+  Number(b.quoteVolume) - Number(a.quoteVolume)
+);
+
+/**
+ * Builds the whitelist object from a list of symbols.
  * @param whitelistedSymbols
  * @param quoteAsset
  * @returns IRecord<string>
@@ -39,16 +49,6 @@ const buildWhitelist = (whitelistedSymbols: string[], quoteAsset: string): IReco
     (previous, current) => ({ ...previous, [`${current}${quoteAsset}`]: current }),
     {},
   )
-);
-
-/**
- * Sorts the tickers by volume descendingly.
- * @param a
- * @param b
- * @returns number
- */
-const tickersSortFunc = (a: IBinanceCoinTicker, b: IBinanceCoinTicker): number => (
-  Number(b.quoteVolume) - Number(a.quoteVolume)
 );
 
 /**
@@ -73,7 +73,7 @@ const buildTopPairsObject = (topSymbols: string[]): IRecord<string> => topSymbol
  ************************************************************************************************ */
 export {
   buildGetCandlesticksURL,
-  buildWhitelist,
   tickersSortFunc,
+  buildWhitelist,
   buildTopPairsObject,
 };

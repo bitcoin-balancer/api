@@ -23,6 +23,21 @@ const validateCandlesticksResponse = (res: IRequestResponse): void => {
   }
 };
 
+/**
+ * Ensures the ticker's endpoint returned a valid list of tickers.
+ * @param res
+ * @throws
+ * - 12500: if the HTTP response code is not in the acceptedCodes
+ * - 14501: if the response doesn't include a valid series of tickers
+ */
+const validateTickersResponse = (res: IRequestResponse): void => {
+  validateResponse(res);
+  if (!arrayValid(res.data)) {
+    console.log(res);
+    throw new Error(encodeError('Bitfinex returned an invalid list of tickers.', 14501));
+  }
+};
+
 
 
 
@@ -32,4 +47,5 @@ const validateCandlesticksResponse = (res: IRequestResponse): void => {
  ************************************************************************************************ */
 export {
   validateCandlesticksResponse,
+  validateTickersResponse,
 };

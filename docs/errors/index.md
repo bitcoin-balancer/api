@@ -362,7 +362,9 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 ### `validations.ts`
 
 - **14500:** `Bitfinex returned an invalid list of candlesticks.`
-- **14501:** ``
+- **14501:** `Bitfinex returned an invalid list of tickers.`
+- **14502:** ``
+- **14503:** ``
 
 
 

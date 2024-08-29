@@ -33,6 +33,8 @@ const assembleGetTopSymbols = (): IGetTopSymbols => {
   switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.coins) {
     case 'binance':
       return BinanceService.getTopSymbols;
+    case 'bitfinex':
+      return BitfinexService.getTopSymbols;
     default:
       throw new Error(`The function assembleGetTopSymbols could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`);
   }
