@@ -1,10 +1,15 @@
 import { sendGET } from 'fetch-request-node';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import { ICandlestickInterval } from '../types.js';
-import { buildGetCandlesticksURL } from './utils.js';
-import { validateCandlesticksResponse } from './validations.js';
+import { buildGetCandlesticksURL, buildWhitelist, tickersSortFunc } from './utils.js';
+import { validateCandlesticksResponse, validateTickersResponse } from './validations.js';
 import { transformCandlesticks } from './transformers.js';
-import { IKrakenService, ISupportedCandlestickIntervals } from './types.js';
+import {
+  IKrakenCoinTicker,
+  IKrakenCoinTickers,
+  IKrakenService,
+  ISupportedCandlestickIntervals,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -43,6 +48,10 @@ const krakenServiceFactory = (): IKrakenService => {
    ********************************************************************************************** */
 
   /**
+   * Candlesticks
+   */
+
+  /**
    * Retrieves the candlestick records from Kraken's API.
    * @param interval
    * @param limit
@@ -70,6 +79,70 @@ const krakenServiceFactory = (): IKrakenService => {
     return transformCandlesticks(res.data.result.XXBTZUSD.slice(-(limit)));
   };
 
+  /**
+   * Order Book
+   */
+
+  // ...
+
+  /**
+   * Tickers
+   */
+
+  /**
+   * Retrieves the dollar-based tickers ordered by volume descendingly from Kraken's API.
+   * @returns Promise<[string, IKrakenCoinTicker][]>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 15500: if the response is not an object or it is missing the error property
+   * - 15501: if the response contains errors
+   * - 15502: if the response does not contain a valid result property
+   * - 15504: if the response doesn't include a valid series of tickers
+   */
+  const __getTickers = async (): Promise<[string, IKrakenCoinTicker][]> => {
+    const res = await sendGET(
+      'https://api.kraken.com/0/public/Ticker',
+      { skipStatusCodeValidation: true },
+    );
+    validateTickersResponse(res);
+    const tickers = Object.entries(<IKrakenCoinTickers>res.data.result);
+    tickers.sort(tickersSortFunc);
+    return tickers;
+  };
+
+  /**
+   * Retrieves the top coins by trading volume based on a whitelist.
+   * @param whitelistedSymbols
+   * @param limit
+   * @returns Promise<string[]>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 15500: if the response is not an object or it is missing the error property
+   * - 15501: if the response contains errors
+   * - 15502: if the response does not contain a valid result property
+   * - 15504: if the response doesn't include a valid series of tickers
+   */
+  const getTopSymbols = async (whitelistedSymbols: string[], limit: number): Promise<string[]> => {
+    // init values
+    const whitelist = buildWhitelist(whitelistedSymbols);
+    const coins = new Set<string>();
+
+    // retrieve the tickers
+    const tickers = await __getTickers();
+
+    // iterate until the optimal number of coins have been selected
+    let i = 0;
+    while (i < tickers.length && coins.size < limit) {
+      if (whitelist[tickers[i][0]]) {
+        coins.add(whitelist[tickers[i][0]]);
+      }
+      i += 1;
+    }
+
+    // return only the top based on their volume
+    return Array.from(coins).slice(0, limit);
+  };
+
 
 
 
@@ -83,6 +156,7 @@ const krakenServiceFactory = (): IKrakenService => {
 
     // market data
     getCandlesticks,
+    getTopSymbols,
   });
 };
 

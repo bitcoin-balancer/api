@@ -35,6 +35,8 @@ const assembleGetTopSymbols = (): IGetTopSymbols => {
       return BinanceService.getTopSymbols;
     case 'bitfinex':
       return BitfinexService.getTopSymbols;
+    case 'kraken':
+      return KrakenService.getTopSymbols;
     default:
       throw new Error(`The function assembleGetTopSymbols could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`);
   }

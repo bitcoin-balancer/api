@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
 import { IRequestResponse } from 'fetch-request-node';
+import { arrayValid, objectValid } from '../../validations/index.js';
 import { validateResponse } from '../validations.js';
 import { IKrakenAPIResponse } from './types.js';
-import { arrayValid, objectValid } from '../../validations/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -51,6 +51,25 @@ const validateCandlesticksResponse = (res: IRequestResponse, resultKey: string):
   }
 };
 
+/**
+ * Ensures the ticker's endpoint returned a valid list of tickers.
+ * @param res
+ * @throws
+ * - 12500: if the HTTP response code is not in the acceptedCodes
+ * - 15500: if the response is not an object or it is missing the error property
+ * - 15501: if the response contains errors
+ * - 15502: if the response does not contain a valid result property
+ * - 15504: if the response doesn't include a valid series of tickers
+ */
+const validateTickersResponse = (res: IRequestResponse): void => {
+  validateResponse(res);
+  validateAPIResponse(res.data);
+  if (!arrayValid(Object.keys(res.data.result))) {
+    console.log(res);
+    throw new Error(encodeError('Kraken returned an invalid list of tickers.', 15504));
+  }
+};
+
 
 
 
@@ -60,4 +79,5 @@ const validateCandlesticksResponse = (res: IRequestResponse, resultKey: string):
  ************************************************************************************************ */
 export {
   validateCandlesticksResponse,
+  validateTickersResponse,
 };

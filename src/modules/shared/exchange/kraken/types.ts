@@ -19,6 +19,7 @@ type IKrakenService = {
     limit: number,
     startTime?: number,
   ) => Promise<ICompactCandlestickRecords>;
+  getTopSymbols: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
 };
 
 
