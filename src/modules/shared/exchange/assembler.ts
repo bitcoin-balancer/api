@@ -52,6 +52,8 @@ const assembleGetTickersStream = (): IGetTickersStream => {
       return BinanceService.getTickersStream;
     case 'bitfinex':
       return BitfinexService.getTickersStream;
+    case 'kraken':
+      return KrakenService.getTickersStream;
     default:
       throw new Error(`The function assembleGetTickersStream could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`);
   }

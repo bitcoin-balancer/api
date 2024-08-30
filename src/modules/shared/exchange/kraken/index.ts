@@ -1,13 +1,22 @@
+import { Observable } from 'rxjs';
 import { sendGET } from 'fetch-request-node';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
-import { ICandlestickInterval } from '../types.js';
-import { buildGetCandlesticksURL, buildWhitelist, tickersSortFunc } from './utils.js';
+import { websocketFactory } from '../../websocket/index.js';
+import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
+import {
+  buildGetCandlesticksURL,
+  buildTopPairsObject,
+  buildWhitelist,
+  tickersSortFunc,
+  buildSubscriptionForTickers,
+} from './utils.js';
 import { validateCandlesticksResponse, validateTickersResponse } from './validations.js';
-import { transformCandlesticks } from './transformers.js';
+import { transformCandlesticks, transformTicker } from './transformers.js';
 import {
   IKrakenCoinTicker,
   IKrakenCoinTickers,
   IKrakenService,
+  IKrakenWebSocketMessage,
   ISupportedCandlestickIntervals,
 } from './types.js';
 
@@ -143,6 +152,41 @@ const krakenServiceFactory = (): IKrakenService => {
     return Array.from(coins).slice(0, limit);
   };
 
+  /**
+   * Retrieves the tickers' stream for a list of topSymbols.
+   * @param topSymbols
+   * @returns Observable<ITickerWebSocketMessage>
+   */
+  const getTickersStream = (topSymbols: string[]): Observable<ITickerWebSocketMessage> => (
+    new Observable<ITickerWebSocketMessage>((subscriber) => {
+      // init values
+      const topPairs = buildTopPairsObject(topSymbols, 'USD');
+
+      // instantiate the websocket
+      const ws = websocketFactory<IKrakenWebSocketMessage>(
+        'COINS',
+        'wss://ws.kraken.com/v2',
+
+        /**
+         * onMessage: emmit the data if the message is a ticker update or snapshot
+         * - ...
+         */
+        (msg) => {
+          if (msg && msg.channel === 'ticker') {
+            subscriber.next(transformTicker(topPairs[msg.data[0].symbol], msg.data[0]));
+          }
+        },
+
+        /**
+         * onOpen: subscribe to every symbol's stream
+         */
+        (__ws) => __ws.send(buildSubscriptionForTickers(Object.keys(topPairs))),
+      );
+      return function unsubscribe() {
+        ws.off();
+      };
+    })
+  );
 
 
 
@@ -157,6 +201,7 @@ const krakenServiceFactory = (): IKrakenService => {
     // market data
     getCandlesticks,
     getTopSymbols,
+    getTickersStream,
   });
 };
 

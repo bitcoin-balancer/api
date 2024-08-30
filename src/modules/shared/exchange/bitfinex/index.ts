@@ -158,6 +158,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
       const ws = websocketFactory<IBitfinexWebSocketMessage>(
         'COINS',
         'wss://api-pub.bitfinex.com/ws/2',
+
         /**
          * onMessage: handle messages appropriately:
          * - if the msg is an array and the second item is a tuple, it is a ticker

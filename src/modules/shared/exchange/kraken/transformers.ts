@@ -3,7 +3,8 @@ import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
 } from '../../candlestick/index.js';
-import { IKrakenCandlestick } from './types.js';
+import { ITickerWebSocketMessage } from '../types.js';
+import { IKrakenCandlestick, IKrakenTickerWebSocketMessageData } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -29,6 +30,18 @@ const transformCandlesticks = (source: IKrakenCandlestick[]): ICompactCandlestic
 );
 
 
+/**
+ * Transforms the ticker message received through the WebSocket into the general message type.
+ * @param symbol
+ * @param ticker
+ * @returns ITickerWebSocketMessage
+ */
+const transformTicker = (
+  symbol: string,
+  ticker: IKrakenTickerWebSocketMessageData,
+): ITickerWebSocketMessage => ({ [symbol]: ticker.last });
+
+
 
 
 
@@ -37,4 +50,5 @@ const transformCandlesticks = (source: IKrakenCandlestick[]): ICompactCandlestic
  ************************************************************************************************ */
 export {
   transformCandlesticks,
+  transformTicker,
 };

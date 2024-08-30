@@ -1,6 +1,10 @@
 import { IRecord } from '../../types.js';
 import { toSeconds } from '../../utils/index.js';
-import { IKrakenCandlestickInterval, IKrakenCoinTicker } from './types.js';
+import {
+  IKrakenCandlestickInterval,
+  IKrakenCoinTicker,
+  IKrakenTickerWebSocketSubscription,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -60,6 +64,38 @@ const buildWhitelist = (whitelistedSymbols: string[]): IRecord<string> => (
   )
 );
 
+/**
+ * Builds the pairs object based on the top symbols.
+ * @param topSymbols
+ * @returns <IRecord<string>>
+ */
+const buildTopPairsObject = (topSymbols: string[], quoteAsset: string): IRecord<string> => (
+  topSymbols.reduce(
+    (previous, current) => ({
+      ...previous,
+      [`t${current}/${quoteAsset}`]: current,
+    }),
+    <IRecord<string>>{},
+  )
+);
+
+/**
+ * Builds the object that is used to subscribes to the tickers' stream for all top symbols.
+ * @param topPairs
+ * @returns string
+ */
+const buildSubscriptionForTickers = (topPairs: string[]): string => (
+  JSON.stringify(<IKrakenTickerWebSocketSubscription>{
+    method: 'subscribe',
+    params: {
+      channel: 'ticker',
+      symbol: topPairs,
+      event_trigger: 'trades',
+      snapshot: true,
+    },
+  })
+);
+
 
 
 
@@ -71,4 +107,6 @@ export {
   buildGetCandlesticksURL,
   tickersSortFunc,
   buildWhitelist,
+  buildTopPairsObject,
+  buildSubscriptionForTickers,
 };

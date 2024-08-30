@@ -1,5 +1,6 @@
+import { Observable } from 'rxjs';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
-import { ICandlestickInterval } from '../types.js';
+import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -20,6 +21,7 @@ type IKrakenService = {
     startTime?: number,
   ) => Promise<ICompactCandlestickRecords>;
   getTopSymbols: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
+  getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 };
 
 
@@ -269,4 +271,5 @@ export type {
   IKrakenCoinTickers,
   IKrakenCoinTicker,
   IKrakenTickerWebSocketSubscription,
+  IKrakenTickerWebSocketMessageData,
 };
