@@ -167,19 +167,14 @@ const krakenServiceFactory = (): IKrakenService => {
         'COINS',
         'wss://ws.kraken.com/v2',
 
-        /**
-         * onMessage: emmit the data if the message is a ticker update or snapshot
-         * - ...
-         */
+        // onMessage: emmit the data if the message is a ticker update or snapshot
         (msg) => {
           if (msg && msg.channel === 'ticker') {
             subscriber.next(transformTicker(topPairs[msg.data[0].symbol], msg.data[0]));
           }
         },
 
-        /**
-         * onOpen: subscribe to every symbol's stream
-         */
+        // onOpen: subscribe to every symbol's stream
         (__ws) => __ws.send(buildSubscriptionForTickers(Object.keys(topPairs))),
       );
       return function unsubscribe() {

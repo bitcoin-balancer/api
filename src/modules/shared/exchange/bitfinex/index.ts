@@ -176,9 +176,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
           }
         },
 
-        /**
-         * onOpen: subscribe to every symbol's stream
-         */
+        // onOpen: subscribe to every symbol's stream
         (__ws) => Object.keys(topPairs).forEach(
           (symbol) => __ws.send(buildSubscriptionForTicker(symbol)),
         ),
