@@ -59,7 +59,7 @@ const coinsServiceFactory = (): ICoinsService => {
 
   // the number of minutes the system will wait before evaluating the initialization and taking
   // actions if needed
-  const __INITIALIZATION_EVALUATION_DELAY = 5;
+  const __INITIALIZATION_EVALUATION_DELAY = 10;
 
   // the number of decimal places that will be used to calculate the price in base asset
   // e.g. ETHBTC, XRPBTC, etc ... this is needed because some coins are worth less than 1 satoshi
