@@ -5,6 +5,22 @@ import { Buffer } from 'node:buffer';
  ************************************************************************************************ */
 
 /**
+ * Attempts to extract the reason why a Websocket connection was closed. If unable, it returns a
+ * generic 'unknown' string.
+ * @param reason
+ * @returns string
+ */
+const __getConnectionCloseReason = (reason: unknown): string => {
+  if (Buffer.isBuffer(reason)) {
+    const reasonStr = reason.toString();
+    if (reasonStr.length) {
+      return reasonStr;
+    }
+  }
+  return 'unknown.';
+};
+
+/**
  * When the connection is closed by the origin, a code and a reason are issued. This function
  * converts it into a readable string.
  * @param code
@@ -12,7 +28,7 @@ import { Buffer } from 'node:buffer';
  * @returns string
  */
 const formatConnectionClosePayload = (code: unknown, reason: unknown): string => (
-  `Code: ${typeof code === 'number' ? code : 'unknown'} - Reason: ${Buffer.isBuffer(reason) ? reason.toString() : 'unknown'}`
+  `Code: ${typeof code === 'number' ? code : 'unknown'} - Reason: ${__getConnectionCloseReason(reason)}`
 );
 
 /**

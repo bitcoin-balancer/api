@@ -73,7 +73,7 @@ const buildTopPairsObject = (topSymbols: string[], quoteAsset: string): IRecord<
   topSymbols.reduce(
     (previous, current) => ({
       ...previous,
-      [`t${current}/${quoteAsset}`]: current,
+      [`${current}/${quoteAsset}`]: current,
     }),
     <IRecord<string>>{},
   )
