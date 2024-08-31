@@ -5,6 +5,7 @@ import { KrakenService } from './kraken/index.js';
 import {
   IGetCandlesticks,
   IGetOrderBook,
+  IGetOrderBookStream,
   IGetTopSymbols,
   IGetTickersStream,
 } from './types.js';
@@ -40,6 +41,19 @@ const assembleGetOrderBook = (): IGetOrderBook => {
       return BinanceService.getOrderBook;
     default:
       throw new Error(`The function assembleGetOrderBook could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity}' is not supported.`);
+  }
+};
+
+/**
+ * Assembles the assembleGetOrderBookStream method based on the configuration set in the environment
+ * @returns IGetOrderBookStream
+ */
+const assembleGetOrderBookStream = (): IGetOrderBookStream => {
+  switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity) {
+    case 'binance':
+      return BinanceService.getOrderBookStream;
+    default:
+      throw new Error(`The function assembleGetOrderBookStream could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity}' is not supported.`);
   }
 };
 
@@ -88,6 +102,7 @@ export {
   // market data
   assembleGetCandlesticks,
   assembleGetOrderBook,
+  assembleGetOrderBookStream,
   assembleGetTopSymbols,
   assembleGetTickersStream,
 };

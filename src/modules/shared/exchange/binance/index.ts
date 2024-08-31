@@ -6,6 +6,7 @@ import { websocketFactory } from '../../websocket/index.js';
 import {
   ICandlestickInterval,
   IOrderBook,
+  IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
 } from '../types.js';
 import {
@@ -22,10 +23,12 @@ import {
 import {
   transformCandlesticks,
   transformOrderBook,
+  transformOrderBookMessage,
   transformTickers,
 } from './transformers.js';
 import {
   IBinanceService,
+  IBinanceOrderBookWebSocketMessage,
   IBinanceCoinTicker,
   IBinanceTickerWebSocketMessage,
 } from './types.js';
@@ -103,6 +106,23 @@ const binanceServiceFactory = (): IBinanceService => {
     validateOrderBookResponse(res);
     return transformOrderBook(res.data);
   };
+
+  /**
+   * Retrieves the stream for the order book updates.
+   * @returns Observable<IOrderBookWebSocketMessage>
+   */
+  const getOrderBookStream = (): Observable<IOrderBookWebSocketMessage> => (
+    new Observable<IOrderBookWebSocketMessage>((subscriber) => {
+      const ws = websocketFactory<IBinanceOrderBookWebSocketMessage>(
+        'LIQUIDITY',
+        `wss://data-stream.binance.vision:9443/ws/${__SYMBOL.toLocaleLowerCase()}@depth@100ms`,
+        (msg) => subscriber.next(transformOrderBookMessage(msg)),
+      );
+      return function unsubscribe() {
+        ws.off();
+      };
+    })
+  );
 
   /**
    * Tickers
@@ -194,6 +214,7 @@ const binanceServiceFactory = (): IBinanceService => {
     // market data
     getCandlesticks,
     getOrderBook,
+    getOrderBookStream,
     getTopSymbols,
     getTickersStream,
   });

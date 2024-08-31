@@ -17,6 +17,7 @@ type IExchangeService = {
   // market data
   getCandlesticks: IGetCandlesticks;
   getOrderBook: IGetOrderBook;
+  getOrderBookStream: IGetOrderBookStream;
   getTopSymbols: IGetTopSymbols;
   getTickersStream: IGetTickersStream;
 
@@ -42,6 +43,9 @@ type IGetCandlesticks = (
 
 // getOrderBook
 type IGetOrderBook = () => Promise<IOrderBook>;
+
+// getOrderBookStream
+type IGetOrderBookStream = () => Observable<IOrderBookWebSocketMessage>;
 
 // getTopSymbols
 type IGetTopSymbols = (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
@@ -91,6 +95,32 @@ type IOrderBook = {
     number, // price
     number, // quantity
   ]>;
+
+  // the identifier of the snapshot's state
+  lastUpdateID: number;
+};
+
+/**
+ * Order Book WebSocket Message
+ * The object that is broadcasted via the order book stream. Always make sure to check
+ * finalUpdateID > lastUpdateID to ensure the syncing is done correctly as the snapshot retrieved
+ * from the RESTful API should be trusted over the messages received via WebSocket.
+ */
+type IOrderBookWebSocketMessage = {
+  // asks (sell orders)
+  asks: Array<[
+    number, // price
+    number, // quantity
+  ]>;
+
+  // bids (buy orders)
+  bids: Array<[
+    number, // price
+    number, // quantity
+  ]>;
+
+  // the identifier of the last update in the event
+  finalUpdateID: number;
 };
 
 
@@ -102,7 +132,7 @@ type IOrderBook = {
  ************************************************************************************************ */
 
 /**
- * Ticker
+ * Ticker WebSocket Message
  * The object that is broadcasted via the ticker stream and contains the price for symbols that
  * have experienced changes. e.g. { 'BTC': 61555.65, 'ETH': 2455.21 }
  */
@@ -122,6 +152,7 @@ export type {
   // methods
   IGetCandlesticks,
   IGetOrderBook,
+  IGetOrderBookStream,
   IGetTopSymbols,
   IGetTickersStream,
 
@@ -130,6 +161,7 @@ export type {
 
   // order book
   IOrderBook,
+  IOrderBookWebSocketMessage,
 
   // ticker
   ITickerWebSocketMessage,

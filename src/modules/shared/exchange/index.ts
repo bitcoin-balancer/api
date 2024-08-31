@@ -1,6 +1,7 @@
 import {
   assembleGetCandlesticks,
   assembleGetOrderBook,
+  assembleGetOrderBookStream,
   assembleGetTickersStream,
   assembleGetTopSymbols,
 } from './assembler.js';
@@ -61,6 +62,12 @@ const exchangeServiceFactory = (): IExchangeService => {
   const getOrderBook = assembleGetOrderBook();
 
   /**
+   * Retrieves the stream for the order book updates.
+   * @returns Observable<IOrderBookWebSocketMessage>
+   */
+  const getOrderBookStream = assembleGetOrderBookStream();
+
+  /**
    * Retrieves the top coins by trading volume based on a whitelist.
    * @param whitelistedSymbols
    * @param limit
@@ -116,6 +123,7 @@ const exchangeServiceFactory = (): IExchangeService => {
     // market data
     getCandlesticks,
     getOrderBook,
+    getOrderBookStream,
     getTopSymbols,
     getTickersStream,
 

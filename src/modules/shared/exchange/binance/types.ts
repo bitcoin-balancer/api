@@ -3,6 +3,7 @@ import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import {
   ICandlestickInterval,
   IOrderBook,
+  IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
 } from '../types.js';
 
@@ -25,6 +26,7 @@ type IBinanceService = {
     startTime?: number,
   ) => Promise<ICompactCandlestickRecords>;
   getOrderBook: () => Promise<IOrderBook>;
+  getOrderBookStream: () => Observable<IOrderBookWebSocketMessage>;
   getTopSymbols: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
   getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 };
@@ -113,6 +115,40 @@ type IBinanceOrderBook = {
   lastUpdateId: number;
 };
 
+/**
+ * Binance Order Book WebSocket Message
+ * The object sent by the stream whenever the orders change.
+ * https://developers.binance.com/docs/binance-spot-api-docs/web-socket-streams#diff-depth-stream
+ */
+type IBinanceOrderBookWebSocketMessage = {
+  // event type
+  e: string; // "depthUpdate"
+
+  // event time
+  E: number; // 1725111742114
+
+  // symbol
+  s: string; // "BTCUSDT"
+
+  // first update ID in event
+  U: number; // 51044631856
+
+  // final update ID in event
+  u: number; // 51044631864
+
+  // asks to be updated
+  a: Array<[
+    string, // price level to be updated
+    string, // quantity
+  ]>; // [["59177.00000000", "5.25143000"], ...]
+
+  // bids to be updated
+  b: Array<[
+    string, // price level to be updated
+    string, // quantity
+  ]>; // [["59164.28000000", "0.00000000"], ...]
+};
+
 
 
 
@@ -178,6 +214,7 @@ export type {
 
   // order book
   IBinanceOrderBook,
+  IBinanceOrderBookWebSocketMessage,
 
   // ticker
   IBinanceCoinTicker,
