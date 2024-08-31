@@ -4,7 +4,7 @@ import { lowRiskLimit, mediumRiskLimit } from '../../middlewares/rate-limit/inde
 import { checkRequest } from '../shared/request-guard/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { WindowService } from './window/index.js';
-
+import { LiquidityService } from './liquidity/index.js';
 import { CoinsService, ICoinStateAsset } from './coins/index.js';
 
 const MarketStateRouter = Router();
@@ -53,6 +53,75 @@ MarketStateRouter.route('/window/config').put(mediumRiskLimit, async (req: Reque
     res.json(buildResponse());
   } catch (e) {
     APIErrorService.save('MarketStateRouter.put.window.config', e, reqUid, req.ip, req.body);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+
+
+
+
+/* ************************************************************************************************
+ *                                           LIQUIDITY                                            *
+ ************************************************************************************************ */
+
+/**
+ * Retrieves the current state of the liquidity.
+ * @returns IAPIResponse<ILiquidityState>
+ * @requirements
+ * - authority: 1
+ */
+MarketStateRouter.route('/liquidity/state').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+    res.json(buildResponse({})); // @TODO
+  } catch (e) {
+    APIErrorService.save('MarketStateRouter.get.liquidity.state', e, reqUid, req.ip);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
+ * Retrieves the liquidity module's configuration.
+ * @returns IAPIResponse<ILiquidityConfig>
+ * @requirements
+ * - authority: 2
+ */
+MarketStateRouter.route('/liquidity/config').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
+    res.json(buildResponse(LiquidityService.config));
+  } catch (e) {
+    APIErrorService.save('MarketStateRouter.get.liquidity.config', e, reqUid, req.ip);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
+ * Updates the liquidity module's configuration.
+ * @param newConfig
+ * @returns IAPIResponse<void>
+ * @requirements
+ * - authority: 3
+ * - otp-token
+ */
+MarketStateRouter.route('/liquidity/config').put(mediumRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(
+      req.get('authorization'),
+      req.ip,
+      3,
+      ['newConfig'],
+      req.body,
+      req.get('otp-token') || '',
+    );
+    await LiquidityService.updateConfiguration(req.body.newConfig);
+    res.json(buildResponse());
+  } catch (e) {
+    APIErrorService.save('MarketStateRouter.put.liquidity.config', e, reqUid, req.ip, req.body);
     res.json(buildResponse(undefined, e));
   }
 });
