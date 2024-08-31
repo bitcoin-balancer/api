@@ -471,7 +471,11 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `validations.ts`
 
-- **22500:** ``
+- **22500:** `The provided liquidity configuration is not a valid object.`
+- **22501:** `The maxDistanceFromPrice '${newConfig.maxDistanceFromPrice}' is invalid as it must be a valid number ranging 0.01 and 100.`
+- **22502:** `The intensity weights property is not a valid object.`
+- **22503:** `The weight for intensity n '${newConfig.intensityWeights[n]}' is invalid as it must be a valid integer ranging 1 and 100.`
+- **22504:** ``
 
 
 

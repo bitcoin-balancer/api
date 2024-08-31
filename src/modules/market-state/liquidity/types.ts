@@ -14,8 +14,8 @@ type ILiquidityService = {
   config: ILiquidityConfig;
 
   // state calculator
-  calculateState: () => any;
-  getPristineState: () => any;
+  /* calculateState: () => any;
+  getPristineState: () => any; */
 
   // initializer
   initialize: () => Promise<void>;
