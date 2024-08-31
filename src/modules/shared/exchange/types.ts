@@ -16,6 +16,7 @@ type IExchangeService = {
 
   // market data
   getCandlesticks: IGetCandlesticks;
+  getOrderBook: IGetOrderBook;
   getTopSymbols: IGetTopSymbols;
   getTickersStream: IGetTickersStream;
 
@@ -38,6 +39,9 @@ type IGetCandlesticks = (
   limit: number,
   startTime?: number,
 ) => Promise<ICompactCandlestickRecords>;
+
+// getOrderBook
+type IGetOrderBook = () => Promise<IOrderBook>;
 
 // getTopSymbols
 type IGetTopSymbols = (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
@@ -68,6 +72,32 @@ type ICandlestickInterval =
 
 
 /* ************************************************************************************************
+ *                                           ORDER BOOK                                           *
+ ************************************************************************************************ */
+
+/**
+ * Order Book
+ * The current state of the order book for the base asset.
+ */
+type IOrderBook = {
+  // asks (sell orders)
+  asks: Array<[
+    number, // price
+    number, // quantity
+  ]>;
+
+  // bids (buy orders)
+  bids: Array<[
+    number, // price
+    number, // quantity
+  ]>;
+};
+
+
+
+
+
+/* ************************************************************************************************
  *                                             TICKER                                             *
  ************************************************************************************************ */
 
@@ -91,11 +121,15 @@ export type {
 
   // methods
   IGetCandlesticks,
+  IGetOrderBook,
   IGetTopSymbols,
   IGetTickersStream,
 
   // candlestick
   ICandlestickInterval,
+
+  // order book
+  IOrderBook,
 
   // ticker
   ITickerWebSocketMessage,

@@ -1,6 +1,10 @@
 import { Observable } from 'rxjs';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
-import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
+import {
+  ICandlestickInterval,
+  IOrderBook,
+  ITickerWebSocketMessage,
+} from '../types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -20,6 +24,7 @@ type IBinanceService = {
     limit: number,
     startTime?: number,
   ) => Promise<ICompactCandlestickRecords>;
+  getOrderBook: () => Promise<IOrderBook>;
   getTopSymbols: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
   getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 };
@@ -86,7 +91,28 @@ type IBinanceCandlestick = [
  *                                           ORDER BOOK                                           *
  ************************************************************************************************ */
 
-// ...
+/**
+ * Binance Order Book
+ * The current state of the order book for the base asset.
+ * GET /api/v3/depth
+ */
+type IBinanceOrderBook = {
+  // asks (sell orders)
+  asks: Array<[
+    string, // price
+    string, // quantity
+  ]>;
+
+  // bids (buy orders)
+  bids: Array<[
+    string, // price
+    string, // quantity
+  ]>;
+
+  // binance internals
+  lastUpdateId: number;
+};
+
 
 
 
@@ -151,7 +177,7 @@ export type {
   IBinanceCandlestick,
 
   // order book
-  // ...
+  IBinanceOrderBook,
 
   // ticker
   IBinanceCoinTicker,

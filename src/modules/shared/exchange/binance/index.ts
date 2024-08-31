@@ -2,17 +2,33 @@ import { Observable } from 'rxjs';
 import { sendGET } from 'fetch-request-node';
 import { ENVIRONMENT } from '../../environment/index.js';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
-import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
 import { websocketFactory } from '../../websocket/index.js';
+import {
+  ICandlestickInterval,
+  IOrderBook,
+  ITickerWebSocketMessage,
+} from '../types.js';
 import {
   buildGetCandlesticksURL,
   buildWhitelist,
   tickersSortFunc,
   buildTopPairsObject,
 } from './utils.js';
-import { validateCandlesticksResponse, validateTickersResponse } from './validations.js';
-import { transformCandlesticks, transformTickers } from './transformers.js';
-import { IBinanceService, IBinanceCoinTicker, IBinanceTickerWebSocketMessage } from './types.js';
+import {
+  validateCandlesticksResponse,
+  validateOrderBookResponse,
+  validateTickersResponse,
+} from './validations.js';
+import {
+  transformCandlesticks,
+  transformOrderBook,
+  transformTickers,
+} from './transformers.js';
+import {
+  IBinanceService,
+  IBinanceCoinTicker,
+  IBinanceTickerWebSocketMessage,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -72,7 +88,21 @@ const binanceServiceFactory = (): IBinanceService => {
    * Order Book
    */
 
-  // ...
+  /**
+   * Retrieves the current state of Binance's order book for the base asset.
+   * @returns Promise<IOrderBook>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13502: if the order book object is invalid
+   */
+  const getOrderBook = async (): Promise<IOrderBook> => {
+    const res = await sendGET(
+      `https://data-api.binance.vision/api/v3/depth?symbol=${__SYMBOL}&limit=5000`,
+      { skipStatusCodeValidation: true },
+    );
+    validateOrderBookResponse(res);
+    return transformOrderBook(res.data);
+  };
 
   /**
    * Tickers
@@ -163,6 +193,7 @@ const binanceServiceFactory = (): IBinanceService => {
 
     // market data
     getCandlesticks,
+    getOrderBook,
     getTopSymbols,
     getTickersStream,
   });

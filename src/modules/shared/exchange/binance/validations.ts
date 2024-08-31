@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
 import { IRequestResponse } from 'fetch-request-node';
-import { arrayValid } from '../../validations/index.js';
+import { arrayValid, objectValid } from '../../validations/index.js';
 import { validateResponse } from '../validations.js';
 
 /* ************************************************************************************************
@@ -38,6 +38,29 @@ const validateTickersResponse = (res: IRequestResponse): void => {
   }
 };
 
+/**
+ * Ensures the Binance API returned a valid order book object.
+ * @param res
+ * @throws
+ * - 12500: if the HTTP response code is not in the acceptedCodes
+ * - 13502: if the order book object is invalid
+ */
+const validateOrderBookResponse = (res: IRequestResponse): void => {
+  validateResponse(res);
+  if (!objectValid(res.data)) {
+    console.log(res.data);
+    throw new Error(encodeError('Binance returned an invalid order book object.', 13502));
+  }
+  if (!arrayValid(res.data.asks)) {
+    console.log(res.data);
+    throw new Error(encodeError('Binance returned an invalid order book object. The \'asks\' property is not a valid array of tuples.', 13502));
+  }
+  if (!arrayValid(res.data.bids)) {
+    console.log(res.data);
+    throw new Error(encodeError('Binance returned an invalid order book object. The \'bids\' property is not a valid array of tuples.', 13502));
+  }
+};
+
 
 
 
@@ -48,4 +71,5 @@ const validateTickersResponse = (res: IRequestResponse): void => {
 export {
   validateCandlesticksResponse,
   validateTickersResponse,
+  validateOrderBookResponse,
 };

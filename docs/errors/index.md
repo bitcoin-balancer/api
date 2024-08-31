@@ -336,7 +336,9 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **13500:** `Binance returned an invalid list of candlesticks.`
 - **13501:** `Binance returned an invalid list of tickers.`
-- **13502:** ``
+- **13502:** `Binance returned an invalid order book object.`
+- **13503:** ``
+- **13504:** ``
 
 
 

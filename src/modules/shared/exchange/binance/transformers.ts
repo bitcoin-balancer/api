@@ -3,8 +3,12 @@ import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
 } from '../../candlestick/index.js';
-import { ITickerWebSocketMessage } from '../types.js';
-import { IBinanceCandlestick, IBinanceTickerWebSocketMessage } from './types.js';
+import { IOrderBook, ITickerWebSocketMessage } from '../types.js';
+import {
+  IBinanceCandlestick,
+  IBinanceOrderBook,
+  IBinanceTickerWebSocketMessage,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -28,6 +32,25 @@ const transformCandlesticks = (source: IBinanceCandlestick[]): ICompactCandlesti
     buildPristineCompactCandlestickRecords(),
   )
 );
+
+/**
+ * Converts a string tuple into a numeric one.
+ * @param order
+ * @returns [number, number]
+ */
+const __transformOrders = (order: [string, string]): [number, number] => (
+  [Number(order[0]), Number(order[1])]
+);
+
+/**
+ * Transforms a raw Binance Order Book into the object required by the Exchange.
+ * @param source
+ * @returns IOrderBook
+ */
+const transformOrderBook = (source: IBinanceOrderBook): IOrderBook => ({
+  asks: source.asks.map(__transformOrders),
+  bids: source.bids.map(__transformOrders),
+});
 
 /**
  * Transforms the ticker message received through the WebSocket into the general message type.
@@ -58,4 +81,5 @@ const transformTickers = (
 export {
   transformCandlesticks,
   transformTickers,
+  transformOrderBook,
 };

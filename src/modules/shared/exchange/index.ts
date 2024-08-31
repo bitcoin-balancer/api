@@ -1,5 +1,6 @@
 import {
   assembleGetCandlesticks,
+  assembleGetOrderBook,
   assembleGetTickersStream,
   assembleGetTopSymbols,
 } from './assembler.js';
@@ -49,6 +50,15 @@ const exchangeServiceFactory = (): IExchangeService => {
    * - 15503: if the response doesn't include a valid series of candlesticks (kraken)
    */
   const getCandlesticks = assembleGetCandlesticks();
+
+  /**
+   * Retrieves the current state of the order book for the base asset.
+   * @returns Promise<IOrderBook>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13502: if the order book object is invalid (binance)
+   */
+  const getOrderBook = assembleGetOrderBook();
 
   /**
    * Retrieves the top coins by trading volume based on a whitelist.
@@ -105,6 +115,7 @@ const exchangeServiceFactory = (): IExchangeService => {
 
     // market data
     getCandlesticks,
+    getOrderBook,
     getTopSymbols,
     getTickersStream,
 
