@@ -1,10 +1,11 @@
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
-import { buildDefaultConfig } from './utils.js';
+import { buildDefaultConfig, buildPristineState } from './utils.js';
+import { canConfigBeUpdated } from './validations.js';
 import {
   ILiquidityService,
   ILiquidityConfig,
+  ICompactLiquidityState,
 } from './types.js';
-import { canConfigBeUpdated } from './validations.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -23,6 +24,28 @@ const liquidityServiceFactory = (): ILiquidityService => {
 
   // the module's configuration
   let __config: IRecordStore<ILiquidityConfig>;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                       STATE CALCULATOR                                       *
+   ********************************************************************************************** */
+
+  /**
+   * Calculates the liquidity state based on the current rate.
+   * @param baseAssetPrice
+   * @returns ICompactLiquidityState
+   */
+  const calculateState = (baseAssetPrice: number): ICompactLiquidityState => buildPristineState();
+
+
+  /**
+   * Builds the default liquidity state.
+   * @returns ICompactLiquidityState
+   */
+  const getPristineState = (): ICompactLiquidityState => buildPristineState();
 
 
 
@@ -87,6 +110,10 @@ const liquidityServiceFactory = (): ILiquidityService => {
       return __config.value;
     },
 
+    // state calculator
+    calculateState,
+    getPristineState,
+
     // initializer
     initialize,
     teardown,
@@ -113,5 +140,9 @@ const LiquidityService = liquidityServiceFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // service
   LiquidityService,
+
+  // types
+  type ICompactLiquidityState,
 };

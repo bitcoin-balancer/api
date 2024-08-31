@@ -4,6 +4,7 @@ import { extractMessage } from 'error-message-utils';
 import { APIErrorService } from '../api-error/index.js';
 import { NotificationService, throttleableNotificationFactory } from '../notification/index.js';
 import { WindowService } from './window/index.js';
+import { LiquidityService } from './liquidity/index.js';
 import { CoinsService } from './coins/index.js';
 import { buildPristineState } from './utils.js';
 import { IMarketStateService, IMarketState } from './types.js';
@@ -69,18 +70,20 @@ const marketStateServiceFactory = (): IMarketStateService => {
       const windowState = WindowService.calculateState();
 
       // calculate the liquidity state
-      // const liquidityState = LiquidityService.calculateState(windowState.window.close.at(-1));
+      const liquidityState = LiquidityService.calculateState(
+        windowState.window.close[windowState.window.close.length - 1],
+      );
 
       // calculate the coins' state
       const { compact, semiCompact } = CoinsService.calculateState();
 
       // calculate the reversal state
-      // const reversalState = ReversalService.calculateState(liquidityState, coins, coinsBTC);
+      // const reversalState = ReversalService.calculateState(liquidityState, semiCompact);
 
       // finally, broadcast the next state
       __state.next({
         windowState,
-        // liquidityState,
+        liquidityState,
         coinsStates: compact,
         // reversalState,
       });
@@ -117,7 +120,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
 
     // Liquidity Module
     try {
-      // await LiquidityService.teardown(); @TODO
+      await LiquidityService.teardown();
     } catch (e) {
       console.error('LiquidityService.teardown()', e);
     }
@@ -152,7 +155,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
 
       // Liquidity Module
       try {
-        // await LiquidityService.initialize();
+        await LiquidityService.initialize();
       } catch (e) {
         throw new Error(`LiquidityService.initialize() -> ${extractMessage(e)}`);
       }

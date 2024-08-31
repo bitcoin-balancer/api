@@ -14,8 +14,8 @@ type ILiquidityService = {
   config: ILiquidityConfig;
 
   // state calculator
-  /* calculateState: () => any;
-  getPristineState: () => any; */
+  calculateState: (baseAssetPrice: number) => ICompactLiquidityState;
+  getPristineState: () => ICompactLiquidityState;
 
   // initializer
   initialize: () => Promise<void>;
@@ -58,6 +58,23 @@ type ILiquidityIntensityWeights = {
  *                                             STATE                                              *
  ************************************************************************************************ */
 
+/**
+ * Liquidity State
+ * The object containing the full liquidity state as well as the payload.
+ */
+type ILiquidityState = {
+
+};
+
+/**
+ * Compact Liquidity State
+ * The object containing a very compact variant of the full state.
+ */
+type ICompactLiquidityState = {
+  // ...
+  bidDominance: number;
+};
+
 
 
 
@@ -95,6 +112,8 @@ export type {
   ILiquidityIntensityWeights,
 
   // state
+  ILiquidityState,
+  ICompactLiquidityState,
 
   // configuration
   ILiquidityConfig,

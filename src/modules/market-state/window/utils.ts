@@ -21,18 +21,6 @@ const __getDefaultRefetchFrequency = (): number => {
 };
 
 /**
- * Builds the default configuration object.
- * @returns IWindowConfig
- */
-const buildDefaultConfig = (): IWindowConfig => ({
-  refetchFrequency: __getDefaultRefetchFrequency(),
-  size: 128,
-  interval: '15m',
-  requirement: 0.025,
-  strongRequirement: 0.85,
-});
-
-/**
  * Builds the pristine state object.
  * @returns IWindowState
  */
@@ -71,6 +59,18 @@ const getConfigUpdatePostActions = (
   shouldFetchInitialCandlesticks: oldConfig.size !== newConfig.size,
 });
 
+/**
+ * Builds the default configuration object.
+ * @returns IWindowConfig
+ */
+const buildDefaultConfig = (): IWindowConfig => ({
+  refetchFrequency: __getDefaultRefetchFrequency(),
+  size: 128,
+  interval: '15m',
+  requirement: 0.025,
+  strongRequirement: 0.85,
+});
+
 
 
 
@@ -79,7 +79,7 @@ const getConfigUpdatePostActions = (
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  buildDefaultConfig,
   buildPristineState,
   getConfigUpdatePostActions,
+  buildDefaultConfig,
 };

@@ -1,8 +1,14 @@
-import { ILiquidityConfig } from './types.js';
+import { ICompactLiquidityState, ILiquidityConfig } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
+
+/**
+ * Builds the pristine state object for the module.
+ * @returns ICompactLiquidityState
+ */
+const buildPristineState = (): ICompactLiquidityState => ({ bidDominance: 50 });
 
 /**
  * Builds the default module's configuration object.
@@ -20,9 +26,12 @@ const buildDefaultConfig = (): ILiquidityConfig => ({
 
 
 
+
+
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  buildPristineState,
   buildDefaultConfig,
 };
