@@ -9,8 +9,8 @@ import { ISplitStates, IState } from '../shared/types.js';
 
 /**
  * Window Service
- * Object in charge of keeping Balancer in sync with the market's candlesticks and calculating its
- * state.
+ * Object in charge of keeping Balancer in sync with the base asset's candlesticks and calculating
+ * its state.
  */
 type IWindowService = {
   // properties
