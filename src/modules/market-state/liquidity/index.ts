@@ -1,5 +1,9 @@
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
-import { buildDefaultConfig, buildPristineState } from './utils.js';
+import {
+  buildPristineState,
+  buildPristineCompactState,
+  buildDefaultConfig,
+} from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
 import { orderBookServiceFactory } from './order-book.js';
 import {
@@ -7,6 +11,7 @@ import {
   ILiquidityConfig,
   ICompactLiquidityState,
   IOrderBookService,
+  ILiquidityState,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -27,6 +32,9 @@ const liquidityServiceFactory = (): ILiquidityService => {
   // the instance of the order book real-time data
   let __orderBook: IOrderBookService;
 
+  // the up-to-date state of the module
+  const __state: ILiquidityState = buildPristineState();
+
   // the module's configuration
   let __config: IRecordStore<ILiquidityConfig>;
 
@@ -43,14 +51,16 @@ const liquidityServiceFactory = (): ILiquidityService => {
    * @param baseAssetPrice
    * @returns ICompactLiquidityState
    */
-  const calculateState = (baseAssetPrice: number): ICompactLiquidityState => buildPristineState();
+  const calculateState = (baseAssetPrice: number): ICompactLiquidityState => {
+    return buildPristineCompactState();
+  };
 
 
   /**
    * Builds the default liquidity state.
    * @returns ICompactLiquidityState
    */
-  const getPristineState = (): ICompactLiquidityState => buildPristineState();
+  const getPristineState = (): ICompactLiquidityState => buildPristineCompactState();
 
 
 
@@ -112,6 +122,9 @@ const liquidityServiceFactory = (): ILiquidityService => {
    ********************************************************************************************** */
   return Object.freeze({
     // properties
+    get state() {
+      return __state;
+    },
     get config() {
       return __config.value;
     },

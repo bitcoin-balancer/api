@@ -11,6 +11,7 @@
  */
 type ILiquidityService = {
   // properties
+  state: ILiquidityState;
   config: ILiquidityConfig;
 
   // state calculator
@@ -88,6 +89,28 @@ type ILiquidityPriceRange = {
   lower: number;
 };
 
+/**
+ * Liquidity Intensity Requirements
+ * For a price level to have intensity and be considered a "peak", it requires the liquidity
+ * specific in this object. Otherwise, it will have an intensity of 0.
+ */
+type ILiquidityIntensityRequirements = {
+  low: number; // 1
+  medium: number; // 2
+  high: number; // 3
+  veryHigh: number; // 4
+};
+
+/**
+ * Liquidity Price Level
+ * The tuple containing the processed data for a whole price in the order book.
+ */
+type ILiquidityPriceLevel = [
+  number, // level's price
+  number, // liquidity within the level
+  ILiquidityIntensity, // liquidity intensity
+];
+
 
 
 
@@ -101,7 +124,11 @@ type ILiquidityPriceRange = {
  * The object containing the full liquidity state as well as the payload.
  */
 type ILiquidityState = {
+  // the percentage representation of the bid dominance (buy orders against sell orders)
+  bidDominance: number;
 
+  // the last time the order book snapshot was fetched from the Exchange's API
+  lastRefetch: number;
 };
 
 /**
@@ -109,7 +136,6 @@ type ILiquidityState = {
  * The object containing a very compact variant of the full state.
  */
 type ICompactLiquidityState = {
-  // ...
   bidDominance: number;
 };
 
@@ -151,6 +177,8 @@ export type {
   ILiquidityIntensity,
   ILiquidityIntensityWeights,
   ILiquidityPriceRange,
+  ILiquidityIntensityRequirements,
+  ILiquidityPriceLevel,
 
   // state
   ILiquidityState,

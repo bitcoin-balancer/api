@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 import { Subscription } from 'rxjs';
 import { IRecord } from '../../shared/types.js';
+import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IOrderBookWebSocketMessage } from '../../shared/exchange/index.js';
 import { getOrderBookRefetchFrequency } from './utils.js';
 import { ILiquiditySide, IOrderBookService } from './types.js';
-import { invokeFuncPersistently } from '../../shared/utils/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *

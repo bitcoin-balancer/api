@@ -4,7 +4,10 @@ import { ENVIRONMENT } from '../../shared/environment/index.js';
 import {
   ICompactLiquidityState,
   ILiquidityConfig,
+  ILiquidityIntensity,
+  ILiquidityIntensityRequirements,
   ILiquidityPriceRange,
+  ILiquidityState,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -26,6 +29,42 @@ const calculatePriceRange = (
   lower: adjustByPercentage(currentPrice, -(maxDistanceFromPrice)),
 });
 
+/**
+ * Calculates the liquidity intensity requirements based on all of the existing price levels.
+ * @returns ILiquidityIntensityRequirements
+ */
+const calculateIntensityRequirements = (): ILiquidityIntensityRequirements => ({
+  low: 0,
+  medium: 0,
+  high: 0,
+  veryHigh: 0,
+});
+
+/**
+ * Calculates the intensity of a price level based on its liquidity and the current requirements.
+ * @param liquidity
+ * @param requirements
+ * @returns ILiquidityIntensity
+ */
+const calculateIntensity = (
+  liquidity: number,
+  requirements: ILiquidityIntensityRequirements,
+): ILiquidityIntensity => {
+  if (liquidity >= requirements.veryHigh) {
+    return 4;
+  }
+  if (liquidity >= requirements.high) {
+    return 3;
+  }
+  if (liquidity >= requirements.medium) {
+    return 2;
+  }
+  if (liquidity >= requirements.low) {
+    return 1;
+  }
+  return 0;
+};
+
 
 
 
@@ -36,9 +75,18 @@ const calculatePriceRange = (
 
 /**
  * Builds the pristine state object for the module.
+ * @returns ILiquidityState
+ */
+const buildPristineState = (): ILiquidityState => ({
+  bidDominance: 50,
+  lastRefetch: Date.now(),
+});
+
+/**
+ * Builds the pristine compact state object for the module.
  * @returns ICompactLiquidityState
  */
-const buildPristineState = (): ICompactLiquidityState => ({ bidDominance: 50 });
+const buildPristineCompactState = (): ICompactLiquidityState => ({ bidDominance: 50 });
 
 
 
@@ -89,9 +137,12 @@ const buildDefaultConfig = (): ILiquidityConfig => ({
 export {
   // calculators
   calculatePriceRange,
+  calculateIntensityRequirements,
+  calculateIntensity,
 
   // state helpes
   buildPristineState,
+  buildPristineCompactState,
 
   // config helpers
   getOrderBookRefetchFrequency,
