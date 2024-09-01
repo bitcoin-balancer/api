@@ -2,9 +2,9 @@
 import { Subscription } from 'rxjs';
 import { IRecord } from '../../shared/types.js';
 import { APIErrorService } from '../../api-error/index.js';
-import { ExchangeService } from '../../shared/exchange/index.js';
+import { ExchangeService, IOrderBookWebSocketMessage } from '../../shared/exchange/index.js';
 import { getOrderBookRefetchFrequency } from './utils.js';
-import { IOrderBookService } from './types.js';
+import { ILiquiditySide, IOrderBookService } from './types.js';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 
 /* ************************************************************************************************
@@ -13,7 +13,7 @@ import { invokeFuncPersistently } from '../../shared/utils/index.js';
 
 /**
  * Order Book Service Factory
- * Generates the object in charge of keeping Balancer in sync with the base asset's order book and 
+ * Generates the object in charge of keeping Balancer in sync with the base asset's order book and
  * calculating its state.
  * @returns Promise<IOrderBookService>
  * @throws
@@ -45,19 +45,47 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
 
 
   /* **********************************************************************************************
-   *                                       SNAPSHOT FETCHER                                       *
+   *                                       SYNCHRONIZATION                                        *
    ********************************************************************************************** */
 
   /**
    * Fetches the order book and overrides the local state with the new data.
    * @returns Promise<void>
    */
-  const fetchSnapshot = async (): Promise<void> => {
+  const __fetchSnapshot = async (): Promise<void> => {
     const snapshot = await ExchangeService.getOrderBook();
     __asks = Object.fromEntries(snapshot.asks);
     __bids = Object.fromEntries(snapshot.bids);
     __lastUpdateID = snapshot.lastUpdateID;
     __lastRefetch = Date.now();
+  };
+
+  /**
+   * Updates the list of orders for a side based on new data.
+   * @param side
+   * @param newOrders
+   */
+  const __syncOrders = (side: ILiquiditySide, newOrders: Array<[number, number]>): void => {
+    const orders = side === 'asks' ? __asks : __bids;
+    newOrders.forEach(([price, newLiquidity]) => {
+      if (newLiquidity === 0) {
+        delete orders[price];
+      } else {
+        orders[price] = newLiquidity;
+      }
+    });
+  };
+
+  /**
+   * Fires whenever a change of any kind takes place in the order book. It processes the new data
+   * if the event took place after the current snapshot was fetched.
+   * @param msg
+   */
+  const __onOrderBookChanges = (msg: IOrderBookWebSocketMessage): void => {
+    if (msg.finalUpdateID > __lastUpdateID) {
+      __syncOrders('asks', msg.asks);
+      __syncOrders('bids', msg.bids);
+    }
   };
 
 
@@ -74,15 +102,15 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
    */
   const __on = async (): Promise<void> => {
     // fetch and sync the order book
-    await invokeFuncPersistently(fetchSnapshot, undefined, [3, 5, 7]);
+    await invokeFuncPersistently(__fetchSnapshot, undefined, [3, 5, 7]);
 
     // subscribe to the stream
-    __streamSub = ExchangeService.getOrderBookStream().subscribe();
+    __streamSub = ExchangeService.getOrderBookStream().subscribe(__onOrderBookChanges);
 
     // init the refetch interval
     __refetchInterval = setInterval(async () => {
       try {
-        await fetchSnapshot();
+        await __fetchSnapshot();
       } catch (e) {
         console.error(e);
         APIErrorService.save('OrderBook.interval.refetch', e);
@@ -110,7 +138,9 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
   await __on();
   return Object.freeze({
     // properties
-    // ...
+    get lastRefetch() {
+      return __lastRefetch;
+    },
 
     // initializer
     off,

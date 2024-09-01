@@ -1,6 +1,34 @@
-import { ENVIRONMENT } from '../../shared/environment/index.js';
+import { adjustByPercentage } from 'bignumber-utils';
 import { toMilliseconds } from '../../shared/utils/index.js';
-import { ICompactLiquidityState, ILiquidityConfig } from './types.js';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
+import {
+  ICompactLiquidityState,
+  ILiquidityConfig,
+  ILiquidityPriceRange,
+} from './types.js';
+
+/* ************************************************************************************************
+ *                                          CALCULATORS                                           *
+ ************************************************************************************************ */
+
+/**
+ * Calculates the price range used to filter orders when calculating the state.
+ * @param currentPrice
+ * @param maxDistanceFromPrice
+ * @returns ILiquidityPriceRange
+ */
+const calculatePriceRange = (
+  currentPrice: number,
+  maxDistanceFromPrice: number,
+): ILiquidityPriceRange => ({
+  current: currentPrice,
+  upper: adjustByPercentage(currentPrice, maxDistanceFromPrice),
+  lower: adjustByPercentage(currentPrice, -(maxDistanceFromPrice)),
+});
+
+
+
+
 
 /* ************************************************************************************************
  *                                         STATE HELPERS                                          *
@@ -11,6 +39,9 @@ import { ICompactLiquidityState, ILiquidityConfig } from './types.js';
  * @returns ICompactLiquidityState
  */
 const buildPristineState = (): ICompactLiquidityState => ({ bidDominance: 50 });
+
+
+
 
 
 /* ************************************************************************************************
@@ -56,6 +87,9 @@ const buildDefaultConfig = (): ILiquidityConfig => ({
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // calculators
+  calculatePriceRange,
+
   // state helpes
   buildPristineState,
 

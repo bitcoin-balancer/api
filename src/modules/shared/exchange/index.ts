@@ -8,6 +8,7 @@ import {
 import {
   ICandlestickInterval,
   IExchangeService,
+  IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
 } from './types.js';
 
@@ -155,5 +156,6 @@ export {
 
   // types
   type ICandlestickInterval,
+  type IOrderBookWebSocketMessage,
   type ITickerWebSocketMessage,
 };

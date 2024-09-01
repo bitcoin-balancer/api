@@ -31,7 +31,7 @@ type ILiquidityService = {
  */
 type IOrderBookService = {
   // properties
-  // ...
+  lastRefetch: number;
 
   // retrievers
   // ...
@@ -49,6 +49,12 @@ type IOrderBookService = {
  ************************************************************************************************ */
 
 /**
+ * Liquidity Side
+ * An Order Book is comprised by 2 sides. The asks (sell orders) and bids (buy orders).
+ */
+type ILiquiditySide = 'asks' | 'bids';
+
+/**
  * Liquidity Intensity
  * The intensity of the liquidity within a price level.
  */
@@ -64,6 +70,22 @@ type ILiquidityIntensityWeights = {
   2: number;
   3: number;
   4: number;
+};
+
+/**
+ * Liquidity Price Range
+ * The price range that will be used to select the orders that will be factored when calculating the
+ * state. Orders outside of this range are ignored.
+ */
+type ILiquidityPriceRange = {
+  // the current price of the base asset
+  current: number;
+
+  // the upper band used to select the asks (current + maxDistanceFromPrice%)
+  upper: number;
+
+  // the lower band used to select the bids (current - maxDistanceFromPrice%)
+  lower: number;
 };
 
 
@@ -125,8 +147,10 @@ export type {
   IOrderBookService,
 
   // types
+  ILiquiditySide,
   ILiquidityIntensity,
   ILiquidityIntensityWeights,
+  ILiquidityPriceRange,
 
   // state
   ILiquidityState,

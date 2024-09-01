@@ -1,13 +1,13 @@
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
 import { buildDefaultConfig, buildPristineState } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
+import { orderBookServiceFactory } from './order-book.js';
 import {
   ILiquidityService,
   ILiquidityConfig,
   ICompactLiquidityState,
   IOrderBookService,
 } from './types.js';
-import { orderBookServiceFactory } from './order-book.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
