@@ -50,9 +50,10 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'WindowService.updateConfiguration.shouldFetchInitialCandlesticks' | 'MarketStateService.__onWindowChanges'
 | 'MarketStateRouter.get.window.config' | 'MarketStateRouter.put.window.config' | 'CoinsService.updateConfiguration.postActions'
 | 'MarketStateRouter.get.coins.config' | 'MarketStateRouter.put.coins.config' | 'WebSocket.COINS.error'
-| 'WebSocket.LIQUIDITY.error' | 'WebSocket.COINS.close' | 'WebSocket.LIQUIDITY.close'
+| 'WebSocket.LIQUIDITY.error' | 'WebSocket.COINS.close' | 'WebSocket.LIQUIDITY.close' | 'WebSocket.HealthCheck'
 | 'MarketStateRouter.get.coins.state.asset.symbol' | 'MarketStateRouter.get.coins.state.asset'
-| 'MarketStateRouter.get.liquidity.state' | 'MarketStateRouter.get.liquidity.config' | 'MarketStateRouter.put.liquidity.config';
+| 'MarketStateRouter.get.liquidity.state' | 'MarketStateRouter.get.liquidity.config' | 'MarketStateRouter.put.liquidity.config'
+| 'OrderBook.interval.refetch';
 
 /**
  * API Error

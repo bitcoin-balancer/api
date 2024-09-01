@@ -124,9 +124,13 @@ const websocketFactory: IWebSocketFactory = <T>(
   setInterval(async () => {
     if (__ws && exceededIdleLimit(__lastMessage, __IDLE_LIMIT)) {
       NotificationService.websocketConnectionIssue(__id);
-      off();
-      await delay(__RESTART_DELAY);
-      __on();
+      try {
+        off();
+        await delay(__RESTART_DELAY);
+        __on();
+      } catch (e) {
+        APIErrorService.save('WebSocket.HealthCheck', e);
+      }
     }
   }, __HEALTH_CHECK_FREQUENCY * 1000);
 

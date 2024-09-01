@@ -25,6 +25,22 @@ type ILiquidityService = {
   updateConfiguration: (newConfig: ILiquidityConfig) => Promise<void>;
 };
 
+/**
+ * Order Book Service
+ * Object in charge of establishing a real-time connection with the Exchange's Order Book.
+ */
+type IOrderBookService = {
+  // properties
+  // ...
+
+  // retrievers
+  // ...
+
+  // initializer
+  off: () => void;
+};
+
+
 
 
 
@@ -106,6 +122,7 @@ type ILiquidityConfig = {
 export type {
   // services
   ILiquidityService,
+  IOrderBookService,
 
   // types
   ILiquidityIntensity,

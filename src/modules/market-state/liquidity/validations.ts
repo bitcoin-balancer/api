@@ -21,7 +21,7 @@ const canConfigBeUpdated = (newConfig: ILiquidityConfig): void => {
     console.log(newConfig);
     throw new Error(encodeError('The provided liquidity configuration is not a valid object.', 22500));
   }
-  if (numberValid(newConfig.maxDistanceFromPrice, 0.01, 100)) {
+  if (!numberValid(newConfig.maxDistanceFromPrice, 0.01, 100)) {
     throw new Error(encodeError(`The maxDistanceFromPrice '${newConfig.maxDistanceFromPrice}' is invalid as it must be a valid number ranging 0.01 and 100.`, 22501));
   }
   if (!objectValid(newConfig.intensityWeights)) {

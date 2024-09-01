@@ -1,7 +1,9 @@
+import { ENVIRONMENT } from '../../shared/environment/index.js';
+import { toMilliseconds } from '../../shared/utils/index.js';
 import { ICompactLiquidityState, ILiquidityConfig } from './types.js';
 
 /* ************************************************************************************************
- *                                         IMPLEMENTATION                                         *
+ *                                         STATE HELPERS                                          *
  ************************************************************************************************ */
 
 /**
@@ -9,6 +11,28 @@ import { ICompactLiquidityState, ILiquidityConfig } from './types.js';
  * @returns ICompactLiquidityState
  */
 const buildPristineState = (): ICompactLiquidityState => ({ bidDominance: 50 });
+
+
+/* ************************************************************************************************
+ *                                         CONFIG HELPERS                                         *
+ ************************************************************************************************ */
+
+/**
+ * Returns the frequency at which the order book will be refetched.
+ * @returns number
+ */
+const getOrderBookRefetchFrequency = (): number => {
+  switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity) {
+    case 'binance':
+      return toMilliseconds(10);
+    case 'bitfinex':
+      return toMilliseconds(10);
+    case 'kraken':
+      return toMilliseconds(20);
+    default:
+      return toMilliseconds(10);
+  }
+};
 
 /**
  * Builds the default module's configuration object.
@@ -32,6 +56,10 @@ const buildDefaultConfig = (): ILiquidityConfig => ({
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // state helpes
   buildPristineState,
+
+  // config helpers
+  getOrderBookRefetchFrequency,
   buildDefaultConfig,
 };
