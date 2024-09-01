@@ -75,7 +75,7 @@ MarketStateRouter.route('/liquidity/state').get(lowRiskLimit, async (req: Reques
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
-    res.json(buildResponse({})); // @TODO
+    res.json(buildResponse(LiquidityService.state));
   } catch (e) {
     APIErrorService.save('MarketStateRouter.get.liquidity.state', e, reqUid, req.ip);
     res.json(buildResponse(undefined, e));
