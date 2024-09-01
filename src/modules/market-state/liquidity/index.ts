@@ -5,7 +5,9 @@ import {
   ILiquidityService,
   ILiquidityConfig,
   ICompactLiquidityState,
+  IOrderBookService,
 } from './types.js';
+import { orderBookServiceFactory } from './order-book.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -21,6 +23,9 @@ const liquidityServiceFactory = (): ILiquidityService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
+
+  // the instance of the order book real-time data
+  let __orderBook: IOrderBookService;
 
   // the module's configuration
   let __config: IRecordStore<ILiquidityConfig>;
@@ -64,7 +69,7 @@ const liquidityServiceFactory = (): ILiquidityService => {
     __config = await recordStoreFactory('LIQUIDITY', buildDefaultConfig());
 
     // initialize the order book stream
-    // @TODO
+    __orderBook = await orderBookServiceFactory();
   };
 
   /**
@@ -73,6 +78,7 @@ const liquidityServiceFactory = (): ILiquidityService => {
    */
   const teardown = async (): Promise<void> => {
     // clearInterval(__refetchInterval);
+    __orderBook?.off();
   };
 
 
