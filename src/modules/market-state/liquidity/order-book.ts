@@ -5,7 +5,7 @@ import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IOrderBookWebSocketMessage } from '../../shared/exchange/index.js';
 import { getOrderBookRefetchFrequency } from './utils.js';
-import { ILiquiditySide, IOrderBookService } from './types.js';
+import { ILiquidityPriceRange, ILiquiditySide, ILiquiditySideID, IOrderBookService } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -45,6 +45,20 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
 
 
   /* **********************************************************************************************
+   *                                          RETRIEVER                                           *
+   ********************************************************************************************** */
+
+  const getSides = (
+    range: ILiquidityPriceRange,
+  ): { asks: ILiquiditySide, bids: ILiquiditySide } => {
+
+  };
+
+
+
+
+
+  /* **********************************************************************************************
    *                                       SYNCHRONIZATION                                        *
    ********************************************************************************************** */
 
@@ -65,7 +79,7 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
    * @param side
    * @param newOrders
    */
-  const __syncOrders = (side: ILiquiditySide, newOrders: Array<[number, number]>): void => {
+  const __syncOrders = (side: ILiquiditySideID, newOrders: Array<[number, number]>): void => {
     const orders = side === 'asks' ? __asks : __bids;
     newOrders.forEach(([price, newLiquidity]) => {
       if (newLiquidity === 0) {

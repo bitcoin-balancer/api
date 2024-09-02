@@ -34,8 +34,8 @@ type IOrderBookService = {
   // properties
   lastRefetch: number;
 
-  // retrievers
-  // ...
+  // retriever
+  getSides: (range: ILiquidityPriceRange) => { asks: ILiquiditySide, bids: ILiquiditySide };
 
   // initializer
   off: () => void;
@@ -53,7 +53,7 @@ type IOrderBookService = {
  * Liquidity Side
  * An Order Book is comprised by 2 sides. The asks (sell orders) and bids (buy orders).
  */
-type ILiquiditySide = 'asks' | 'bids';
+type ILiquiditySideID = 'asks' | 'bids';
 
 /**
  * Liquidity Intensity
@@ -111,6 +111,18 @@ type ILiquidityPriceLevel = [
   ILiquidityIntensity, // liquidity intensity
 ];
 
+/**
+ * Liquidity Side
+ * The object containing the order book's processed data for a side.
+ */
+type ILiquiditySide = {
+  // the total liquidity accumulated in all levels
+  total: number;
+
+  // the list of price levels that comprise the side
+  levels: ILiquidityPriceLevel[];
+};
+
 
 
 
@@ -124,6 +136,16 @@ type ILiquidityPriceLevel = [
  * The object containing the full liquidity state as well as the payload.
  */
 type ILiquidityState = {
+  // the price range used to select the orders that will factor into the state's calculation
+  priceRange: ILiquidityPriceRange;
+
+  // the liquidity intensity requirements used to calculate the intensity of price levels
+  intensityRequirements: ILiquidityIntensityRequirements;
+
+  // the object containing all the price levels for a side including the liquidity total
+  asks: ILiquiditySide;
+  bids: ILiquiditySide;
+
   // the percentage representation of the bid dominance (buy orders against sell orders)
   bidDominance: number;
 
@@ -173,12 +195,13 @@ export type {
   IOrderBookService,
 
   // types
-  ILiquiditySide,
+  ILiquiditySideID,
   ILiquidityIntensity,
   ILiquidityIntensityWeights,
   ILiquidityPriceRange,
   ILiquidityIntensityRequirements,
   ILiquidityPriceLevel,
+  ILiquiditySide,
 
   // state
   ILiquidityState,

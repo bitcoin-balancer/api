@@ -3,15 +3,17 @@ import {
   buildPristineState,
   buildPristineCompactState,
   buildDefaultConfig,
+  calculatePriceRange,
 } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
 import { orderBookServiceFactory } from './order-book.js';
 import {
   ILiquidityService,
-  ILiquidityConfig,
-  ICompactLiquidityState,
   IOrderBookService,
+  ILiquiditySideID,
+  ICompactLiquidityState,
   ILiquidityState,
+  ILiquidityConfig,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -52,7 +54,12 @@ const liquidityServiceFactory = (): ILiquidityService => {
    * @returns ICompactLiquidityState
    */
   const calculateState = (baseAssetPrice: number): ICompactLiquidityState => {
-    return buildPristineCompactState();
+    // calculate the price range
+    __state.priceRange = calculatePriceRange(baseAssetPrice, __config.value.maxDistanceFromPrice);
+
+    // finally, return the compact state
+    __state.lastRefetch = __orderBook.lastRefetch;
+    return { bidDominance: 50 };
   };
 
 

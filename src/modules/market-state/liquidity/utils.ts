@@ -1,13 +1,16 @@
+/* eslint-disable object-curly-newline */
 import { adjustByPercentage } from 'bignumber-utils';
 import { toMilliseconds } from '../../shared/utils/index.js';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import {
   ICompactLiquidityState,
-  ILiquidityConfig,
+  ILiquiditySideID,
   ILiquidityIntensity,
   ILiquidityIntensityRequirements,
   ILiquidityPriceRange,
+  ILiquidityPriceLevel,
   ILiquidityState,
+  ILiquidityConfig,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -78,6 +81,10 @@ const calculateIntensity = (
  * @returns ILiquidityState
  */
 const buildPristineState = (): ILiquidityState => ({
+  priceRange: { current: 0, upper: 0, lower: 0 },
+  intensityRequirements: { low: 0, medium: 0, high: 0, veryHigh: 0 },
+  asks: { total: 0, levels: [] },
+  bids: { total: 0, levels: [] },
   bidDominance: 50,
   lastRefetch: Date.now(),
 });
@@ -132,6 +139,30 @@ const buildDefaultConfig = (): ILiquidityConfig => ({
 
 
 /* ************************************************************************************************
+ *                                          MISC HELPERS                                          *
+ ************************************************************************************************ */
+
+/**
+ * Generates the sort function to be used on price levels. Asks are ordered by price from low to
+ * high while bids are ordered by price from high to low.
+ * @param side
+ * @returns (a: ILiquidityPriceLevel, b: ILiquidityPriceLevel): number
+ */
+const priceLevelSortFunc = (side: ILiquiditySideID) => (
+  a: ILiquidityPriceLevel,
+  b: ILiquidityPriceLevel,
+): number => {
+  if (side === 'asks') {
+    return a[0] - b[0];
+  }
+  return b[0] - a[0];
+};
+
+
+
+
+
+/* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
@@ -147,4 +178,7 @@ export {
   // config helpers
   getOrderBookRefetchFrequency,
   buildDefaultConfig,
+
+  // misc helpers
+  priceLevelSortFunc,
 };
