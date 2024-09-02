@@ -1,5 +1,5 @@
 /* eslint-disable object-curly-newline */
-import { adjustByPercentage, calculateMean, processValue } from 'bignumber-utils';
+import { adjustByPercentage, calculateMean, calculatePercentageRepresentation, processValue } from 'bignumber-utils';
 import { toMilliseconds } from '../../shared/utils/index.js';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import {
@@ -11,6 +11,7 @@ import {
   ILiquidityPriceLevel,
   ILiquidityState,
   ILiquidityConfig,
+  ILiquidityIntensityWeights,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -78,7 +79,7 @@ const calculateIntensityRequirements = (
  * @param requirements
  * @returns ILiquidityIntensity
  */
-const calculateIntensity = (
+const __calculateIntensity = (
   liquidity: number,
   requirements: ILiquidityIntensityRequirements,
 ): ILiquidityIntensity => {
@@ -95,6 +96,37 @@ const calculateIntensity = (
     return 1;
   }
   return 0;
+};
+
+/**
+ * Calculates the points accumulated by a side based on its peaks.
+ * @param levels
+ * @param weights
+ * @returns number
+ */
+const __calculatePointsForSide = (
+  levels: ILiquidityPriceLevel[],
+  weights: ILiquidityIntensityWeights,
+): number => levels.reduce(
+  (previous, current) => previous + (current[2] === 0 ? 0 : weights[current[2]]),
+  0,
+);
+
+/**
+ * Calculates the bid dominance based on the liq. peaks present in both sides of the order book.
+ * @param asks
+ * @param bids
+ * @param weights
+ * @returns number
+ */
+const calculateBidDominance = (
+  asks: ILiquidityPriceLevel[],
+  bids: ILiquidityPriceLevel[],
+  weights: ILiquidityIntensityWeights,
+): number => {
+  const askPoints = __calculatePointsForSide(asks, weights);
+  const bidPoints = __calculatePointsForSide(bids, weights);
+  return calculatePercentageRepresentation(bidPoints, (askPoints + bidPoints));
 };
 
 
@@ -203,6 +235,19 @@ const isOrderPriceInRange = (
   || (side === 'bids' && price < range.current && price >= range.lower)
 );
 
+/**
+ * Processes an individual price level by calculating its intensity based on the current
+ * requirements.
+ * @param level
+ * @returns ILiquidityPriceLevel
+ */
+const processPriceLevel = (
+  level: ILiquidityPriceLevel,
+  requirements: ILiquidityIntensityRequirements,
+): ILiquidityPriceLevel => (
+  [level[0], level[1], __calculateIntensity(level[1], requirements)]
+);
+
 
 
 
@@ -214,7 +259,7 @@ export {
   // calculators
   calculatePriceRange,
   calculateIntensityRequirements,
-  calculateIntensity,
+  calculateBidDominance,
 
   // state helpes
   buildPristineState,
@@ -227,4 +272,5 @@ export {
   // misc helpers
   priceLevelSortFunc,
   isOrderPriceInRange,
+  processPriceLevel,
 };

@@ -1,9 +1,12 @@
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
 import {
+  calculatePriceRange,
+  calculateIntensityRequirements,
+  calculateBidDominance,
   buildPristineState,
   buildPristineCompactState,
   buildDefaultConfig,
-  calculatePriceRange,
+  processPriceLevel,
 } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
 import { orderBookServiceFactory } from './order-book.js';
@@ -13,7 +16,7 @@ import {
   ICompactLiquidityState,
   ILiquidityState,
   ILiquidityConfig,
-  ILiquiditySide,
+  ILiquidityPriceLevel,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -37,6 +40,10 @@ const liquidityServiceFactory = (): ILiquidityService => {
   // the up-to-date state of the module
   const __state: ILiquidityState = buildPristineState();
 
+  // the liq. intensity requirements are calculated every REQUIREMENT_CALCULATION_FREQUENCY minutes
+  let __nextRequirementsCalculation: number | undefined;
+  const __REQUIREMENT_CALCULATION_FREQUENCY = 2;
+
   // the module's configuration
   let __config: IRecordStore<ILiquidityConfig>;
 
@@ -48,8 +55,36 @@ const liquidityServiceFactory = (): ILiquidityService => {
    *                                       STATE CALCULATOR                                       *
    ********************************************************************************************** */
 
-  const __getLiquiditySides = (): { asks: ILiquiditySide, bids: ILiquiditySide } => {
+  /**
+   * Recalculates the intensity requirements and sets the date for the next recalculation.
+   * @param levels
+   * @param currentTime
+   */
+  const __recalculateRequirements = (levels: ILiquidityPriceLevel[]): void => {
+    const ts = Date.now();
+    if (!__nextRequirementsCalculation || ts >= __nextRequirementsCalculation) {
+      __state.intensityRequirements = calculateIntensityRequirements(levels);
+      __nextRequirementsCalculation = ts + ((__REQUIREMENT_CALCULATION_FREQUENCY * 60) * 1000);
+    }
+  };
 
+  /**
+   * Syncs the local state with the latest state of the order book.
+   */
+  const __syncLiquiditySides = (): void => {
+    // retrieve the up-to-date liquidity sides
+    const { asks, bids } = __orderBook.getPreProcessedLiquiditySides(__state.priceRange);
+
+    // recalculate requirements (if due)
+    __recalculateRequirements(asks.levels.concat(bids.levels));
+
+    // process and set the price levels
+    __state.asks.levels = asks.levels.map(
+      (level) => processPriceLevel(level, __state.intensityRequirements),
+    );
+    __state.bids.levels = bids.levels.map(
+      (level) => processPriceLevel(level, __state.intensityRequirements),
+    );
   };
 
   /**
@@ -61,17 +96,21 @@ const liquidityServiceFactory = (): ILiquidityService => {
     // calculate the price range
     __state.priceRange = calculatePriceRange(baseAssetPrice, __config.value.maxDistanceFromPrice);
 
-    // retrieve both liquidity sides
-    const { asks, bids } = __getLiquiditySides();
-    __state.asks = asks;
-    __state.bids = bids;
+    // sync both liquidity sides
+    __syncLiquiditySides();
 
     // identify the liquidity peaks and calculate the bid dominance
-    // @TODO
+    __state.bidDominance = calculateBidDominance(
+      __state.asks.levels,
+      __state.bids.levels,
+      __config.value.intensityWeights,
+    );
+
+    // update the latest refetch timestamp for debugging purposes
+    __state.lastRefetch = __orderBook.lastRefetch;
 
     // finally, return the compact state
-    __state.lastRefetch = __orderBook.lastRefetch;
-    return { bidDominance: 50 };
+    return { bidDominance: __state.bidDominance };
   };
 
 
