@@ -196,7 +196,7 @@ const buildDefaultConfig = (): ILiquidityConfig => ({
     1: 1,
     2: 3,
     3: 6,
-    4: 12,
+    4: 9,
   },
 });
 
