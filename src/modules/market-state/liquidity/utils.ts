@@ -1,5 +1,5 @@
 /* eslint-disable object-curly-newline */
-import { adjustByPercentage } from 'bignumber-utils';
+import { adjustByPercentage, calculateMean, processValue } from 'bignumber-utils';
 import { toMilliseconds } from '../../shared/utils/index.js';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import {
@@ -33,15 +33,44 @@ const calculatePriceRange = (
 });
 
 /**
- * Calculates the liquidity intensity requirements based on all of the existing price levels.
+ * Calculates the liquidity intensity requirements based on all of the existing price levels that
+ * will be used to determine the intensity for each level.
  * @returns ILiquidityIntensityRequirements
  */
-const calculateIntensityRequirements = (): ILiquidityIntensityRequirements => ({
-  low: 0,
-  medium: 0,
-  high: 0,
-  veryHigh: 0,
-});
+const calculateIntensityRequirements = (
+  levels: ILiquidityPriceLevel[],
+): ILiquidityIntensityRequirements => {
+  // init values
+  let accum: number = 0;
+  let lowest: number = 0;
+  let highest: number = 0;
+
+  // iterate over each level and populate the values
+  levels.forEach((level) => {
+    accum += level[1];
+    highest = level[1] > highest ? level[1] : highest;
+    // eslint-disable-next-line no-nested-ternary
+    lowest = lowest === 0 ? level[1] : level[1] < lowest ? level[1] : lowest;
+  });
+
+  // calculate the requirements
+  const mean = processValue(accum / levels.length);
+  const meanLow = calculateMean([mean, lowest]);
+  const meanVeryHigh = calculateMean([mean, highest]);
+  const meanHigh = calculateMean([mean, meanVeryHigh]);
+  const meanHighAdj = calculateMean([mean, meanHigh]);
+  const meanMedium = calculateMean([mean, meanHighAdj]);
+  const meanMediumAdj = calculateMean([mean, meanMedium]);
+  const meanLowMedium = calculateMean([meanLow, meanMediumAdj]);
+
+  // finally, return the requirements
+  return {
+    low: meanLow,
+    medium: meanLowMedium,
+    high: meanMediumAdj,
+    veryHigh: meanHighAdj,
+  };
+};
 
 /**
  * Calculates the intensity of a price level based on its liquidity and the current requirements.

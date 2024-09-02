@@ -4,7 +4,11 @@ import { IRecord } from '../../shared/types.js';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IOrderBookWebSocketMessage } from '../../shared/exchange/index.js';
-import { getOrderBookRefetchFrequency, isOrderPriceInRange, priceLevelSortFunc } from './utils.js';
+import {
+  getOrderBookRefetchFrequency,
+  isOrderPriceInRange,
+  priceLevelSortFunc,
+} from './utils.js';
 import {
   ILiquidityPriceLevel,
   ILiquidityPriceRange,
@@ -118,7 +122,7 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
    * @param range
    * @returns { asks: ILiquiditySide, bids: ILiquiditySide }
    */
-  const getLiquiditySides = (
+  const getPreProcessedLiquiditySides = (
     range: ILiquidityPriceRange,
   ): { asks: ILiquiditySide, bids: ILiquiditySide } => ({
     asks: __buildSide('asks', range),
@@ -228,7 +232,7 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
     },
 
     // retriever
-    getLiquiditySides,
+    getPreProcessedLiquiditySides,
 
     // initializer
     off,

@@ -10,10 +10,10 @@ import { orderBookServiceFactory } from './order-book.js';
 import {
   ILiquidityService,
   IOrderBookService,
-  ILiquiditySideID,
   ICompactLiquidityState,
   ILiquidityState,
   ILiquidityConfig,
+  ILiquiditySide,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -48,6 +48,10 @@ const liquidityServiceFactory = (): ILiquidityService => {
    *                                       STATE CALCULATOR                                       *
    ********************************************************************************************** */
 
+  const __getLiquiditySides = (): { asks: ILiquiditySide, bids: ILiquiditySide } => {
+
+  };
+
   /**
    * Calculates the liquidity state based on the current rate.
    * @param baseAssetPrice
@@ -56,6 +60,14 @@ const liquidityServiceFactory = (): ILiquidityService => {
   const calculateState = (baseAssetPrice: number): ICompactLiquidityState => {
     // calculate the price range
     __state.priceRange = calculatePriceRange(baseAssetPrice, __config.value.maxDistanceFromPrice);
+
+    // retrieve both liquidity sides
+    const { asks, bids } = __getLiquiditySides();
+    __state.asks = asks;
+    __state.bids = bids;
+
+    // identify the liquidity peaks and calculate the bid dominance
+    // @TODO
 
     // finally, return the compact state
     __state.lastRefetch = __orderBook.lastRefetch;
