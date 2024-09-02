@@ -1,5 +1,10 @@
 /* eslint-disable object-curly-newline */
-import { adjustByPercentage, calculateMean, calculatePercentageRepresentation, processValue } from 'bignumber-utils';
+import {
+  adjustByPercentage,
+  calculateMean,
+  calculatePercentageRepresentation,
+  processValue,
+} from 'bignumber-utils';
 import { toMilliseconds } from '../../shared/utils/index.js';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import {

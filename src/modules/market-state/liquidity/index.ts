@@ -79,12 +79,14 @@ const liquidityServiceFactory = (): ILiquidityService => {
     __recalculateRequirements(asks.levels.concat(bids.levels));
 
     // process and set the price levels
-    __state.asks.levels = asks.levels.map(
-      (level) => processPriceLevel(level, __state.intensityRequirements),
-    );
-    __state.bids.levels = bids.levels.map(
-      (level) => processPriceLevel(level, __state.intensityRequirements),
-    );
+    __state.asks = {
+      total: asks.total,
+      levels: asks.levels.map((level) => processPriceLevel(level, __state.intensityRequirements)),
+    };
+    __state.bids = {
+      total: bids.total,
+      levels: bids.levels.map((level) => processPriceLevel(level, __state.intensityRequirements)),
+    };
   };
 
   /**
