@@ -158,6 +158,22 @@ const priceLevelSortFunc = (side: ILiquiditySideID) => (
   return b[0] - a[0];
 };
 
+/**
+ * Verifies if an order's price is within the price range.
+ * @param price
+ * @param range
+ * @param side
+ * @returns boolean
+ */
+const isOrderPriceInRange = (
+  price: number,
+  range: ILiquidityPriceRange,
+  side: ILiquiditySideID,
+): boolean => (
+  (side === 'asks' && price > range.current && price <= range.upper)
+  || (side === 'bids' && price < range.current && price >= range.lower)
+);
+
 
 
 
@@ -181,4 +197,5 @@ export {
 
   // misc helpers
   priceLevelSortFunc,
+  isOrderPriceInRange,
 };

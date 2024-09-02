@@ -4,8 +4,14 @@ import { IRecord } from '../../shared/types.js';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IOrderBookWebSocketMessage } from '../../shared/exchange/index.js';
-import { getOrderBookRefetchFrequency } from './utils.js';
-import { ILiquidityPriceRange, ILiquiditySide, ILiquiditySideID, IOrderBookService } from './types.js';
+import { getOrderBookRefetchFrequency, isOrderPriceInRange, priceLevelSortFunc } from './utils.js';
+import {
+  ILiquidityPriceLevel,
+  ILiquidityPriceRange,
+  ILiquiditySide,
+  ILiquiditySideID,
+  IOrderBookService,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -48,11 +54,76 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
    *                                          RETRIEVER                                           *
    ********************************************************************************************** */
 
-  const getSides = (
-    range: ILiquidityPriceRange,
-  ): { asks: ILiquiditySide, bids: ILiquiditySide } => {
+  /**
+   * Builds the order tuple based on its price and liquidity.
+   * @param price
+   * @param liquidity
+   * @returns [number, number]
+   */
+  const __buildOrder = (price: string, liquidity: number): [number, number] => (
+    [Math.floor(Number(price)), liquidity]
+  );
 
+  /**
+   * Builds and sorts the order tuples by price ascendingly.
+   * @param side
+   * @returns Array<[number, number]>
+   */
+  const __getOrdersForSide = (side: ILiquiditySideID): Array<[number, number]> => {
+    const orders = side === 'asks' ? __asks : __bids;
+    return Object.keys(orders)
+      .map((price) => __buildOrder(price, orders[price]))
+      .sort((a, b) => a[0] - b[0]);
   };
+
+  /**
+   * Builds the price levels and calculates the total liquidity for a side.
+   * @param side
+   * @param range
+   * @returns ILiquiditySide
+   */
+  const __buildSide = (side: ILiquiditySideID, range: ILiquidityPriceRange): ILiquiditySide => {
+    // init values
+    let total: number = 0;
+    const levels: ILiquidityPriceLevel[] = [];
+
+    // iterate over each order and ensure the price level is within the range
+    __getOrdersForSide(side).forEach(([price, liquidity]) => {
+      if (isOrderPriceInRange(price, range, side)) {
+        // if there are levels, otherwise include it
+        if (levels.length > 0) {
+          // if the price has not yet been added, do so. Otherwise, just increase the liquidity
+          if (levels[levels.length - 1][0] !== price) {
+            levels.push([price, liquidity, 0]);
+          } else {
+            levels[levels.length - 1][1] += liquidity;
+          }
+        } else {
+          levels.push([price, liquidity, 0]);
+        }
+
+        // add the liquidity to the total
+        total += liquidity;
+      }
+    });
+
+    // finally, return the build
+    return { total, levels: levels.sort(priceLevelSortFunc(side)) };
+  };
+
+
+  /**
+   * Builds the liquidity for both sides based on the existing orders. Note that the intensities
+   * are not calculated at this stage.
+   * @param range
+   * @returns { asks: ILiquiditySide, bids: ILiquiditySide }
+   */
+  const getLiquiditySides = (
+    range: ILiquidityPriceRange,
+  ): { asks: ILiquiditySide, bids: ILiquiditySide } => ({
+    asks: __buildSide('asks', range),
+    bids: __buildSide('bids', range),
+  });
 
 
 
@@ -155,6 +226,9 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
     get lastRefetch() {
       return __lastRefetch;
     },
+
+    // retriever
+    getLiquiditySides,
 
     // initializer
     off,

@@ -35,7 +35,9 @@ type IOrderBookService = {
   lastRefetch: number;
 
   // retriever
-  getSides: (range: ILiquidityPriceRange) => { asks: ILiquiditySide, bids: ILiquiditySide };
+  getLiquiditySides: (
+    range: ILiquidityPriceRange,
+  ) => { asks: ILiquiditySide, bids: ILiquiditySide };
 
   // initializer
   off: () => void;
