@@ -60,6 +60,10 @@ const exchangeServiceFactory = (): IExchangeService => {
    * - 12500: if the HTTP response code is not in the acceptedCodes
    * - 13502: if the order book object is invalid (binance)
    * - 14502: if the response does not include a valid order book snapshot (bitfinex)
+   * - 15500: if the response is not an object or it is missing the error property (kraken)
+   * - 15501: if the response contains errors (kraken)
+   * - 15502: if the response does not contain a valid result property (kraken)
+   * - 15505: if the response doesn't include a valid order book object (kraken)
    */
   const getOrderBook = assembleGetOrderBook();
 
@@ -77,6 +81,11 @@ const exchangeServiceFactory = (): IExchangeService => {
    * @throws
    * - 12500: if the HTTP response code is not in the acceptedCodes
    * - 13501: if the response doesn't include a valid series of tickers (binance)
+   * - 14501: if the response doesn't include a valid series of tickers (bitfinex)
+   * - 15500: if the response is not an object or it is missing the error property (kraken)
+   * - 15501: if the response contains errors (kraken)
+   * - 15502: if the response does not contain a valid result property (kraken)
+   * - 15504: if the response doesn't include a valid series of tickers (kraken)
    */
   const getTopSymbols = assembleGetTopSymbols();
 

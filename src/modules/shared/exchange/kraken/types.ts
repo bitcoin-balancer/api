@@ -1,6 +1,10 @@
 import { Observable } from 'rxjs';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
-import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
+import {
+  ICandlestickInterval,
+  IOrderBook,
+  ITickerWebSocketMessage,
+} from '../types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -20,6 +24,7 @@ type IKrakenService = {
     limit: number,
     startTime?: number,
   ) => Promise<ICompactCandlestickRecords>;
+  getOrderBook: () => Promise<IOrderBook>;
   getTopSymbols: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
   getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 };
@@ -171,7 +176,29 @@ type ISupportedCandlestickIntervals = {
  *                                           ORDER BOOK                                           *
  ************************************************************************************************ */
 
-// ...
+/**
+ * Kraken Order Book Level
+ * The tuple that contains the information for an individual price level.
+ */
+type IKrakenOrderBookLevel = [
+  string, // price
+  string, // volume
+  number, // timestamp
+];
+
+/**
+ * Kraken Order Book
+ * The current state of the order book for the base asset.
+ * GET https://api.kraken.com/0/public/Depth?pair=XBTUSD&count=500
+ */
+type IKrakenOrderBook = {
+  // asks (sell orders)
+  asks: Array<IKrakenOrderBookLevel>;
+
+  // bids (buy orders)
+  bids: Array<IKrakenOrderBookLevel>;
+};
+
 
 
 
@@ -265,7 +292,8 @@ export type {
   ISupportedCandlestickIntervals,
 
   // order book
-  // ...
+  IKrakenOrderBookLevel,
+  IKrakenOrderBook,
 
   // ticker
   IKrakenCoinTickers,

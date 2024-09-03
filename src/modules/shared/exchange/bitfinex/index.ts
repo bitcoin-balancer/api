@@ -93,14 +93,11 @@ const bitfinexServiceFactory = (): IBitfinexService => {
     limit: number,
     startTime?: number,
   ): Promise<ICompactCandlestickRecords> => {
-    // send and validate the req
     const res = await sendGET(
       buildGetCandlesticksURL(__SYMBOL, __CANDLESTICK_INTERVALS[interval], limit, startTime),
       { skipStatusCodeValidation: true },
     );
     validateCandlesticksResponse(res);
-
-    // finally, return the transformed candlesticks
     return transformCandlesticks(res.data);
   };
 

@@ -41,6 +41,8 @@ const assembleGetOrderBook = (): IGetOrderBook => {
       return BinanceService.getOrderBook;
     case 'bitfinex':
       return BitfinexService.getOrderBook;
+    case 'kraken':
+      return KrakenService.getOrderBook;
     default:
       throw new Error(`The function assembleGetOrderBook could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity}' is not supported.`);
   }

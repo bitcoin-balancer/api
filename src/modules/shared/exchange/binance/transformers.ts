@@ -39,7 +39,7 @@ const transformCandlesticks = (source: IBinanceCandlestick[]): ICompactCandlesti
  * @param order
  * @returns [number, number]
  */
-const __transformOrders = (order: [string, string]): [number, number] => (
+const __transformOrder = (order: [string, string]): [number, number] => (
   [Number(order[0]), Number(order[1])]
 );
 
@@ -49,8 +49,8 @@ const __transformOrders = (order: [string, string]): [number, number] => (
  * @returns IOrderBook
  */
 const transformOrderBook = (source: IBinanceOrderBook): IOrderBook => ({
-  asks: source.asks.map(__transformOrders),
-  bids: source.bids.map(__transformOrders),
+  asks: source.asks.map(__transformOrder),
+  bids: source.bids.map(__transformOrder),
   lastUpdateID: source.lastUpdateId,
 });
 
@@ -62,8 +62,8 @@ const transformOrderBook = (source: IBinanceOrderBook): IOrderBook => ({
 const transformOrderBookMessage = (
   source: IBinanceOrderBookWebSocketMessage,
 ): IOrderBookWebSocketMessage => ({
-  asks: source.a.map(__transformOrders),
-  bids: source.b.map(__transformOrders),
+  asks: source.a.map(__transformOrder),
+  bids: source.b.map(__transformOrder),
   finalUpdateID: source.u,
 });
 

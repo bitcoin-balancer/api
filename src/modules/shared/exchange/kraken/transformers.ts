@@ -3,8 +3,16 @@ import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
 } from '../../candlestick/index.js';
-import { ITickerWebSocketMessage } from '../types.js';
-import { IKrakenCandlestick, IKrakenTickerWebSocketMessageData } from './types.js';
+import {
+  IOrderBook,
+  ITickerWebSocketMessage,
+} from '../types.js';
+import {
+  IKrakenCandlestick,
+  IKrakenOrderBookLevel,
+  IKrakenOrderBook,
+  IKrakenTickerWebSocketMessageData,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -29,6 +37,26 @@ const transformCandlesticks = (source: IKrakenCandlestick[]): ICompactCandlestic
   )
 );
 
+/**
+ * Converts a string tuple into a numeric one.
+ * @param order
+ * @returns [number, number]
+ */
+const __transformOrder = (order: IKrakenOrderBookLevel): [number, number] => (
+  [Number(order[0]), Number(order[1])]
+);
+
+/**
+ * Transforms a raw Kraken Order Book into the object required by the Exchange.
+ * @param source
+ * @returns IOrderBook
+ */
+const transformOrderBook = (source: IKrakenOrderBook): IOrderBook => ({
+  asks: source.asks.map(__transformOrder),
+  bids: source.bids.map(__transformOrder),
+  lastUpdateID: 0,
+});
+
 
 /**
  * Transforms the ticker message received through the WebSocket into the general message type.
@@ -50,5 +78,6 @@ const transformTicker = (
  ************************************************************************************************ */
 export {
   transformCandlesticks,
+  transformOrderBook,
   transformTicker,
 };

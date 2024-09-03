@@ -2,7 +2,11 @@ import { Observable } from 'rxjs';
 import { sendGET } from 'fetch-request-node';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import { websocketFactory } from '../../websocket/index.js';
-import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
+import {
+  ICandlestickInterval,
+  IOrderBook,
+  ITickerWebSocketMessage,
+} from '../types.js';
 import {
   buildGetCandlesticksURL,
   buildTopPairsObject,
@@ -10,8 +14,16 @@ import {
   tickersSortFunc,
   buildSubscriptionForTickers,
 } from './utils.js';
-import { validateCandlesticksResponse, validateTickersResponse } from './validations.js';
-import { transformCandlesticks, transformTicker } from './transformers.js';
+import {
+  validateCandlesticksResponse,
+  validateOrderBookResponse,
+  validateTickersResponse,
+} from './validations.js';
+import {
+  transformCandlesticks,
+  transformOrderBook,
+  transformTicker,
+} from './transformers.js';
 import {
   IKrakenCoinTicker,
   IKrakenCoinTickers,
@@ -77,14 +89,11 @@ const krakenServiceFactory = (): IKrakenService => {
     limit: number,
     startTime?: number,
   ): Promise<ICompactCandlestickRecords> => {
-    // send and validate the req
     const res = await sendGET(
       buildGetCandlesticksURL(__SYMBOL, __CANDLESTICK_INTERVALS[interval], startTime),
       { skipStatusCodeValidation: true },
     );
     validateCandlesticksResponse(res, 'XXBTZUSD');
-
-    // finally, return the transformed candlesticks
     return transformCandlesticks(res.data.result.XXBTZUSD.slice(-(limit)));
   };
 
@@ -92,7 +101,24 @@ const krakenServiceFactory = (): IKrakenService => {
    * Order Book
    */
 
-  // ...
+  /**
+   * Retrieves the current state of Kraken's order book for the base asset.
+   * @returns Promise<IOrderBook>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 15500: if the response is not an object or it is missing the error property
+   * - 15501: if the response contains errors
+   * - 15502: if the response does not contain a valid result property
+   * - 15505: if the response doesn't include a valid order book object
+   */
+  const getOrderBook = async (): Promise<IOrderBook> => {
+    const res = await sendGET(
+      `https://api.kraken.com/0/public/Depth?pair=${__SYMBOL}&count=500`,
+      { skipStatusCodeValidation: true },
+    );
+    validateOrderBookResponse(res, 'XXBTZUSD');
+    return transformOrderBook(res.data.result.XXBTZUSD);
+  };
 
   /**
    * Tickers
@@ -195,6 +221,7 @@ const krakenServiceFactory = (): IKrakenService => {
 
     // market data
     getCandlesticks,
+    getOrderBook,
     getTopSymbols,
     getTickersStream,
   });

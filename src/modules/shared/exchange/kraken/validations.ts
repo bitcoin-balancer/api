@@ -52,6 +52,34 @@ const validateCandlesticksResponse = (res: IRequestResponse, resultKey: string):
 };
 
 /**
+ * Ensures the order book's endpoint returned a valid object.
+ * @param res
+ * @param resultKey
+ * @throws
+ * - 12500: if the HTTP response code is not in the acceptedCodes
+ * - 15500: if the response is not an object or it is missing the error property
+ * - 15501: if the response contains errors
+ * - 15502: if the response does not contain a valid result property
+ * - 15505: if the response doesn't include a valid order book object
+ */
+const validateOrderBookResponse = (res: IRequestResponse, resultKey: string): void => {
+  validateResponse(res);
+  validateAPIResponse(res.data);
+  if (!objectValid(res.data.result[resultKey])) {
+    console.log(res);
+    throw new Error(encodeError('Kraken returned an invalid order book object.', 15505));
+  }
+  if (!arrayValid(res.data.result[resultKey].asks)) {
+    console.log(res);
+    throw new Error(encodeError('Kraken returned an invalid order book object. The \'asks\' property is not a valid list.', 15505));
+  }
+  if (!arrayValid(res.data.result[resultKey].bids)) {
+    console.log(res);
+    throw new Error(encodeError('Kraken returned an invalid order book object. The \'bids\' property is not a valid list.', 15505));
+  }
+};
+
+/**
  * Ensures the ticker's endpoint returned a valid list of tickers.
  * @param res
  * @throws
@@ -79,5 +107,6 @@ const validateTickersResponse = (res: IRequestResponse): void => {
  ************************************************************************************************ */
 export {
   validateCandlesticksResponse,
+  validateOrderBookResponse,
   validateTickersResponse,
 };
