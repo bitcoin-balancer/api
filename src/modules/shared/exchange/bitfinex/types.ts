@@ -177,6 +177,8 @@ type IBitfinexOrderBookWebSocketMessage = [
 
 
 
+
+
 /* ************************************************************************************************
  *                                             TICKER                                             *
  ************************************************************************************************ */
@@ -262,7 +264,9 @@ export type {
 
   // order book
   IBitfinexOrderBook,
+  IBitfinexOrderBookLevel,
   IBitfinexOrderBookWebSocketSubscription,
+  IBitfinexOrderBookWebSocketMessage,
 
   // ticker
   IBitfinexCoinTicker,

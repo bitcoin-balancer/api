@@ -11,12 +11,13 @@ import {
 } from '../types.js';
 import {
   buildGetCandlesticksURL,
+  buildSubscriptionForOrderBook,
+  isOrderBookWebSocketMessage,
   tickersSortFunc,
   buildSubscriptionForTicker,
   buildTopPairsObject,
   buildWhitelist,
   isTickerWebsocketMessage,
-  buildSubscriptionForOrderBook,
 } from './utils.js';
 import {
   validateCandlesticksResponse,
@@ -26,13 +27,15 @@ import {
 import {
   transformCandlesticks,
   transformOrderBook,
+  transformOrderBookMessage,
   transformTicker,
 } from './transformers.js';
 import {
-  IBitfinexCoinTicker,
   IBitfinexService,
-  IBitfinexWebSocketMessage,
   ISupportedCandlestickIntervals,
+  IBitfinexWebSocketMessage,
+  IBitfinexOrderBookLevel,
+  IBitfinexCoinTicker,
 } from './types.js';
 
 
@@ -133,18 +136,11 @@ const bitfinexServiceFactory = (): IBitfinexService => {
 
         /**
          * onMessage: handle messages appropriately:
-         * - if the msg is an array and the second item is a tuple, it is a ticker
-         * - if the msg's event is 'subscribed', a connection to a symbol has been established
+         * - if the msg is an array and the second item is a tuple, it is an update
          */
         (msg) => {
-          if (msg) {
-            if (Array.isArray(msg)) {
-              if (isTickerWebsocketMessage(msg[1])) {
-                subscriber.next(transformTicker(channels[msg[0]], msg[1]));
-              }
-            } else if (msg.event === 'subscribed') {
-              channels[msg.chanId] = topPairs[msg.symbol];
-            }
+          if (isOrderBookWebSocketMessage(msg)) {
+            subscriber.next(transformOrderBookMessage(msg[1] as IBitfinexOrderBookLevel));
           }
         },
 

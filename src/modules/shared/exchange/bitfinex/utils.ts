@@ -1,7 +1,9 @@
 import { IRecord } from '../../types.js';
 import {
   IBitfinexCandlestickInterval,
+  IBitfinexWebSocketMessage,
   IBitfinexOrderBookWebSocketSubscription,
+  IBitfinexOrderBookWebSocketMessage,
   IBitfinexCoinTicker,
   IBitfinexTickerWebSocketMessageData,
   IBitfinexTickerWebSocketSubscription,
@@ -54,6 +56,17 @@ const buildSubscriptionForOrderBook = (symbol: string): string => (
     len: 250,
     freq: 'F0',
   })
+);
+
+/**
+ * Checks if a WebSocket message belongs to an order book update.
+ * @param msg
+ * @returns boolean
+ */
+const isOrderBookWebSocketMessage = (
+  msg: IBitfinexWebSocketMessage,
+): msg is IBitfinexOrderBookWebSocketMessage => (
+  Array.isArray(msg) && Array.isArray(msg[1]) && typeof msg[1][0] === 'number'
 );
 
 
@@ -137,6 +150,7 @@ export {
 
   // order book
   buildSubscriptionForOrderBook,
+  isOrderBookWebSocketMessage,
 
   // tickers
   tickersSortFunc,

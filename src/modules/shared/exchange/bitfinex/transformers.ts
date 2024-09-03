@@ -2,10 +2,15 @@ import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
 } from '../../candlestick/index.js';
-import { IOrderBook, ITickerWebSocketMessage } from '../types.js';
+import {
+  IOrderBook,
+  IOrderBookWebSocketMessage,
+  ITickerWebSocketMessage,
+} from '../types.js';
 import {
   IBitfinexCandlestick,
   IBitfinexOrderBook,
+  IBitfinexOrderBookLevel,
   IBitfinexTickerWebSocketMessageData,
 } from './types.js';
 
@@ -52,6 +57,28 @@ const transformOrderBook = (source: IBitfinexOrderBook): IOrderBook => source.re
 );
 
 /**
+ * Transforms an order book update object into the websocket message required by the Exchange.
+ * @param source
+ * @returns IOrderBookWebSocketMessage
+ */
+const transformOrderBookMessage = (
+  source: IBitfinexOrderBookLevel,
+): IOrderBookWebSocketMessage => {
+  if (source[2] > 0) {
+    return {
+      asks: [],
+      bids: [[source[0], source[1] === 0 ? 0 : source[2]]],
+      finalUpdateID: 1, // placeholder
+    };
+  }
+  return {
+    asks: [[source[0], source[1] === 0 ? 0 : -(source[2])]],
+    bids: [],
+    finalUpdateID: 1, // placeholder
+  };
+};
+
+/**
  * Transforms the ticker message received through the WebSocket into the general message type.
  * @param symbol
  * @param ticker
@@ -72,5 +99,6 @@ const transformTicker = (
 export {
   transformCandlesticks,
   transformOrderBook,
+  transformOrderBookMessage,
   transformTicker,
 };
