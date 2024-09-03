@@ -20,10 +20,6 @@ type IExchangeService = {
   getOrderBookStream: IGetOrderBookStream;
   getTopSymbols: IGetTopSymbols;
   getTickersStream: IGetTickersStream;
-
-  // initializer
-  initialize: () => Promise<void>;
-  teardown: () => Promise<void>;
 };
 
 

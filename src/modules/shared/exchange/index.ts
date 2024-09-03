@@ -91,30 +91,6 @@ const exchangeServiceFactory = (): IExchangeService => {
 
 
   /* **********************************************************************************************
-   *                                         INITIALIZER                                          *
-   ********************************************************************************************** */
-
-  /**
-   * Initializes the Market State Module.
-   * @returns Promise<void>
-   */
-  const initialize = async (): Promise<void> => {
-
-  };
-
-  /**
-   * Tears down the Market State Module.
-   * @returns Promise<void>
-   */
-  const teardown = async (): Promise<void> => {
-
-  };
-
-
-
-
-
-  /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
   return Object.freeze({
@@ -127,10 +103,6 @@ const exchangeServiceFactory = (): IExchangeService => {
     getOrderBookStream,
     getTopSymbols,
     getTickersStream,
-
-    // initializer
-    initialize,
-    teardown,
   });
 };
 
