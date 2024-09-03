@@ -58,6 +58,8 @@ const assembleGetOrderBookStream = (): IGetOrderBookStream => {
       return BinanceService.getOrderBookStream;
     case 'bitfinex':
       return BitfinexService.getOrderBookStream;
+    case 'kraken':
+      return KrakenService.getOrderBookStream;
     default:
       throw new Error(`The function assembleGetOrderBookStream could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity}' is not supported.`);
   }

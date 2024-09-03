@@ -3,6 +3,7 @@ import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import {
   ICandlestickInterval,
   IOrderBook,
+  IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
 } from '../types.js';
 
@@ -25,6 +26,7 @@ type IKrakenService = {
     startTime?: number,
   ) => Promise<ICompactCandlestickRecords>;
   getOrderBook: () => Promise<IOrderBook>;
+  getOrderBookStream: () => Observable<IOrderBookWebSocketMessage>;
   getTopSymbols: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
   getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 };
@@ -67,7 +69,7 @@ type IKrakenAPIResponse = {
  * status: https://docs.kraken.com/api/docs/websocket-v2/status
  * heartbeat: https://docs.kraken.com/api/docs/websocket-v2/heartbeat
  */
-type IKrakenWebSocketChannel = 'status' | 'heartbeat' | 'ticker';
+type IKrakenWebSocketChannel = 'status' | 'heartbeat' | 'book' | 'ticker';
 
 /**
  * Kraken WebSocket Method
@@ -105,6 +107,7 @@ type IKrakenWebSocketMessage = {
     channel: 'heartbeat';
   }
   | IKrakenStatusWebSocketMessage
+  | IKrakenOrderBookWebSocketMessage
   | IKrakenTickerWebSocketMessage
 );
 
@@ -197,6 +200,43 @@ type IKrakenOrderBook = {
 
   // bids (buy orders)
   bids: Array<IKrakenOrderBookLevel>;
+};
+
+/**
+ * Kraken Order Book WebSocket Subscription
+ * The object that will be sent in a message in order to subscribe to the book's stream. More info:
+ * https://docs.kraken.com/api/docs/websocket-v2/book
+ */
+type IKrakenOrderBookWebSocketSubscriptionParams = {
+  channel: IKrakenWebSocketChannel;
+  symbol: string[];
+  depth: 10 | 25 | 100 | 500 | 1000;
+  snapshot: boolean;
+};
+type IKrakenOrderBookWebSocketSubscription = {
+  method: IKrakenWebSocketMethod;
+  params: IKrakenOrderBookWebSocketSubscriptionParams;
+};
+
+/**
+ * Kraken Order Book WebSocket Message
+ * This object is received from the stream whenever the order book for the base asset changes.
+ */
+type IKrakenOrderBookWebSocketMessagePriceLevel = {
+  price: number; // e.g. 58094.3
+  qty: number; // 0.00166872
+};
+type IKrakenOrderBookWebSocketMessageData = {
+  symbol: string; // e.g. 'BTC/USD'
+  bids: IKrakenOrderBookWebSocketMessagePriceLevel[];
+  asks: IKrakenOrderBookWebSocketMessagePriceLevel[];
+  checksum: number; // e.g. 1634053266
+  timestamp: string; // e.g. '2024-09-03T19:17:18.024967Z
+};
+type IKrakenOrderBookWebSocketMessage = {
+  channel: 'book';
+  data: [IKrakenOrderBookWebSocketMessageData],
+  type: IKrakenWebSocketMessageType; // e.g. 'update'
 };
 
 
@@ -294,6 +334,11 @@ export type {
   // order book
   IKrakenOrderBookLevel,
   IKrakenOrderBook,
+  IKrakenOrderBookWebSocketSubscriptionParams,
+  IKrakenOrderBookWebSocketSubscription,
+  IKrakenOrderBookWebSocketMessagePriceLevel,
+  IKrakenOrderBookWebSocketMessageData,
+  IKrakenOrderBookWebSocketMessage,
 
   // ticker
   IKrakenCoinTickers,

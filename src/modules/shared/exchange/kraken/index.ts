@@ -5,10 +5,12 @@ import { websocketFactory } from '../../websocket/index.js';
 import {
   ICandlestickInterval,
   IOrderBook,
+  IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
 } from '../types.js';
 import {
   buildGetCandlesticksURL,
+  buildSubscriptionForOrderBook,
   buildTopPairsObject,
   buildWhitelist,
   tickersSortFunc,
@@ -22,6 +24,7 @@ import {
 import {
   transformCandlesticks,
   transformOrderBook,
+  transformOrderBookMessage,
   transformTicker,
 } from './transformers.js';
 import {
@@ -119,6 +122,32 @@ const krakenServiceFactory = (): IKrakenService => {
     validateOrderBookResponse(res, 'XXBTZUSD');
     return transformOrderBook(res.data.result.XXBTZUSD);
   };
+
+  /**
+   * Retrieves the order book's stream for the base asset.
+   * @returns Observable<IOrderBookWebSocketMessage>
+   */
+  const getOrderBookStream = (): Observable<IOrderBookWebSocketMessage> => (
+    new Observable<IOrderBookWebSocketMessage>((subscriber) => {
+      const ws = websocketFactory<IKrakenWebSocketMessage>(
+        'LIQUIDITY',
+        'wss://ws.kraken.com/v2',
+
+        // onMessage: emmit the data if the message is a book update
+        (msg) => {
+          if (msg && msg.channel === 'book') {
+            subscriber.next(transformOrderBookMessage(msg.data[0]));
+          }
+        },
+
+        // onOpen: subscribe to the order book's stream
+        (__ws) => __ws.send(buildSubscriptionForOrderBook('BTC/USD')),
+      );
+      return function unsubscribe() {
+        ws.off();
+      };
+    })
+  );
 
   /**
    * Tickers
@@ -222,6 +251,7 @@ const krakenServiceFactory = (): IKrakenService => {
     // market data
     getCandlesticks,
     getOrderBook,
+    getOrderBookStream,
     getTopSymbols,
     getTickersStream,
   });

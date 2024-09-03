@@ -2,12 +2,13 @@ import { IRecord } from '../../types.js';
 import { toSeconds } from '../../utils/index.js';
 import {
   IKrakenCandlestickInterval,
+  IKrakenOrderBookWebSocketSubscription,
   IKrakenCoinTicker,
   IKrakenTickerWebSocketSubscription,
 } from './types.js';
 
 /* ************************************************************************************************
- *                                         IMPLEMENTATION                                         *
+ *                                          CANDLESTICKS                                          *
  ************************************************************************************************ */
 
 /**
@@ -28,6 +29,39 @@ const buildGetCandlesticksURL = (
   }
   return url;
 };
+
+
+
+
+
+/* ************************************************************************************************
+ *                                           ORDER BOOK                                           *
+ ************************************************************************************************ */
+
+/**
+ * Builds the object that is used to subscribes to the tickers' stream for all top symbols.
+ * @param topPairs
+ * @returns string
+ */
+const buildSubscriptionForOrderBook = (symbol: string): string => (
+  JSON.stringify(<IKrakenOrderBookWebSocketSubscription>{
+    method: 'subscribe',
+    params: {
+      channel: 'book',
+      symbol: [symbol],
+      depth: 1000,
+      snapshot: false,
+    },
+  })
+);
+
+
+
+
+
+/* ************************************************************************************************
+ *                                            TICKERS                                             *
+ ************************************************************************************************ */
 
 /**
  * Sorts the tickers by volume descendingly.
@@ -104,7 +138,13 @@ const buildSubscriptionForTickers = (topPairs: string[]): string => (
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // candlesticks
   buildGetCandlesticksURL,
+
+  // order book
+  buildSubscriptionForOrderBook,
+
+  // tickers
   tickersSortFunc,
   buildWhitelist,
   buildTopPairsObject,

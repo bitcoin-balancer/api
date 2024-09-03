@@ -5,6 +5,7 @@ import {
 } from '../../candlestick/index.js';
 import {
   IOrderBook,
+  IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
 } from '../types.js';
 import {
@@ -12,6 +13,7 @@ import {
   IKrakenOrderBookLevel,
   IKrakenOrderBook,
   IKrakenTickerWebSocketMessageData,
+  IKrakenOrderBookWebSocketMessageData,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -57,6 +59,18 @@ const transformOrderBook = (source: IKrakenOrderBook): IOrderBook => ({
   lastUpdateID: 0,
 });
 
+/**
+ * Transforms an order book update object into the websocket message required by the Exchange.
+ * @param source
+ * @returns IOrderBookWebSocketMessage
+ */
+const transformOrderBookMessage = (
+  source: IKrakenOrderBookWebSocketMessageData,
+): IOrderBookWebSocketMessage => ({
+  asks: source.asks.map((order) => [order.price, order.qty]),
+  bids: source.bids.map((order) => [order.price, order.qty]),
+  finalUpdateID: 1,
+});
 
 /**
  * Transforms the ticker message received through the WebSocket into the general message type.
@@ -79,5 +93,6 @@ const transformTicker = (
 export {
   transformCandlesticks,
   transformOrderBook,
+  transformOrderBookMessage,
   transformTicker,
 };
