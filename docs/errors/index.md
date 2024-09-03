@@ -365,7 +365,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **14500:** `Bitfinex returned an invalid list of candlesticks.`
 - **14501:** `Bitfinex returned an invalid list of tickers.`
-- **14502:** ``
+- **14502:** `Bitfinex returned an invalid order book snapshot.`
 - **14503:** ``
 
 

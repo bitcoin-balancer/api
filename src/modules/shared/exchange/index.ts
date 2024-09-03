@@ -59,6 +59,7 @@ const exchangeServiceFactory = (): IExchangeService => {
    * @throws
    * - 12500: if the HTTP response code is not in the acceptedCodes
    * - 13502: if the order book object is invalid (binance)
+   * - 14502: if the response does not include a valid order book snapshot (bitfinex)
    */
   const getOrderBook = assembleGetOrderBook();
 

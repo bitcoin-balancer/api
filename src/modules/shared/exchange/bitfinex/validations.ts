@@ -24,6 +24,21 @@ const validateCandlesticksResponse = (res: IRequestResponse): void => {
 };
 
 /**
+ * Ensures the Bitfinex API returned a valid order book object.
+ * @param res
+ * @throws
+ * - 12500: if the HTTP response code is not in the acceptedCodes
+ * - 14502: if the response does not include a valid order book snapshot
+ */
+const validateOrderBookResponse = (res: IRequestResponse): void => {
+  validateResponse(res);
+  if (!arrayValid(res.data)) {
+    console.log(res);
+    throw new Error(encodeError('Bitfinex returned an invalid order book snapshot.', 14502));
+  }
+};
+
+/**
  * Ensures the ticker's endpoint returned a valid list of tickers.
  * @param res
  * @throws
@@ -47,5 +62,6 @@ const validateTickersResponse = (res: IRequestResponse): void => {
  ************************************************************************************************ */
 export {
   validateCandlesticksResponse,
+  validateOrderBookResponse,
   validateTickersResponse,
 };

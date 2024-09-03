@@ -3,7 +3,11 @@ import { sendGET } from 'fetch-request-node';
 import { ENVIRONMENT } from '../../environment/index.js';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import { websocketFactory } from '../../websocket/index.js';
-import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
+import {
+  ICandlestickInterval,
+  IOrderBook,
+  ITickerWebSocketMessage,
+} from '../types.js';
 import {
   buildGetCandlesticksURL,
   tickersSortFunc,
@@ -12,8 +16,16 @@ import {
   buildWhitelist,
   isTickerWebsocketMessage,
 } from './utils.js';
-import { validateCandlesticksResponse, validateTickersResponse } from './validations.js';
-import { transformCandlesticks, transformTicker } from './transformers.js';
+import {
+  validateCandlesticksResponse,
+  validateOrderBookResponse,
+  validateTickersResponse,
+} from './validations.js';
+import {
+  transformCandlesticks,
+  transformOrderBook,
+  transformTicker,
+} from './transformers.js';
 import {
   IBitfinexCoinTicker,
   IBitfinexService,
@@ -91,7 +103,21 @@ const bitfinexServiceFactory = (): IBitfinexService => {
    * Order Book
    */
 
-  // ...
+  /**
+   * Retrieves the current state of Bitfinex's order book for the base asset.
+   * @returns Promise<IOrderBook>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 14502: if the response does not include a valid order book snapshot
+   */
+  const getOrderBook = async (): Promise<IOrderBook> => {
+    const res = await sendGET(
+      `https://api-pub.bitfinex.com/v2/book/${__SYMBOL}/P0?len=250`,
+      { skipStatusCodeValidation: true },
+    );
+    validateOrderBookResponse(res);
+    return transformOrderBook(res.data);
+  };
 
   /**
    * Tickers
@@ -201,6 +227,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
 
     // market data
     getCandlesticks,
+    getOrderBook,
     getTopSymbols,
     getTickersStream,
   });
