@@ -4,6 +4,7 @@ import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import {
   ICandlestickInterval,
   IOrderBook,
+  IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
 } from '../types.js';
 
@@ -26,6 +27,7 @@ type IBitfinexService = {
     startTime?: number,
   ) => Promise<ICompactCandlestickRecords>;
   getOrderBook: () => Promise<IOrderBook>;
+  getOrderBookStream: () => Observable<IOrderBookWebSocketMessage>;
   getTopSymbols: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
   getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 };

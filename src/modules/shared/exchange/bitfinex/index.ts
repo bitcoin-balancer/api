@@ -6,6 +6,7 @@ import { websocketFactory } from '../../websocket/index.js';
 import {
   ICandlestickInterval,
   IOrderBook,
+  IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
 } from '../types.js';
 import {
@@ -15,6 +16,7 @@ import {
   buildTopPairsObject,
   buildWhitelist,
   isTickerWebsocketMessage,
+  buildSubscriptionForOrderBook,
 } from './utils.js';
 import {
   validateCandlesticksResponse,
@@ -118,6 +120,42 @@ const bitfinexServiceFactory = (): IBitfinexService => {
     validateOrderBookResponse(res);
     return transformOrderBook(res.data);
   };
+
+  /**
+   * Retrieves the order book' stream for the base asset.
+   * @returns Observable<IOrderBookWebSocketMessage>
+   */
+  const getOrderBookStream = (): Observable<IOrderBookWebSocketMessage> => (
+    new Observable<IOrderBookWebSocketMessage>((subscriber) => {
+      const ws = websocketFactory<IBitfinexWebSocketMessage>(
+        'LIQUIDITY',
+        'wss://api-pub.bitfinex.com/ws/2',
+
+        /**
+         * onMessage: handle messages appropriately:
+         * - if the msg is an array and the second item is a tuple, it is a ticker
+         * - if the msg's event is 'subscribed', a connection to a symbol has been established
+         */
+        (msg) => {
+          if (msg) {
+            if (Array.isArray(msg)) {
+              if (isTickerWebsocketMessage(msg[1])) {
+                subscriber.next(transformTicker(channels[msg[0]], msg[1]));
+              }
+            } else if (msg.event === 'subscribed') {
+              channels[msg.chanId] = topPairs[msg.symbol];
+            }
+          }
+        },
+
+        // onOpen: subscribe to the stream
+        (__ws) => __ws.send(buildSubscriptionForOrderBook(__SYMBOL)),
+      );
+      return function unsubscribe() {
+        ws.off();
+      };
+    })
+  );
 
   /**
    * Tickers
@@ -228,6 +266,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
     // market data
     getCandlesticks,
     getOrderBook,
+    getOrderBookStream,
     getTopSymbols,
     getTickersStream,
   });
