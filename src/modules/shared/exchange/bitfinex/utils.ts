@@ -1,12 +1,14 @@
 import { IRecord } from '../../types.js';
 import {
   IBitfinexCandlestickInterval,
+  IBitfinexOrderBookWebSocketSubscription,
   IBitfinexCoinTicker,
+  IBitfinexTickerWebSocketMessageData,
   IBitfinexTickerWebSocketSubscription,
 } from './types.js';
 
 /* ************************************************************************************************
- *                                         IMPLEMENTATION                                         *
+ *                                          CANDLESTICKS                                          *
  ************************************************************************************************ */
 
 /**
@@ -29,6 +31,38 @@ const buildGetCandlesticksURL = (
   }
   return url;
 };
+
+
+
+
+
+/* ************************************************************************************************
+ *                                           ORDER BOOK                                           *
+ ************************************************************************************************ */
+
+/**
+ * Builds the object used to subscribe to the order book stream.
+ * @param symbol
+ * @returns string
+ */
+const buildSubscriptionForOrderBook = (symbol: string): string => (
+  JSON.stringify(<IBitfinexOrderBookWebSocketSubscription>{
+    event: 'subscribe',
+    symbol,
+    channel: 'book',
+    prec: 'P0',
+    len: 250,
+    freq: 'F0',
+  })
+);
+
+
+
+
+
+/* ************************************************************************************************
+ *                                            TICKERS                                             *
+ ************************************************************************************************ */
 
 /**
  * Sorts the tickers by volume descendingly.
@@ -81,6 +115,15 @@ const buildSubscriptionForTicker = (symbol: string): string => (
   })
 );
 
+/**
+ * Checks if a websocket message belongs to a ticker.
+ * @param value
+ * @returns boolean
+ */
+const isTickerWebsocketMessage = (value: unknown): value is IBitfinexTickerWebSocketMessageData => (
+  Array.isArray(value)
+);
+
 
 
 
@@ -89,9 +132,16 @@ const buildSubscriptionForTicker = (symbol: string): string => (
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // candlesticks
   buildGetCandlesticksURL,
+
+  // order book
+  buildSubscriptionForOrderBook,
+
+  // tickers
   tickersSortFunc,
   buildWhitelist,
   buildTopPairsObject,
   buildSubscriptionForTicker,
+  isTickerWebsocketMessage,
 };

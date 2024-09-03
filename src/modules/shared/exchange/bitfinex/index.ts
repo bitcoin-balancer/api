@@ -6,10 +6,11 @@ import { websocketFactory } from '../../websocket/index.js';
 import { ICandlestickInterval, ITickerWebSocketMessage } from '../types.js';
 import {
   buildGetCandlesticksURL,
+  tickersSortFunc,
   buildSubscriptionForTicker,
   buildTopPairsObject,
   buildWhitelist,
-  tickersSortFunc,
+  isTickerWebsocketMessage,
 } from './utils.js';
 import { validateCandlesticksResponse, validateTickersResponse } from './validations.js';
 import { transformCandlesticks, transformTicker } from './transformers.js';
@@ -167,7 +168,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
         (msg) => {
           if (msg) {
             if (Array.isArray(msg)) {
-              if (Array.isArray(msg[1])) {
+              if (isTickerWebsocketMessage(msg[1])) {
                 subscriber.next(transformTicker(channels[msg[0]], msg[1]));
               }
             } else if (msg.event === 'subscribed') {

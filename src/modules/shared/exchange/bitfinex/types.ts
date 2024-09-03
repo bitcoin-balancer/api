@@ -43,7 +43,7 @@ type IBitfinexChannelID = number;
  * Bitfinex WebSocket Channel
  * The name of the channel the API subscribed to.
  */
-type IBitfinexWebSocketChannel = 'ticker';
+type IBitfinexWebSocketChannel = 'book' | 'ticker';
 
 /**
  * Bitfinex WebSocket Event
@@ -74,7 +74,8 @@ type IBitfinexHeartbeatWebSocketMessage = [IBitfinexChannelID, 'hb'];
  * The possible objects that are sent when subscribing to the on('message') event.
  */
 type IBitfinexWebSocketMessage = IBitfinexInfoWebSocketMessage | IBitfinexHeartbeatWebSocketMessage
-| IBitfinexTickerSubscriptionMessage | IBitfinexTickerWebSocketMessage;
+| IBitfinexTickerSubscriptionMessage | IBitfinexOrderBookWebSocketMessage
+| IBitfinexTickerWebSocketMessage;
 
 
 
@@ -125,8 +126,47 @@ type ISupportedCandlestickIntervals = {
  *                                           ORDER BOOK                                           *
  ************************************************************************************************ */
 
-// ...
+/**
+ * Bitfinex Order Book Level
+ * The tuple that contains the information for an individual price level.
+ */
+type IBitfinexOrderBookLevel = [
+  number, // 0: price (price level)
+  number, // 1: count (number of orders at the price level)
+  number, // 2: amount (total amount available at that price lvl - if AMOUNT > 0 then bid else ask)
+];
 
+/**
+ * Bitfinex Order Book
+ * The current state of the order book for the base asset.
+ * GET https://api-pub.bitfinex.com/v2/book/{symbol}/{precision}
+ */
+type IBitfinexOrderBook = Array<IBitfinexOrderBookLevel>;
+
+/**
+ * Bitfinex Order Book WebSocket Subscription
+ * The object that will be sent in a message in order to subscribe to the order book stream.
+ * More info: https://docs.bitfinex.com/reference/ws-public-books
+ */
+type IBitfinexOrderBookWebSocketSubscription = {
+  event: IBitfinexWebSocketEvent; // e.g. 'subscribe'
+  channel: IBitfinexWebSocketChannel; // e.g. 'book'
+  symbol: string; // e.g. 'tBTCUSD'
+  prec: string; // e.g. 'PO'
+  len: number; // e.g. 250
+  freq: string, // 'FO'
+};
+
+/**
+ * Bitfinex Order Book WebSocket Message
+ * The object sent by the stream whenever the base asset's order book changes.
+ * The array of levels is only received on subscription, following events will include an individual
+ * tuple.
+ */
+type IBitfinexOrderBookWebSocketMessage = [
+  IBitfinexChannelID,
+  Array<IBitfinexOrderBookLevel> | IBitfinexOrderBookLevel,
+];
 
 
 
@@ -214,7 +254,8 @@ export type {
   ISupportedCandlestickIntervals,
 
   // order book
-  // ...
+  IBitfinexOrderBook,
+  IBitfinexOrderBookWebSocketSubscription,
 
   // ticker
   IBitfinexCoinTicker,
