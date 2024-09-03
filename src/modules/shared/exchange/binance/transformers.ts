@@ -3,7 +3,11 @@ import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
 } from '../../candlestick/index.js';
-import { IOrderBook, IOrderBookWebSocketMessage, ITickerWebSocketMessage } from '../types.js';
+import {
+  IOrderBook,
+  IOrderBookWebSocketMessage,
+  ITickerWebSocketMessage,
+} from '../types.js';
 import {
   IBinanceCandlestick,
   IBinanceOrderBook,
