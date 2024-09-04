@@ -116,4 +116,20 @@ export const RAW_TABLES: IRawTable[] = [
         value JSONB NOT NULL
       );`,
   },
+
+  /**
+   * event_candlesticks
+   * every record corresponds to the full history of an event in OHLC format.
+   */
+  {
+    name: 'event_candlesticks',
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('event_candlesticks')} (
+        id          UUID PRIMARY KEY,
+        event       VARCHAR(100) NOT NULL,
+        interval    VARCHAR(10) NOT NULL,
+        records     JSONB NOT NULL,
+        event_time  BIGINT NOT NULL
+      );`,
+  },
 ];

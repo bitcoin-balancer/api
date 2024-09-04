@@ -57,7 +57,7 @@ type IQueryResult = pg.QueryResult;
  * unit and integration tests.
  */
 type ITableName = 'api_errors' | 'users' | 'password_updates' | 'refresh_tokens' | 'notifications'
-| 'ip_blacklist' | 'record_stores';
+| 'ip_blacklist' | 'record_stores' | 'event_candlesticks';
 type ITestTableName = `test_${ITableName}`;
 type ITableNames = {
   [key in ITableName]: ITableName | ITestTableName;
