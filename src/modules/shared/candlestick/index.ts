@@ -1,5 +1,11 @@
 import { buildPristineCompactCandlestickRecords } from './utils.js';
-import { ICandlestick, ICandlestickRecord, ICompactCandlestickRecords } from './types.js';
+import {
+  ICandlestick,
+  ICandlestickIntervalID,
+  ICandlestickRecord,
+  ICompactCandlestickRecords,
+  IEventName,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -7,10 +13,14 @@ import { ICandlestick, ICandlestickRecord, ICompactCandlestickRecords } from './
 
 /**
  * Candlestick Factory
- * Generates the object in charge of creating and storing data in OHLC format.
- * @returns ICandlestick
+ * Generates the object in charge of creating and storing historic data in OHLC format.
+ * @returns Promise<ICandlestick>
  */
-const candlestickFactory = (): ICandlestick => {
+const candlestickFactory = async (
+  id: string,
+  event: IEventName,
+  interval: ICandlestickIntervalID,
+): Promise<ICandlestick> => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */

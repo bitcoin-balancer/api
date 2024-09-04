@@ -1,4 +1,10 @@
-import { ICompactCandlestickRecords } from './types.js';
+import {
+  ICandlestickIntervalID,
+  IEventName,
+  ICompactCandlestickRecords,
+  IEventHistory,
+  ICombinedCompactCandlestickRecords,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -16,6 +22,37 @@ const buildPristineCompactCandlestickRecords = (): ICompactCandlestickRecords =>
   close: [],
 });
 
+/**
+ * Builds the combined compact candlestick records object in pristine state.
+ * @returns ICompactCandlestickRecords
+ */
+const buildPristineCombinedCompactCandlestickRecords = (): ICombinedCompactCandlestickRecords => ({
+  id: [],
+  open: [],
+  high: [],
+  low: [],
+  close: [],
+});
+
+/**
+ * Builds the event history object in pristine state.
+ * @param id
+ * @param event
+ * @param interval
+ * @returns IEventHistory
+ */
+const buildPristineEventHistory = (
+  id: string,
+  event: IEventName,
+  interval: ICandlestickIntervalID,
+): IEventHistory => ({
+  id,
+  event,
+  interval,
+  records: buildPristineCombinedCompactCandlestickRecords(),
+  event_time: Date.now(),
+});
+
 
 
 
@@ -25,4 +62,5 @@ const buildPristineCompactCandlestickRecords = (): ICompactCandlestickRecords =>
  ************************************************************************************************ */
 export {
   buildPristineCompactCandlestickRecords,
+  buildPristineEventHistory,
 };
