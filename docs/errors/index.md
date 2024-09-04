@@ -483,7 +483,6 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 
 
-
 <br/><br/><br/><br/><br/><br/>
 
 ## `Coins` (23000 - 23999)
@@ -516,5 +515,35 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **23511:** `The requirement '${newConfig.requirement}' must be less than the strong requirement '${newConfig.strongRequirement}'.`
 
 
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Reversal` (24000 - 24999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **24000:** ``
+
+### `utils.ts`
+
+- **24250:** ``
+
+### `validations.ts`
+
+- **24500:** `The provided reversal configuration is not a valid object.`
+- **24501:** `The crashDuration '${newConfig.crashDuration}' is invalid as it must be a valid integer ranging 5 and 10080.`
+- **24502:** `The crashIdleDuration '${newConfig.crashIdleDuration}' is invalid as it must be a valid integer ranging 0 and 1440.`
+- **24503:** `The pointsRequirement '${newConfig.pointsRequirement}' is invalid as it must be a valid number ranging 50 and 100.`
+- **24504:** `The weights property is not a valid object.`
+- **24505:** `The weight for liquidity '${newConfig.weights.liquidity}' is invalid as it must be a valid number ranging 1 and 100.`
+- **24506:** `The weight for coins quote '${newConfig.weights.coinsQuote}' is invalid as it must be a valid number ranging 1 and 100.`
+- **24507:** `The weight for coins base '${newConfig.weights.coinsBase}' is invalid as it must be a valid number ranging 1 and 100.`
 
 

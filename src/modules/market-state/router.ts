@@ -6,6 +6,7 @@ import { APIErrorService } from '../api-error/index.js';
 import { WindowService } from './window/index.js';
 import { LiquidityService } from './liquidity/index.js';
 import { CoinsService, ICoinStateAsset } from './coins/index.js';
+import { ReversalService } from './reversal/index.js';
 
 const MarketStateRouter = Router();
 
@@ -213,6 +214,58 @@ MarketStateRouter.route('/coins/config').put(mediumRiskLimit, async (req: Reques
     res.json(buildResponse());
   } catch (e) {
     APIErrorService.save('MarketStateRouter.put.coins.config', e, reqUid, req.ip, req.body);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+
+
+
+
+/* ************************************************************************************************
+ *                                            REVERSAL                                            *
+ ************************************************************************************************ */
+
+/**
+ * Retrieves the reversal module's configuration.
+ * @returns IAPIResponse<IReversalConfig>
+ * @requirements
+ * - authority: 2
+ */
+MarketStateRouter.route('/reversal/config').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
+    res.json(buildResponse(ReversalService.config));
+  } catch (e) {
+    APIErrorService.save('MarketStateRouter.get.reversal.config', e, reqUid, req.ip);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
+ * Updates the reversal module's configuration.
+ * @param newConfig
+ * @returns IAPIResponse<void>
+ * @requirements
+ * - authority: 3
+ * - otp-token
+ */
+MarketStateRouter.route('/reversal/config').put(mediumRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(
+      req.get('authorization'),
+      req.ip,
+      3,
+      ['newConfig'],
+      req.body,
+      req.get('otp-token') || '',
+    );
+    await ReversalService.updateConfiguration(req.body.newConfig);
+    res.json(buildResponse());
+  } catch (e) {
+    APIErrorService.save('MarketStateRouter.put.reversal.config', e, reqUid, req.ip, req.body);
     res.json(buildResponse(undefined, e));
   }
 });

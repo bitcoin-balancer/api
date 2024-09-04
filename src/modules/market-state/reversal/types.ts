@@ -10,11 +10,14 @@
  */
 type IReversalService = {
   // properties
-  // ...
+  config: IReversalConfig,
 
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;
+
+  // configuration
+  updateConfiguration: (newConfig: IReversalConfig) => Promise<void>;
 };
 
 
