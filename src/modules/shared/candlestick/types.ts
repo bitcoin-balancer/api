@@ -5,12 +5,18 @@
  ************************************************************************************************ */
 
 /**
- * Candlestick
+ * Event History
  * Object in charge of creating and storing data in OHLC format.
  */
-type ICandlestick = {
+type IEventHistory = {
   // properties
   // ...
+
+  // event handler
+  handleNewData: (data: number[]) => void;
+
+  // initializer
+  complete: () => Promise<void>;
 };
 
 
@@ -83,10 +89,10 @@ type ICombinedCompactCandlestickRecords = {
 };
 
 /**
- * Event History
+ * Event History Record
  * The object containing the event settings as well as the candlesticks.
  */
-type IEventHistory = {
+type IEventHistoryRecord = {
   // the unique identifier of the event
   id: string;
 
@@ -112,7 +118,7 @@ type IEventHistory = {
  ************************************************************************************************ */
 export type {
   // factory
-  ICandlestick,
+  IEventHistory,
 
   // types
   ICandlestickIntervalID,
@@ -120,5 +126,5 @@ export type {
   ICandlestickRecord,
   ICompactCandlestickRecords,
   ICombinedCompactCandlestickRecords,
-  IEventHistory,
+  IEventHistoryRecord,
 };

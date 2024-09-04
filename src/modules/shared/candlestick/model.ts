@@ -1,5 +1,5 @@
 import { DatabaseService } from '../../database/index.js';
-import { ICombinedCompactCandlestickRecords, IEventHistory } from './types.js';
+import { ICombinedCompactCandlestickRecords, IEventHistoryRecord } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -8,9 +8,9 @@ import { ICombinedCompactCandlestickRecords, IEventHistory } from './types.js';
 /**
  * Retrieves a record by ID. If the record is not found it returns undefined.
  * @param id
- * @returns Promise<IEventHistory | undefined>
+ * @returns Promise<IEventHistoryRecord | undefined>
  */
-const getEventHistory = async (id: number): Promise<IEventHistory | undefined> => {
+const getEventHistoryRecord = async (id: string): Promise<IEventHistoryRecord | undefined> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, event, interval, records, event_time
@@ -24,10 +24,10 @@ const getEventHistory = async (id: number): Promise<IEventHistory | undefined> =
 
 /**
  * Saves the event history in pristine state.
- * @param eventHist
+ * @param hist
  * @returns Promise<void>
  */
-const createEventHistory = async (hist: IEventHistory): Promise<void> => {
+const createEventHistory = async (hist: IEventHistoryRecord): Promise<void> => {
   await DatabaseService.pool.query({
     text: `
       INSERT INTO ${DatabaseService.tn.event_candlesticks} (id, event, interval, records, event_time)
@@ -65,7 +65,7 @@ const updateRecords = async (
  */
 const deleteAllRecords = async (): Promise<void> => {
   await DatabaseService.pool.query({
-    text: `DELETE FROM ${DatabaseService.tn.ip_blacklist};`,
+    text: `DELETE FROM ${DatabaseService.tn.event_candlesticks};`,
     values: [],
   });
 };
@@ -78,7 +78,7 @@ const deleteAllRecords = async (): Promise<void> => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  getEventHistory,
+  getEventHistoryRecord,
   createEventHistory,
   updateRecords,
   deleteAllRecords,
