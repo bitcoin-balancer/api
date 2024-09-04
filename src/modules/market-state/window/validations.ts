@@ -6,7 +6,7 @@ import {
   objectValid,
   stringValid,
 } from '../../shared/validations/index.js';
-import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
+import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import { ExchangeService } from '../../shared/exchange/index.js';
 import { IWindowConfig } from './types.js';
 

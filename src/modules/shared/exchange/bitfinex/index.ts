@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { sendGET } from 'fetch-request-node';
 import { ENVIRONMENT } from '../../environment/index.js';
-import { ICompactCandlestickRecords } from '../../candlestick/index.js';
+import { ICompactCandlestickRecords } from '../../../candlestick/index.js';
 import { websocketFactory } from '../../websocket/index.js';
 import {
   ICandlestickInterval,

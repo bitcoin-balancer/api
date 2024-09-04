@@ -2,7 +2,7 @@ import { IRecord } from '../../types.js';
 import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
-} from '../../candlestick/index.js';
+} from '../../../candlestick/index.js';
 import {
   IOrderBook,
   IOrderBookWebSocketMessage,

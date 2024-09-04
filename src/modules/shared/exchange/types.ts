@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { IRecord } from '../types.js';
-import { ICompactCandlestickRecords } from '../candlestick/index.js';
+import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
