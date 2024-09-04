@@ -284,7 +284,8 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `index.ts`
 
-- **11000:** ``
+- **11000:** `The event history ID '${id}' is invalid.`
+- **11001:** `The event history ID '${id}' was not found in the database.`
 
 
 

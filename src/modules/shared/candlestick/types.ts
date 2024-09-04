@@ -1,4 +1,23 @@
 
+/* ************************************************************************************************
+ *                                            SERVICE                                             *
+ ************************************************************************************************ */
+
+/**
+ * Candlestick Service
+ * Object in charge of managing candlesticks in general as well as events' histories.
+ */
+type ICandlestickService = {
+  // properties
+  // ...
+
+  // retrievers
+  getEventHistory: (id: string) => Promise<IEventHistoryRecord>;
+};
+
+
+
+
 
 /* ************************************************************************************************
  *                                            FACTORY                                             *
@@ -117,6 +136,9 @@ type IEventHistoryRecord = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
+  // service
+  ICandlestickService,
+
   // factory
   IEventHistory,
 
