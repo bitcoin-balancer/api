@@ -78,7 +78,11 @@ const marketStateServiceFactory = (): IMarketStateService => {
       const { compact, semiCompact } = CoinsService.calculateState();
 
       // calculate the reversal state
-      // const reversalState = ReversalService.calculateState(liquidityState, semiCompact);
+      /* const reversalState = ReversalService.calculateState(
+        windowState,
+        liquidityState,
+        semiCompact,
+      ); */
 
       // finally, broadcast the next state
       __state.next({

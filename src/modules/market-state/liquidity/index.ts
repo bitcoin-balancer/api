@@ -147,7 +147,6 @@ const liquidityServiceFactory = (): ILiquidityService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    // clearInterval(__refetchInterval);
     __orderBook?.off();
   };
 
