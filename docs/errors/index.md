@@ -545,5 +545,6 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **24505:** `The weight for liquidity '${newConfig.weights.liquidity}' is invalid as it must be a valid number ranging 1 and 100.`
 - **24506:** `The weight for coins quote '${newConfig.weights.coinsQuote}' is invalid as it must be a valid number ranging 1 and 100.`
 - **24507:** `The weight for coins base '${newConfig.weights.coinsBase}' is invalid as it must be a valid number ranging 1 and 100.`
+- **24508:** `The sum of the weights must total 100. Received ${total}`
 
 

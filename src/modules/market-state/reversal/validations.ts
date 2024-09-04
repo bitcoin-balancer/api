@@ -23,6 +23,7 @@ import { IReversalConfig } from './types.js';
  * - 24505: if the liquidity weight is invalid
  * - 24506: if the coins quote weight is invalid
  * - 24507: if the coins base weight is invalid
+ * - 24508: if adding the weights doesn't result in 100
  */
 const canConfigBeUpdated = (newConfig: IReversalConfig): void => {
   if (!objectValid(newConfig)) {
@@ -50,6 +51,12 @@ const canConfigBeUpdated = (newConfig: IReversalConfig): void => {
   }
   if (!numberValid(newConfig.weights.coinsBase, 1, 100)) {
     throw new Error(encodeError(`The weight for coins base '${newConfig.weights.coinsBase}' is invalid as it must be a valid number ranging 1 and 100.`, 24507));
+  }
+  const total = newConfig.weights.liquidity
+    + newConfig.weights.coinsQuote
+    + newConfig.weights.coinsBase;
+  if (total !== 100) {
+    throw new Error(encodeError(`The sum of the weights must total 100. Received ${total}`, 24508));
   }
 };
 

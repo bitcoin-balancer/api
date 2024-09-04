@@ -70,6 +70,7 @@ const reversalServiceFactory = (): IReversalService => {
    * - 24505: if the liquidity weight is invalid
    * - 24506: if the coins quote weight is invalid
    * - 24507: if the coins base weight is invalid
+   * - 24508: if adding the weights doesn't result in 100
    */
   const updateConfiguration = async (newConfig: IReversalConfig): Promise<void> => {
     canConfigBeUpdated(newConfig);
