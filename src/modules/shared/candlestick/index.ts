@@ -1,6 +1,7 @@
 import {
   buildPristineCompactCandlestickRecords,
   buildPristineEventHistory,
+  isActive,
 } from './utils.js';
 import {
   createEventHistory,
@@ -54,6 +55,20 @@ const eventHistoryFactory = async (
    ********************************************************************************************** */
 
   /**
+   * Invoked whenever the latest candlestick is no longer active or if the candlesticks have not yet
+   * been initialized
+   * @param currentTime
+   * @param data
+   */
+  const __onNewCandlestick = (currentTime: number, data: number[]): void => {
+    __hist.records.id.push(currentTime);
+    __hist.records.open.push(data);
+    __hist.records.high.push(data);
+    __hist.records.low.push(data);
+    __hist.records.close.push(data);
+  };
+
+  /**
    * Invoked whenever new data comes into existance. It will update the current candlestick and
    * check if the interval has concluded.
    * @param data
@@ -64,9 +79,30 @@ const eventHistoryFactory = async (
 
     // if records have already been added, proceed to update them
     if (__hist.records.id.length > 0) {
+      // init the current index
+      const idx = __hist.records.id.length - 1;
 
+      // if the candlestick is active, update it. Otherwise, init the new one
+      if (isActive(__hist.records.id[idx], __hist.interval, currentTime)) {
+        data.forEach((item, i) => {
+          // update the high
+          __hist.records.high[idx][i] = item > __hist.records.high[idx][i]
+            ? item
+            : __hist.records.high[idx][i];
+
+          // update the low
+          __hist.records.low[idx][i] = item < __hist.records.low[idx][i]
+            ? item
+            : __hist.records.low[idx][i];
+
+          // update the close
+          __hist.records.close[idx][i] = item;
+        });
+      } else {
+        __onNewCandlestick(currentTime, data);
+      }
     } else {
-      __hist.records.id.push(currentTime);
+      __onNewCandlestick(currentTime, data);
     }
   };
 

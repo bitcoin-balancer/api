@@ -85,9 +85,10 @@ const buildPristineEventHistory = (
  * @param current
  * @returns boolean
  */
-const isActive = (open: number, interval: ICandlestickIntervalID, current: number): boolean => {
+const isActive = (open: number, interval: ICandlestickIntervalID, current: number): boolean => (
+  (open + __INTERVAL_VALUES[interval]) >= current
+);
 
-};
 
 
 
