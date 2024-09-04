@@ -6,6 +6,7 @@ import { NotificationService, throttleableNotificationFactory } from '../notific
 import { WindowService } from './window/index.js';
 import { LiquidityService } from './liquidity/index.js';
 import { CoinsService } from './coins/index.js';
+import { ReversalService } from './reversal/index.js';
 import { buildPristineState } from './utils.js';
 import { IMarketStateService, IMarketState } from './types.js';
 
@@ -138,7 +139,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
 
     // Reversal Module
     try {
-      // await ReversalService.teardown(); @TODO
+      await ReversalService.teardown();
     } catch (e) {
       console.error('ReversalService.teardown()', e);
     }
@@ -173,7 +174,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
 
       // Reversal Module
       try {
-        // await ReversalService.initialize();
+        await ReversalService.initialize();
       } catch (e) {
         throw new Error(`ReversalService.initialize() -> ${extractMessage(e)}`);
       }
