@@ -478,5 +478,6 @@ export {
   type ICoinState,
   type ISemiCompactCoinState,
   type ICompactCoinState,
+  type ICoinsState,
   type ICoinsStates,
 };
