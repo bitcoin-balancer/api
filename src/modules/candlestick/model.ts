@@ -31,8 +31,7 @@ const createEventHistory = async (hist: IEventHistoryRecord): Promise<void> => {
   await DatabaseService.pool.query({
     text: `
       INSERT INTO ${DatabaseService.tn.event_candlesticks} (id, event, interval, records, event_time)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING id;
+      VALUES ($1, $2, $3, $4, $5);
     `,
     values: [hist.id, hist.event, hist.interval, hist.records, hist.event_time],
   });

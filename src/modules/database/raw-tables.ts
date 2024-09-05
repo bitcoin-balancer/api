@@ -143,7 +143,6 @@ export const RAW_TABLES: IRawTable[] = [
         event_time            BIGINT NOT NULL,
         reversal_event_time   BIGINT NULL
       );
-      CREATE INDEX IF NOT EXISTS ${getTableName('price_crash_states')}_event_time_idx ON ${getTableName('price_crash_states')}(event_time DESC);
-      CREATE INDEX IF NOT EXISTS ${getTableName('price_crash_states')}_reversal_event_time_idx ON ${getTableName('price_crash_states')}(reversal_event_time, event_time DESC);`,
+      CREATE INDEX IF NOT EXISTS ${getTableName('price_crash_states')}_event_time_idx ON ${getTableName('price_crash_states')}(event_time DESC);`,
   },
 ];
