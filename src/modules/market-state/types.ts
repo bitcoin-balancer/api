@@ -1,7 +1,8 @@
 import { Subscription } from 'rxjs';
 import { IWindowState } from './window/index.js';
-import { ICoinsStates, ICompactCoinState } from './coins/index.js';
 import { ICompactLiquidityState } from './liquidity/index.js';
+import { ICoinsStates, ICompactCoinState } from './coins/index.js';
+import { IReversalState } from './reversal/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -44,6 +45,9 @@ type IMarketState = {
 
   // the state of the coins module
   coinsStates: ICoinsStates<ICompactCoinState>;
+
+  // the state of the reversal module
+  reversalState: IReversalState | undefined;
 };
 
 

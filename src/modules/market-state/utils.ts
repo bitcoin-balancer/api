@@ -15,6 +15,7 @@ const buildPristineState = (): IMarketState => ({
   windowState: WindowService.getPristineState(),
   coinsStates: CoinsService.getPristineState(),
   liquidityState: LiquidityService.getPristineState(),
+  reversalState: undefined,
 });
 
 

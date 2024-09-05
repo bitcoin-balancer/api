@@ -1,9 +1,14 @@
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
+import { IWindowState } from '../window/index.js';
+import { ICompactLiquidityState } from '../liquidity/index.js';
+import { ICoinsStates, ISemiCompactCoinState } from '../coins/index.js';
 import { buildDefaultConfig } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
 import {
-  IReversalConfig,
   IReversalService,
+  IPriceCrashStateRecord,
+  IReversalState,
+  IReversalConfig,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -22,6 +27,27 @@ const reversalServiceFactory = (): IReversalService => {
 
   // the module's configuration
   let __config: IRecordStore<IReversalConfig>;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                       STATE CALCULATOR                                       *
+   ********************************************************************************************** */
+
+  /**
+   * Calculates the current state of the reversal if there is a price crash active.
+   * @param windowState
+   * @param liquidityState
+   * @param coinsStates
+   * @returns IReversalState | undefined
+   */
+  const calculateState = (
+    windowState: IWindowState,
+    liquidityState: ICompactLiquidityState,
+    coinsStates: ICoinsStates<ISemiCompactCoinState>,
+  ): IReversalState | undefined => undefined;
 
 
 
@@ -90,6 +116,9 @@ const reversalServiceFactory = (): IReversalService => {
       return __config.value;
     },
 
+    // state calculator
+    calculateState,
+
     // initializer
     initialize,
     teardown,
@@ -120,4 +149,6 @@ export {
   ReversalService,
 
   // types
+  type IPriceCrashStateRecord,
+  type IReversalState,
 };

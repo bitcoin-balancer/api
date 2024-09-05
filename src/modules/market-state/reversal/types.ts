@@ -1,4 +1,6 @@
-
+import { IWindowState } from '../window/index.js';
+import { ICompactLiquidityState } from '../liquidity/index.js';
+import { ICoinsStates, ISemiCompactCoinState } from '../coins/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -12,6 +14,13 @@ type IReversalService = {
   // properties
   config: IReversalConfig,
 
+  // state calculator
+  calculateState: (
+    windowState: IWindowState,
+    liquidityState: ICompactLiquidityState,
+    coinsStates: ICoinsStates<ISemiCompactCoinState>,
+  ) => IReversalState | undefined;
+
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;
@@ -19,15 +28,6 @@ type IReversalService = {
   // configuration
   updateConfiguration: (newConfig: IReversalConfig) => Promise<void>;
 };
-
-
-
-
-/* ************************************************************************************************
- *                                             TYPES                                              *
- ************************************************************************************************ */
-
-// ...
 
 
 
@@ -131,10 +131,9 @@ export type {
   // service
   IReversalService,
 
-  // types
-
   // state
   IPriceCrashStateRecord,
+  IReversalState,
 
   // configuration
   IReversalPointWeights,
