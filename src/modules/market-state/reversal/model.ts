@@ -10,7 +10,7 @@ import { IPriceCrashStateRecord } from './types.js';
  * @param id
  * @returns Promise<IPriceCrashStateRecord | undefined>
  */
-const getRecord = async (id: string): Promise<IPriceCrashStateRecord | undefined> => {
+const getStateRecord = async (id: string): Promise<IPriceCrashStateRecord | undefined> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, highest_points, final_points, event_time, reversal_event_time
@@ -27,7 +27,7 @@ const getRecord = async (id: string): Promise<IPriceCrashStateRecord | undefined
  * @param record
  * @returns Promise<void>
  */
-const createRecord = async ({
+const createStateRecord = async ({
   id,
   highest_points,
   final_points,
@@ -92,7 +92,7 @@ const __listNextRecords = async (
  * @param startAtEventTime?
  * @returns Promise<IPriceCrashStateRecord[]>
  */
-const listUserPasswordUpdateRecords = async (
+const listStateRecords = async (
   limit: number,
   startAtEventTime?: number,
 ): Promise<IPriceCrashStateRecord[]> => (
@@ -109,7 +109,7 @@ const listUserPasswordUpdateRecords = async (
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  getRecord,
-  createRecord,
-  listUserPasswordUpdateRecords,
+  getStateRecord,
+  createStateRecord,
+  listStateRecords,
 };

@@ -21,6 +21,13 @@ type IReversalService = {
     coinsStates: ICoinsStates<ISemiCompactCoinState>,
   ) => IReversalState | undefined;
 
+  // retrievers
+  getRecord: (id: string) => Promise<IPriceCrashStateRecord>;
+  listRecords: (
+    limit: number,
+    startAtEventTime: number | undefined,
+  ) => Promise<IPriceCrashStateRecord[]>;
+
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;

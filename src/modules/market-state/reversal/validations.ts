@@ -4,12 +4,53 @@ import {
   integerValid,
   numberValid,
   objectValid,
+  uuidValid,
 } from '../../shared/validations/index.js';
 import { IReversalConfig } from './types.js';
 
 /* ************************************************************************************************
+ *                                           CONSTANTS                                            *
+ ************************************************************************************************ */
+
+// the maximum number of records that can be queried at a time
+const __QUERY_LIMIT: number = 30;
+
+
+
+
+
+/* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
+
+/**
+ * Verifies if a record can be retrieved for an identifier.
+ * @param id
+ * @throws
+ * - 24509: if the ID is not a valid UUID v4
+ */
+const canRecordBeRetrieved = (id: string): void => {
+  if (!uuidValid(id)) {
+    throw new Error(encodeError(`The record for ID '${id}' cannot be retrieved because it isn't a valid UUID v4.`, 24509));
+  }
+};
+
+/**
+ * Ensures a list of price crash state records can be retrieved.
+ * @param limit
+ * @param startAtEventTime
+ * @throws
+ * - 24510: if the desired number of records exceeds the limit
+ * - 24511: if the startAtEventTime was provided and is invalid
+ */
+const canRecordsBeListed = (limit: number, startAtEventTime: number | undefined): void => {
+  if (!integerValid(limit, 1, __QUERY_LIMIT)) {
+    throw new Error(encodeError(`The maximum number of Price Crash State Records that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`, 24510));
+  }
+  if (startAtEventTime !== undefined && !integerValid(startAtEventTime, 1)) {
+    throw new Error(encodeError(`The Price Crash State Records cannot be listed with an invalid startAtEventTime. Received: ${startAtEventTime}.`, 24511));
+  }
+};
 
 /**
  * Verifies if the configuration update can be updated.
@@ -68,5 +109,7 @@ const canConfigBeUpdated = (newConfig: IReversalConfig): void => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  canRecordBeRetrieved,
+  canRecordsBeListed,
   canConfigBeUpdated,
 };

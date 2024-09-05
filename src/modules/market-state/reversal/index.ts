@@ -1,15 +1,18 @@
+import { encodeError } from 'error-message-utils';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
 import { IWindowState } from '../window/index.js';
 import { ICompactLiquidityState } from '../liquidity/index.js';
 import { ICoinsStates, ISemiCompactCoinState } from '../coins/index.js';
 import { buildDefaultConfig } from './utils.js';
-import { canConfigBeUpdated } from './validations.js';
+import { canRecordBeRetrieved, canRecordsBeListed, canConfigBeUpdated } from './validations.js';
+import { getStateRecord, createStateRecord, listStateRecords } from './model.js';
 import {
   IReversalService,
   IPriceCrashStateRecord,
   IReversalState,
   IReversalConfig,
 } from './types.js';
+
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -48,6 +51,48 @@ const reversalServiceFactory = (): IReversalService => {
     liquidityState: ICompactLiquidityState,
     coinsStates: ICoinsStates<ISemiCompactCoinState>,
   ): IReversalState | undefined => undefined;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                          RETRIEVERS                                          *
+   ********************************************************************************************** */
+
+  /**
+   * Retrieves a price crash state record for an ID.
+   * @param id
+   * @returns Promise<IPriceCrashStateRecord>
+   * @throws
+   * - 24509: if the ID is not a valid UUID v4
+   * - 24000: if the record does not exist
+   */
+  const getRecord = async (id: string): Promise<IPriceCrashStateRecord> => {
+    canRecordBeRetrieved(id);
+    const record = await getStateRecord(id);
+    if (!record) {
+      throw new Error(encodeError(`The record for ID '${id}' was not found in the database.`, 24000));
+    }
+    return record;
+  };
+
+  /**
+   * Retrieves a list of price crash state records.
+   * @param limit
+   * @param startAtEventTime
+   * @returns Promise<IPriceCrashStateRecord[]>
+   * @throws
+   * - 24510: if the desired number of records exceeds the limit
+   * - 24511: if the startAtEventTime was provided and is invalid
+   */
+  const listRecords = (
+    limit: number,
+    startAtEventTime: number | undefined,
+  ): Promise<IPriceCrashStateRecord[]> => {
+    canRecordsBeListed(limit, startAtEventTime);
+    return listStateRecords(limit, startAtEventTime);
+  };
 
 
 
@@ -118,6 +163,10 @@ const reversalServiceFactory = (): IReversalService => {
 
     // state calculator
     calculateState,
+
+    // retrievers
+    getRecord,
+    listRecords,
 
     // initializer
     initialize,

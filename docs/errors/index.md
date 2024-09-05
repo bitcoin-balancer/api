@@ -529,7 +529,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `index.ts`
 
-- **24000:** ``
+- **24000:** `The record for ID '${id}' was not found in the database.`
 
 ### `utils.ts`
 
@@ -546,5 +546,8 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **24506:** `The weight for coins quote '${newConfig.weights.coinsQuote}' is invalid as it must be a valid number ranging 1 and 100.`
 - **24507:** `The weight for coins base '${newConfig.weights.coinsBase}' is invalid as it must be a valid number ranging 1 and 100.`
 - **24508:** `The sum of the weights must total 100. Received ${total}`
+- **24509:** `The record for ID '${id}' cannot be retrieved because it isn't a valid UUID v4.`
+- **24510:** `The maximum number of Price Crash State Records that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`
+- **24511:** `The Price Crash State Records cannot be listed with an invalid startAtEventTime. Received: ${startAtEventTime}.`
 
 
