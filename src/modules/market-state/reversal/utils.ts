@@ -1,4 +1,5 @@
 import { generateUUID } from '../../shared/uuid/index.js';
+import { IWindowState } from '../window/types.js';
 import { IPriceCrashStateRecord, IReversalConfig, IReversalState } from './types.js';
 
 /* ************************************************************************************************
@@ -46,6 +47,52 @@ const calculateDurations = (
   // finally, return the times
   return { activeUntil, idleUntil };
 };
+
+/**
+ * Checks if the price has just crashed and a new state should be created.
+ * @param currentTime
+ * @param previousWindowState
+ * @param currentWindowState
+ * @param activeUntil
+ * @param idleUntil
+ * @returns boolean
+ */
+const isNewPriceCrashState = (
+  currentTime: number,
+  previousWindowState: IWindowState | undefined,
+  currentWindowState: IWindowState,
+  activeUntil: number | undefined,
+  idleUntil: number | undefined,
+): boolean => (
+  activeUntil === undefined
+  && (idleUntil === undefined || currentTime > idleUntil)
+  && previousWindowState !== undefined
+  && (currentWindowState.state === -2 && previousWindowState.state > -2)
+);
+
+/**
+ * Checks if the price crash state has ended and should be wrapped up.
+ * @param currentTime
+ * @param activeUntil
+ * @returns boolean
+ */
+const hasPriceCrashStateEnded = (currentTime: number, activeUntil: number | undefined): boolean => (
+  typeof activeUntil === 'number' && currentTime > activeUntil
+);
+
+/**
+ * Checks if there is an active price crash state and should be updated with the new data.
+ * @param currentTime
+ * @param activeUntil
+ * @returns boolean
+ */
+const isPriceCrashStateActive = (
+  currentTime: number,
+  activeUntil: number | undefined,
+  state: IPriceCrashStateRecord | undefined,
+): boolean => (
+  typeof activeUntil === 'number' && activeUntil > currentTime && state !== undefined
+);
 
 /**
  * Transforms a price crash state record into a reversal state ready to be inserted into the
@@ -96,6 +143,9 @@ export {
   // state helpers
   buildPristinePriceCrashState,
   calculateDurations,
+  isNewPriceCrashState,
+  hasPriceCrashStateEnded,
+  isPriceCrashStateActive,
   toState,
 
   // config helpers
