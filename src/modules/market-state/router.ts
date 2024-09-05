@@ -227,6 +227,45 @@ MarketStateRouter.route('/coins/config').put(mediumRiskLimit, async (req: Reques
  ************************************************************************************************ */
 
 /**
+ * Retrieves a price crash state record by ID.
+ * @returns IAPIResponse<IPriceCrashStateRecord>
+ * @requirements
+ * - authority: 1
+ */
+MarketStateRouter.route('/reversal/record/:id').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+    res.json(buildResponse(await ReversalService.getRecord(req.params.id)));
+  } catch (e) {
+    APIErrorService.save('MarketStateRouter.get.reversal.record', e, reqUid, req.ip);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
+ * Validates and retrieves the list of price crash state records.
+ * @param limit
+ * @param startAtEventTime?
+ * @returns IAPIResponse<IPriceCrashStateRecord[]>
+ * @requirements
+ * - authority: 1
+ */
+MarketStateRouter.route('/reversal/records').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 1, ['limit'], req.query);
+    res.json(buildResponse(await ReversalService.listRecords(
+      Number(req.query.limit),
+      typeof req.query.startAtEventTime === 'string' ? Number(req.query.startAtEventTime) : undefined,
+    )));
+  } catch (e) {
+    APIErrorService.save('MarketStateRouter.get.reversal.records', e, reqUid, req.ip, req.query);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
  * Retrieves the reversal module's configuration.
  * @returns IAPIResponse<IReversalConfig>
  * @requirements

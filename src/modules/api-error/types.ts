@@ -53,8 +53,8 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'WebSocket.LIQUIDITY.error' | 'WebSocket.COINS.close' | 'WebSocket.LIQUIDITY.close' | 'WebSocket.HealthCheck'
 | 'MarketStateRouter.get.coins.state.asset.symbol' | 'MarketStateRouter.get.coins.state.asset'
 | 'MarketStateRouter.get.liquidity.state' | 'MarketStateRouter.get.liquidity.config' | 'MarketStateRouter.put.liquidity.config'
-| 'MarketStateRouter.get.reversal.config' | 'MarketStateRouter.put.reversal.config' | 'OrderBook.interval.refetch'
-| 'CandlestickRouter.get.event-history';
+| 'MarketStateRouter.get.reversal.config' | 'MarketStateRouter.put.reversal.config' | 'MarketStateRouter.get.reversal.record'
+| 'MarketStateRouter.get.reversal.records' | 'OrderBook.interval.refetch' | 'CandlestickRouter.get.event-history';
 
 /**
  * API Error
