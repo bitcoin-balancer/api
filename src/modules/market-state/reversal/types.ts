@@ -41,6 +41,25 @@ type IReversalService = {
 
 
 /* ************************************************************************************************
+ *                                             TYPES                                              *
+ ************************************************************************************************ */
+
+/**
+ * Reversal Points
+ * Object containing the points accumulated by each indicator.
+ */
+type IReversalPoints = {
+  total: number;
+  liquidity: number;
+  coinsQuote: number;
+  coinsBase: number;
+};
+
+
+
+
+
+/* ************************************************************************************************
  *                                             STATE                                              *
  ************************************************************************************************ */
 
@@ -137,6 +156,9 @@ type IReversalConfig = {
 export type {
   // service
   IReversalService,
+
+  // types
+  IReversalPoints,
 
   // state
   IPriceCrashStateRecord,

@@ -1,12 +1,41 @@
 import { generateUUID } from '../../shared/uuid/index.js';
+import { ISplitStateID } from '../shared/types.js';
+import { ICompactLiquidityState } from '../liquidity/index.js';
+import { ICoinsStates, ISemiCompactCoinState } from '../coins/index.js';
 import { IWindowState } from '../window/types.js';
-import { IPriceCrashStateRecord, IReversalConfig, IReversalState } from './types.js';
+import {
+  IPriceCrashStateRecord,
+  IReversalConfig,
+  IReversalPoints,
+  IReversalPointWeights,
+  IReversalState,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                        POINT CALCULATORS                                       *
  ************************************************************************************************ */
 
-// ...
+
+
+/**
+ * Calculates the points for each module as well as the total.
+ * @param liquidityState
+ * @param coinsStates
+ * @returns IReversalPoints
+ */
+const calculatePoints = (
+  liquidityState: ICompactLiquidityState,
+  coinsStates: ICoinsStates<ISemiCompactCoinState>,
+  stateSplits: ISplitStateID[],
+  weights: IReversalPointWeights,
+): IReversalPoints => ({
+  total: 0,
+  liquidity: 0,
+  coinsQuote: 0,
+  coinsBase: 0,
+});
+
+
 
 
 
@@ -138,7 +167,7 @@ const buildDefaultConfig = (): IReversalConfig => ({
  ************************************************************************************************ */
 export {
   // point calculators
-
+  calculatePoints,
 
   // state helpers
   buildPristinePriceCrashState,

@@ -7,6 +7,7 @@ import { IWindowState } from '../window/index.js';
 import { ICompactLiquidityState } from '../liquidity/index.js';
 import { ICoinsStates, ISemiCompactCoinState } from '../coins/index.js';
 import {
+  calculatePoints,
   buildPristinePriceCrashState,
   calculateDurations,
   isNewPriceCrashState,
@@ -100,16 +101,40 @@ const reversalServiceFactory = (): IReversalService => {
   /**
    * Invoked whenever there is an active crash state and the market state broadcasted new data. It
    * calculates the current points broadcasts a reversal event if present.
+   * @param currentTime
    * @param windowState
    * @param liquidityState
    * @param coinsStates
    */
   const __onMarketStateChanges = (
-    windowState: IWindowState,
+    currentTime: number,
     liquidityState: ICompactLiquidityState,
     coinsStates: ICoinsStates<ISemiCompactCoinState>,
   ): void => {
+    // calculate the market state points
+    const {
+      total,
+      liquidity,
+      coinsQuote,
+      coinsBase,
+    } = calculatePoints(liquidityState, coinsStates, __STATE_SPLITS, __config.value.weights);
 
+    // update the state
+    __state.highest_points = total > __state.highest_points ? total : __state.highest_points;
+    __state.final_points = total;
+
+    // update the history
+    __eventHist.handleNewData([total, liquidity, coinsQuote, coinsBase]);
+
+    // if an event hasn't been issued, check if the current points meet the requirements. If so,
+    // issue a reversal event.
+    if (
+      __state.reversal_event_time === null
+      && total >= __config.value.pointsRequirement
+    ) {
+      __state.reversal_event_time = currentTime;
+      NotificationService.onReversalEvent(total);
+    }
   };
 
   /**
@@ -150,7 +175,7 @@ const reversalServiceFactory = (): IReversalService => {
     } else if (hasPriceCrashStateEnded(ts, __activeUntil)) {
       __onPriceCrashStateEnd();
     } else if (isPriceCrashStateActive(ts, __activeUntil, __state)) {
-      __onMarketStateChanges(windowState, liquidityState, coinsStates);
+      __onMarketStateChanges(ts, liquidityState, coinsStates);
     }
 
     // store the window state in memory
