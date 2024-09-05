@@ -37,7 +37,43 @@ type IReversalService = {
  *                                             STATE                                              *
  ************************************************************************************************ */
 
-// ...
+/**
+ * Price Crash State Record
+ * The record originated when the base asset's price experiences a sharp decline. Once the time
+ * runs out (set by crashDuration), the record is stored in the database.
+ */
+type IPriceCrashStateRecord = {
+  // the identifier of the record
+  id: string;
+
+  // the highest number of points accumulated throughout the price crash state
+  highest_points: number;
+
+  // the number of points accumulated when the price crash state ended
+  final_points: number;
+
+  // the timestamp (in ms) when the price crash state was activated
+  event_time: number;
+
+  // the timestamp (in ms) when the reversal event was issued (if any)
+  reversal_event_time: number | null;
+};
+
+/**
+ * Reversal State
+ * The object containing the state of the reversal. If a price crash state is not active, this value
+ * will be undefined.
+ */
+type IReversalState = {
+  // the identifier of the price crash state record
+  id: string;
+
+  // the current number of points
+  points: number;
+
+  // the timestamp (in ms) when the reversal event was issued (if any)
+  reversalEventTime: number | null;
+};
 
 
 
@@ -98,6 +134,7 @@ export type {
   // types
 
   // state
+  IPriceCrashStateRecord,
 
   // configuration
   IReversalPointWeights,
