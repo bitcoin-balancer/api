@@ -257,7 +257,7 @@ const notificationServiceFactory = (): INotificationService => {
   const onReversalEvent = (points: number): void => __addToQueue({
     sender: 'MARKET_STATE',
     title: 'Reversal event',
-    description: `The Reversal Module has just issued a event with a total of ${points}/100 points.`,
+    description: `The Reversal Module has just issued an event with a total of ${points}/100 points.`,
   });
 
 

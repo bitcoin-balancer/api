@@ -141,8 +141,11 @@ const __calculateCoinsPoints = (
   // calculate the score obtained by all the symbols
   const score: number = __calculateScoreForSymbols(states, stateSplits);
 
+  // the highest possible score that can be obtained by all symbols combined
+  const highest = states.length * stateSplits.length;
+
   // calculate the score received based the highest possible one
-  const received = calculatePercentageRepresentation(score, states.length);
+  const received = calculatePercentageRepresentation(score, highest);
 
   // finally, turn the score into reversal points and return it
   return processValue((received / 100) * weight);
@@ -173,7 +176,7 @@ const calculatePoints = (
   total += coinsQuote;
 
   // calculate the coins base points
-  const coinsBase = __calculateCoinsPoints(coinsStates.base, stateSplits, weights.coinsQuote);
+  const coinsBase = __calculateCoinsPoints(coinsStates.base, stateSplits, weights.coinsBase);
   total += coinsBase;
 
   // finally, return the points build
@@ -246,7 +249,8 @@ const isNewPriceCrashState = (
   activeUntil === undefined
   && (idleUntil === undefined || currentTime > idleUntil)
   && previousWindowState !== undefined
-  && (currentWindowState.state === -2 && previousWindowState.state > -2)
+  //&& (currentWindowState.state === -2 && previousWindowState.state > -2) @TO BE RESTORED
+  && (previousWindowState.state > currentWindowState.state)
 );
 
 /**
