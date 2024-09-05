@@ -1,5 +1,6 @@
 import { encodeError } from 'error-message-utils';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
+import { NotificationService } from '../../notification/index.js';
 import { ISplitStateID } from '../shared/types.js';
 import { IWindowState } from '../window/index.js';
 import { ICompactLiquidityState } from '../liquidity/index.js';

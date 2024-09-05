@@ -230,6 +230,16 @@ const notificationServiceFactory = (): INotificationService => {
   });
 
   /**
+   * Broadcasts a message notifying users the Coins module could not be re-initialized.
+   * @param error
+   */
+  const coinsReInitError = (error: string): void => __addToQueue({
+    sender: 'MARKET_STATE',
+    title: 'Error when re-initializing the Coins Module',
+    description: `${error} - Please restart Balancer in order to fix the issue.`,
+  });
+
+  /**
    * Broadcasts a message notifying users the Bitcoin price is moving strongly.
    * @param price
    * @param change
@@ -240,22 +250,14 @@ const notificationServiceFactory = (): INotificationService => {
     description: `The price has changed ${change > 0 ? '%2b' : ''}${change}% in the window and is currently at ${prettifyDollarValue(price)}`,
   });
 
-
-
-
-
-  /* **********************************************************************************************
-   *                                            COINS                                             *
-   ********************************************************************************************** */
-
   /**
-   * Broadcasts a message notifying users the Coins module could not be re-initialized.
-   * @param error
+   * Broadcasts a message notifying users a reversal event has just been issued.
+   * @param points
    */
-  const coinsReInitError = (error: string): void => __addToQueue({
-    sender: 'COINS',
-    title: 'Error during re-initialization',
-    description: `${error} - Please restart Balancer in order to fix the issue.`,
+  const onReversalEvent = (points: number): void => __addToQueue({
+    sender: 'MARKET_STATE',
+    title: 'Reversal event',
+    description: `The Reversal Module has just issued a event with a total of ${points} points.`,
   });
 
 
@@ -322,10 +324,9 @@ const notificationServiceFactory = (): INotificationService => {
 
     // market state
     marketStateError,
-    windowState,
-
-    // coins
     coinsReInitError,
+    windowState,
+    onReversalEvent,
 
     // initializer
     initialize,

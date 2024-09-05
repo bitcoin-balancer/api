@@ -33,10 +33,9 @@ type INotificationService = {
 
   // market state
   marketStateError: (errorMessage: string) => void;
-  windowState: (price: number, change: number) => void;
-
-  // coins
   coinsReInitError: (error: string) => void;
+  windowState: (price: number, change: number) => void;
+  onReversalEvent: (points: number) => void;
 
   // initializer
   initialize: () => Promise<void>;
@@ -87,7 +86,7 @@ type IThrottleableNotification = {
  * The sender can be a module or even a specific event.
  */
 type INotificationSender = 'AUTOMATED_TEST' | 'API_ERROR' | 'API_INITIALIZER' | 'SERVER'
-| 'WEBSOCKET' | 'MARKET_STATE' | 'COINS';
+| 'WEBSOCKET' | 'MARKET_STATE';
 
 /**
  * Notification
