@@ -8,6 +8,7 @@ import {
   ICandlestickRecord,
   ICompactCandlestickRecords,
   IEventHistoryRecord,
+  IEventHistory,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -99,4 +100,5 @@ export {
   type ICandlestickRecord,
   type ICompactCandlestickRecords,
   type IEventHistoryRecord,
+  type IEventHistory,
 };

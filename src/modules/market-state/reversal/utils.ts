@@ -26,6 +26,28 @@ const buildPristinePriceCrashState = (): IPriceCrashStateRecord => ({
 });
 
 /**
+ * Calculates the times at which the module will be stateful as well as the idle period.
+ * @param currentTime
+ * @param crashDuration
+ * @param crashIdleDuration
+ * @returns { activeUntil: number, idleUntil: number }
+ */
+const calculateDurations = (
+  currentTime: number,
+  crashDuration: number,
+  crashIdleDuration: number,
+): { activeUntil: number, idleUntil: number } => {
+  // calculate the time at which the crash state will fade away
+  const activeUntil = currentTime + ((crashDuration * 60) * 1000);
+
+  // calculate the time at which the module will no longer be idle
+  const idleUntil = activeUntil + ((crashIdleDuration * 60) * 1000);
+
+  // finally, return the times
+  return { activeUntil, idleUntil };
+};
+
+/**
  * Transforms a price crash state record into a reversal state ready to be inserted into the
  * Market State.
  * @param state
@@ -73,6 +95,7 @@ export {
 
   // state helpers
   buildPristinePriceCrashState,
+  calculateDurations,
   toState,
 
   // config helpers

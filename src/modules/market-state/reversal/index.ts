@@ -1,13 +1,27 @@
 import { encodeError } from 'error-message-utils';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
+import { eventHistoryFactory, IEventHistory } from '../../candlestick/index.js';
 import { NotificationService } from '../../notification/index.js';
 import { ISplitStateID } from '../shared/types.js';
 import { IWindowState } from '../window/index.js';
 import { ICompactLiquidityState } from '../liquidity/index.js';
 import { ICoinsStates, ISemiCompactCoinState } from '../coins/index.js';
-import { buildDefaultConfig } from './utils.js';
-import { canRecordBeRetrieved, canRecordsBeListed, canConfigBeUpdated } from './validations.js';
-import { getStateRecord, createStateRecord, listStateRecords } from './model.js';
+import {
+  buildPristinePriceCrashState,
+  calculateDurations,
+  toState,
+  buildDefaultConfig,
+} from './utils.js';
+import {
+  canRecordBeRetrieved,
+  canRecordsBeListed,
+  canConfigBeUpdated,
+} from './validations.js';
+import {
+  getStateRecord,
+  createStateRecord,
+  listStateRecords,
+} from './model.js';
 import {
   IReversalService,
   IPriceCrashStateRecord,
@@ -29,11 +43,20 @@ const reversalServiceFactory = (): IReversalService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
+  // the previously passed window state
+  let __previousWindowState: IWindowState | undefined;
+
   // the current price crash state
-  let __state: IPriceCrashStateRecord | undefined;
+  let __state: IPriceCrashStateRecord;
+
+  // the time at which the state will be active until
+  let __activeUntil: number | undefined;
 
   // the time at which another price crash state can be started
   let __idleUntil: number | undefined;
+
+  // the instance of the history builder
+  let __eventHist: IEventHistory;
 
   // the splits that will be used to calculate the points for the coins (both, quote and base)
   const __STATE_SPLITS: ISplitStateID[] = ['s25', 's15', 's10', 's5', 's2'];
@@ -50,6 +73,58 @@ const reversalServiceFactory = (): IReversalService => {
    ********************************************************************************************** */
 
   /**
+   * Invoked when a price crash state is detected. It initializes all the required properties to
+   * manage the state and issue the reversal event (if any).
+   * @returns Promise<void>
+   */
+  const __onPriceCrashState = async (): Promise<void> => {
+    // init the state
+    __state = buildPristinePriceCrashState();
+
+    // calculate and set the durations
+    const { activeUntil, idleUntil } = calculateDurations(
+      __state.event_time,
+      __config.value.crashDuration,
+      __config.value.crashIdleDuration,
+    );
+    __activeUntil = activeUntil;
+    __idleUntil = idleUntil;
+
+    // intantiate the event history
+    __eventHist = await eventHistoryFactory(__state.id, 'reversal', '5m');
+  };
+
+  /**
+   * Invoked whenever there is an active crash state and the market state broadcasted new data.
+   * @param windowState
+   * @param liquidityState
+   * @param coinsStates
+   */
+  const __onMarketStateChanges = (
+    windowState: IWindowState,
+    liquidityState: ICompactLiquidityState,
+    coinsStates: ICoinsStates<ISemiCompactCoinState>,
+  ): void => {
+
+  };
+
+  /**
+   * Invoked whenever the price crash state is no longer active. It stores the state and completes
+   * the event history.
+   * @returns Promise<void>
+   */
+  const __onPriceCrashStateEnd = async (): Promise<void> => {
+    // save the state
+    await createStateRecord(__state);
+
+    // reset the duration
+    __activeUntil = undefined;
+
+    // complete the event history instance
+    await __eventHist.complete();
+  };
+
+  /**
    * Calculates the current state of the reversal if there is a price crash active.
    * @param windowState
    * @param liquidityState
@@ -60,7 +135,15 @@ const reversalServiceFactory = (): IReversalService => {
     windowState: IWindowState,
     liquidityState: ICompactLiquidityState,
     coinsStates: ICoinsStates<ISemiCompactCoinState>,
-  ): IReversalState | undefined => undefined;
+  ): IReversalState | undefined => {
+
+
+    // store the window state in memory
+    __previousWindowState = windowState;
+
+    // finally, return the state (if any)
+    return (__state && __activeUntil !== undefined) ? toState(__state) : undefined;
+  };
 
 
 
