@@ -1,5 +1,6 @@
 import { encodeError } from 'error-message-utils';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
+import { ISplitStateID } from '../shared/types.js';
 import { IWindowState } from '../window/index.js';
 import { ICompactLiquidityState } from '../liquidity/index.js';
 import { ICoinsStates, ISemiCompactCoinState } from '../coins/index.js';
@@ -12,7 +13,6 @@ import {
   IReversalState,
   IReversalConfig,
 } from './types.js';
-
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -27,6 +27,15 @@ const reversalServiceFactory = (): IReversalService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
+
+  // the current price crash state
+  let __state: IPriceCrashStateRecord | undefined;
+
+  // the time at which another price crash state can be started
+  let __idleUntil: number | undefined;
+
+  // the splits that will be used to calculate the points for the coins (both, quote and base)
+  const __STATE_SPLITS: ISplitStateID[] = ['s25', 's15', 's10', 's5', 's2'];
 
   // the module's configuration
   let __config: IRecordStore<IReversalConfig>;
@@ -61,7 +70,8 @@ const reversalServiceFactory = (): IReversalService => {
    ********************************************************************************************** */
 
   /**
-   * Retrieves a price crash state record for an ID.
+   * Retrieves a price crash state record for an ID. If there is an active state, it will return it
+   * straight from the local property.
    * @param id
    * @returns Promise<IPriceCrashStateRecord>
    * @throws
@@ -70,6 +80,11 @@ const reversalServiceFactory = (): IReversalService => {
    */
   const getRecord = async (id: string): Promise<IPriceCrashStateRecord> => {
     canRecordBeRetrieved(id);
+
+    // check if the user is retrieving the active state. Otherwise, query the DB
+    if (__state && __state.id === id) {
+      return __state;
+    }
     const record = await getStateRecord(id);
     if (!record) {
       throw new Error(encodeError(`The record for ID '${id}' was not found in the database.`, 24000));
@@ -86,7 +101,7 @@ const reversalServiceFactory = (): IReversalService => {
    * - 24510: if the desired number of records exceeds the limit
    * - 24511: if the startAtEventTime was provided and is invalid
    */
-  const listRecords = (
+  const listRecords = async (
     limit: number,
     startAtEventTime: number | undefined,
   ): Promise<IPriceCrashStateRecord[]> => {
