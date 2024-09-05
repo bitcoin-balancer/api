@@ -2,10 +2,6 @@ import { IRawTable } from './types.js';
 import { getTableName } from './utils.js';
 
 export const RAW_TABLES: IRawTable[] = [
-  /* **********************************************************************************************
-   *                                             AUTH                                             *
-   ********************************************************************************************** */
-
   /**
    * api_errors
    * every record corresponds to an error that was thrown in the API.
@@ -131,5 +127,23 @@ export const RAW_TABLES: IRawTable[] = [
         records     JSONB NOT NULL,
         event_time  BIGINT NOT NULL
       );`,
+  },
+
+  /**
+   * price_crash_states
+   * every record corresponds to an individual price crash state.
+   */
+  {
+    name: 'price_crash_states',
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('price_crash_states')} (
+        id                    UUID PRIMARY KEY,
+        highest_points        SMALLINT NOT NULL,
+        final_points          SMALLINT NOT NULL,
+        event_time            BIGINT NOT NULL,
+        reversal_event_time   BIGINT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ${getTableName('price_crash_states')}_event_time_idx ON ${getTableName('price_crash_states')}(event_time DESC);
+      CREATE INDEX IF NOT EXISTS ${getTableName('price_crash_states')}_reversal_event_time_idx ON ${getTableName('price_crash_states')}(reversal_event_time, event_time DESC);`,
   },
 ];
