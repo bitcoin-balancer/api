@@ -138,8 +138,8 @@ export const RAW_TABLES: IRawTable[] = [
     sql:
       `CREATE TABLE IF NOT EXISTS ${getTableName('price_crash_states')} (
         id                    UUID PRIMARY KEY,
-        highest_points        SMALLINT NOT NULL,
-        final_points          SMALLINT NOT NULL,
+        highest_points        NUMERIC(5, 2) NOT NULL,
+        final_points          NUMERIC(5, 2) NOT NULL,
         event_time            BIGINT NOT NULL,
         reversal_event_time   BIGINT NULL
       );
