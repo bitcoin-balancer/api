@@ -77,20 +77,30 @@ const eventHistoryFactory = async (
 
       // if the candlestick is active, update it. Otherwise, init the new one
       if (isActive(__hist.records.id[idx], __hist.interval, currentTime)) {
+        const high: number[] = [];
+        const low: number[] = [];
+        const close: number[] = [];
         data.forEach((item, i) => {
           // update the high
-          __hist.records.high[idx][i] = item > __hist.records.high[idx][i]
-            ? item
-            : __hist.records.high[idx][i];
+          high.push(
+            item > __hist.records.high[idx][i]
+              ? item
+              : __hist.records.high[idx][i],
+          );
 
           // update the low
-          __hist.records.low[idx][i] = item < __hist.records.low[idx][i]
-            ? item
-            : __hist.records.low[idx][i];
+          low.push(
+            __hist.records.low[idx][i] = item < __hist.records.low[idx][i]
+              ? item
+              : __hist.records.low[idx][i],
+          );
 
           // update the close
-          __hist.records.close[idx][i] = item;
+          close.push(item);
         });
+        __hist.records.high[idx] = high;
+        __hist.records.low[idx] = low;
+        __hist.records.close[idx] = close;
       } else {
         __onNewCandlestick(currentTime, data);
       }
