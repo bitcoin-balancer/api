@@ -69,4 +69,4 @@ npm run test:bench
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[Apache v2.0](https://www.apache.org/licenses/LICENSE-2.0)
