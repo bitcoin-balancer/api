@@ -95,7 +95,7 @@ const reversalServiceFactory = (): IReversalService => {
     __idleUntil = idleUntil;
 
     // intantiate the event history
-    __eventHist = await eventHistoryFactory(__state.id, 'reversal', '5m');
+    __eventHist = await eventHistoryFactory(__state.id, 'reversal', '3m');
   };
 
   /**
