@@ -249,8 +249,7 @@ const isNewPriceCrashState = (
   activeUntil === undefined
   && (idleUntil === undefined || currentTime > idleUntil)
   && previousWindowState !== undefined
-  //&& (currentWindowState.state === -2 && previousWindowState.state > -2) @TO BE RESTORED
-  //&& (previousWindowState.state > currentWindowState.state)
+  && (currentWindowState.state === -2 && previousWindowState.state > -2)
 );
 
 /**
