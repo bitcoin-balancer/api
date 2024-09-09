@@ -58,6 +58,22 @@ type IGetBalances = () => Promise<IBalances>;
 
 
 /* ************************************************************************************************
+ *                                            GENERAL                                             *
+ ************************************************************************************************ */
+
+/**
+ * Side
+ * The kind of action executed by the account.
+ * BUY stands for buying the base asset (e.g. USDT -> BTC)
+ * SELL stands for selling the base asset (e.g. BTC -> USDT)
+ */
+type ISide = 'BUY' | 'SELL';
+
+
+
+
+
+/* ************************************************************************************************
  *                                          CANDLESTICK                                           *
  ************************************************************************************************ */
 
@@ -159,6 +175,39 @@ type IBalances = {
   refetchTime: number;
 };
 
+/**
+ * Trade
+ * The object containing all the details for a single trade execution.
+ */
+type ITrade = {
+  // the identifier of the trade (assigned by Balancer)
+  id: number;
+
+  // the identifier of the trade in the exchange
+  id_alt: string | null;
+
+  // if this property is set it means the trade was created manually through the GUI
+  notes: string | null;
+
+  // the kind of action that was executed
+  side: ISide;
+
+  // the rate of the trade in quote asset
+  price: number;
+
+  // the total amount in base asset
+  amount: number;
+
+  // the total amount of the trade in quote asset
+  amount_quote: number;
+
+  // the total comission charged in base asset
+  comission: number;
+
+  // the timestamp (ms) at which the trade was executed
+  event_time: number;
+};
+
 
 
 
@@ -178,6 +227,9 @@ export type {
   IGetTickersStream,
   IGetBalances,
 
+  // general
+  ISide,
+
   // candlestick
   ICandlestickInterval,
 
@@ -190,4 +242,5 @@ export type {
 
   // account data
   IBalances,
+  ITrade,
 };

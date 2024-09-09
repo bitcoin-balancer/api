@@ -7,8 +7,9 @@ import {
   assembleGetBalances,
 } from './assembler.js';
 import {
-  ICandlestickInterval,
   IExchangeService,
+  ISide,
+  ICandlestickInterval,
   IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
   IBalances,
@@ -154,6 +155,7 @@ export {
   ExchangeService,
 
   // types
+  type ISide,
   type ICandlestickInterval,
   type IOrderBookWebSocketMessage,
   type ITickerWebSocketMessage,

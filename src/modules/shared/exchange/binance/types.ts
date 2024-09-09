@@ -54,6 +54,22 @@ type IBinanceWebSocketMessage = IBinanceTickerWebSocketMessage;
 
 
 /* ************************************************************************************************
+ *                                            GENERAL                                             *
+ ************************************************************************************************ */
+
+/**
+ * Binance Side
+ * The kind of action executed by the account.
+ * BUY stands for buying the base asset (e.g. USDT -> BTC)
+ * SELL stands for selling the base asset (e.g. BTC -> USDT)
+ */
+type IBinanceSide = 'BUY' | 'SELL';
+
+
+
+
+
+/* ************************************************************************************************
  *                                          CANDLESTICK                                           *
  ************************************************************************************************ */
 
@@ -245,6 +261,26 @@ type IBinanceAccountInformation = {
   uid: number; // 354937868
 };
 
+/**
+ * Binance Account Trade
+ * The object containing all the details for a single trade execution
+ */
+type IBinanceAccountTrade = {
+  symbol: string; // "BNBBTC"
+  id: number; // 28457
+  orderId: number; // 100234
+  orderListId: number; // -1
+  price: string; // "4.00000100"
+  qty: string; // "12.00000000"
+  quoteQty: string; // "48.000012"
+  commission: string; // "10.10000000"
+  commissionAsset: string; // "BNB"
+  time: number; // 1499865549590
+  isBuyer: boolean; // true
+  isMaker: boolean; // false
+  isBestMatch: boolean; // true
+};
+
 
 
 
@@ -258,6 +294,9 @@ export type {
 
   // websocket
   IBinanceWebSocketMessage,
+
+  // general
+  IBinanceSide,
 
   // candlestick
   IBinanceCandlestickInterval,
@@ -274,4 +313,5 @@ export type {
   // account data
   IBinanceAccountBalance,
   IBinanceAccountInformation,
+  IBinanceAccountTrade,
 };
