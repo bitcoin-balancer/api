@@ -32,7 +32,8 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
 
   // the list of errors that are regular and shouldn't be stored
   const __OMIT_ERROR_CODES: number[] = [
-    // ...
+    4252, // Failed to verify the JWT. Error: ${extractMessage(err)}
+    3000, // The OTP Token '${token}' for uid '${uid}' is invalid.
   ];
 
   // the number of API Errors that have not been yet read by users
