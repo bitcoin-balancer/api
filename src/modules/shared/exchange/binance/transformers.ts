@@ -5,17 +5,19 @@ import {
   buildPristineCompactCandlestickRecords,
 } from '../../../candlestick/index.js';
 import {
-  IBalances,
   IOrderBook,
   IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
+  IBalances,
+  ITrade,
 } from '../types.js';
 import {
-  IBinanceAccountInformation,
   IBinanceCandlestick,
   IBinanceOrderBook,
   IBinanceOrderBookWebSocketMessage,
   IBinanceTickerWebSocketMessage,
+  IBinanceAccountInformation,
+  IBinanceAccountTrade,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -121,6 +123,20 @@ const transformBalances = (data: IBinanceAccountInformation): IBalances => {
   };
 };
 
+/**
+ * Transforms a list of Binance trades into the objects required by the Exchange.
+ * @param rawTrades
+ * @returns ITrade[]
+ */
+const transformTrades = (rawTrades: IBinanceAccountTrade[]): ITrade[] => rawTrades.map((trade) => ({
+  id_alt: String(trade.id),
+  side: trade.isBuyer ? 'BUY' : 'SELL',
+  price: Number(trade.price),
+  amount: Number(trade.qty),
+  comission: Number(trade.commission),
+  event_time: trade.time,
+}));
+
 
 
 
@@ -134,4 +150,5 @@ export {
   transformOrderBook,
   transformOrderBookMessage,
   transformBalances,
+  transformTrades,
 };

@@ -81,6 +81,21 @@ const validateBalancesResponse = (res: IRequestResponse): void => {
   }
 };
 
+/**
+ * Ensures the trade's endpoint returned a valid list of executed trades.
+ * @param res
+ * @throws
+ * - 12500: if the HTTP response code is not in the acceptedCodes
+ * - 13505: if the response is not an array
+ */
+const validateTradesResponse = (res: IRequestResponse): void => {
+  validateResponse(res);
+  if (!arrayValid(res.data, true)) {
+    console.log(res);
+    throw new Error(encodeError('Binance returned an invalid list of trades.', 13505));
+  }
+};
+
 
 
 
@@ -93,4 +108,5 @@ export {
   validateTickersResponse,
   validateOrderBookResponse,
   validateBalancesResponse,
+  validateTradesResponse,
 };

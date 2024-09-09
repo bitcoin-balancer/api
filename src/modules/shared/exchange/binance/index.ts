@@ -9,6 +9,7 @@ import {
   IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
   IBalances,
+  ITrade,
 } from '../types.js';
 import {
   signParams,
@@ -22,6 +23,7 @@ import {
   validateOrderBookResponse,
   validateTickersResponse,
   validateBalancesResponse,
+  validateTradesResponse,
 } from './validations.js';
 import {
   transformCandlesticks,
@@ -29,6 +31,7 @@ import {
   transformOrderBookMessage,
   transformTickers,
   transformBalances,
+  transformTrades,
 } from './transformers.js';
 import {
   IBinanceService,
@@ -235,6 +238,27 @@ const binanceServiceFactory = (): IBinanceService => {
     return transformBalances(res.data);
   };
 
+  /**
+   * Retrieves the list of trades starting at a time in milliseconds.
+   * @param startAt
+   * @returns Promise<ITrade[]>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13505: if the response is not an array
+   */
+  const listTrades = async (startAt: number): Promise<ITrade[]> => {
+    const res = await sendGET(
+      `https://api.binance.com/api/v3/myTrades?${signParams(__CREDENTIALS.secret, {
+        symbol: __SYMBOL,
+        startTime: startAt,
+        limit: 1000,
+      })}`,
+      { requestOptions: { headers: __AUTH_HEADERS }, skipStatusCodeValidation: true },
+    );
+    validateTradesResponse(res);
+    return transformTrades(res.data);
+  };
+
 
 
 
@@ -255,6 +279,7 @@ const binanceServiceFactory = (): IBinanceService => {
 
     // account data
     getBalances,
+    listTrades,
   });
 };
 

@@ -6,6 +6,7 @@ import {
   IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
   IBalances,
+  ITrade,
 } from '../types.js';
 
 /* ************************************************************************************************
@@ -33,6 +34,7 @@ type IBinanceService = {
 
   // account data
   getBalances: () => Promise<IBalances>;
+  listTrades: (startAt: number) => Promise<ITrade[]>;
 };
 
 
@@ -263,7 +265,8 @@ type IBinanceAccountInformation = {
 
 /**
  * Binance Account Trade
- * The object containing all the details for a single trade execution
+ * The object containing all the details for a single trade execution.
+ * GET /api/v3/myTrades
  */
 type IBinanceAccountTrade = {
   symbol: string; // "BNBBTC"

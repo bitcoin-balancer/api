@@ -13,6 +13,7 @@ import {
   IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
   IBalances,
+  ITrade,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -160,4 +161,5 @@ export {
   type IOrderBookWebSocketMessage,
   type ITickerWebSocketMessage,
   type IBalances,
+  type ITrade,
 };

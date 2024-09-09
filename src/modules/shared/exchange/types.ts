@@ -181,13 +181,13 @@ type IBalances = {
  */
 type ITrade = {
   // the identifier of the trade (assigned by Balancer)
-  id: number;
+  id?: number;
 
   // the identifier of the trade in the exchange
-  id_alt: string | null;
+  id_alt?: string | null;
 
   // if this property is set it means the trade was created manually through the GUI
-  notes: string | null;
+  notes?: string | null;
 
   // the kind of action that was executed
   side: ISide;
@@ -197,9 +197,6 @@ type ITrade = {
 
   // the total amount in base asset
   amount: number;
-
-  // the total amount of the trade in quote asset
-  amount_quote: number;
 
   // the total comission charged in base asset
   comission: number;
