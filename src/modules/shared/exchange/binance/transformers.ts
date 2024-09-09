@@ -1,14 +1,17 @@
-import { IRecord } from '../../types.js';
+import { encodeError } from 'error-message-utils';
+import { ENVIRONMENT } from '../../environment/index.js';
 import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
 } from '../../../candlestick/index.js';
 import {
+  IBalances,
   IOrderBook,
   IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
 } from '../types.js';
 import {
+  IBinanceAccountInformation,
   IBinanceCandlestick,
   IBinanceOrderBook,
   IBinanceOrderBookWebSocketMessage,
@@ -78,7 +81,7 @@ const transformOrderBookMessage = (
  * @returns ITickerWebSocketMessage
  */
 const transformTickers = (
-  topPairs: IRecord<string>,
+  topPairs: Record<string, string>,
   tickers: IBinanceTickerWebSocketMessage,
 ): ITickerWebSocketMessage => tickers.reduce(
   (previous, current) => {
@@ -90,7 +93,33 @@ const transformTickers = (
   {},
 );
 
-
+/**
+ * Transforms the raw account info object into the Balances object required by the Exchange.
+ * @param data
+ * @returns IBalances
+ * @throws
+ * - 13750: if the balance for the base asset is not in the response object
+ * - 13751: if the balance for the quote asset is not in the response object
+ */
+const transformBalances = (data: IBinanceAccountInformation): IBalances => {
+  const base = data.balances.find(
+    (balanceObj) => balanceObj.asset === ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset,
+  );
+  const quote = data.balances.find(
+    (balanceObj) => balanceObj.asset === ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset,
+  );
+  if (base === undefined) {
+    throw new Error(encodeError(`The balance for the base asset (${ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset}) could not be extracted from Binance's response.`, 13750));
+  }
+  if (quote === undefined) {
+    throw new Error(encodeError(`The balance for the quote asset (${ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset}) could not be extracted from Binance's response.`, 13751));
+  }
+  return {
+    [ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset]: Number(base.free),
+    [ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset]: Number(quote.free),
+    refetchTime: Date.now(),
+  };
+};
 
 
 
@@ -102,4 +131,5 @@ export {
   transformTickers,
   transformOrderBook,
   transformOrderBookMessage,
+  transformBalances,
 };

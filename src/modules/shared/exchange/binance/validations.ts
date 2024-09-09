@@ -61,6 +61,26 @@ const validateOrderBookResponse = (res: IRequestResponse): void => {
   }
 };
 
+/**
+ * Ensures the account information's endpoint returned a valid list of balances.
+ * @param res
+ * @throws
+ * - 12500: if the HTTP response code is not in the acceptedCodes
+ * - 13503: if the response didn't include a valid object
+ * - 13504: if the response didn't include a valid list of balances
+ */
+const validateBalancesResponse = (res: IRequestResponse): void => {
+  validateResponse(res);
+  if (!objectValid(res.data)) {
+    console.log(res);
+    throw new Error(encodeError('Binance returned an invalid account information object.', 13503));
+  }
+  if (!arrayValid(res.data.balances)) {
+    console.log(res.data);
+    throw new Error(encodeError('Binance returned an invalid list of balances.', 13504));
+  }
+};
+
 
 
 
@@ -72,4 +92,5 @@ export {
   validateCandlesticksResponse,
   validateTickersResponse,
   validateOrderBookResponse,
+  validateBalancesResponse,
 };

@@ -338,8 +338,14 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **13500:** `Binance returned an invalid list of candlesticks.`
 - **13501:** `Binance returned an invalid list of tickers.`
 - **13502:** `Binance returned an invalid order book object.`
-- **13503:** ``
-- **13504:** ``
+- **13503:** `Binance returned an invalid account information object.`
+- **13504:** `Binance returned an invalid list of balances.`
+- **13505:** ``
+
+### `transformers.ts`
+
+- **13750:** `The balance for the base asset (${ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset}) could not be extracted from Binance's response.`
+- **13751:** `The balance for the quote asset (${ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset}) could not be extracted from Binance's response.`
 
 
 

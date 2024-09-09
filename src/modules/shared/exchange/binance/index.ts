@@ -21,12 +21,14 @@ import {
   validateCandlesticksResponse,
   validateOrderBookResponse,
   validateTickersResponse,
+  validateBalancesResponse,
 } from './validations.js';
 import {
   transformCandlesticks,
   transformOrderBook,
   transformOrderBookMessage,
   transformTickers,
+  transformBalances,
 } from './transformers.js';
 import {
   IBinanceService,
@@ -55,6 +57,10 @@ const binanceServiceFactory = (): IBinanceService => {
   // the credentials to be used for authenticated requests
   const __CREDENTIALS = ENVIRONMENT.EXCHANGE_CREDENTIALS.binance;
 
+  // the headers needed to interact with authenticated endpoints
+  const __AUTH_HEADERS = new Headers(
+    __CREDENTIALS === undefined ? {} : { 'X-MBX-APIKEY': __CREDENTIALS.key },
+  );
 
 
 
@@ -81,14 +87,11 @@ const binanceServiceFactory = (): IBinanceService => {
     limit: number,
     startTime?: number,
   ): Promise<ICompactCandlestickRecords> => {
-    // send and validate the req
     const res = await sendGET(
       buildGetCandlesticksURL(__SYMBOL, interval, limit, startTime),
       { skipStatusCodeValidation: true },
     );
     validateCandlesticksResponse(res);
-
-    // finally, return the transformed candlesticks
     return transformCandlesticks(res.data);
   };
 
@@ -213,8 +216,24 @@ const binanceServiceFactory = (): IBinanceService => {
    *                                         ACCOUNT DATA                                         *
    ********************************************************************************************** */
 
-  const getBalances = (): IBalances => ({ BTC: 0, USDT: 0, refetchTime: 0 });
-
+  /**
+   * Retrieves the account balances directly from Binance's API.
+   * @returns Promise<IBalances>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13503: if the response didn't include a valid object
+   * - 13504: if the response didn't include a valid list of balances
+   * - 13750: if the balance for the base asset is not in the response object
+   * - 13751: if the balance for the quote asset is not in the response object
+   */
+  const getBalances = async (): Promise<IBalances> => {
+    const res = await sendGET(
+      `https://api.binance.com/api/v3/account?${signParams(__CREDENTIALS.secret)}`,
+      { requestOptions: { headers: __AUTH_HEADERS }, skipStatusCodeValidation: true },
+    );
+    validateBalancesResponse(res);
+    return transformBalances(res.data);
+  };
 
 
 
@@ -233,6 +252,9 @@ const binanceServiceFactory = (): IBinanceService => {
     getOrderBookStream,
     getTopSymbols,
     getTickersStream,
+
+    // account data
+    getBalances,
   });
 };
 

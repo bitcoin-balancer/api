@@ -5,6 +5,7 @@ import {
   IOrderBook,
   IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
+  IBalances,
 } from '../types.js';
 
 /* ************************************************************************************************
@@ -29,6 +30,9 @@ type IBinanceService = {
   getOrderBookStream: () => Observable<IOrderBookWebSocketMessage>;
   getTopSymbols: (whitelistedSymbols: string[], limit: number) => Promise<string[]>;
   getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
+
+  // account data
+  getBalances: () => Promise<IBalances>;
 };
 
 
