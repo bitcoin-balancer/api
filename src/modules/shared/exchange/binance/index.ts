@@ -50,6 +50,9 @@ const binanceServiceFactory = (): IBinanceService => {
   // the main symbol comprised by the base and quote asset
   const __SYMBOL = `${ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset}${ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset}`;
 
+  // the credentials to be used for authenticated requests
+  const __CREDENTIALS = ENVIRONMENT.EXCHANGE_CREDENTIALS.binance;
+
 
 
 

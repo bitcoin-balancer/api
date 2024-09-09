@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { sendGET } from 'fetch-request-node';
+import { ENVIRONMENT } from '../../environment/index.js';
 import { ICompactCandlestickRecords } from '../../../candlestick/index.js';
 import { websocketFactory } from '../../websocket/index.js';
 import {
@@ -51,6 +52,9 @@ const krakenServiceFactory = (): IKrakenService => {
 
   // the main symbol comprised by the base and quote asset
   const __SYMBOL = 'XBTUSD';
+
+  // the credentials to be used for authenticated requests
+  const __CREDENTIALS = ENVIRONMENT.EXCHANGE_CREDENTIALS.kraken;
 
   // the supported candlestick intervals
   const __CANDLESTICK_INTERVALS: ISupportedCandlestickIntervals = {

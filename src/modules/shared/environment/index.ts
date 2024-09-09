@@ -19,6 +19,7 @@ import {
   IJWTSecretConfig,
   IEnvironment,
   IExchangeConfig,
+  IExchangeCredentials,
   IExchangesCredentials,
 } from './types.js';
 
@@ -69,6 +70,7 @@ export {
   type INodeEnv,
   type ITelegramConfig,
   type IExchangeConfig,
+  type IExchangeCredentials,
   type IExchangesCredentials,
 
   // implementation

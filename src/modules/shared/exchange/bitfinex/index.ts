@@ -56,6 +56,9 @@ const bitfinexServiceFactory = (): IBitfinexService => {
   // the main symbol comprised by the base and quote asset
   const __SYMBOL = `t${ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset}USD`;
 
+  // the credentials to be used for authenticated requests
+  const __CREDENTIALS = ENVIRONMENT.EXCHANGE_CREDENTIALS.bitfinex;
+
   // the supported candlestick intervals
   const __CANDLESTICK_INTERVALS: ISupportedCandlestickIntervals = {
     '1m': '1m',

@@ -198,7 +198,7 @@ const notificationServiceFactory = (): INotificationService => {
   const websocketError = (id: string, error: string): void => __addToQueue({
     sender: 'WEBSOCKET',
     title: `${id} Websocket error`,
-    description: `${error} - Please restart Balancer in order to try again.`,
+    description: `${error} - If the data stream is not restored in a few minutes, consider restarting Balancer in order to try again.`,
   });
 
   /**
