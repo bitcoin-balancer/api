@@ -199,6 +199,53 @@ type IBinanceTickerWebSocketMessage = IBinanceTickerWebSocketMessageData[];
 
 
 /* ************************************************************************************************
+ *                                          ACCOUNT DATA                                          *
+ ************************************************************************************************ */
+
+/**
+ * Binance Account Balance
+ * The object containing the balance details and its state for a symbol.
+ */
+type IBinanceAccountBalance = {
+  asset: string; // "BTC"
+  free: string; // "4723846.89208129"
+  locked: string; // "0.00000000"
+};
+
+/**
+ * Binance Account Information
+ * All the details regarding the Binance account that is currently connected to Balancer.
+ * GET /api/v3/account
+ */
+type IBinanceAccountInformation = {
+  makerCommission: number; // 15
+  takerCommission: number; // 15
+  buyerCommission: number; // 0
+  sellerCommission: number; // 0
+  commissionRates: {
+    maker: string;
+    taker: string;
+    buyer: string;
+    seller: string;
+  };
+  canTrade: boolean;
+  canWithdraw: boolean;
+  canDeposit: boolean;
+  brokered: boolean;
+  requireSelfTradePrevention: boolean;
+  preventSor: boolean;
+  updateTime: number; // 123456789
+  accountType: string; // SPOT
+  balances: IBinanceAccountBalance[];
+  permissions: string[]; // ["SPOT"]
+  uid: number; // 354937868
+};
+
+
+
+
+
+/* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
@@ -219,4 +266,8 @@ export type {
   // ticker
   IBinanceCoinTicker,
   IBinanceTickerWebSocketMessage,
+
+  // account data
+  IBinanceAccountBalance,
+  IBinanceAccountInformation,
 };
