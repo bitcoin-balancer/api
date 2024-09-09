@@ -239,7 +239,7 @@ type IBinanceAccountInformation = {
   requireSelfTradePrevention: boolean;
   preventSor: boolean;
   updateTime: number; // 123456789
-  accountType: string; // SPOT
+  accountType: string; // "SPOT"
   balances: IBinanceAccountBalance[];
   permissions: string[]; // ["SPOT"]
   uid: number; // 354937868

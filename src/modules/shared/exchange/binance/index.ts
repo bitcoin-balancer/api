@@ -58,9 +58,9 @@ const binanceServiceFactory = (): IBinanceService => {
   const __CREDENTIALS = ENVIRONMENT.EXCHANGE_CREDENTIALS.binance;
 
   // the headers needed to interact with authenticated endpoints
-  const __AUTH_HEADERS = new Headers(
-    __CREDENTIALS === undefined ? {} : { 'X-MBX-APIKEY': __CREDENTIALS.key },
-  );
+  const __AUTH_HEADERS = new Headers({
+    'X-MBX-APIKEY': __CREDENTIALS === undefined ? '' : __CREDENTIALS.key,
+  });
 
 
 

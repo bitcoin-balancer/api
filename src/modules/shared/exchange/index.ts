@@ -4,12 +4,14 @@ import {
   assembleGetOrderBookStream,
   assembleGetTickersStream,
   assembleGetTopSymbols,
+  assembleGetBalances,
 } from './assembler.js';
 import {
   ICandlestickInterval,
   IExchangeService,
   IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
+  IBalances,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -96,6 +98,18 @@ const exchangeServiceFactory = (): IExchangeService => {
    */
   const getTickersStream = assembleGetTickersStream();
 
+  /**
+   * Retrieves the account balances directly from Exchange's API.
+   * @returns Promise<IBalances>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13503: if the response didn't include a valid object (binance)
+   * - 13504: if the response didn't include a valid list of balances (binance)
+   * - 13750: if the balance for the base asset is not in the response object (binance)
+   * - 13751: if the balance for the quote asset is not in the response object (binance)
+   */
+  const getBalances = assembleGetBalances();
+
 
 
 
@@ -113,6 +127,9 @@ const exchangeServiceFactory = (): IExchangeService => {
     getOrderBookStream,
     getTopSymbols,
     getTickersStream,
+
+    // account data
+    getBalances,
   });
 };
 
@@ -140,4 +157,5 @@ export {
   type ICandlestickInterval,
   type IOrderBookWebSocketMessage,
   type ITickerWebSocketMessage,
+  type IBalances,
 };

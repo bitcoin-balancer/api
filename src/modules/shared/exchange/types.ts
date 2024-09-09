@@ -21,6 +21,9 @@ type IExchangeService = {
   getOrderBookStream: IGetOrderBookStream;
   getTopSymbols: IGetTopSymbols;
   getTickersStream: IGetTickersStream;
+
+  // account data
+  getBalances: IGetBalances;
 };
 
 
@@ -50,7 +53,8 @@ type IGetTopSymbols = (whitelistedSymbols: string[], limit: number) => Promise<s
 // getTickersStream
 type IGetTickersStream = (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 
-
+// getBalances
+type IGetBalances = () => Promise<IBalances>;
 
 
 
@@ -173,6 +177,7 @@ export type {
   IGetOrderBookStream,
   IGetTopSymbols,
   IGetTickersStream,
+  IGetBalances,
 
   // candlestick
   ICandlestickInterval,

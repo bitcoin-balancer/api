@@ -8,6 +8,7 @@ import {
   IGetOrderBookStream,
   IGetTopSymbols,
   IGetTickersStream,
+  IGetBalances,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -99,6 +100,19 @@ const assembleGetTickersStream = (): IGetTickersStream => {
   }
 };
 
+/**
+ * Assembles the getBalances method based on the configuration set in the environment.
+ * @returns IGetBalances
+ */
+const assembleGetBalances = (): IGetBalances => {
+  switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.trading) {
+    case 'binance':
+      return BinanceService.getBalances;
+    default:
+      throw new Error(`The function assembleGetBalances could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`);
+  }
+};
+
 
 
 
@@ -113,4 +127,5 @@ export {
   assembleGetOrderBookStream,
   assembleGetTopSymbols,
   assembleGetTickersStream,
+  assembleGetBalances,
 };
