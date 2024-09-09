@@ -9,6 +9,7 @@ import {
   IGetTopSymbols,
   IGetTickersStream,
   IGetBalances,
+  IListTrades,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -100,6 +101,14 @@ const assembleGetTickersStream = (): IGetTickersStream => {
   }
 };
 
+
+
+
+
+/* ************************************************************************************************
+ *                                         ACCOUNT DATA                                           *
+ ************************************************************************************************ */
+
 /**
  * Assembles the getBalances method based on the configuration set in the environment.
  * @returns IGetBalances
@@ -110,6 +119,19 @@ const assembleGetBalances = (): IGetBalances => {
       return BinanceService.getBalances;
     default:
       throw new Error(`The function assembleGetBalances could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`);
+  }
+};
+
+/**
+ * Assembles the lsitTrades method based on the configuration set in the environment.
+ * @returns IListTrades
+ */
+const assembleListTrades = (): IListTrades => {
+  switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.trading) {
+    case 'binance':
+      return BinanceService.listTrades;
+    default:
+      throw new Error(`The function assembleListTrades could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`);
   }
 };
 
@@ -127,5 +149,8 @@ export {
   assembleGetOrderBookStream,
   assembleGetTopSymbols,
   assembleGetTickersStream,
+
+  // account data
   assembleGetBalances,
+  assembleListTrades,
 };

@@ -23,6 +23,7 @@ type IExchangeService = {
 
   // account data
   getBalances: IGetBalances;
+  listTrades: IListTrades;
 };
 
 
@@ -54,6 +55,11 @@ type IGetTickersStream = (topSymbols: string[]) => Observable<ITickerWebSocketMe
 
 // getBalances
 type IGetBalances = () => Promise<IBalances>;
+
+// listTrades
+type IListTrades = (startAt: number) => Promise<ITrade[]>;
+
+
 
 
 
@@ -223,6 +229,7 @@ export type {
   IGetTopSymbols,
   IGetTickersStream,
   IGetBalances,
+  IListTrades,
 
   // general
   ISide,

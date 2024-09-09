@@ -5,6 +5,7 @@ import {
   assembleGetTickersStream,
   assembleGetTopSymbols,
   assembleGetBalances,
+  assembleListTrades,
 } from './assembler.js';
 import {
   IExchangeService,
@@ -100,6 +101,14 @@ const exchangeServiceFactory = (): IExchangeService => {
    */
   const getTickersStream = assembleGetTickersStream();
 
+
+
+
+
+  /* **********************************************************************************************
+   *                                         ACCOUNT DATA                                         *
+   ********************************************************************************************** */
+
   /**
    * Retrieves the account balances directly from Exchange's API.
    * @returns Promise<IBalances>
@@ -111,6 +120,16 @@ const exchangeServiceFactory = (): IExchangeService => {
    * - 13751: if the balance for the quote asset is not in the response object (binance)
    */
   const getBalances = assembleGetBalances();
+
+  /**
+   * Retrieves the list of trades starting at a time in milliseconds.
+   * @param startAt
+   * @returns Promise<ITrade[]>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13505: if the response is not an array (binance)
+   */
+  const listTrades = assembleListTrades();
 
 
 
@@ -132,6 +151,7 @@ const exchangeServiceFactory = (): IExchangeService => {
 
     // account data
     getBalances,
+    listTrades,
   });
 };
 
