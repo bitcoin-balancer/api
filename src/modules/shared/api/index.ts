@@ -14,6 +14,7 @@ import { IPBlacklistService } from '../../ip-blacklist/index.js';
 import { VersionService } from '../version/index.js';
 import { ServerService } from '../../server/index.js';
 import { MarketStateService } from '../../market-state/index.js';
+import { PositionService } from '../../position/index.js';
 import { DataJoinService } from '../../data-join/index.js';
 import {
   readPackageFile,
@@ -123,7 +124,7 @@ const apiServiceFactory = (): IAPIService => {
 
       // Position Module
       try {
-        // await PositionService.teardown(); @TODO
+        await PositionService.teardown();
       } catch (e) {
         console.error('PositionService.teardown()', e);
       }
@@ -288,7 +289,7 @@ const apiServiceFactory = (): IAPIService => {
       // Position Module
       console.log('10/11) Position Module: started');
       try {
-        // await PositionService.initialize(); @TODO
+        await PositionService.initialize();
       } catch (e) {
         throw new Error(`PositionService.initialize() -> ${extractMessage(e)}`);
       }
