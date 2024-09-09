@@ -1,4 +1,3 @@
-import { IRecord } from '../types.js';
 import { arrayValid, objectValid, stringValid } from '../validations/index.js';
 
 /* ************************************************************************************************
@@ -10,7 +9,7 @@ import { arrayValid, objectValid, stringValid } from '../validations/index.js';
  * @param payload
  * @returns boolean
  */
-const __isBinanceError = (payload: IRecord<any>): boolean => typeof payload.msg === 'string';
+const __isBinanceError = (payload: Record<string, any>): boolean => typeof payload.msg === 'string';
 
 /**
  * Checks if an error payload was returned by the Bitfinex API.

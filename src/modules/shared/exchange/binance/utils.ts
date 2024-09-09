@@ -1,7 +1,6 @@
 import { stringify } from 'node:querystring';
 import { createHmac } from 'node:crypto';
 import { ENVIRONMENT } from '../../environment/index.js';
-import { IRecord } from '../../types.js';
 import { ICandlestickInterval } from '../types.js';
 import { IBinanceCoinTicker } from './types.js';
 
@@ -63,9 +62,12 @@ const tickersSortFunc = (a: IBinanceCoinTicker, b: IBinanceCoinTicker): number =
  * Builds the whitelist object from a list of symbols.
  * @param whitelistedSymbols
  * @param quoteAsset
- * @returns IRecord<string>
+ * @returns Record<string ,string>
  */
-const buildWhitelist = (whitelistedSymbols: string[], quoteAsset: string): IRecord<string> => (
+const buildWhitelist = (
+  whitelistedSymbols: string[],
+  quoteAsset: string,
+): Record<string, string> => (
   whitelistedSymbols.reduce(
     (previous, current) => ({ ...previous, [`${current}${quoteAsset}`]: current }),
     {},
@@ -75,14 +77,14 @@ const buildWhitelist = (whitelistedSymbols: string[], quoteAsset: string): IReco
 /**
  * Builds the pairs object based on the top symbols.
  * @param topSymbols
- * @returns <IRecord<string>>
+ * @returns Record<string, string>
  */
-const buildTopPairsObject = (topSymbols: string[]): IRecord<string> => topSymbols.reduce(
+const buildTopPairsObject = (topSymbols: string[]): Record<string, string> => topSymbols.reduce(
   (previous, current) => ({
     ...previous,
     [`${current}${ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset}`]: current,
   }),
-  <IRecord<string>>{},
+  <Record<string, string>>{},
 );
 
 

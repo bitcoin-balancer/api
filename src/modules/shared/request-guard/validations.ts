@@ -1,5 +1,4 @@
 import { encodeError } from 'error-message-utils';
-import { IRecord } from '../types.js';
 import { authorizationHeaderValid, ipValid, objectValid } from '../validations/index.js';
 
 /* ************************************************************************************************
@@ -28,7 +27,7 @@ const validateIP = (ip: string | undefined): void => {
  */
 const validateArgs = (
   requiredArgs: string[] | undefined,
-  args: IRecord<any> | undefined,
+  args: Record<string, any> | undefined,
 ): void => {
   if (Array.isArray(requiredArgs) && requiredArgs.length) {
     if (!objectValid(args)) {

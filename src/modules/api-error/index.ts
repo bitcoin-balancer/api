@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { decodeError, extractMessage } from 'error-message-utils';
-import { IRecord } from '../shared/types.js';
 import { IAPIError, IAPIErrorOrigin, IAPIErrorService } from './types.js';
 import { buildArgs } from './utils.js';
 import { canRecordsBeListed } from './validations.js';
@@ -62,7 +61,7 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
     error: any,
     uid?: string,
     ip?: string,
-    args?: IRecord<any>,
+    args?: Record<string, any>,
     printError: boolean = true,
   ): Promise<void> => {
     try {

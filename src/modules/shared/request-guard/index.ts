@@ -1,5 +1,4 @@
 import { encodeError } from 'error-message-utils';
-import { IRecord } from '../types.js';
 import { ENVIRONMENT } from '../environment/index.js';
 import { APIService } from '../api/index.js';
 import { IAuthority, UserService } from '../../auth/user/index.js';
@@ -29,7 +28,7 @@ import { validateArgs, validateAuthorizationHeader, validateIP } from './validat
 const checkPublicRequest = (
   clientIP: string | undefined,
   requiredArgs?: string[],
-  args?: IRecord<any>,
+  args?: Record<string, any>,
 ): void => {
   // ensure the API is not running on TEST_MODE
   if (ENVIRONMENT.TEST_MODE) {
@@ -85,7 +84,7 @@ const checkRequest = async (
   clientIP: string | undefined,
   requiredAuthority: IAuthority,
   requiredArgs?: string[],
-  args?: IRecord<any>,
+  args?: Record<string, any>,
   otpToken?: string,
 ): Promise<string> => {
   // perform the essential validations

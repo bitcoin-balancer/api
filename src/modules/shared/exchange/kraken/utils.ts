@@ -1,4 +1,3 @@
-import { IRecord } from '../../types.js';
 import { toSeconds } from '../../utils/index.js';
 import {
   IKrakenCandlestickInterval,
@@ -80,9 +79,9 @@ const tickersSortFunc = (
  * Builds the whitelist object from a list of symbols.
  * @param whitelistedSymbols
  * @param quoteAsset
- * @returns IRecord<string>
+ * @returns Record<string, string>
  */
-const buildWhitelist = (whitelistedSymbols: string[]): IRecord<string> => (
+const buildWhitelist = (whitelistedSymbols: string[]): Record<string, string> => (
   whitelistedSymbols.reduce(
     (previous, current) => ({
       ...previous,
@@ -101,15 +100,15 @@ const buildWhitelist = (whitelistedSymbols: string[]): IRecord<string> => (
 /**
  * Builds the pairs object based on the top symbols.
  * @param topSymbols
- * @returns <IRecord<string>>
+ * @returns Record<string, string>
  */
-const buildTopPairsObject = (topSymbols: string[], quoteAsset: string): IRecord<string> => (
+const buildTopPairsObject = (topSymbols: string[], quoteAsset: string): Record<string, string> => (
   topSymbols.reduce(
     (previous, current) => ({
       ...previous,
       [`${current}/${quoteAsset}`]: current,
     }),
-    <IRecord<string>>{},
+    <Record<string, string>>{},
   )
 );
 

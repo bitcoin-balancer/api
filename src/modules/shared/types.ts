@@ -25,15 +25,6 @@ type ITerminationSignal = 'SIGINT' | 'SIGTERM';
  ************************************************************************************************ */
 
 /**
- * Record
- * This utility type is used to replace the original 'object' type which can become difficult to
- * deal with.
- */
-type IRecord<T> = {
-  [key: string]: T;
-};
-
-/**
  * Package File
  * The typical structure of a package.json file.
  */
@@ -68,6 +59,5 @@ export type {
   ITerminationSignal,
 
   // utility types
-  IRecord,
   IPackageFile,
 };

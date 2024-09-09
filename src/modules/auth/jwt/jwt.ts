@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import { encodeError, extractMessage } from 'error-message-utils';
-import { IRecord } from '../../shared/types.js';
 import { toSeconds } from '../../shared/utils/index.js';
 import { jwtValid, objectValid, uuidValid } from '../../shared/validations/index.js';
 
@@ -24,9 +23,9 @@ const ALG: jwt.Algorithm = 'HS256';
  * seconds in order to match the spec.
  * @param uid
  * @param expiry
- * @returns IRecord<string | number>
+ * @returns Record<string, string | number>
  */
-const __buildPayload = (uid: string, expiry: Date): IRecord<string | number> => ({
+const __buildPayload = (uid: string, expiry: Date): Record<string, string | number> => ({
   sub: uid,
   exp: toSeconds(expiry.getTime()),
 });

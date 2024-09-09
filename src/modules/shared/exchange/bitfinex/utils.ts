@@ -1,4 +1,3 @@
-import { IRecord } from '../../types.js';
 import {
   IBitfinexCandlestickInterval,
   IBitfinexWebSocketMessage,
@@ -91,9 +90,12 @@ const tickersSortFunc = (a: IBitfinexCoinTicker, b: IBitfinexCoinTicker): number
  * Builds the whitelist object from a list of symbols.
  * @param whitelistedSymbols
  * @param quoteAsset
- * @returns IRecord<string>
+ * @returns Record<string, string>
  */
-const buildWhitelist = (whitelistedSymbols: string[], quoteAsset: string): IRecord<string> => (
+const buildWhitelist = (
+  whitelistedSymbols: string[],
+  quoteAsset: string,
+): Record<string, string> => (
   whitelistedSymbols.reduce(
     (previous, current) => ({ ...previous, [`t${current}${quoteAsset}`]: current }),
     {},
@@ -103,15 +105,15 @@ const buildWhitelist = (whitelistedSymbols: string[], quoteAsset: string): IReco
 /**
  * Builds the pairs object based on the top symbols.
  * @param topSymbols
- * @returns <IRecord<string>>
+ * @returns Record<string, string>
  */
-const buildTopPairsObject = (topSymbols: string[], quoteAsset: string): IRecord<string> => (
+const buildTopPairsObject = (topSymbols: string[], quoteAsset: string): Record<string, string> => (
   topSymbols.reduce(
     (previous, current) => ({
       ...previous,
       [`t${current}${quoteAsset}`]: current,
     }),
-    <IRecord<string>>{},
+    <Record<string, string>>{},
   )
 );
 

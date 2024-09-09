@@ -1,4 +1,3 @@
-import { IRecord } from '../shared/types.js';
 import { DatabaseService } from '../database/index.js';
 import { IAPIError, IAPIErrorOrigin } from './types.js';
 
@@ -87,7 +86,7 @@ const saveRecord = async (
   error: string,
   uid: string | undefined,
   ip: string | undefined,
-  args: IRecord<any> | undefined,
+  args: Record<string, any> | undefined,
 ): Promise<number> => {
   const { rows } = await DatabaseService.pool.query({
     text: `

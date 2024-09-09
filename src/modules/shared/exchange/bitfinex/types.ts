@@ -1,5 +1,4 @@
 import { Observable } from 'rxjs';
-import { IRecord } from '../../types.js';
 import { ICompactCandlestickRecords } from '../../../candlestick/index.js';
 import {
   ICandlestickInterval,
@@ -66,7 +65,7 @@ type IBitfinexInfoWebSocketMessage = {
   event: 'info',
   version: number; // e.g. 2
   serverId: string; // e.g. '517720c6-d168-4be6-b720-f44c7eb9877e'
-  platform: IRecord<unknown>; // e.g. { status: 1 }
+  platform: Record<string, unknown>; // e.g. { status: 1 }
 };
 
 /**

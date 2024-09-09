@@ -1,5 +1,4 @@
 import { encodeError } from 'error-message-utils';
-import { IRecord } from '../types.js';
 import { ISortDirection } from './types.js';
 
 /* ************************************************************************************************
@@ -84,7 +83,7 @@ const sortPrimitives = (
 const sortRecords = (
   key: string,
   direction: ISortDirection,
-) => <T extends IRecord<any>>(a: T, b: T): number => {
+) => <T extends Record<string, any>>(a: T, b: T): number => {
   if (typeof a[key] === 'string' && typeof b[key] === 'string') {
     return __sortStringValues(a[key], b[key], direction);
   }

@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
-import { IRecord } from '../types.js';
-import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import { IBaseAsset, IQuoteAsset } from '../environment/index.js';
+import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -137,7 +136,7 @@ type IOrderBookWebSocketMessage = {
  * The object that is broadcasted via the ticker stream and contains the price for symbols that
  * have experienced changes. e.g. { 'BTC': 61555.65, 'ETH': 2455.21 }
  */
-type ITickerWebSocketMessage = IRecord<number>;
+type ITickerWebSocketMessage = Record<string, number>;
 
 
 

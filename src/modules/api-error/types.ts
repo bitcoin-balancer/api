@@ -1,4 +1,4 @@
-import { IRecord } from '../shared/types.js';
+
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -18,7 +18,7 @@ type IAPIErrorService = {
     error: any,
     uid?: string,
     ip?: string,
-    args?: IRecord<any>,
+    args?: Record<string, any>,
   ) => Promise<void>;
   list: (limit: number, startAtID: number | undefined) => Promise<IAPIError[]>;
   deleteAll: () => Promise<void>;
@@ -80,7 +80,7 @@ type IAPIError = {
   ip: string | null;
 
   // the arguments used when the error was thrown
-  args: IRecord<any> | null;
+  args: Record<string, any> | null;
 };
 
 

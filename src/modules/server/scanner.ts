@@ -2,7 +2,6 @@ import systeminformation from 'systeminformation';
 import { calculatePercentageRepresentation, processValue } from 'bignumber-utils';
 import { sortRecords } from '../shared/utils/index.js';
 import { ICPUState, IMemoryState, IFileSystemState } from './types.js';
-import { IRecord } from '../shared/types.js';
 
 /* ************************************************************************************************
  *                                         STATE BUILDERS                                         *
@@ -13,7 +12,7 @@ import { IRecord } from '../shared/types.js';
  * @param raw
  * @returns ICPUState
  */
-const __buildCPUState = (raw: IRecord<any>): ICPUState => ({
+const __buildCPUState = (raw: Record<string, any>): ICPUState => ({
   avgLoad: typeof raw.avgLoad === 'number' ? processValue(raw.avgLoad) : 0,
   currentLoad: typeof raw.currentLoad === 'number' ? processValue(raw.currentLoad) : 0,
   currentLoadUser: typeof raw.currentLoadUser === 'number' ? processValue(raw.currentLoadUser) : 0,
@@ -25,7 +24,7 @@ const __buildCPUState = (raw: IRecord<any>): ICPUState => ({
  * @param raw
  * @returns IMemoryState
  */
-const __buildMemoryState = (raw: IRecord<any>): IMemoryState => ({
+const __buildMemoryState = (raw: Record<string, any>): IMemoryState => ({
   total: raw.total ?? 0,
   free: raw.free ?? 0,
   active: raw.active ?? 0,
@@ -37,7 +36,7 @@ const __buildMemoryState = (raw: IRecord<any>): IMemoryState => ({
  * @param raw
  * @returns IFileSystemState
  */
-const __buildFileSystemState = (raw: IRecord<any>): IFileSystemState => ({
+const __buildFileSystemState = (raw: Record<string, any>): IFileSystemState => ({
   fs: raw.fs ?? 'Unknown',
   type: raw.type ?? 'Unknown',
   size: raw.size ?? 0,
@@ -52,7 +51,7 @@ const __buildFileSystemState = (raw: IRecord<any>): IFileSystemState => ({
  * @param raw
  * @return IFileSystemState[]
  */
-const __buildFileSystemStates = (raw: IRecord<any>[]): IFileSystemState[] => (
+const __buildFileSystemStates = (raw: Record<string, any>[]): IFileSystemState[] => (
   raw.map(__buildFileSystemState).sort(sortRecords('use', 'desc'))
 );
 
@@ -76,9 +75,9 @@ const scanResources = async (): Promise<{
 }> => {
   const data: {
     time: { uptime: number },
-    currentLoad: IRecord<any>,
-    mem: IRecord<any>,
-    fsSize: IRecord<any>[],
+    currentLoad: Record<string, any>,
+    mem: Record<string, any>,
+    fsSize: Record<string, any>[],
   } = await systeminformation.get({
     time: 'uptime',
     currentLoad: 'avgLoad, currentLoad, currentLoadUser, currentLoadSystem',

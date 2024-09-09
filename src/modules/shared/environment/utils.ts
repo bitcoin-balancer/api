@@ -2,7 +2,6 @@ import process from 'node:process';
 import { readFileSync } from 'node:fs';
 import { extractMessage } from 'error-message-utils';
 import { isInteger } from 'bignumber-utils';
-import { IRecord } from '../types.js';
 import { stringValid, objectValid } from '../validations/index.js';
 
 /* ************************************************************************************************
@@ -57,12 +56,12 @@ const getInteger = (key: string): number => {
 /**
  * Extracts an object value from the global environment object.
  * @param key
- * @returns IRecord
+ * @returns Record<string, any>
  * @throws
  * - if the property does not exist or is an empty string
  * - if the property is not a valid object
  */
-const getObject = (key: string): IRecord<any> => {
+const getObject = (key: string): Record<string, any> => {
   const val = getString(key);
   try {
     const parsedVal = JSON.parse(val);
@@ -106,12 +105,12 @@ const getSecretString = (key: string): string => {
 /**
  * Extracts an object value stored in a secret's file.
  * @param key
- * @returns IRecord
+ * @returns Record<string, any>
  * @throws
  * - if it fails to extract content from a secret's path
  * - if the value cannot be parsed
  */
-const getSecretObject = (key: string): IRecord<any> => {
+const getSecretObject = (key: string): Record<string, any> => {
   const val = getSecretString(key);
   try {
     const parsedVal = JSON.parse(val);

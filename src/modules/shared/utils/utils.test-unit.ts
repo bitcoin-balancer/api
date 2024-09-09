@@ -8,7 +8,6 @@ import {
   delay,
   invokeFuncPersistently,
 } from './index.js';
-import { IRecord } from '../types.js';
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
@@ -71,7 +70,7 @@ describe('Sorting Utilities', () => {
     expect(() => a.sort(sortPrimitives(b))).toThrowError('1');
   });
 
-  test.each(<Array<[IRecord<any>[], ISortDirection, IRecord<any>[]]>>[
+  test.each(<Array<[Record<string, any>[], ISortDirection, Record<string, any>[]]>>[
     [[], 'asc', []],
 
     // numeric values

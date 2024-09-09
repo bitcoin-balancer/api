@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { Subscription } from 'rxjs';
-import { IRecord } from '../../shared/types.js';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IOrderBookWebSocketMessage } from '../../shared/exchange/index.js';
@@ -36,8 +35,8 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
    ********************************************************************************************** */
 
   // the existing buy and sell orders
-  let __asks: IRecord<number>;
-  let __bids: IRecord<number>;
+  let __asks: Record<string, number>;
+  let __bids: Record<string, number>;
 
   // the identifier of the snapshot's state
   let __lastUpdateID: number;

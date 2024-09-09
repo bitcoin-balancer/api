@@ -1,6 +1,5 @@
 import { version as uuidVersion, validate as uuidValidate } from 'uuid';
 import { isInteger } from 'bignumber-utils';
-import { IRecord } from '../types.js';
 import { IAuthority } from '../../auth/user/types.js';
 
 
@@ -53,7 +52,7 @@ const integerValid = (value: any, min?: number, max?: number): value is number =
  * @param allowEmpty?
  * @returns boolean
  */
-const objectValid = (value: any, allowEmpty?: boolean): value is IRecord<any> => (
+const objectValid = (value: any, allowEmpty?: boolean): value is Record<string, any> => (
   Boolean(value)
   && typeof value === 'object'
   && !Array.isArray(value)
