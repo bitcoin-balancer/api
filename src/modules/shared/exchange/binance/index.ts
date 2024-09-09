@@ -8,8 +8,10 @@ import {
   IOrderBook,
   IOrderBookWebSocketMessage,
   ITickerWebSocketMessage,
+  IBalances,
 } from '../types.js';
 import {
+  signParams,
   buildGetCandlesticksURL,
   buildWhitelist,
   tickersSortFunc,
@@ -202,6 +204,17 @@ const binanceServiceFactory = (): IBinanceService => {
       };
     })
   );
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                         ACCOUNT DATA                                         *
+   ********************************************************************************************** */
+
+  const getBalances = (): IBalances => ({ BTC: 0, USDT: 0, refetchTime: 0 });
+
 
 
 

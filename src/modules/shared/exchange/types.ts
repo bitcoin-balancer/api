@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { IRecord } from '../types.js';
 import { ICompactCandlestickRecords } from '../../candlestick/index.js';
+import { IBaseAsset, IQuoteAsset } from '../environment/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -139,6 +140,27 @@ type ITickerWebSocketMessage = IRecord<number>;
 
 
 /* ************************************************************************************************
+ *                                          ACCOUNT DATA                                          *
+ ************************************************************************************************ */
+
+/**
+ * Balances
+ * The object containing the available balance for the base and quote assets.
+ */
+type IBalances = {
+  [K in IBaseAsset]: number;
+} & {
+  [K in IQuoteAsset]?: number;
+} & {
+  // the timestamp in ms of the last time the balances were fetched
+  refetchTime: number;
+};
+
+
+
+
+
+/* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
@@ -161,4 +183,7 @@ export type {
 
   // ticker
   ITickerWebSocketMessage,
+
+  // account data
+  IBalances,
 };

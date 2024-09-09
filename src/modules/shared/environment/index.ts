@@ -21,6 +21,8 @@ import {
   IExchangeConfig,
   IExchangeCredentials,
   IExchangesCredentials,
+  IBaseAsset,
+  IQuoteAsset,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -72,6 +74,8 @@ export {
   type IExchangeConfig,
   type IExchangeCredentials,
   type IExchangesCredentials,
+  type IBaseAsset,
+  type IQuoteAsset,
 
   // implementation
   ENVIRONMENT,
