@@ -55,7 +55,7 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'MarketStateRouter.get.liquidity.state' | 'MarketStateRouter.get.liquidity.config' | 'MarketStateRouter.put.liquidity.config'
 | 'MarketStateRouter.get.reversal.config' | 'MarketStateRouter.put.reversal.config' | 'MarketStateRouter.get.reversal.record'
 | 'MarketStateRouter.get.reversal.records' | 'OrderBook.interval.refetch' | 'CandlestickRouter.get.event-history'
-| 'BalanceService.__refetchInterval';
+| 'BalanceService.__refetchInterval' | 'PositionRouter.get.balances';
 
 /**
  * API Error

@@ -9,6 +9,7 @@ import { DatabaseRouter } from './modules/database/router.js';
 import { IPBlacklistRouter } from './modules/ip-blacklist/router.js';
 import { MarketStateRouter } from './modules/market-state/router.js';
 import { NotificationRouter } from './modules/notification/router.js';
+import { PositionRouter } from './modules/position/router.js';
 import { ServerRouter } from './modules/server/router.js';
 import { PingRouter } from './modules/ping/router.js';
 
@@ -31,6 +32,7 @@ const mountRoutes = (app: Express): void => {
   app.use('/ip-blacklist', IPBlacklistRouter);
   app.use('/market-state', MarketStateRouter);
   app.use('/notification', NotificationRouter);
+  app.use('/position', PositionRouter);
   app.use('/server', ServerRouter);
   app.use('/ping', PingRouter);
 
