@@ -1,6 +1,6 @@
-import { invokeFuncPersistently } from '../shared/utils/index.js';
-import { APIErrorService } from '../api-error/index.js';
-import { ExchangeService, IBalances } from '../shared/exchange/index.js';
+import { invokeFuncPersistently } from '../../shared/utils/index.js';
+import { APIErrorService } from '../../api-error/index.js';
+import { ExchangeService, IBalances } from '../../shared/exchange/index.js';
 import { IBalanceService } from './types.js';
 
 /* ************************************************************************************************

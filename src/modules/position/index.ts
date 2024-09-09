@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+import { extractMessage } from 'error-message-utils';
+import { BalanceService } from './balance/index.js';
 import { IPositionService } from './types.js';
 
 /* ************************************************************************************************
@@ -21,33 +24,42 @@ const positionServiceFactory = (): IPositionService => {
 
 
   /* **********************************************************************************************
-   *                                            ACTIONS                                           *
-   ********************************************************************************************** */
-
-  const someAction = () => {
-    // ...
-  };
-
-
-
-  /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
-
-  /**
-   * Initializes the Position Module.
-   * @returns Promise<void>
-   */
-  const initialize = async (): Promise<void> => {
-
-  };
 
   /**
    * Tears down the Position Module.
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
+    // Balance Module
+    try {
+      await BalanceService.teardown();
+    } catch (e) {
+      console.error('BalanceService.teardown()', e);
+    }
 
+    // ...
+  };
+
+  /**
+   * Initializes the Position Module.
+   * @returns Promise<void>
+   */
+  const initialize = async (): Promise<void> => {
+    try {
+      // Balance Module
+      try {
+        await BalanceService.initialize();
+      } catch (e) {
+        throw new Error(`BalanceService.initialize() -> ${extractMessage(e)}`);
+      }
+
+      // ...
+    } catch (e) {
+      await teardown();
+      throw e;
+    }
   };
 
 
