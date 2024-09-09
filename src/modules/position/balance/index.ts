@@ -38,6 +38,12 @@ const balanceServiceFactory = (): IBalanceService => {
    * the state before returning it.
    * @param forceRefetch
    * @returns Promise<IBalances>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13503: if the response didn't include a valid object (binance)
+   * - 13504: if the response didn't include a valid list of balances (binance)
+   * - 13750: if the balance for the base asset is not in the response object (binance)
+   * - 13751: if the balance for the quote asset is not in the response object (binance)
    */
   const getBalances = async (forceRefetch?: boolean): Promise<IBalances> => {
     if (forceRefetch) {
