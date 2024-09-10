@@ -115,9 +115,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
   const teardown = async (): Promise<void> => {
     // Window Module
     try {
-      if (__windowSub) {
-        __windowSub.unsubscribe();
-      }
+      __windowSub?.unsubscribe();
       await WindowService.teardown();
     } catch (e) {
       console.error('WindowService.teardown()', e);

@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
+import { Subscription } from 'rxjs';
 import { extractMessage } from 'error-message-utils';
+import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { BalanceService } from './balance/index.js';
 import { IPositionService } from './types.js';
 
@@ -23,6 +25,25 @@ const positionServiceFactory = (): IPositionService => {
   // the minimum amount of the base asset that can bought or sold
   const __MIN_ORDER_SIZE = 0.0001;
 
+  // the subscription to the market state stream
+  let __marketStateSub: Subscription;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                     MARKET STATE STREAM                                      *
+   ********************************************************************************************** */
+
+  /**
+   * Fires whenever a new market state is calculated.
+   * @param nextState
+   */
+  const __onMarketStateChanges = (nextState: IMarketState): void => {
+
+  };
+
 
 
 
@@ -36,6 +57,9 @@ const positionServiceFactory = (): IPositionService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
+    // unsubscribe from the market state stream
+    __marketStateSub?.unsubscribe();
+
     // Balance Module
     try {
       await BalanceService.teardown();
@@ -59,12 +83,14 @@ const positionServiceFactory = (): IPositionService => {
         throw new Error(`BalanceService.initialize() -> ${extractMessage(e)}`);
       }
 
-      // ...
+      // subscribe to the market state stream
+      __marketStateSub = MarketStateService.subscribe(__onMarketStateChanges);
     } catch (e) {
       await teardown();
       throw e;
     }
   };
+
 
 
 
