@@ -164,6 +164,6 @@ export const RAW_TABLES: IRawTable[] = [
         comission   NUMERIC(20, 8) NOT NULL,
         event_time  BIGINT NOT NULL
       );
-      CREATE INDEX IF NOT EXISTS ${getTableName('trades')}_event_time_idx ON ${getTableName('trades')}(event_time DESC);`,
+      CREATE INDEX IF NOT EXISTS ${getTableName('trades')}_event_time_idx ON ${getTableName('trades')}(event_time ASC);`,
   },
 ];
