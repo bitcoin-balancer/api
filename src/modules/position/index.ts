@@ -67,6 +67,13 @@ const positionServiceFactory = (): IPositionService => {
       console.error('BalanceService.teardown()', e);
     }
 
+    // Trade Module
+    try {
+      // await TradeService.teardown();
+    } catch (e) {
+      console.error('TradeService.teardown()', e);
+    }
+
     // ...
   };
 
@@ -81,6 +88,13 @@ const positionServiceFactory = (): IPositionService => {
         await BalanceService.initialize();
       } catch (e) {
         throw new Error(`BalanceService.initialize() -> ${extractMessage(e)}`);
+      }
+
+      // Trade Module
+      try {
+        // ...
+      } catch (e) {
+        throw new Error(`TradeService.initialize() -> ${extractMessage(e)}`);
       }
 
       // subscribe to the market state stream
