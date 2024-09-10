@@ -96,6 +96,21 @@ const validateTradesResponse = (res: IRequestResponse): void => {
   }
 };
 
+/**
+ * Ensures the order's endpoint returned a valid execution payload object.
+ * @param res
+ * @throws
+ * - 12500: if the HTTP response code is not in the acceptedCodes
+ * - 13506: if the response is not a valid payload object
+ */
+const validateOrderExecutionResponse = (res: IRequestResponse): void => {
+  validateResponse(res);
+  if (!objectValid(res.data)) {
+    console.log(res);
+    throw new Error(encodeError('Binance returned an invalid order execution payload.', 13506));
+  }
+};
+
 
 
 
@@ -109,4 +124,5 @@ export {
   validateOrderBookResponse,
   validateBalancesResponse,
   validateTradesResponse,
+  validateOrderExecutionResponse,
 };

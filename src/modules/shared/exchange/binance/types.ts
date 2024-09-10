@@ -35,6 +35,10 @@ type IBinanceService = {
   // account data
   getBalances: () => Promise<IBalances>;
   listTrades: (startAt: number) => Promise<ITrade[]>;
+
+  // account actions
+  buy: (amount: number) => Promise<IBinanceOrderExecutionResponse>;
+  sell: (amount: number) => Promise<IBinanceOrderExecutionResponse>;
 };
 
 
@@ -295,6 +299,7 @@ type IBinanceAccountTrade = {
 /**
  * Binance Order Exection Response
  * The object returned by Binance's API when an order is fulfilled.
+ * POST /api/v3/order
  */
 type IBinanceOrderExecutionResponse = {
   symbol: string; // "BTCUSDT"

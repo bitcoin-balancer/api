@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { sendGET } from 'fetch-request-node';
+import { sendGET, sendPOST } from 'fetch-request-node';
 import { ENVIRONMENT } from '../../environment/index.js';
 import { ICompactCandlestickRecords } from '../../../candlestick/index.js';
 import { websocketFactory } from '../../websocket/index.js';
@@ -24,6 +24,7 @@ import {
   validateTickersResponse,
   validateBalancesResponse,
   validateTradesResponse,
+  validateOrderExecutionResponse,
 } from './validations.js';
 import {
   transformCandlesticks,
@@ -36,6 +37,7 @@ import {
 import {
   IBinanceService,
   IBinanceOrderBookWebSocketMessage,
+  IBinanceSide,
   IBinanceCoinTicker,
   IBinanceTickerWebSocketMessage,
   IBinanceOrderExecutionResponse,
@@ -265,6 +267,51 @@ const binanceServiceFactory = (): IBinanceService => {
 
 
   /* **********************************************************************************************
+   *                                       ACCOUNT ACTIONS                                        *
+   ********************************************************************************************** */
+
+  /**
+   * Sends an order to be executed by Binance and returns the execution payload.
+   * @param side
+   * @param amount
+   * @returns Promise<IBinanceOrderExecutionResponse>
+   */
+  const __order = async (
+    side: IBinanceSide,
+    amount: number,
+  ): Promise<IBinanceOrderExecutionResponse> => {
+    const res = await sendPOST(
+      `https://api.binance.com/api/v3/order?${signParams(__CREDENTIALS.secret, {
+        symbol: __SYMBOL,
+        side,
+        type: 'MARKET',
+        quantity: amount,
+      })}`,
+      { requestOptions: { headers: __AUTH_HEADERS }, skipStatusCodeValidation: true },
+    );
+    validateOrderExecutionResponse(res);
+    return res.data;
+  };
+
+  /**
+   * Sends a buy order to Binance for a desired base asset amount.
+   * @param amount
+   * @returns Promise<IBinanceOrderExecutionResponse>
+   */
+  const buy = (amount: number): Promise<IBinanceOrderExecutionResponse> => __order('BUY', amount);
+
+  /**
+   * Sends a sell order to Binance for a desired base asset amount.
+   * @param amount
+   * @returns Promise<IBinanceOrderExecutionResponse>
+   */
+  const sell = (amount: number): Promise<IBinanceOrderExecutionResponse> => __order('SELL', amount);
+
+
+
+
+
+  /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
   return Object.freeze({
@@ -281,6 +328,10 @@ const binanceServiceFactory = (): IBinanceService => {
     // account data
     getBalances,
     listTrades,
+
+    // account actions
+    buy,
+    sell,
   });
 };
 

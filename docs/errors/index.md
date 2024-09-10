@@ -341,7 +341,8 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **13503:** `Binance returned an invalid account information object.`
 - **13504:** `Binance returned an invalid list of balances.`
 - **13505:** `Binance returned an invalid list of trades.`
-- **13506:** ``
+- **13506:** `Binance returned an invalid order execution payload.`
+- **13507:** ``
 
 ### `transformers.ts`
 
