@@ -24,6 +24,10 @@ type IExchangeService = {
   // account data
   getBalances: IGetBalances;
   listTrades: IListTrades;
+
+  // account actions
+  buy: IBuy;
+  sell: ISell;
 };
 
 
@@ -58,6 +62,12 @@ type IGetBalances = () => Promise<IBalances>;
 
 // listTrades
 type IListTrades = (startAt: number) => Promise<ITrade[]>;
+
+// buy
+type IBuy = (amount: number) => Promise<Record<string, unknown>>;
+
+// sell
+type ISell = (amount: number) => Promise<Record<string, unknown>>;
 
 
 
@@ -230,6 +240,8 @@ export type {
   IGetTickersStream,
   IGetBalances,
   IListTrades,
+  IBuy,
+  ISell,
 
   // general
   ISide,

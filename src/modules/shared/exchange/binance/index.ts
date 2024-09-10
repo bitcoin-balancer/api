@@ -275,6 +275,9 @@ const binanceServiceFactory = (): IBinanceService => {
    * @param side
    * @param amount
    * @returns Promise<IBinanceOrderExecutionResponse>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13506: if the response is not a valid payload object
    */
   const __order = async (
     side: IBinanceSide,
@@ -297,6 +300,9 @@ const binanceServiceFactory = (): IBinanceService => {
    * Sends a buy order to Binance for a desired base asset amount.
    * @param amount
    * @returns Promise<IBinanceOrderExecutionResponse>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13506: if the response is not a valid payload object
    */
   const buy = (amount: number): Promise<IBinanceOrderExecutionResponse> => __order('BUY', amount);
 
@@ -304,6 +310,9 @@ const binanceServiceFactory = (): IBinanceService => {
    * Sends a sell order to Binance for a desired base asset amount.
    * @param amount
    * @returns Promise<IBinanceOrderExecutionResponse>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13506: if the response is not a valid payload object
    */
   const sell = (amount: number): Promise<IBinanceOrderExecutionResponse> => __order('SELL', amount);
 

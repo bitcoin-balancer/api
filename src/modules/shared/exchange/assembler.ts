@@ -10,6 +10,8 @@ import {
   IGetTickersStream,
   IGetBalances,
   IListTrades,
+  IBuy,
+  ISell,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -123,7 +125,7 @@ const assembleGetBalances = (): IGetBalances => {
 };
 
 /**
- * Assembles the lsitTrades method based on the configuration set in the environment.
+ * Assembles the listTrades method based on the configuration set in the environment.
  * @returns IListTrades
  */
 const assembleListTrades = (): IListTrades => {
@@ -132,6 +134,40 @@ const assembleListTrades = (): IListTrades => {
       return BinanceService.listTrades;
     default:
       throw new Error(`The function assembleListTrades could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`);
+  }
+};
+
+
+
+
+
+/* ************************************************************************************************
+ *                                        ACCOUNT ACTIONS                                         *
+ ************************************************************************************************ */
+
+/**
+ * Assembles the buy method based on the configuration set in the environment.
+ * @returns IBuy
+ */
+const assembleBuy = (): IBuy => {
+  switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.trading) {
+    case 'binance':
+      return BinanceService.buy;
+    default:
+      throw new Error(`The function assembleBuy could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`);
+  }
+};
+
+/**
+ * Assembles the sell method based on the configuration set in the environment.
+ * @returns ISell
+ */
+const assembleSell = (): ISell => {
+  switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.trading) {
+    case 'binance':
+      return BinanceService.sell;
+    default:
+      throw new Error(`The function assembleSell could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`);
   }
 };
 
@@ -153,4 +189,8 @@ export {
   // account data
   assembleGetBalances,
   assembleListTrades,
+
+  // account actions
+  assembleBuy,
+  assembleSell,
 };

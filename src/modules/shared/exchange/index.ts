@@ -6,6 +6,8 @@ import {
   assembleGetTopSymbols,
   assembleGetBalances,
   assembleListTrades,
+  assembleBuy,
+  assembleSell,
 } from './assembler.js';
 import {
   IExchangeService,
@@ -136,6 +138,34 @@ const exchangeServiceFactory = (): IExchangeService => {
 
 
   /* **********************************************************************************************
+   *                                       ACCOUNT ACTIONS                                        *
+   ********************************************************************************************** */
+
+  /**
+   * Sends a buy order to the Exchange for a desired base asset amount.
+   * @param amount
+   * @returns Promise<Record<string, unknown>>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13506: if the response is not a valid payload object (binance)
+   */
+  const buy = assembleBuy();
+
+  /**
+   * Sends a sell order to the Exchange for a desired base asset amount.
+   * @param amount
+   * @returns Promise<Record<string, unknown>>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13506: if the response is not a valid payload object (binance)
+   */
+  const sell = assembleSell();
+
+
+
+
+
+  /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
   return Object.freeze({
@@ -152,6 +182,10 @@ const exchangeServiceFactory = (): IExchangeService => {
     // account data
     getBalances,
     listTrades,
+
+    // account actions
+    buy,
+    sell,
   });
 };
 
