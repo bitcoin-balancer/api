@@ -17,7 +17,11 @@ const positionServiceFactory = (): IPositionService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // ...
+  // the number of decimal places the base asset can have
+  const __BASE_ASSET_DP = 4;
+
+  // the minimum amount of the base asset that can bought or sold
+  const __MIN_ORDER_SIZE = 0.0001;
 
 
 
