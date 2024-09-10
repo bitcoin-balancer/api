@@ -38,6 +38,7 @@ import {
   IBinanceOrderBookWebSocketMessage,
   IBinanceCoinTicker,
   IBinanceTickerWebSocketMessage,
+  IBinanceOrderExecutionResponse,
 } from './types.js';
 
 /* ************************************************************************************************

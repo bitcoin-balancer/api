@@ -289,6 +289,43 @@ type IBinanceAccountTrade = {
 
 
 /* ************************************************************************************************
+ *                                        ACCOUNT ACTIONS                                         *
+ ************************************************************************************************ */
+
+/**
+ * Binance Order Exection Response
+ * The object returned by Binance's API when an order is fulfilled.
+ */
+type IBinanceOrderExecutionResponse = {
+  symbol: string; // "BTCUSDT"
+  orderId: number; // 28
+  orderListId: number; // -1
+  clientOrderId: string; // "6gCrw2kRUAF9CvJDGP16IP"
+  transactTime: number; // 1507725176595
+  price: string; // "0.00000000"
+  origQty: string; // "10.00000000"
+  executedQty: string; // "10.00000000"
+  cummulativeQuoteQty: string; // "10.00000000"
+  status: string; // "FILLED"
+  timeInForce: string; // "GTC"
+  type: string; // "MARKET"
+  side: string; // "SELL"
+  workingTime: number; // 1507725176595
+  selfTradePreventionMode: string; // "NONE"
+  fills: Array<{
+    price: string; // "4000.00000000"
+    qty: string; // "1.00000000"
+    commission: string; // "4.00000000"
+    commissionAsset: string; // "USDT"
+    tradeId: number; // 56
+  }>;
+};
+
+
+
+
+
+/* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
@@ -317,4 +354,7 @@ export type {
   IBinanceAccountBalance,
   IBinanceAccountInformation,
   IBinanceAccountTrade,
+
+  // account actions
+  IBinanceOrderExecutionResponse,
 };
