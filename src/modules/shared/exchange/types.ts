@@ -214,7 +214,10 @@ type ITrade = {
   // the total amount in base asset
   amount: number;
 
-  // the total comission charged in base asset
+  // the total amount in quote asset
+  amount_quote: number;
+
+  // the total comission charged in base or quote asset (whichever asset was received)
   comission: number;
 
   // the timestamp (ms) at which the trade was executed

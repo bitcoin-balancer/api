@@ -133,6 +133,7 @@ const transformTrades = (rawTrades: IBinanceAccountTrade[]): ITrade[] => rawTrad
   side: trade.isBuyer ? 'BUY' : 'SELL',
   price: Number(trade.price),
   amount: Number(trade.qty),
+  amount_quote: Number(trade.quoteQty),
   comission: Number(trade.commission),
   event_time: trade.time,
 }));

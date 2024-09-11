@@ -155,14 +155,15 @@ export const RAW_TABLES: IRawTable[] = [
     name: 'trades',
     sql:
       `CREATE TABLE IF NOT EXISTS ${getTableName('trades')} (
-        id          BIGSERIAL PRIMARY KEY,
-        id_alt      VARCHAR(500) NULL,
-        notes       VARCHAR(50000) NULL,
-        side        VARCHAR(10) NOT NULL,
-        price       NUMERIC(20, 2) NOT NULL,
-        amount      NUMERIC(20, 8) NOT NULL,
-        comission   NUMERIC(20, 8) NOT NULL,
-        event_time  BIGINT NOT NULL
+        id            BIGSERIAL PRIMARY KEY,
+        id_alt        VARCHAR(500) NULL,
+        notes         VARCHAR(50000) NULL,
+        side          VARCHAR(10) NOT NULL,
+        price         NUMERIC(20, 2) NOT NULL,
+        amount        NUMERIC(20, 8) NOT NULL,
+        amount_quote  NUMERIC(20, 2) NOT NULL,
+        comission     NUMERIC(20, 8) NOT NULL,
+        event_time    BIGINT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS ${getTableName('trades')}_event_time_idx ON ${getTableName('trades')}(event_time ASC);`,
   },
