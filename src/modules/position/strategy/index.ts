@@ -1,5 +1,6 @@
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
 import { buildDefaultConfig } from './utils.js';
+import { canConfigBeUpdated } from './validations.js';
 import { IStrategyService, IStrategy, IDecreaseLevel } from './types.js';
 
 /* ************************************************************************************************
@@ -52,6 +53,35 @@ const strategyServiceFactory = (): IStrategyService => {
 
 
   /* **********************************************************************************************
+   *                                        CONFIGURATION                                         *
+   ********************************************************************************************** */
+
+  /**
+   * Updates the configuration of the module.
+   * @param newConfig
+   * @throws
+   * - 31500: if the config is not a valid object
+   * - 31501: if the canIncrease property is not a boolean
+   * - 31502: if the canDecrease property is not a boolean
+   * - 31503: if the increaseAmountQuote property is not a valid number
+   * - 31504: if the minPositionAmountQuote property is not a valid number
+   * - 31505: if the increaseIdleDuration property is not a valid number
+   * - 31506: if the increaseGainRequirement property is not a valid number
+   * - 31507: if the decreaseLevels property is not a valid tuple
+   * - 31508: if any of the price levels' gainRequirement property is invalid
+   * - 31509: if any of the price levels' percentage property is invalid
+   * - 31510: if any of the price levels' frequency property is invalid
+   */
+  const updateConfiguration = async (newConfig: IStrategy): Promise<void> => {
+    canConfigBeUpdated(newConfig);
+    await __config.update(newConfig);
+  };
+
+
+
+
+
+  /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
   return Object.freeze({
@@ -63,6 +93,9 @@ const strategyServiceFactory = (): IStrategyService => {
     // initializer
     initialize,
     teardown,
+
+    // configuration
+    updateConfiguration,
   });
 };
 

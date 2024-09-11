@@ -559,3 +559,63 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **24511:** `The Price Crash State Records cannot be listed with an invalid startAtEventTime. Received: ${startAtEventTime}.`
 
 
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Position` (30000 - 30999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **30000:** ``
+
+### `utils.ts`
+
+- **30250:** ``
+
+### `validations.ts`
+
+- **30500:** ``
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Strategy` (31000 - 31999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **31000:** ``
+
+### `utils.ts`
+
+- **31250:** ``
+
+### `validations.ts`
+
+- **31500:** `The provided strategy is not a valid object.`
+- **31501:** `The canIncrease '${newConfig.canIncrease}' must be a boolean.`
+- **31502:** `The canDecrease '${newConfig.canIncrease}' must be a boolean value.`
+- **31503:** `The increaseAmountQuote '${newConfig.increaseAmountQuote}' is invalid as it must be a valid number ranging 1 and ${Number.MAX_SAFE_INTEGER}.`
+- **31504:** `The minPositionAmountQuote '${newConfig.minPositionAmountQuote}' is invalid as it must be a valid number ranging ${min} and ${max}.`
+- **31505:** `The increaseIdleDuration '${newConfig.increaseIdleDuration}' is invalid as it must be a valid number ranging 1 and 1440.`
+- **31506:** `The increaseGainRequirement '${newConfig.increaseGainRequirement}' is invalid as it must be a valid number ranging -99 and 0.`
+- **31507:** `The decreaseLevels property doesn\'t contain a valid tuple with 5 items.`
+- **31508:** `The gainRequirement for level ${i} '${newConfig.increaseGainRequirement}' is invalid as it must be a valid number ranging 0.1 and 1000000.`
+- **31509:** `The percentage for level ${i} '${level.percentage}' is invalid as it must be a valid number ranging ${minPercentage} and 100.`
+- **31510:** `The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid number ranging ${minFrequency} and ${__MAX_FREQUENCY}.`
+
+

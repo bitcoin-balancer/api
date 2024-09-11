@@ -15,6 +15,9 @@ type IStrategyService = {
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;
+
+  // configuration
+  updateConfiguration: (newConfig: IStrategy) => Promise<void>;
 };
 
 

@@ -25,6 +25,15 @@ type ITerminationSignal = 'SIGINT' | 'SIGTERM';
  ************************************************************************************************ */
 
 /**
+ * Range
+ * Utility type used for numeric ranges.
+ */
+type IRange = {
+  min: number;
+  max: number;
+};
+
+/**
  * Package File
  * The typical structure of a package.json file.
  */
@@ -59,5 +68,6 @@ export type {
   ITerminationSignal,
 
   // utility types
+  IRange,
   IPackageFile,
 };
