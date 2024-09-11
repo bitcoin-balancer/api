@@ -52,6 +52,18 @@ type IDecreaseLevel = {
 };
 
 /**
+ * Decrease Levels
+ * The tuple that contains all the details for each level.
+ */
+type IDecreaseLevels = [
+  IDecreaseLevel,
+  IDecreaseLevel,
+  IDecreaseLevel,
+  IDecreaseLevel,
+  IDecreaseLevel,
+];
+
+/**
  * Strategy
  * The configuration that will determine how positions will be increased and decreased.
  */
@@ -93,5 +105,6 @@ export type {
   // types
   IDecreaseLevelID,
   IDecreaseLevel,
+  IDecreaseLevels,
   IStrategy,
 };

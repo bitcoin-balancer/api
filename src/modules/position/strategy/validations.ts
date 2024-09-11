@@ -69,15 +69,15 @@ const canConfigBeUpdated = (newConfig: IStrategy): void => {
   newConfig.decreaseLevels.forEach((level, i) => {
     const minGainRequirement = previous === undefined ? 0.1 : previous.gainRequirement + 0.01;
     const minPercentage = previous === undefined ? 1 : previous.percentage;
-    const minFrequency = previous === undefined ? 1 : previous.frequency;
+    const maxFrequency = previous === undefined ? __MAX_FREQUENCY : previous.frequency;
     if (!numberValid(level.gainRequirement, minGainRequirement, __MAX_GAIN_REQUIREMENT)) {
       throw new Error(encodeError(`The gainRequirement for level ${i} '${level.gainRequirement}' is invalid as it must be a valid number ranging ${minGainRequirement} and ${__MAX_GAIN_REQUIREMENT}.`, 31508));
     }
     if (!numberValid(level.percentage, minPercentage, 100)) {
       throw new Error(encodeError(`The percentage for level ${i} '${level.percentage}' is invalid as it must be a valid number ranging ${minPercentage} and 100.`, 31509));
     }
-    if (!numberValid(level.frequency, minFrequency, __MAX_FREQUENCY)) {
-      throw new Error(encodeError(`The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid number ranging ${minFrequency} and ${__MAX_FREQUENCY}.`, 31510));
+    if (!numberValid(level.frequency, 1, maxFrequency)) {
+      throw new Error(encodeError(`The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid number ranging 1 and ${maxFrequency}.`, 31510));
     }
     previous = level;
   });

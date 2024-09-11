@@ -616,6 +616,6 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **31507:** `The decreaseLevels property doesn\'t contain a valid tuple with 5 items.`
 - **31508:** `The gainRequirement for level ${i} '${newConfig.increaseGainRequirement}' is invalid as it must be a valid number ranging 0.1 and 1000000.`
 - **31509:** `The percentage for level ${i} '${level.percentage}' is invalid as it must be a valid number ranging ${minPercentage} and 100.`
-- **31510:** `The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid number ranging ${minFrequency} and ${__MAX_FREQUENCY}.`
+- **31510:** `The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid number ranging 1 and ${maxFrequency}.`
 
 
