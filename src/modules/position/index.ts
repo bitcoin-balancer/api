@@ -2,6 +2,7 @@
 import { Subscription } from 'rxjs';
 import { extractMessage } from 'error-message-utils';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
+import { StrategyService } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
 import { IPositionService } from './types.js';
 
@@ -60,6 +61,13 @@ const positionServiceFactory = (): IPositionService => {
     // unsubscribe from the market state stream
     __marketStateSub?.unsubscribe();
 
+    // Strategy Module
+    try {
+      await StrategyService.teardown();
+    } catch (e) {
+      console.error('StrategyService.teardown()', e);
+    }
+
     // Balance Module
     try {
       await BalanceService.teardown();
@@ -83,6 +91,13 @@ const positionServiceFactory = (): IPositionService => {
    */
   const initialize = async (): Promise<void> => {
     try {
+      // Strategy Module
+      try {
+        await StrategyService.initialize();
+      } catch (e) {
+        throw new Error(`StrategyService.initialize() -> ${extractMessage(e)}`);
+      }
+
       // Balance Module
       try {
         await BalanceService.initialize();
