@@ -135,10 +135,6 @@ type IReversalConfig = {
   // record is stored in the database and the state is reset.
   crashDuration: number;
 
-  // the number of minutes Balancer will wait before being able to activate the price crash state
-  // again
-  crashIdleDuration: number;
-
   // the total number of points required for a reversal event to be issued
   pointsRequirement: number;
 

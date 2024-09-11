@@ -9,7 +9,7 @@ import { ICoinsStates, ISemiCompactCoinState } from '../coins/index.js';
 import {
   calculatePoints,
   buildPristinePriceCrashState,
-  calculateDurations,
+  calculateCrashStateDuration,
   isNewPriceCrashState,
   hasPriceCrashStateEnded,
   isPriceCrashStateActive,
@@ -56,9 +56,6 @@ const reversalServiceFactory = (): IReversalService => {
   // the time at which the state will be active until
   let __activeUntil: number | undefined;
 
-  // the time at which another price crash state can be started
-  let __idleUntil: number | undefined;
-
   // the instance of the history builder
   let __eventHist: IEventHistory;
 
@@ -85,14 +82,8 @@ const reversalServiceFactory = (): IReversalService => {
     // init the state
     __state = buildPristinePriceCrashState();
 
-    // calculate and set the durations
-    const { activeUntil, idleUntil } = calculateDurations(
-      __state.event_time,
-      __config.value.crashDuration,
-      __config.value.crashIdleDuration,
-    );
-    __activeUntil = activeUntil;
-    __idleUntil = idleUntil;
+    // calculate and set the duration of the state
+    __activeUntil = calculateCrashStateDuration(__state.event_time, __config.value.crashDuration);
 
     // intantiate the event history
     __eventHist = await eventHistoryFactory(__state.id, 'reversal', '3m');
@@ -170,7 +161,7 @@ const reversalServiceFactory = (): IReversalService => {
     const ts = Date.now();
 
     // handle the new data based on the current state
-    if (isNewPriceCrashState(ts, __previousWindowState, windowState, __activeUntil, __idleUntil)) {
+    if (isNewPriceCrashState(__previousWindowState, windowState, __activeUntil)) {
       __onNewPriceCrashState();
     } else if (hasPriceCrashStateEnded(ts, __activeUntil)) {
       __onPriceCrashStateEnd();

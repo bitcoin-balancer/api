@@ -209,45 +209,28 @@ const buildPristinePriceCrashState = (): IPriceCrashStateRecord => ({
 });
 
 /**
- * Calculates the times at which the module will be stateful as well as the idle period.
+ * Calculates the time at which the price crash state will fade away.
  * @param currentTime
  * @param crashDuration
- * @param crashIdleDuration
- * @returns { activeUntil: number, idleUntil: number }
+ * @returns number
  */
-const calculateDurations = (
-  currentTime: number,
-  crashDuration: number,
-  crashIdleDuration: number,
-): { activeUntil: number, idleUntil: number } => {
-  // calculate the time at which the crash state will fade away
-  const activeUntil = currentTime + ((crashDuration * 60) * 1000);
-
-  // calculate the time at which the module will no longer be idle
-  const idleUntil = activeUntil + ((crashIdleDuration * 60) * 1000);
-
-  // finally, return the times
-  return { activeUntil, idleUntil };
-};
+const calculateCrashStateDuration = (currentTime: number, crashDuration: number): number => (
+  currentTime + ((crashDuration * 60) * 1000)
+);
 
 /**
  * Checks if the price has just crashed and a new state should be created.
- * @param currentTime
  * @param previousWindowState
  * @param currentWindowState
  * @param activeUntil
- * @param idleUntil
  * @returns boolean
  */
 const isNewPriceCrashState = (
-  currentTime: number,
   previousWindowState: IWindowState | undefined,
   currentWindowState: IWindowState,
   activeUntil: number | undefined,
-  idleUntil: number | undefined,
 ): boolean => (
   activeUntil === undefined
-  && (idleUntil === undefined || currentTime > idleUntil)
   && previousWindowState !== undefined
   && (currentWindowState.state === -2 && previousWindowState.state > -2)
 );
@@ -302,7 +285,6 @@ const toState = (state: IPriceCrashStateRecord): IReversalState => ({
  */
 const buildDefaultConfig = (): IReversalConfig => ({
   crashDuration: 240,
-  crashIdleDuration: 30,
   pointsRequirement: 75,
   weights: {
     liquidity: 35,
@@ -324,7 +306,7 @@ export {
 
   // state helpers
   buildPristinePriceCrashState,
-  calculateDurations,
+  calculateCrashStateDuration,
   isNewPriceCrashState,
   hasPriceCrashStateEnded,
   isPriceCrashStateActive,

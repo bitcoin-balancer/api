@@ -547,7 +547,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 - **24500:** `The provided reversal configuration is not a valid object.`
 - **24501:** `The crashDuration '${newConfig.crashDuration}' is invalid as it must be a valid integer ranging 5 and 10080.`
-- **24502:** `The crashIdleDuration '${newConfig.crashIdleDuration}' is invalid as it must be a valid integer ranging 0 and 1440.`
+- **24502:** ``
 - **24503:** `The pointsRequirement '${newConfig.pointsRequirement}' is invalid as it must be a valid number ranging 50 and 100.`
 - **24504:** `The weights property is not a valid object.`
 - **24505:** `The weight for liquidity '${newConfig.weights.liquidity}' is invalid as it must be a valid number ranging 1 and 100.`

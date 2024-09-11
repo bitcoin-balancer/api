@@ -58,7 +58,6 @@ const canRecordsBeListed = (limit: number, startAtEventTime: number | undefined)
  * @throws
  * - 24500: if the new config is an invalid object
  * - 24501: if the crash duration is invalid
- * - 24502: if the crash idle duration is invalid
  * - 24503: if the points requirement is invalid
  * - 24504: if the weights property is an invalid object
  * - 24505: if the liquidity weight is invalid
@@ -73,9 +72,6 @@ const canConfigBeUpdated = (newConfig: IReversalConfig): void => {
   }
   if (!integerValid(newConfig.crashDuration, 5, 10080)) {
     throw new Error(encodeError(`The crashDuration '${newConfig.crashDuration}' is invalid as it must be a valid integer ranging 5 and 10080.`, 24501));
-  }
-  if (!integerValid(newConfig.crashIdleDuration, 0, 1440)) {
-    throw new Error(encodeError(`The crashIdleDuration '${newConfig.crashIdleDuration}' is invalid as it must be a valid integer ranging 0 and 1440.`, 24502));
   }
   if (!numberValid(newConfig.pointsRequirement, 50, 100)) {
     throw new Error(encodeError(`The pointsRequirement '${newConfig.pointsRequirement}' is invalid as it must be a valid number ranging 50 and 100.`, 24503));
