@@ -37,7 +37,7 @@ type IRecordStore<T> = {
  * Every store has a unique identifier that is use to differentiate them in the db.
  */
 type IStoreID = 'AUTOMATED_TESTS_01' | 'AUTOMATED_TESTS_02' | 'SERVER_ALARMS' | 'WINDOW'
-| 'LIQUIDITY' | 'COINS' | 'REVERSAL';
+| 'LIQUIDITY' | 'COINS' | 'REVERSAL' | 'STRATEGY';
 
 
 
