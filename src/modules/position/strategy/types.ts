@@ -53,9 +53,9 @@ type IStrategy = {
   // if enabled, Balancer will automatically decrease positions when conditions apply
   canDecrease: boolean;
 
-  // if the position amount is <= minPositionSize (quote asset), it will be completely closed on the
-  // next decrease action
-  // minPositionSize: number;
+  // if the position's amount_quote is <= minPositionAmountQuote, it will be completely closed on
+  // the next decrease action
+  minPositionAmountQuote: number;
 
   // the amount of quote asset (USDT) that will be used to open/increase positions
   increaseAmountQuote: number;

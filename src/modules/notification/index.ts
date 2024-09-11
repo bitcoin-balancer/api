@@ -197,7 +197,7 @@ const notificationServiceFactory = (): INotificationService => {
    */
   const websocketError = (id: string, error: string): void => __addToQueue({
     sender: 'WEBSOCKET',
-    title: `${id} Websocket error`,
+    title: `${id} WebSocket error`,
     description: `${error} - If the data stream is not restored in a few minutes, consider restarting Balancer in order to try again.`,
   });
 
@@ -207,8 +207,8 @@ const notificationServiceFactory = (): INotificationService => {
    */
   const websocketConnectionIssue = (id: string): void => __addToQueue({
     sender: 'WEBSOCKET',
-    title: `${id} Websocket issue`,
-    description: 'The websocket has not broadcasted data in an irregular period of time. Balancer will attempt to restore the connection in a few seconds. If this issue persists, you may need to restart Balancer.',
+    title: `${id} WebSocket issue`,
+    description: 'The WebSocket has not broadcasted data in an irregular period of time. Balancer will attempt to restore the connection in a few seconds. If this issue persists, you may need to restart Balancer.',
   });
 
 
