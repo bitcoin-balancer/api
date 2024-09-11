@@ -33,6 +33,7 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
   const __OMIT_ERROR_CODES: number[] = [
     4252, // Failed to verify the JWT. Error: ${extractMessage(err)}
     3000, // The OTP Token '${token}' for uid '${uid}' is invalid.
+    6002, // The API cannot accept requests because it has not yet been initialized. Please try ...
   ];
 
   // the number of API Errors that have not been yet read by users

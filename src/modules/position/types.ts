@@ -41,10 +41,10 @@ type IPositionAction = {
 };
 
 /**
- * Position Record
+ * Position
  * The object containing the state of a position that may be active.
  */
-type IPositionRecord = {
+type IPosition = {
   // universally unique identifier
   id: string;
 
@@ -57,13 +57,24 @@ type IPositionRecord = {
   // the weighted average price
   entry_price: number;
 
-  // the current amount of base asset (and its quote equivalent) allocated into the position
-  amount: number;
-  amount_quote: number;
-
   // the % the price has moved in favor or against. If the position is at a loss, this value will
   // be negative
   gain: number;
+
+  // the current amount of base asset (and its quote equivalent) allocated into the position
+  // if the amount is 0, the position will be closed
+  amount: number;
+  amount_quote: number;
+
+  // the amount of quote asset that has been invested into the position and claimed
+  amount_quote_in: number;
+  amount_quote_out: number;
+
+  // the position's profit and loss in quote asset
+  pnl: number;
+
+  // the position's return on investment
+  roi: number;
 
   // the prices at which the decrease levels become active
   decrease_price_levels: [number, number, number, number, number];
@@ -148,6 +159,8 @@ export type {
   // types
 
   // position
+  IPositionAction,
+  IPosition,
 
   // strategy
   IDecreaseLevel,
