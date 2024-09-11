@@ -60,7 +60,7 @@ const reversalServiceFactory = (): IReversalService => {
   let __eventHist: IEventHistory;
 
   // the splits that will be used to calculate the points for the coins (both, quote and base)
-  const __STATE_SPLITS: ISplitStateID[] = ['s25', 's15', 's10', 's5', 's2'];
+  const __STATE_SPLITS: ISplitStateID[] = ['s15', 's10', 's5', 's2'];
 
   // the module's configuration
   let __config: IRecordStore<IReversalConfig>;
