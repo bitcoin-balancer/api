@@ -29,6 +29,12 @@ type IStrategyService = {
  ************************************************************************************************ */
 
 /**
+ * Decrease Level ID
+ * The unique identifier for a level. Used to access any level from the tuple.
+ */
+type IDecreaseLevelID = 0 | 1 | 2 | 3 | 4;
+
+/**
  * Decrease Level
  * The object containing the configuration that will be used by the PositionService when the
  * position is profitable and needs to be decreased.
@@ -85,6 +91,7 @@ export type {
   IStrategyService,
 
   // types
+  IDecreaseLevelID,
   IDecreaseLevel,
   IStrategy,
 };

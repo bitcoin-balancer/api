@@ -44,9 +44,7 @@ const buildDefaultConfig = (): IStrategy => ({
  * @param increaseAmountQuote
  * @returns IRange
  */
-const calculateMinPositionAmountQuoteRange = (
-  increaseAmountQuote: number,
-): IRange => ({
+const calculateMinPositionAmountQuoteRange = (increaseAmountQuote: number): IRange => ({
   min: Math.floor(increaseAmountQuote * __MIN_POSITION_AMOUNT_RANGE_SIZE.min),
   max: Math.floor(increaseAmountQuote * __MIN_POSITION_AMOUNT_RANGE_SIZE.max),
 });

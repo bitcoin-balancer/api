@@ -6,7 +6,6 @@ import { APIErrorService } from '../api-error/index.js';
 import { StrategyService } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
 
-
 const PositionRouter = Router();
 
 /* ************************************************************************************************
