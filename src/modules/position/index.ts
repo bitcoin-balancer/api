@@ -19,6 +19,24 @@ import {
 } from './types.js';
 
 /* ************************************************************************************************
+ *                                             NOTES                                              *
+ ************************************************************************************************ */
+
+/**
+ * Minimum Trading Amounts
+ * At the time of coding this module (September 2024) the minimum trading amounts by exchange were:
+ * - Binance:   0.00001 BTC ~1$   - https://www.binance.com/en/trade-rule
+ * - Bitfinex:  0.00004 BTC ~2.5$ - https://support.bitfinex.com/hc/en-us/articles/115003283709-What-is-the-minimum-order-size-on-Bitfinex
+ * - Kraken:    0.0001 BTC  ~10$  - https://support.kraken.com/hc/en-us/articles/205893708-Minimum-order-size-volume-for-trading
+ * - Coinbase:  ?
+ * - OKX:       0.00001 BTC ~1$   - https://www.okx.com/trade-market/info/spot
+ */
+
+
+
+
+
+/* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
