@@ -133,8 +133,8 @@ const deleteAllPositionRecords = async (): Promise<void> => {
 const __listCompactPositionRecords = async (limit: number): Promise<ICompactPosition[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
-      SELECT id, origin, error, event_time, uid, ip, args 
-      FROM ${DatabaseService.tn.api_errors} 
+      SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
+      FROM ${DatabaseService.tn.positions}
       ORDER BY id DESC
       LIMIT $1;
     `,
@@ -142,6 +142,46 @@ const __listCompactPositionRecords = async (limit: number): Promise<ICompactPosi
   });
   return rows;
 };
+
+/**
+ * Retrieves the list of positions starting at the given point. Note: the startAtID record will not
+ * be included in the result.
+ * @param limit
+ * @param startAtID
+ * @returns Promise<ICompactPosition[]>
+ */
+const __listNextCompactPositionRecords = async (
+  limit: number,
+  startAtID: number,
+): Promise<ICompactPosition[]> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
+      FROM ${DatabaseService.tn.positions}
+      WHERE id < $1
+      ORDER BY id DESC
+      LIMIT $2;
+    `,
+    values: [startAtID, limit],
+  });
+  return rows;
+};
+
+/**
+ * Retrieves a list of positions from the database. If a startAtID is provided, it will only
+ * retrieve records that are older than the passed ID (exclusive).
+ * @param limit
+ * @param startAtID?
+ * @returns Promise<ICompactPosition[]>
+ */
+const listCompactPositionRecords = (
+  limit: number,
+  startAtID?: number,
+): Promise<ICompactPosition[]> => (
+  typeof startAtID === 'number'
+    ? __listNextCompactPositionRecords(limit, startAtID)
+    : __listCompactPositionRecords(limit)
+);
 
 
 
@@ -159,5 +199,5 @@ export {
   deleteAllPositionRecords,
 
   // compact position
-
+  listCompactPositionRecords,
 };
