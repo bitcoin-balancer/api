@@ -177,7 +177,7 @@ export const RAW_TABLES: IRawTable[] = [
     name: 'positions',
     sql:
       `CREATE TABLE IF NOT EXISTS ${getTableName('positions')} (
-        id                      BIGSERIAL PRIMARY KEY,
+        id                      UUID PRIMARY KEY,
         open                    BIGINT NOT NULL,
         close                   BIGINT NULL,
         entry_price             NUMERIC(20, 2) NOT NULL,
@@ -192,6 +192,7 @@ export const RAW_TABLES: IRawTable[] = [
         increase_actions        JSONB NOT NULL,
         decrease_actions        JSONB NOT NULL
       );
+      CREATE INDEX IF NOT EXISTS ${getTableName('positions')}_open_idx ON ${getTableName('positions')}(open DESC);
       CREATE INDEX IF NOT EXISTS ${getTableName('positions')}_close_idx ON ${getTableName('positions')}(close);`,
   },
 ];

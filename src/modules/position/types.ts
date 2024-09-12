@@ -73,8 +73,8 @@ type IDecreaseActions = [
  * The object containing the state of a position that may be active.
  */
 type IPosition = {
-  // the identifier of the position
-  id: number;
+  // the universally unique identifier
+  id: string;
 
   // the timestamp at which the position was opened
   open: number;
@@ -122,7 +122,7 @@ type IPosition = {
  * The light representation of a position record containing only essential data.
  */
 type ICompactPosition = {
-  id: number;
+  id: string;
   open: number;
   close: number | null;
   entry_price: number;

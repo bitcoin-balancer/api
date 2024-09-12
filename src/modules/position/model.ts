@@ -1,7 +1,6 @@
 import { DatabaseService } from '../database/index.js';
 import { IPosition, ICompactPosition } from './types.js';
 
-
 /* ************************************************************************************************
  *                                            POSITION                                            *
  ************************************************************************************************ */
@@ -11,7 +10,7 @@ import { IPosition, ICompactPosition } from './types.js';
  * @param id
  * @returns Promise<IPosition | undefined>
  */
-const getPositionRecord = async (id: number): Promise<IPosition | undefined> => {
+const getPositionRecord = async (id: string): Promise<IPosition | undefined> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions
@@ -45,6 +44,7 @@ const getActivePositionRecord = async (): Promise<IPosition | undefined> => {
  * @returns Promise<number>
  */
 const createPositionRecord = async ({
+  id,
   open,
   close,
   entry_price,
@@ -58,19 +58,17 @@ const createPositionRecord = async ({
   decrease_price_levels,
   increase_actions,
   decrease_actions,
-}: IPosition): Promise<number> => {
-  const { rows } = await DatabaseService.pool.query({
+}: IPosition): Promise<void> => {
+  await DatabaseService.pool.query({
     text: `
-      INSERT INTO ${DatabaseService.tn.positions} (open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-      RETURNING id;
+      INSERT INTO ${DatabaseService.tn.positions} (id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);
     `,
     values: [
-      open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl,
-      roi, decrease_price_levels, increase_actions, decrease_actions,
+      id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out,
+      pnl, roi, decrease_price_levels, increase_actions, decrease_actions,
     ],
   });
-  return rows[0].id;
 };
 
 /**
@@ -135,7 +133,7 @@ const __listCompactPositionRecords = async (limit: number): Promise<ICompactPosi
     text: `
       SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
       FROM ${DatabaseService.tn.positions}
-      ORDER BY id DESC
+      ORDER BY open DESC
       LIMIT $1;
     `,
     values: [limit],
@@ -144,42 +142,42 @@ const __listCompactPositionRecords = async (limit: number): Promise<ICompactPosi
 };
 
 /**
- * Retrieves the list of positions starting at the given point. Note: the startAtID record will not
- * be included in the result.
+ * Retrieves the list of positions starting at the given point. Note: the startAtOpenTime record
+ * will not be included in the result.
  * @param limit
- * @param startAtID
+ * @param startAtOpenTime
  * @returns Promise<ICompactPosition[]>
  */
 const __listNextCompactPositionRecords = async (
   limit: number,
-  startAtID: number,
+  startAtOpenTime: number,
 ): Promise<ICompactPosition[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
       FROM ${DatabaseService.tn.positions}
-      WHERE id < $1
-      ORDER BY id DESC
+      WHERE open < $1
+      ORDER BY open DESC
       LIMIT $2;
     `,
-    values: [startAtID, limit],
+    values: [startAtOpenTime, limit],
   });
   return rows;
 };
 
 /**
- * Retrieves a list of positions from the database. If a startAtID is provided, it will only
- * retrieve records that are older than the passed ID (exclusive).
+ * Retrieves a list of positions from the database. If a startAtOpenTime is provided, it will only
+ * retrieve records that are older than the passed open time (exclusive).
  * @param limit
- * @param startAtID?
+ * @param startAtOpenTime?
  * @returns Promise<ICompactPosition[]>
  */
 const listCompactPositionRecords = (
   limit: number,
-  startAtID?: number,
+  startAtOpenTime?: number,
 ): Promise<ICompactPosition[]> => (
-  typeof startAtID === 'number'
-    ? __listNextCompactPositionRecords(limit, startAtID)
+  typeof startAtOpenTime === 'number'
+    ? __listNextCompactPositionRecords(limit, startAtOpenTime)
     : __listCompactPositionRecords(limit)
 );
 
