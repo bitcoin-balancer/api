@@ -1,5 +1,5 @@
 import { encodeError } from 'error-message-utils';
-import { uuidValid } from '../shared/validations/index.js';
+import { uuidValid } from '../validations/index.js';
 import { buildPristineCompactCandlestickRecords } from './utils.js';
 import { getEventHistoryRecord } from './model.js';
 import { eventHistoryFactory } from './event-history.js';

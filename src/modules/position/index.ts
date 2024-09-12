@@ -23,7 +23,7 @@ import {
  ************************************************************************************************ */
 
 /**
- * Minimum Trading Amounts
+ * MINIMUM TRADING AMOUNT
  * At the time of coding this module (September 2024) the minimum trading amounts by exchange were:
  * - Binance:   0.00001 BTC ~1$   - https://www.binance.com/en/trade-rule
  * - Bitfinex:  0.00004 BTC ~2.5$ - https://support.bitfinex.com/hc/en-us/articles/115003283709-What-is-the-minimum-order-size-on-Bitfinex
@@ -57,7 +57,7 @@ const positionServiceFactory = (): IPositionService => {
   const __MIN_ORDER_SIZE = 0.0001;
 
   // the active position (if any)
-  const __active: IPosition | undefined;
+  let __active: IPosition | undefined;
 
   // the subscription to the market state stream
   let __marketStateSub: Subscription;

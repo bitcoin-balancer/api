@@ -1,6 +1,11 @@
 import { encodeError } from 'error-message-utils';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
-import { eventHistoryFactory, IEventHistory } from '../../candlestick/index.js';
+import {
+  CandlestickService,
+  eventHistoryFactory,
+  IEventHistory,
+  IEventHistoryRecord,
+} from '../../shared/candlestick/index.js';
 import { NotificationService } from '../../notification/index.js';
 import { ISplitStateID } from '../shared/types.js';
 import { IWindowState } from '../window/index.js';
@@ -224,6 +229,18 @@ const reversalServiceFactory = (): IReversalService => {
     return listStateRecords(limit, startAtEventTime);
   };
 
+  /**
+   * Retrieves the history in OHLC format for a price crash state based on its ID.
+   * @param id
+   * @returns Promise<IEventHistoryRecord>
+   * @throws
+   * - 11000: if the id has an invalid format
+   * - 11001: if the record was not found in the database
+   */
+  const getEventHistory = (id: string): Promise<IEventHistoryRecord> => (
+    CandlestickService.getEventHistory(id)
+  );
+
 
 
 
@@ -297,6 +314,7 @@ const reversalServiceFactory = (): IReversalService => {
     // retrievers
     getRecord,
     listRecords,
+    getEventHistory,
 
     // initializer
     initialize,

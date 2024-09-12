@@ -3,7 +3,10 @@ import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { NotificationService, throttleableNotificationFactory } from '../../notification/index.js';
-import { ICompactCandlestickRecords, buildPristineCompactCandlestickRecords } from '../../candlestick/index.js';
+import {
+  ICompactCandlestickRecords,
+  buildPristineCompactCandlestickRecords,
+} from '../../shared/candlestick/index.js';
 import { ExchangeService } from '../../shared/exchange/index.js';
 import { calculateStateForSeries } from '../shared/utils.js';
 import { buildDefaultConfig, buildPristineState, getConfigUpdatePostActions } from './utils.js';

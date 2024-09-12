@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ICompactCandlestickRecords } from '../../../candlestick/index.js';
+import { ICompactCandlestickRecords } from '../../candlestick/index.js';
 import {
   ICandlestickInterval,
   IOrderBook,

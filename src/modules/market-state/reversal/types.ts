@@ -1,3 +1,4 @@
+import { IEventHistoryRecord } from '../../shared/candlestick/index.js';
 import { IWindowState } from '../window/index.js';
 import { ICompactLiquidityState } from '../liquidity/index.js';
 import { ICoinsStates, ISemiCompactCoinState } from '../coins/index.js';
@@ -27,6 +28,7 @@ type IReversalService = {
     limit: number,
     startAtEventTime: number | undefined,
   ) => Promise<IPriceCrashStateRecord[]>;
+  getEventHistory: (id: string) => Promise<IEventHistoryRecord>;
 
   // initializer
   initialize: () => Promise<void>;

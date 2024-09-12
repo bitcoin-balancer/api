@@ -266,6 +266,23 @@ MarketStateRouter.route('/reversal/records').get(lowRiskLimit, async (req: Reque
 });
 
 /**
+ * Retrieves the history for a price crash state based on its ID.
+ * @returns IAPIResponse<IEventHistoryRecord>
+ * @requirements
+ * - authority: 1
+ */
+MarketStateRouter.route('/reversal/event-history/:id').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+    res.json(buildResponse(await ReversalService.getEventHistory(req.params.id)));
+  } catch (e) {
+    APIErrorService.save('MarketStateRouter.get.reversal.event-history', e, reqUid, req.ip, req.params);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
  * Retrieves the reversal module's configuration.
  * @returns IAPIResponse<IReversalConfig>
  * @requirements

@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { IBaseAsset, IQuoteAsset } from '../environment/index.js';
-import { ICompactCandlestickRecords } from '../../candlestick/index.js';
+import { ICompactCandlestickRecords } from '../candlestick/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *

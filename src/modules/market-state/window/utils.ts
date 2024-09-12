@@ -1,4 +1,4 @@
-import { buildPristineCompactCandlestickRecords } from '../../candlestick/index.js';
+import { buildPristineCompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { IWindowConfig, IWindowState } from './types.js';
 

@@ -4,7 +4,7 @@ import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { NotificationService } from '../../notification/index.js';
-import { ICompactCandlestickRecords } from '../../candlestick/index.js';
+import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ExchangeService, ITickerWebSocketMessage } from '../../shared/exchange/index.js';
 import { ISplitStateItem, IState, IStateResult } from '../shared/types.js';
 import { calculateStateForSeries, calculateStateMean } from '../shared/utils.js';

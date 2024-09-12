@@ -1,4 +1,4 @@
-import { DatabaseService } from '../database/index.js';
+import { DatabaseService } from '../../database/index.js';
 import { ICombinedCompactCandlestickRecords, IEventHistoryRecord } from './types.js';
 
 /* ************************************************************************************************

@@ -1,5 +1,5 @@
 import { Subscription } from 'rxjs';
-import { ICompactCandlestickRecords } from '../../candlestick/index.js';
+import { ICompactCandlestickRecords } from '../../shared/candlestick/index.js';
 import { ICandlestickInterval } from '../../shared/exchange/index.js';
 import { ISplitStates, IState } from '../shared/types.js';
 
