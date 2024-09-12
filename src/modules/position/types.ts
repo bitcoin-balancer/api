@@ -13,8 +13,8 @@ type IPositionService = {
   // ...
 
   // retrievers
-  getRecord: (id: string) => Promise<IPosition>;
-  listCompactRecords: (
+  getPosition: (id: string) => Promise<IPosition>;
+  listCompactPositions: (
     limit: number,
     startAtOpenTime: number | undefined,
   ) => Promise<ICompactPosition[]>;

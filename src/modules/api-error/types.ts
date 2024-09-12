@@ -56,7 +56,7 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'MarketStateRouter.get.reversal.config' | 'MarketStateRouter.put.reversal.config' | 'MarketStateRouter.get.reversal.record'
 | 'MarketStateRouter.get.reversal.records' | 'OrderBook.interval.refetch' | 'CandlestickRouter.get.event-history'
 | 'BalanceService.__refetchInterval' | 'PositionRouter.get.balances' | 'PositionRouter.get.strategy'
-| 'PositionRouter.put.strategy';
+| 'PositionRouter.put.strategy' | 'PositionRouter.get.record' | 'PositionRouter.get.records';
 
 /**
  * API Error

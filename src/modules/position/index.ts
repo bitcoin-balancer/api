@@ -7,6 +7,9 @@ import { BalanceService } from './balance/index.js';
 import { canPositionRecordBeRetrieved, canCompactPositionRecordsBeListed } from './validations.js';
 import {
   getPositionRecord,
+  getActivePositionRecord,
+  createPositionRecord,
+  updatePositionRecord,
   listCompactPositionRecords,
 } from './model.js';
 import {
@@ -57,7 +60,7 @@ const positionServiceFactory = (): IPositionService => {
    * - 30500: if the ID is not a valid uuid v4
    * - 30000: if the position does not exist
    */
-  const getRecord = async (id: string): Promise<IPosition> => {
+  const getPosition = async (id: string): Promise<IPosition> => {
     canPositionRecordBeRetrieved(id);
 
     // check if the user is asking for the active position. Otherwise, retrieve it
@@ -80,7 +83,7 @@ const positionServiceFactory = (): IPositionService => {
    * - 30501: if the number of requested records exceeds the limit
    * - 30502: if the startAtOpenTime is not a valid timestamp
    */
-  const listCompactRecords = (
+  const listCompactPositions = (
     limit: number,
     startAtOpenTime: number | undefined,
   ): Promise<ICompactPosition[]> => {
@@ -191,8 +194,8 @@ const positionServiceFactory = (): IPositionService => {
     // ...
 
     // retrievers
-    getRecord,
-    listCompactRecords,
+    getPosition,
+    listCompactPositions,
 
     // initializer
     initialize,
