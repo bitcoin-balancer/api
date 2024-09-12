@@ -47,7 +47,7 @@ type IDecreaseLevel = {
   percentage: number;
 
   // the number of minutes in which the interval will continue to decrease the position (as long as
-  // the WindowState is strongly increasing)
+  // the conditions are met)
   frequency: number;
 };
 
@@ -81,7 +81,7 @@ type IStrategy = {
   // the amount of quote asset (USDT) that will be used to open/increase positions
   increaseAmountQuote: number;
 
-  // the number of hours Balancer will before before being able to increase the position again
+  // the number of hours Balancer will wait before being able to increase the position again
   increaseIdleDuration: number;
 
   // the position must be at a loss of at least increaseGainRequirement% to be able to increase
