@@ -36,6 +36,12 @@ type IPositionService = {
  ************************************************************************************************ */
 
 /**
+ * Decrease Price Levels
+ * Each level has its own price that is calculated based on its gainRequirement%.
+ */
+type IDecreasePriceLevels = [number, number, number, number, number];
+
+/**
  * Position Action
  * The object containing the details for a position action (increase or decrease).
  */
@@ -51,12 +57,24 @@ type IPositionAction = {
 };
 
 /**
+ * Decrease Actions
+ * The tuple containing all of the decrease actions by level.
+ */
+type IDecreaseActions = [
+  IPositionAction[],
+  IPositionAction[],
+  IPositionAction[],
+  IPositionAction[],
+  IPositionAction[],
+];
+
+/**
  * Position
  * The object containing the state of a position that may be active.
  */
 type IPosition = {
-  // universally unique identifier
-  id: string;
+  // the identifier of the position
+  id: number;
 
   // the timestamp at which the position was opened
   open: number;
@@ -90,19 +108,13 @@ type IPosition = {
   roi: number;
 
   // the prices at which the decrease levels become active
-  decrease_price_levels: [number, number, number, number, number];
+  decrease_price_levels: IDecreasePriceLevels;
 
   // the list of increase actions
   increase_actions: IPositionAction[];
 
   // the list of decrease actions by level
-  decrease_actions: [
-    IPositionAction[],
-    IPositionAction[],
-    IPositionAction[],
-    IPositionAction[],
-    IPositionAction[],
-  ];
+  decrease_actions: IDecreaseActions;
 };
 
 
@@ -119,6 +131,8 @@ export type {
   // types
 
   // position
+  IDecreasePriceLevels,
   IPositionAction,
+  IDecreaseActions,
   IPosition,
 };

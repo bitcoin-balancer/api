@@ -167,4 +167,31 @@ export const RAW_TABLES: IRawTable[] = [
       );
       CREATE INDEX IF NOT EXISTS ${getTableName('trades')}_event_time_idx ON ${getTableName('trades')}(event_time ASC);`,
   },
+
+  /**
+   * positions
+   * every record corresponds to an individual trade execution (one order can contain many trade
+   * executions).
+   */
+  {
+    name: 'positions',
+    sql:
+      `CREATE TABLE IF NOT EXISTS ${getTableName('positions')} (
+        id                      BIGSERIAL PRIMARY KEY,
+        open                    BIGINT NOT NULL,
+        close                   BIGINT NULL,
+        entry_price             NUMERIC(20, 2) NOT NULL,
+        gain                    NUMERIC(10, 2) NOT NULL,
+        amount                  NUMERIC(20, 8) NOT NULL,
+        amount_quote            NUMERIC(20, 2) NOT NULL,
+        amount_quote_in         NUMERIC(20, 2) NOT NULL,
+        amount_quote_out        NUMERIC(20, 2) NOT NULL,
+        pnl                     NUMERIC(20, 2) NOT NULL,
+        roi                     NUMERIC(10, 2) NOT NULL,
+        decrease_price_levels   JSONB NOT NULL,
+        increase_actions        JSONB NOT NULL,
+        decrease_actions        JSONB NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ${getTableName('positions')}_close_idx ON ${getTableName('positions')}(close);`,
+  },
 ];
