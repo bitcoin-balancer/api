@@ -117,6 +117,24 @@ type IPosition = {
   decrease_actions: IDecreaseActions;
 };
 
+/**
+ * Compact Position
+ * The light representation of a position record containing only essential data.
+ */
+type ICompactPosition = {
+  id: number;
+  open: number;
+  close: number | null;
+  entry_price: number;
+  gain: number;
+  amount: number;
+  amount_quote: number;
+  amount_quote_in: number;
+  amount_quote_out: number;
+  pnl: number;
+  roi: number;
+};
+
 
 
 
@@ -135,4 +153,5 @@ export type {
   IPositionAction,
   IDecreaseActions,
   IPosition,
+  ICompactPosition,
 };

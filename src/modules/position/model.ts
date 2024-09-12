@@ -1,5 +1,5 @@
 import { DatabaseService } from '../database/index.js';
-import { IPosition } from './types.js';
+import { IPosition, ICompactPosition } from './types.js';
 
 
 /* ************************************************************************************************
@@ -125,7 +125,23 @@ const deleteAllPositionRecords = async (): Promise<void> => {
  *                                        COMPACT POSITION                                        *
  ************************************************************************************************ */
 
-// ...
+/**
+ * Retrieves a list of positions constrained by a limit.
+ * @param limit
+ * @returns Promise<ICompactPosition[]>
+ */
+const __listCompactPositionRecords = async (limit: number): Promise<ICompactPosition[]> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT id, origin, error, event_time, uid, ip, args 
+      FROM ${DatabaseService.tn.api_errors} 
+      ORDER BY id DESC
+      LIMIT $1;
+    `,
+    values: [limit],
+  });
+  return rows;
+};
 
 
 
