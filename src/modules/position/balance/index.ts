@@ -61,10 +61,11 @@ const balanceServiceFactory = (): IBalanceService => {
    ********************************************************************************************** */
 
   /**
-   * Initializes the Position Module.
+   * Initializes the Balance Module.
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
+    await getBalances(true);
     __refetchInterval = setInterval(async () => {
       try {
         await getBalances(true);
@@ -75,7 +76,7 @@ const balanceServiceFactory = (): IBalanceService => {
   };
 
   /**
-   * Tears down the Position Module.
+   * Tears down the Balance Module.
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
