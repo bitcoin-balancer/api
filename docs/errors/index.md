@@ -573,7 +573,10 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `index.ts`
 
-- **30000:** ``
+- **30000:** `The position '${id}' was not found in the database.`
+- **30001:** ``
+- **30002:** ``
+- **30003:** ``
 
 ### `utils.ts`
 
@@ -581,7 +584,10 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `validations.ts`
 
-- **30500:** ``
+- **30500:** `The position record cannot be retrieved for an invalid ID '${id}'.`
+- **30501:** `The maximum number of compact position records that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`
+- **30502:** `If the startAtOpenTime arg is provided, it must be a valid timestamp. Received: ${startAtOpenTime}`
+- **30503:** ``
 
 
 

@@ -1,10 +1,19 @@
 /* eslint-disable no-console */
 import { Subscription } from 'rxjs';
-import { extractMessage } from 'error-message-utils';
+import { encodeError, extractMessage } from 'error-message-utils';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { StrategyService } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
-import { IPositionService } from './types.js';
+import { canPositionRecordBeRetrieved, canCompactPositionRecordsBeListed } from './validations.js';
+import {
+  getPositionRecord,
+  listCompactPositionRecords,
+} from './model.js';
+import {
+  IPositionService,
+  IPosition,
+  ICompactPosition,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -26,8 +35,58 @@ const positionServiceFactory = (): IPositionService => {
   // the minimum amount of the base asset that can bought or sold
   const __MIN_ORDER_SIZE = 0.0001;
 
+  // the active position (if any)
+  const __active: IPosition | undefined;
+
   // the subscription to the market state stream
   let __marketStateSub: Subscription;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                          RETRIEVERS                                          *
+   ********************************************************************************************** */
+
+  /**
+   * Retrieves a position record from the local property or from the database by ID.
+   * @param id
+   * @returns Promise<IPosition>
+   * @throws
+   * - 30500: if the ID is not a valid uuid v4
+   * - 30000: if the position does not exist
+   */
+  const getRecord = async (id: string): Promise<IPosition> => {
+    canPositionRecordBeRetrieved(id);
+
+    // check if the user is asking for the active position. Otherwise, retrieve it
+    if (__active && __active.id === id) {
+      return __active;
+    }
+    const record = await getPositionRecord(id);
+    if (!record) {
+      throw new Error(encodeError(`The position '${id}' was not found in the database.`, 30000));
+    }
+    return record;
+  };
+
+  /**
+   * Validates and retrieves a list of compact position records.
+   * @param limit
+   * @param startAtOpenTime
+   * @returns Promise<ICompactPosition[]>
+   * @throws
+   * - 30501: if the number of requested records exceeds the limit
+   * - 30502: if the startAtOpenTime is not a valid timestamp
+   */
+  const listCompactRecords = (
+    limit: number,
+    startAtOpenTime: number | undefined,
+  ): Promise<ICompactPosition[]> => {
+    canCompactPositionRecordsBeListed(limit, startAtOpenTime);
+    return listCompactPositionRecords(limit, startAtOpenTime);
+  };
 
 
 
@@ -130,6 +189,10 @@ const positionServiceFactory = (): IPositionService => {
   return Object.freeze({
     // properties
     // ...
+
+    // retrievers
+    getRecord,
+    listCompactRecords,
 
     // initializer
     initialize,
