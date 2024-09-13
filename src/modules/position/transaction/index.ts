@@ -1,3 +1,5 @@
+import { extractMessage } from 'error-message-utils';
+import { APIErrorService } from '../../api-error/index.js';
 import { IBalances, ISide } from '../../shared/exchange/index.js';
 import { buildTX } from './utils.js';
 import {
@@ -33,10 +35,35 @@ const transactionServiceFactory = (): ITransactionService => {
    *                                           EXECUTION                                          *
    ********************************************************************************************** */
 
-  const __scheduleTransaction = async (tx: ITransaction): Promise<void> => {
+  /**
+   * Schedules a transaction to be executed persistently.
+   * @param id
+   * @param rawTX
+   * @returns Promise<void>
+   */
+  const __scheduleTransaction = async (
+    id: number,
+    rawTX: Omit<ITransaction, 'id'>,
+  ): Promise<void> => {
+    // init the tx
+    const tx = { ...rawTX, id };
 
+    try {
+      // check if the initial balance needs to be loaded
+      if (tx.logs.length === 0) {
+        // ...
+        await updateTransactionRecord(tx);
+      }
 
-
+      // execute the tx
+      // @TODO
+      tx.status = 'SUCCEEDED';
+      await updateTransactionRecord(tx);
+    } catch (e) {
+      APIErrorService.save('TransactionService.__scheduleTransaction', e, undefined, undefined, tx);
+      tx.status = 'FAILED';
+      await updateTransactionRecord(tx);
+    }
   };
 
   /**
@@ -50,10 +77,9 @@ const transactionServiceFactory = (): ITransactionService => {
     // build and store the tx
     const rawTX = buildTX(side, amount, balances);
     const id = await createTransactionRecord(rawTX);
-    const tx: ITransaction = { ...rawTX, id };
 
     // schedule the tx
-    __scheduleTransaction(tx);
+    __scheduleTransaction(id, rawTX);
 
     // finally, return the ID
     return id;
