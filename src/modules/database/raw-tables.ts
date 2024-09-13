@@ -206,7 +206,7 @@ export const RAW_TABLES: IRawTable[] = [
     sql:
       `CREATE TABLE IF NOT EXISTS ${getTableName('transactions')} (
         id          BIGSERIAL PRIMARY KEY,
-        event_time  BIGINT NOT NULL
+        event_time  BIGINT NOT NULL,
         status      VARCHAR(100) NOT NULL,
         side        VARCHAR(10) NOT NULL,
         amount      NUMERIC(20, 8) NOT NULL,

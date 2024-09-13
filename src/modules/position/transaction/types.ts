@@ -41,37 +41,18 @@ type ITransactionActionName = 'INITIAL_BALANCES' | 'EXECUTION' | 'CONFIRMATION';
  * Object containing all the data related to the event that took place.
  */
 type ITransactionLog = {
-  // the time at which the log was recorded
-  eventTime: number;
-
   // the log that's being stored
   action: ITransactionActionName;
 
-  // if true, the event was successful
-  outcome: boolean;
+  // the time at which the log was recorded
+  eventTime: number;
 
   // the data that was received when the event was executed
-  payload?: Record<string, unknown>;
+  payload?: Record<string, unknown> | IBalances;
 
-  // the error message
+  // the error message if the event failed to execute
   error?: string;
-} & (
-  | {
-    action: 'INITIAL_BALANCES',
-    outcome: true,
-    payload: IBalances,
-  }
-  | {
-    action: 'EXECUTION',
-    outcome: true,
-    payload: Record<string, unknown>,
-  }
-  | {
-    action: 'CONFIRMATION',
-    outcome: true,
-    payload: IBalances,
-  }
-);
+};
 
 /**
  * Transaction
