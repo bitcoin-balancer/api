@@ -139,8 +139,11 @@ const positionServiceFactory = (): IPositionService => {
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    // unsubscribe from the market state stream
+    // unsubscribe from the market state's stream
     __marketStateSub?.unsubscribe();
+
+    // unsubscribe from the trades' stream
+    // @TODO
 
     // Strategy Module
     try {
@@ -158,7 +161,6 @@ const positionServiceFactory = (): IPositionService => {
 
     // Trade Module
     try {
-      // unsubscribe from the stream @TODO
       await TradeService.teardown();
     } catch (e) {
       console.error('TradeService.teardown()', e);
@@ -192,14 +194,16 @@ const positionServiceFactory = (): IPositionService => {
 
       // Trade Module
       try {
-        TradeService.initialize(__active?.open);
-        // subscribe to the stream @TODO
+        await TradeService.initialize(__active?.open);
       } catch (e) {
         throw new Error(`TradeService.initialize() -> ${extractMessage(e)}`);
       }
 
-      // subscribe to the market state stream
+      // subscribe to the market state's stream
       __marketStateSub = MarketStateService.subscribe(__onMarketStateChanges);
+
+      // subscribe to the trades' stream
+      // @TODO
     } catch (e) {
       await teardown();
       throw e;
