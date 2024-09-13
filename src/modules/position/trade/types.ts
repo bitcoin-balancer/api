@@ -16,7 +16,7 @@ type ITradeService = {
 
 
   // initializer
-  initialize: () => Promise<void>;
+  initialize: (positionOpenTime: number | undefined) => Promise<void>;
   teardown: () => Promise<void>;
 };
 

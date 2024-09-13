@@ -75,9 +75,10 @@ const tradeServiceFactory = (): ITradeService => {
 
   /**
    * Initializes the Trade Module.
+   * @param positionOpenTime
    * @returns Promise<void>
    */
-  const initialize = async (): Promise<void> => {
+  const initialize = async (positionOpenTime: number | undefined): Promise<void> => {
     await getBalances(true);
     __syncInterval = setInterval(async () => {
       try {

@@ -4,6 +4,7 @@ import { encodeError, extractMessage } from 'error-message-utils';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { StrategyService } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
+import { TradeService } from './trade/index.js';
 import { canPositionRecordBeRetrieved, canCompactPositionRecordsBeListed } from './validations.js';
 import {
   getPositionRecord,
@@ -157,7 +158,8 @@ const positionServiceFactory = (): IPositionService => {
 
     // Trade Module
     try {
-      // await TradeService.teardown();
+      // unsubscribe from the stream @TODO
+      await TradeService.teardown();
     } catch (e) {
       console.error('TradeService.teardown()', e);
     }
@@ -171,6 +173,9 @@ const positionServiceFactory = (): IPositionService => {
    */
   const initialize = async (): Promise<void> => {
     try {
+      // Active Position
+      __active = await getActivePositionRecord();
+
       // Strategy Module
       try {
         await StrategyService.initialize();
@@ -187,7 +192,8 @@ const positionServiceFactory = (): IPositionService => {
 
       // Trade Module
       try {
-        // ...
+        TradeService.initialize(__active?.open);
+        // subscribe to the stream @TODO
       } catch (e) {
         throw new Error(`TradeService.initialize() -> ${extractMessage(e)}`);
       }
