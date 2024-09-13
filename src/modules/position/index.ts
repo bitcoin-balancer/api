@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { Subscription } from 'rxjs';
 import { encodeError, extractMessage } from 'error-message-utils';
+import { ITrade } from '../shared/exchange/index.js';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { StrategyService } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
@@ -60,8 +61,35 @@ const positionServiceFactory = (): IPositionService => {
   // the active position (if any)
   let __active: IPosition | undefined;
 
-  // the subscription to the market state stream
+  // the subscription to the market state's stream
   let __marketStateSub: Subscription;
+
+  // the subscription to the trades' stream
+  let __tradesSub: Subscription;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                           STREAMS                                            *
+   ********************************************************************************************** */
+
+  /**
+   * Fires whenever a new market state is calculated.
+   * @param nextState
+   */
+  const __onMarketStateChanges = (nextState: IMarketState): void => {
+
+  };
+
+  /**
+   * Fires whenever the trades for an active position change in any way.
+   * @param nextState
+   */
+  const __onTradesChanges = (nextState: ITrade[]): void => {
+
+  };
 
 
 
@@ -115,22 +143,6 @@ const positionServiceFactory = (): IPositionService => {
 
 
   /* **********************************************************************************************
-   *                                     MARKET STATE STREAM                                      *
-   ********************************************************************************************** */
-
-  /**
-   * Fires whenever a new market state is calculated.
-   * @param nextState
-   */
-  const __onMarketStateChanges = (nextState: IMarketState): void => {
-
-  };
-
-
-
-
-
-  /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
 
@@ -143,7 +155,7 @@ const positionServiceFactory = (): IPositionService => {
     __marketStateSub?.unsubscribe();
 
     // unsubscribe from the trades' stream
-    // @TODO
+    __tradesSub?.unsubscribe();
 
     // Strategy Module
     try {
@@ -203,7 +215,7 @@ const positionServiceFactory = (): IPositionService => {
       __marketStateSub = MarketStateService.subscribe(__onMarketStateChanges);
 
       // subscribe to the trades' stream
-      // @TODO
+      __tradesSub = TradeService.subscribe(__onTradesChanges);
     } catch (e) {
       await teardown();
       throw e;
