@@ -1,4 +1,5 @@
 import { ENVIRONMENT } from '../../shared/environment/index.js';
+import { ITrade } from '../../shared/exchange/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -17,6 +18,15 @@ const getSyncFrequency = (): number => {
   }
 };
 
+/**
+ * Calculates the starting point that will be used to retrieve new trades.
+ * @param trades
+ * @returns number
+ */
+const calculateSyncStartTime = (trades: ITrade[]): number => (
+  trades.length > 0 ? trades[trades.length - 1].event_time + 1 : Date.now()
+);
+
 
 
 
@@ -26,4 +36,5 @@ const getSyncFrequency = (): number => {
  ************************************************************************************************ */
 export {
   getSyncFrequency,
+  calculateSyncStartTime,
 };

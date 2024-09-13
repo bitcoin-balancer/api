@@ -1,3 +1,4 @@
+import { Subscription } from 'rxjs';
 import { ITrade } from '../../shared/exchange/index.js';
 
 /* ************************************************************************************************
@@ -13,7 +14,11 @@ type ITradeService = {
   // ...
 
   // retrievers
+  // ...
 
+  // stream
+  subscribe: (callback: (value: ITrade[]) => any) => Subscription;
+  onPositionClose: () => void;
 
   // initializer
   initialize: (positionOpenTime: number | undefined) => Promise<void>;

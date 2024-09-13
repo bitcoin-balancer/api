@@ -1,8 +1,15 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
-import { ExchangeService, IBalances, ITrade } from '../../shared/exchange/index.js';
-import { getSyncFrequency } from './utils.js';
+import { ExchangeService, ITrade } from '../../shared/exchange/index.js';
+import {
+  getSyncFrequency,
+  calculateSyncStartTime,
+} from './utils.js';
+import {
+  listTradeRecords,
+  saveTradeRecords,
+} from './model.js';
 import { ITradeService } from './types.js';
 
 /* ************************************************************************************************
@@ -35,24 +42,24 @@ const tradeServiceFactory = (): ITradeService => {
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
 
+  // ...
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                            STREAM                                            *
+   ********************************************************************************************** */
+
   /**
-   * Retrieves the balances object from the local state. If forceRefetch is true, it will update
-   * the state before returning it.
-   * @param forceRefetch
-   * @returns Promise<IBalances>
-   * @throws
-   * - 12500: if the HTTP response code is not in the acceptedCodes
-   * - 13503: if the response didn't include a valid object (binance)
-   * - 13504: if the response didn't include a valid list of balances (binance)
-   * - 13750: if the balance for the base asset is not in the response object (binance)
-   * - 13751: if the balance for the quote asset is not in the response object (binance)
+   * Generates a subscription to the trades' stream.
+   * @param callback
+   * @returns Subscription
    */
-  const getBalances = async (forceRefetch?: boolean): Promise<IBalances> => {
-    if (forceRefetch) {
-      __balances = await invokeFuncPersistently(ExchangeService.getBalances, undefined, [2, 3, 5]);
-    }
-    return __balances;
-  };
+  const subscribe = (callback: (value: ITrade[]) => any): Subscription => (
+    __stream.subscribe(callback)
+  );
 
 
 
@@ -62,9 +69,54 @@ const tradeServiceFactory = (): ITradeService => {
    *                                             SYNC                                             *
    ********************************************************************************************** */
 
-  const syncTrades = async (): Promise<void> => {
-
+  /**
+   * Retrieves account trades that have not yet been processed and returns them. If any, they are
+   * stored in the database.
+   * @param startTime
+   * @returns Promise<ITrade[]>
+   */
+  const __getNewTrades = async (startTime: number): Promise<ITrade[]> => {
+    const trades = await invokeFuncPersistently(
+      ExchangeService.listTrades,
+      [startTime],
+      [2, 3, 7],
+    );
+    if (trades.length) {
+      await saveTradeRecords(trades);
+    }
+    return trades;
   };
+
+  /**
+   * Initializes the trades' stream and keeps the local state synced with the exchange.
+   * @param positionOpenTime
+   * @returns Promise<void>
+   * @throws
+   * - 12500: if the HTTP response code is not in the acceptedCodes
+   * - 13505: if the response is not an array (binance)
+   */
+  const syncTrades = async (positionOpenTime?: number): Promise<void> => {
+    // init values
+    let trades: ITrade[] = __stream.value.slice();
+    if (typeof positionOpenTime === 'number') {
+      trades = await listTradeRecords(positionOpenTime);
+    }
+
+    // retrieve newer trades and store them (if any)
+    const newTrades = await __getNewTrades(calculateSyncStartTime(trades));
+
+    // broadcast the trades if there was a change
+    const combined = [...trades, ...newTrades];
+    if (combined.length > __stream.value.length) {
+      __stream.next(combined);
+    }
+  };
+
+  /**
+   * Fires whenever a position is closed. It resets the stream and broadcasts it.
+   */
+  const onPositionClose = (): void => __stream.next([]);
+
 
 
 
@@ -79,10 +131,10 @@ const tradeServiceFactory = (): ITradeService => {
    * @returns Promise<void>
    */
   const initialize = async (positionOpenTime: number | undefined): Promise<void> => {
-    await getBalances(true);
+    await syncTrades(positionOpenTime);
     __syncInterval = setInterval(async () => {
       try {
-        await getBalances(true);
+        await syncTrades();
       } catch (e) {
         APIErrorService.save('TradeService.__syncInterval', e);
       }
@@ -109,7 +161,11 @@ const tradeServiceFactory = (): ITradeService => {
     // ...
 
     // retrievers
+    // ...
 
+    // stream
+    subscribe,
+    onPositionClose,
 
     // initializer
     initialize,
@@ -134,5 +190,12 @@ const TradeService = tradeServiceFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // service
   TradeService,
+
+  // validations
+  // ...
+
+  // types
+  // ...
 };

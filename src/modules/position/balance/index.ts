@@ -48,7 +48,7 @@ const balanceServiceFactory = (): IBalanceService => {
    */
   const getBalances = async (forceRefetch?: boolean): Promise<IBalances> => {
     if (forceRefetch) {
-      __balances = await invokeFuncPersistently(ExchangeService.getBalances, undefined, [2, 3, 5]);
+      __balances = await invokeFuncPersistently(ExchangeService.getBalances, undefined, [2, 3, 7]);
     }
     return __balances;
   };

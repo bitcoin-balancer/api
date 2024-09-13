@@ -2,7 +2,7 @@ import { DatabaseService } from '../../database/index.js';
 import { ITrade } from '../../shared/exchange/index.js';
 
 /* ************************************************************************************************
- *                                         IMPLEMENTATION                                         *
+ *                                           RETRIEVERS                                           *
  ************************************************************************************************ */
 
 /**
@@ -50,6 +50,14 @@ const listTradeRecords = async (startAt: number, endAt?: number): Promise<ITrade
   const { rows } = await DatabaseService.pool.query({ text, values });
   return rows;
 };
+
+
+
+
+
+/* ************************************************************************************************
+ *                                             ACTIONS                                            *
+ ************************************************************************************************ */
 
 /**
  * Saves a list of trades into the database that have just been retrieved from the database.
@@ -129,8 +137,11 @@ const deleteTradeRecord = async (id: number): Promise<void> => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // retrievers
   getRecord,
   listTradeRecords,
+
+  // actions
   saveTradeRecords,
   createTradeRecord,
   updateTradeRecord,
