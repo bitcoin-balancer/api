@@ -7,7 +7,7 @@ import { IWindowConfig, IWindowState } from './types.js';
  ************************************************************************************************ */
 
 /**
- * Retrieves the default re-fetch frequency based on the exchange set for the window and their
+ * Retrieves the re-fetch frequency based on the exchange set for the window and their
  * rate limitting.
  * @returns number
  */

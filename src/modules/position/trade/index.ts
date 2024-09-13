@@ -1,30 +1,31 @@
+import { BehaviorSubject } from 'rxjs';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
-import { ExchangeService, IBalances } from '../../shared/exchange/index.js';
-import { getRefetchFrequency } from './utils.js';
-import { IBalanceService } from './types.js';
+import { ExchangeService, IBalances, ITrade } from '../../shared/exchange/index.js';
+import { getSyncFrequency } from './utils.js';
+import { ITradeService } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
 /**
- * Balance Service Factory
- * Generates the object in charge of retrieving and syncing the account's balances for both, the
- * base and quote assets.
- * @returns IBalanceService
+ * Trade Service Factory
+ * Generates the object in charge of retrieving and storing the account trades triggered by
+ * positions.
+ * @returns ITradeService
  */
-const balanceServiceFactory = (): IBalanceService => {
+const tradeServiceFactory = (): ITradeService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // the current state of the account balances
-  let __balances: IBalances;
+  // the stream of trades that belong to the active position
+  const __stream = new BehaviorSubject<ITrade[]>([]);
 
   // the balances will be re-fetched every __REFETCH_FREQUENCY seconds
-  const __REFETCH_FREQUENCY = getRefetchFrequency();
-  let __refetchInterval: NodeJS.Timeout;
+  const __SYNC_FREQUENCY = getSyncFrequency();
+  let __syncInterval: NodeJS.Timeout;
 
 
 
@@ -58,30 +59,41 @@ const balanceServiceFactory = (): IBalanceService => {
 
 
   /* **********************************************************************************************
+   *                                             SYNC                                             *
+   ********************************************************************************************** */
+
+  const syncTrades = async (): Promise<void> => {
+
+  };
+
+
+
+
+  /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
 
   /**
-   * Initializes the Balance Module.
+   * Initializes the Trade Module.
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
     await getBalances(true);
-    __refetchInterval = setInterval(async () => {
+    __syncInterval = setInterval(async () => {
       try {
         await getBalances(true);
       } catch (e) {
-        APIErrorService.save('BalanceService.__refetchInterval', e);
+        APIErrorService.save('TradeService.__syncInterval', e);
       }
-    }, __REFETCH_FREQUENCY * 1000);
+    }, __SYNC_FREQUENCY * 1000);
   };
 
   /**
-   * Tears down the Balance Module.
+   * Tears down the Trade Module.
    * @returns Promise<void>
    */
   const teardown = async (): Promise<void> => {
-    clearInterval(__refetchInterval);
+    clearInterval(__syncInterval);
   };
 
 
@@ -96,7 +108,7 @@ const balanceServiceFactory = (): IBalanceService => {
     // ...
 
     // retrievers
-    getBalances,
+
 
     // initializer
     initialize,
@@ -111,7 +123,7 @@ const balanceServiceFactory = (): IBalanceService => {
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
-const BalanceService = balanceServiceFactory();
+const TradeService = tradeServiceFactory();
 
 
 
@@ -121,5 +133,5 @@ const BalanceService = balanceServiceFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
-  BalanceService,
+  TradeService,
 };
