@@ -10,7 +10,7 @@ import { ITrade } from '../../shared/exchange/index.js';
  * @param id
  * @returns Promise<ITrade | undefined>
  */
-const getRecord = async (id: number): Promise<ITrade | undefined> => {
+const getTradeRecord = async (id: number): Promise<ITrade | undefined> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, id_alt, notes, side, price, amount, amount_quote, comission, event_time
@@ -138,7 +138,7 @@ const deleteTradeRecord = async (id: number): Promise<void> => {
  ************************************************************************************************ */
 export {
   // retrievers
-  getRecord,
+  getTradeRecord,
   listTradeRecords,
 
   // actions

@@ -6,7 +6,10 @@ import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { StrategyService } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
 import { TradeService } from './trade/index.js';
-import { canPositionRecordBeRetrieved, canCompactPositionRecordsBeListed } from './validations.js';
+import {
+  canPositionRecordBeRetrieved,
+  canCompactPositionRecordsBeListed,
+} from './validations.js';
 import {
   getPositionRecord,
   getActivePositionRecord,
@@ -177,8 +180,6 @@ const positionServiceFactory = (): IPositionService => {
     } catch (e) {
       console.error('TradeService.teardown()', e);
     }
-
-    // ...
   };
 
   /**
