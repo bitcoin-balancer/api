@@ -47,6 +47,9 @@ type ITransactionLog = {
   // the time at which the log was recorded
   eventTime: number;
 
+  // if true, the action was executed successfully
+  outcome: boolean;
+
   // the data that was received when the event was executed
   payload?: Record<string, unknown> | IBalances;
 
@@ -78,6 +81,18 @@ type ITransaction = {
   logs: ITransactionLog[];
 };
 
+/**
+ * Transaction Action Result
+ * The result of executing an action. Regardless of the outcome, the logs must be stored.
+ */
+type ITransactionActionResult = {
+  // the list of logs generated during the execution of the action
+  logs: ITransactionLog[];
+
+  // if it exists, the action failed to execute
+  error?: string;
+};
+
 
 
 
@@ -94,4 +109,5 @@ export type {
   ITransactionActionName,
   ITransactionLog,
   ITransaction,
+  ITransactionActionResult,
 };

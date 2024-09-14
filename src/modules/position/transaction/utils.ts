@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+import { encodeError } from 'error-message-utils';
 import { ISide, IBalances } from '../../shared/exchange/index.js';
 import {
   ITransaction,
@@ -17,11 +19,13 @@ import {
  */
 const buildLog = (
   action: ITransactionActionName,
+  outcome: boolean,
   payload?: Record<string, unknown> | IBalances,
   error?: string,
 ): ITransactionLog => ({
   action,
   eventTime: Date.now(),
+  outcome,
   payload,
   error,
 });
@@ -44,10 +48,24 @@ const buildTX = (
     status: 'PROCESSING',
     side,
     amount,
-    logs: balances === undefined
-      ? []
-      : [buildLog('INITIAL_BALANCES', balances)],
+    logs: balances === undefined ? [] : [buildLog('INITIAL_BALANCES', true, balances)],
   };
+};
+
+/**
+ * Retrieves the initial balances snapshot from the logs.
+ * @param logs
+ * @returns IBalances
+ * @throws
+ * - 32250: if the snapshot is not found in the logs
+ */
+const getInitialBalances = (logs: ITransactionLog[]): IBalances => {
+  const initialBalancesLog = logs.find((log) => log.action === 'INITIAL_BALANCES' && log.outcome);
+  if (!initialBalancesLog) {
+    console.log(logs);
+    throw new Error(encodeError('The initial balances snapshot could not be extracted from the logs.', 32250));
+  }
+  return initialBalancesLog.payload as IBalances;
 };
 
 
@@ -60,4 +78,5 @@ const buildTX = (
 export {
   buildLog,
   buildTX,
+  getInitialBalances,
 };

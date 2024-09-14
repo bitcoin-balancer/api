@@ -1,14 +1,22 @@
 import { extractMessage } from 'error-message-utils';
+import { delay } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { IBalances, ISide } from '../../shared/exchange/index.js';
-import { buildTX } from './utils.js';
+import { BalanceService } from '../balance/index.js';
+import {
+  buildLog,
+  buildTX,
+  getInitialBalances,
+} from './utils.js';
 import {
   createTransactionRecord,
   updateTransactionRecord,
 } from './model.js';
 import {
   ITransactionService,
+  ITransactionLog,
   ITransaction,
+  ITransactionActionResult,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -25,7 +33,8 @@ const transactionServiceFactory = (): ITransactionService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // ...
+  // the delays that will be awaited before trying to execute the action again
+  const __RETRY_DELAYS: number[] = [5, 15, 30, 60, 180];
 
 
 
@@ -34,6 +43,38 @@ const transactionServiceFactory = (): ITransactionService => {
   /* **********************************************************************************************
    *                                           EXECUTION                                          *
    ********************************************************************************************** */
+
+  /**
+   * Attempts to retrieve the initial balances in a persistent manner.
+   * @param logs?
+   * @param retryScheduleDuration?
+   * @returns Promise<ITransactionActionResult>
+   */
+  const __getInitialBalances = async (
+    logs: ITransactionLog[] = [],
+    retryScheduleDuration: number[] = __RETRY_DELAYS,
+  ): Promise<ITransactionActionResult> => {
+    try {
+      const balances = await BalanceService.getBalances(true);
+      return { logs: [...logs, buildLog('INITIAL_BALANCES', true, balances)] };
+    } catch (e) {
+      const msg = extractMessage(e);
+      if (retryScheduleDuration.length === 0) {
+        return { logs: [...logs, buildLog('INITIAL_BALANCES', false, undefined, msg)], error: msg };
+      }
+      await delay(retryScheduleDuration[0]);
+      return __getInitialBalances(
+        [...logs, buildLog('INITIAL_BALANCES', false, undefined, msg)],
+        retryScheduleDuration.slice(1),
+      );
+    }
+  };
+
+  const __executeAndConfirmTransaction = async (
+    initialBalances: IBalances,
+  ): Promise<ITransactionActionResult> => ({
+    logs: [],
+  });
 
   /**
    * Schedules a transaction to be executed persistently.
@@ -45,24 +86,33 @@ const transactionServiceFactory = (): ITransactionService => {
     id: number,
     rawTX: Omit<ITransaction, 'id'>,
   ): Promise<void> => {
-    // init the tx
     const tx = { ...rawTX, id };
-
     try {
-      // check if the initial balance needs to be loaded
+      // retrieve the initial balances in case they weren't provided
       if (tx.logs.length === 0) {
-        // ...
-        await updateTransactionRecord(tx);
+        const { logs, error } = await __getInitialBalances();
+        tx.logs = [...tx.logs, ...logs];
+        if (typeof error === 'string') {
+          throw new Error(
+            'Failed to retrieve the initial balances to start the transaction.',
+            { cause: error },
+          );
+        }
       }
 
-      // execute the tx
-      // @TODO
+      // execute and confirm the tx
+      const { logs, error } = await __executeAndConfirmTransaction(getInitialBalances(tx.logs));
+      tx.logs = [...tx.logs, ...logs];
+      if (typeof error === 'string') {
+        throw new Error('Failed to execute and confirm the transaction.', { cause: error });
+      }
       tx.status = 'SUCCEEDED';
       await updateTransactionRecord(tx);
     } catch (e) {
-      APIErrorService.save('TransactionService.__scheduleTransaction', e, undefined, undefined, tx);
+      // handle the execution failure
       tx.status = 'FAILED';
       await updateTransactionRecord(tx);
+      APIErrorService.save('TransactionService.__scheduleTransaction', e, undefined, undefined, tx);
     }
   };
 

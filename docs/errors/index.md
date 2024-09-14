@@ -625,3 +625,29 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **31510:** `The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid number ranging 1 and ${maxFrequency}.`
 
 
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Transaction` (32000 - 32999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **32000:** ``
+
+### `utils.ts`
+
+- **32250:** `'The initial balances snapshot could not be extracted from the logs.`
+- **32251:** ``
+
+### `validations.ts`
+
+- **32500:** ``
+
+
