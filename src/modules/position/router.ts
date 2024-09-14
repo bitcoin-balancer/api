@@ -1,10 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { buildResponse } from 'api-response-utils';
-import { lowRiskLimit, mediumRiskLimit } from '../../middlewares/rate-limit/index.js';
+import { lowRiskLimit, mediumRiskLimit, veryLowRiskLimit } from '../../middlewares/rate-limit/index.js';
 import { checkRequest } from '../shared/request-guard/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { StrategyService } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
+import { TransactionService } from './transaction/index.js';
 import { PositionService } from './index.js';
 
 const PositionRouter = Router();
@@ -90,7 +91,44 @@ PositionRouter.route('/balances').get(lowRiskLimit, async (req: Request, res: Re
  *                                          TRANSACTION                                           *
  ************************************************************************************************ */
 
-// ...
+/**
+ * Retrieves a transaction record.
+ * @returns IAPIResponse<ITransaction>
+ * @requirements
+ * - authority: 2
+ */
+PositionRouter.route('/transaction/:id').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
+    res.json(buildResponse(await TransactionService.getTransaction(Number(req.params.id))));
+  } catch (e) {
+    APIErrorService.save('PositionRouter.get.transaction', e, reqUid, req.ip, req.params);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
+ * Retrieves a series of transactions. If the startAtID is provided, it will start at that point
+ * exclusively.
+ * @param startAtID?
+ * @returns IAPIResponse<ITransaction[]>
+ * @requirements
+ * - authority: 2
+ */
+PositionRouter.route('/transactions').get(veryLowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 2, ['limit'], req.query);
+    res.json(buildResponse(await TransactionService.listTransactions(
+      Number(req.query.limit),
+      typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
+    )));
+  } catch (e) {
+    APIErrorService.save('PositionRouter.get.transactions', e, reqUid, req.ip, req.query);
+    res.json(buildResponse(undefined, e));
+  }
+});
 
 
 

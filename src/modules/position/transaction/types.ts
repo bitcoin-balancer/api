@@ -14,6 +14,10 @@ type ITransactionService = {
 
   // retrievers
   getTransaction: (id: number) => Promise<ITransaction>;
+  listTransactions: (
+    limit: number,
+    startAtID: number | undefined,
+  ) => Promise<ITransaction[]>;
   listTransactionsByRange: (startAt: number, endAt?: number) => Promise<ITransaction[]>;
 
   // execution
