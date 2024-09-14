@@ -8,6 +8,9 @@ import { integerValid, timestampValid, uuidValid } from '../shared/validations/i
 // the maximum number of compact position records that can be queried at a time
 const __QUERY_LIMIT = 30;
 
+// the maximum difference between the startAt and the endAt properties in milliseconds
+const __DATE_RANGE_LIMIT = (5 * (365 * (24 * (60 * 60)))) * 1000; // ~5 years
+
 
 
 
@@ -55,6 +58,8 @@ const canCompactPositionRecordsBeListed = async (
  * @throws
  * - 30503: if the startAt timestamp is invalid
  * - 30504: if an invalid endAt is provided
+ * - 30505: if the startAt is greater than or equals than the endAt
+ * - 30506: if the difference between the startAt and the endAt exceeds the limit
  */
 const canCompactPositionRecordsBeListedByRange = async (
   startAt: number,
@@ -65,6 +70,12 @@ const canCompactPositionRecordsBeListedByRange = async (
   }
   if (endAt !== undefined && !timestampValid(endAt)) {
     throw new Error(encodeError(`If the endAt arg is provided, it must be a valid timestamp. Received: ${endAt}`, 30504));
+  }
+  if (typeof endAt === 'number' && startAt >= endAt) {
+    throw new Error(encodeError(`If startAt '${startAt}' must be less than the endAt '${endAt}'.`, 30505));
+  }
+  if (((typeof endAt === 'number' ? endAt : Date.now()) - startAt) >= __DATE_RANGE_LIMIT) {
+    throw new Error(encodeError('The difference between the startAt and the endAt cannot be larger than 5 years.', 30506));
   }
 };
 

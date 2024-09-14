@@ -217,6 +217,8 @@ const positionServiceFactory = (): IPositionService => {
    * @throws
    * - 30503: if the startAt timestamp is invalid
    * - 30504: if an invalid endAt is provided
+   * - 30505: if the startAt is greater than or equals than the endAt
+   * - 30506: if the difference between the startAt and the endAt exceeds the limit
    */
   const listCompactPositionsByRange = (
     startAt: number,

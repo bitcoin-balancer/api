@@ -589,7 +589,9 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **30502:** `If the startAtOpenTime arg is provided, it must be a valid timestamp. Received: ${startAtOpenTime}`
 - **30503:** `The startAt '${startAt}' is not a valid timestamp.`
 - **30504:** `If the endAt arg is provided, it must be a valid timestamp. Received: ${endAt}`
-- **30505:** ``
+- **30505:** `If startAt '${startAt}' must be less than the endAt '${endAt}'.`
+- **30506:** `The difference between the startAt and the endAt cannot be larger than 5 years.`
+- **30507:** ``
 
 
 
