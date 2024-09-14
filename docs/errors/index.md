@@ -639,7 +639,8 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `index.ts`
 
-- **32000:** ``
+- **32000:** `The transaction '${id}' was not found in the database.`
+- **32001:** ``
 
 ### `utils.ts`
 
@@ -648,6 +649,9 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `validations.ts`
 
-- **32500:** ``
+- **32500:** `The transaction cannot be retrieved for an invalid id. Received: ${id}`
+- **32501:** `The maximum number of transactions that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`
+- **32502:** `The transactions cannot be listed with an invalid startAtID. Received: ${startAtID}.`
+- **32503:** ``
 
 

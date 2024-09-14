@@ -1,15 +1,15 @@
-import { extractMessage } from 'error-message-utils';
+import { encodeError, extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { delay } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IBalances, ISide } from '../../shared/exchange/index.js';
 import { BalanceService } from '../balance/index.js';
+import { buildLog, buildTX, getInitialBalancesSnapshot } from './utils.js';
+import { canTransactionBeRetrieved, canRecordsBeListed } from './validations.js';
 import {
-  buildLog,
-  buildTX,
-  getInitialBalancesSnapshot,
-} from './utils.js';
-import {
+  getTransactionRecord,
+  listTransactionRecords,
+  listTransactionRecordsByRange,
   createTransactionRecord,
   updateTransactionRecord,
 } from './model.js';
@@ -51,7 +51,48 @@ const transactionServiceFactory = (): ITransactionService => {
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
 
-  // ...
+  /**
+   * Retrieves a transaction record from the database.
+   * @param id
+   * @returns Promise<ITransaction>
+   * @throws
+   * - 32500: if the identifier is invalid
+   * - 32000: if the tx is not found in the db
+   */
+  const getTransaction = async (id: number): Promise<ITransaction> => {
+    canTransactionBeRetrieved(id);
+    const record = await getTransactionRecord(id);
+    if (!record) {
+      throw new Error(encodeError(`The transaction '${id}' was not found in the database.`, 32000));
+    }
+    return record;
+  };
+
+  /**
+   * Retrieves a series of transactions. If the startAtID is provided, it will start at that point
+   * exclusively.
+   * @param limit
+   * @param startAtID
+   * @returns Promise<ITransaction[]>
+   * @throws
+   * - 32501: if the query limit is larger than the limit
+   * - 32502: if the startAtID was provided and is not a valid identifier
+   */
+  const listTransactions = (
+    limit: number,
+    startAtID: number | undefined,
+  ): Promise<ITransaction[]> => {
+    canRecordsBeListed(limit, startAtID);
+    return listTransactionRecords(limit, startAtID);
+  };
+
+  /**
+   * Retrieves a list of Transactions that are between a date range.
+   * @param startAt
+   * @param endAt?
+   * @returns Promise<ITransaction[]>
+   */
+  const listTransactionsByRange = listTransactionRecordsByRange;
 
 
 
@@ -262,6 +303,9 @@ const transactionServiceFactory = (): ITransactionService => {
     // ...
 
     // retrievers
+    getTransaction,
+    listTransactions,
+    listTransactionsByRange,
 
     // execution
     execute,
