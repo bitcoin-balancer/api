@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { encodeError } from 'error-message-utils';
+import { encodeError, extractMessage } from 'error-message-utils';
 import { ISide, IBalances } from '../../shared/exchange/index.js';
 import {
   ITransaction,
@@ -21,13 +21,13 @@ const buildLog = (
   action: ITransactionActionName,
   outcome: boolean,
   payload?: Record<string, unknown> | IBalances,
-  error?: string,
+  error?: unknown,
 ): ITransactionLog => ({
   action,
   eventTime: Date.now(),
   outcome,
   payload,
-  error,
+  error: error !== undefined && typeof error !== 'string' ? extractMessage(error) : error,
 });
 
 /**
@@ -59,7 +59,7 @@ const buildTX = (
  * @throws
  * - 32250: if the snapshot is not found in the logs
  */
-const getInitialBalances = (logs: ITransactionLog[]): IBalances => {
+const getInitialBalancesSnapshot = (logs: ITransactionLog[]): IBalances => {
   const initialBalancesLog = logs.find((log) => log.action === 'INITIAL_BALANCES' && log.outcome);
   if (!initialBalancesLog) {
     console.log(logs);
@@ -78,5 +78,5 @@ const getInitialBalances = (logs: ITransactionLog[]): IBalances => {
 export {
   buildLog,
   buildTX,
-  getInitialBalances,
+  getInitialBalancesSnapshot,
 };
