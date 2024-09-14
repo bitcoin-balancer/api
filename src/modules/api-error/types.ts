@@ -57,7 +57,7 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'MarketStateRouter.get.reversal.records' | 'MarketStateRouter.get.reversal.event-history' | 'OrderBook.interval.refetch'
 | 'BalanceService.__refetchInterval' | 'PositionRouter.get.balances' | 'PositionRouter.get.strategy' | 'PositionRouter.put.strategy'
 | 'PositionRouter.get.record' | 'PositionRouter.get.records' | 'TradeService.__syncInterval' | 'TransactionService.__scheduleTransaction'
-| 'PositionRouter.get.transaction' | 'PositionRouter.get.transactions';
+| 'PositionRouter.get.transaction' | 'PositionRouter.get.transactions' | 'PositionRouter.get.records.range';
 
 /**
  * API Error

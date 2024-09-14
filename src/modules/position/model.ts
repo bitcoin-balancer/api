@@ -181,6 +181,37 @@ const listCompactPositionRecords = (
     : __listCompactPositionRecords(limit)
 );
 
+/**
+ * Retrieves a list of compact positions that are between a date range.
+ * @param startAt
+ * @param endAt?
+ * @returns Promise<ICompactPosition[]>
+ */
+const listCompactPositionRecordsByRange = async (
+  startAt: number,
+  endAt?: number,
+): Promise<ICompactPosition[]> => {
+  // init values
+  let text: string = `
+    SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
+    FROM ${DatabaseService.tn.transactions}
+    WHERE open >= $1
+  `;
+  const values: number[] = [startAt];
+
+  // include the conditional clause based on params
+  if (typeof endAt === 'number') {
+    text += ' AND open <= $2';
+    values.push(endAt);
+  }
+
+  // order the records
+  text += ' ORDER BY open ASC;';
+
+  // execute the query and return the results
+  const { rows } = await DatabaseService.pool.query({ text, values });
+  return rows;
+};
 
 
 
@@ -198,4 +229,5 @@ export {
 
   // compact position
   listCompactPositionRecords,
+  listCompactPositionRecordsByRange,
 };

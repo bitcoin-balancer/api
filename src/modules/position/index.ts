@@ -2,13 +2,18 @@
 import { Subscription } from 'rxjs';
 import { encodeError, extractMessage } from 'error-message-utils';
 import { ITrade } from '../shared/exchange/index.js';
+import { IState } from '../market-state/shared/types.js';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { StrategyService } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
 import { TradeService } from './trade/index.js';
 import {
+  newReversalEventIssued,
+} from './utils.js';
+import {
   canPositionRecordBeRetrieved,
   canCompactPositionRecordsBeListed,
+  canCompactPositionRecordsBeListedByRange,
 } from './validations.js';
 import {
   getPositionRecord,
@@ -16,6 +21,7 @@ import {
   createPositionRecord,
   updatePositionRecord,
   listCompactPositionRecords,
+  listCompactPositionRecordsByRange,
 } from './model.js';
 import {
   IPositionService,
@@ -65,11 +71,54 @@ const positionServiceFactory = (): IPositionService => {
   let __active: IPosition | undefined;
 
   // the subscription to the market state's stream
+  let __price: number;
+  let __windowState: IState;
+  let __lastReversalEventTime: number = 0;
   let __marketStateSub: Subscription;
 
   // the subscription to the trades' stream
+  let __trades: ITrade[];
   let __tradesSub: Subscription;
 
+
+
+
+
+  /* **********************************************************************************************
+   *                                       EVENT HANDLERS                                         *
+   ********************************************************************************************** */
+
+  /**
+   * Fires whenever there is a new market state. If there is an active position it will update all
+   * of its dynamic properties to reflect the latest state.
+   */
+  const __handleMarketStateChanges = (): void => {
+    if (__active) {
+      // ...
+    }
+  };
+
+  /**
+   * Fires whenever a new reversal event is issued. It checks if a position should be opened or if
+   * an open position should be increased.
+   * @returns Promise<void>
+   */
+  const __handleNewReversalEvent = async (): Promise<void> => {
+    if (StrategyService.config.canIncrease) {
+      // ...
+    }
+  };
+
+  /**
+   * Fires whenever the market is increasing strongly. It checks if there is an active position and
+   * if it should be decreased.
+   * @returns Promise<void>
+   */
+  const __handleStronglyIncreasingWindow = async (): Promise<void> => {
+    if (StrategyService.config.canDecrease && __active) {
+      // ...
+    }
+  };
 
 
 
@@ -79,19 +128,38 @@ const positionServiceFactory = (): IPositionService => {
    ********************************************************************************************** */
 
   /**
-   * Fires whenever a new market state is calculated.
+   * Fires whenever a new market state is calculated. Updates the local properties and handles any
+   * events that could be triggered by the market state.
    * @param nextState
    */
   const __onMarketStateChanges = (nextState: IMarketState): void => {
+    // update local properties
+    __price = nextState.windowState.window.close[nextState.windowState.window.close.length - 1];
+    __windowState = nextState.windowState.state;
 
+    // handle the syncing of the active position (if any)
+    __handleMarketStateChanges();
+
+    // handle a new reversal event if it has been issued
+    if (newReversalEventIssued(__lastReversalEventTime, nextState)) {
+      __lastReversalEventTime = nextState.reversalState!.reversalEventTime as number;
+      __handleNewReversalEvent();
+    }
+
+    // handle a strongly increasing window state
+    if (__windowState === 2) {
+      __handleStronglyIncreasingWindow();
+    }
   };
 
   /**
-   * Fires whenever the trades for an active position change in any way.
+   * Fires whenever the trades for an active position change in any way. Updates the local property
+   * and handles the changes accordingly.
    * @param nextState
    */
   const __onTradesChanges = (nextState: ITrade[]): void => {
-
+    //
+    __trades = nextState;
   };
 
 
@@ -139,6 +207,23 @@ const positionServiceFactory = (): IPositionService => {
   ): Promise<ICompactPosition[]> => {
     canCompactPositionRecordsBeListed(limit, startAtOpenTime);
     return listCompactPositionRecords(limit, startAtOpenTime);
+  };
+
+  /**
+   * Retrieves a list of compact positions that were opened within a date range.
+   * @param startAt
+   * @param endAt?
+   * @returns Promise<ICompactPosition[]>
+   * @throws
+   * - 30503: if the startAt timestamp is invalid
+   * - 30504: if an invalid endAt is provided
+   */
+  const listCompactPositionsByRange = (
+    startAt: number,
+    endAt: number | undefined,
+  ): Promise<ICompactPosition[]> => {
+    canCompactPositionRecordsBeListedByRange(startAt, endAt);
+    return listCompactPositionRecordsByRange(startAt, endAt);
   };
 
 
@@ -237,6 +322,7 @@ const positionServiceFactory = (): IPositionService => {
     // retrievers
     getPosition,
     listCompactPositions,
+    listCompactPositionsByRange,
 
     // initializer
     initialize,

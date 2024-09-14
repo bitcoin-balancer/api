@@ -1,6 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { buildResponse } from 'api-response-utils';
-import { lowRiskLimit, mediumRiskLimit, veryLowRiskLimit } from '../../middlewares/rate-limit/index.js';
+import {
+  lowRiskLimit,
+  mediumRiskLimit,
+  veryLowRiskLimit,
+} from '../../middlewares/rate-limit/index.js';
 import { checkRequest } from '../shared/request-guard/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { StrategyService } from './strategy/index.js';
@@ -173,6 +177,28 @@ PositionRouter.route('/records').get(lowRiskLimit, async (req: Request, res: Res
     )));
   } catch (e) {
     APIErrorService.save('PositionRouter.get.records', e, reqUid, req.ip, req.query);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
+ * Validates and retrieves a list of compact position records by date range.
+ * @param startAt
+ * @param endAt?
+ * @returns IAPIResponse<ICompactPosition[]>
+ * @requirements
+ * - authority: 2
+ */
+PositionRouter.route('/records/range').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 2, ['startAt'], req.query);
+    res.json(buildResponse(await PositionService.listCompactPositionsByRange(
+      Number(req.query.startAt),
+      typeof req.query.endAt === 'string' ? Number(req.query.endAt) : undefined,
+    )));
+  } catch (e) {
+    APIErrorService.save('PositionRouter.get.records.range', e, reqUid, req.ip, req.query);
     res.json(buildResponse(undefined, e));
   }
 });

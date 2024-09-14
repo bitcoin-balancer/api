@@ -18,6 +18,10 @@ type IPositionService = {
     limit: number,
     startAtOpenTime: number | undefined,
   ) => Promise<ICompactPosition[]>;
+  listCompactPositionsByRange: (
+    startAt: number,
+    endAt: number | undefined,
+  ) => Promise<ICompactPosition[]>;
 
   // initializer
   initialize: () => Promise<void>;

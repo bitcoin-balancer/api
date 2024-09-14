@@ -587,7 +587,9 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **30500:** `The position record cannot be retrieved for an invalid ID '${id}'.`
 - **30501:** `The maximum number of compact position records that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`
 - **30502:** `If the startAtOpenTime arg is provided, it must be a valid timestamp. Received: ${startAtOpenTime}`
-- **30503:** ``
+- **30503:** `The startAt '${startAt}' is not a valid timestamp.`
+- **30504:** `If the endAt arg is provided, it must be a valid timestamp. Received: ${endAt}`
+- **30505:** ``
 
 
 

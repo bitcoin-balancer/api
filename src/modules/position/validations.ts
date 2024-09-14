@@ -11,6 +11,7 @@ const __QUERY_LIMIT = 30;
 
 
 
+
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
@@ -47,6 +48,26 @@ const canCompactPositionRecordsBeListed = async (
   }
 };
 
+/**
+ * Verifies if a series of compact position records can be listed by range.
+ * @param startAt
+ * @param endAt
+ * @throws
+ * - 30503: if the startAt timestamp is invalid
+ * - 30504: if an invalid endAt is provided
+ */
+const canCompactPositionRecordsBeListedByRange = async (
+  startAt: number,
+  endAt: number | undefined,
+): Promise<void> => {
+  if (!timestampValid(startAt)) {
+    throw new Error(encodeError(`The startAt '${startAt}' is not a valid timestamp.`, 30503));
+  }
+  if (endAt !== undefined && !timestampValid(endAt)) {
+    throw new Error(encodeError(`If the endAt arg is provided, it must be a valid timestamp. Received: ${endAt}`, 30504));
+  }
+};
+
 
 
 
@@ -57,4 +78,5 @@ const canCompactPositionRecordsBeListed = async (
 export {
   canPositionRecordBeRetrieved,
   canCompactPositionRecordsBeListed,
+  canCompactPositionRecordsBeListedByRange,
 };
