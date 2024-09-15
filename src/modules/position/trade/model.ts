@@ -51,6 +51,24 @@ const listTradeRecords = async (startAt: number, endAt?: number): Promise<ITrade
   return rows;
 };
 
+/**
+ * Retrieves the timestamp in ms of the last trade that was stored in the database. If no trades
+ * have been stored, it returns undefined.
+ * @returns Promise<number | undefined>
+ */
+const getLastTradeRecordTime = async (): Promise<number | undefined> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT event_time
+      FROM ${DatabaseService.tn.trades}
+      ORDER BY event_time DESC
+      LIMIT 1;
+    `,
+    values: [],
+  });
+  return rows[0]?.event_time;
+};
+
 
 
 
@@ -140,6 +158,7 @@ export {
   // retrievers
   getTradeRecord,
   listTradeRecords,
+  getLastTradeRecordTime,
 
   // actions
   saveTradeRecords,
