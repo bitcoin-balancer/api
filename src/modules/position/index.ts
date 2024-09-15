@@ -109,7 +109,7 @@ const positionServiceFactory = (): IPositionService => {
 
 
   /* **********************************************************************************************
-   *                                       EVENT HANDLERS                                         *
+   *                                 MARKET STATE EVENT HANDLERS                                  *
    ********************************************************************************************** */
 
   /**
@@ -160,6 +160,26 @@ const positionServiceFactory = (): IPositionService => {
 
 
 
+
+  /* **********************************************************************************************
+   *                                    TRADES EVENT HANDLERS                                     *
+   ********************************************************************************************** */
+
+
+
+
+  const __handleNewPosition = async (): Promise<void> => {
+
+  };
+
+  const __handlePositionChanges = (): void => {
+
+  };
+
+
+
+
+
   /* **********************************************************************************************
    *                                           STREAMS                                            *
    ********************************************************************************************** */
@@ -190,17 +210,17 @@ const positionServiceFactory = (): IPositionService => {
   };
 
   /**
-   * Fires whenever the trades for an active position change in any way. Updates the local property
-   * and handles the changes accordingly.
+   * Fires whenever the trades for an active position change in any way. It will check if a new
+   * position has been opened or if the active position has changed. If so, it updates the handle
+   * the appropriate event.
    * @param nextState
    */
   const __onTradesChanges = (nextState: ITrade[]): void => {
-    // set the trades
-    __trades = nextState;
-
-    // ...
-    if (__trades.length) {
-      // ...
+    if (__trades.length === 0 && nextState.length > 0) {
+      __trades = nextState;
+      __handleNewPosition();
+    } else if (__trades.length > 0 && nextState.length > __trades.length) {
+      __handlePositionChanges();
     }
   };
 
