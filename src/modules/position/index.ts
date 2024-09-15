@@ -8,6 +8,7 @@ import { StrategyService } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
 import { TradeService } from './trade/index.js';
 import {
+  calculateMarketStateDependantProps,
   newReversalEventIssued,
 } from './utils.js';
 import {
@@ -94,7 +95,20 @@ const positionServiceFactory = (): IPositionService => {
    */
   const __handleMarketStateChanges = (): void => {
     if (__active) {
-      // ...
+      // update the active position
+      __active = {
+        ...__active,
+        ...calculateMarketStateDependantProps(
+          __price,
+          __active.entry_price,
+          __active.amount,
+          __active.amount_quote_in,
+          __active.amount_quote_out,
+        ),
+      };
+
+      // update the event history
+      // @TODO
     }
   };
 
@@ -158,8 +172,13 @@ const positionServiceFactory = (): IPositionService => {
    * @param nextState
    */
   const __onTradesChanges = (nextState: ITrade[]): void => {
-    //
+    // set the trades
     __trades = nextState;
+
+    // ...
+    if (__trades.length) {
+      // ...
+    }
   };
 
 

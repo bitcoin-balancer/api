@@ -36,7 +36,16 @@ type IPositionService = {
  *                                             TYPES                                              *
  ************************************************************************************************ */
 
-// ...
+/**
+ * Market State Dependant Props
+ * The properties that should be recalculated every time the market state changes.
+ */
+type IMarketStateDependantProps = {
+  gain: number,
+  amount_quote: number,
+  pnl: number,
+  roi: number,
+};
 
 
 
@@ -158,6 +167,7 @@ export type {
   IPositionService,
 
   // types
+  IMarketStateDependantProps,
 
   // position
   IDecreasePriceLevels,
