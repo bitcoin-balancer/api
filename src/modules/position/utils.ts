@@ -5,7 +5,8 @@ import {
   IBigNumber,
 } from 'bignumber-utils';
 import { IMarketState } from '../market-state/index.js';
-import { IMarketStateDependantProps } from './types.js';
+import { IMarketStateDependantProps, ITradesAnalysis } from './types.js';
+import { ITrade } from '../shared/exchange/types.js';
 
 /* ************************************************************************************************
  *                                          CALCULATORS                                           *
@@ -53,6 +54,37 @@ const calculateMarketStateDependantProps = (
 
 
 /* ************************************************************************************************
+ *                                        TRADES ANALYSIS                                         *
+ ************************************************************************************************ */
+
+/**
+ * Builds the default analsysis object to serve as a skeleton.
+ * @returns ITradesAnalysis
+ */
+const buildDefaultAnalysis = (): ITradesAnalysis => ({
+  open: 0,
+  close: null,
+  entry_price: 0,
+  amount: 0,
+  amount_quote: 0,
+  amount_quote_in: 0,
+  amount_quote_out: 0,
+  pnl: 0,
+  roi: 0,
+});
+
+
+const analyzeTrades = (trades: ITrade[]): ITradesAnalysis | undefined => (
+  trades.length > 0
+    ? buildDefaultAnalysis()
+    : undefined
+);
+
+
+
+
+
+/* ************************************************************************************************
  *                                     EVENT HANDLING HELPERS                                     *
  ************************************************************************************************ */
 
@@ -78,6 +110,9 @@ const newReversalEventIssued = (lastReversal: number, state: IMarketState): bool
 export {
   // calculators
   calculateMarketStateDependantProps,
+
+  // trades analysis
+  analyzeTrades,
 
   // event handling helpers
   newReversalEventIssued,

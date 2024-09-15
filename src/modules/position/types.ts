@@ -48,6 +48,22 @@ type IMarketStateDependantProps = {
   roi: number,
 };
 
+/**
+ * Trades Analysis
+ * 
+ */
+type ITradesAnalysis = {
+  open: number;
+  close: number | null;
+  entry_price: number;
+  amount: number;
+  amount_quote: number;
+  amount_quote_in: number;
+  amount_quote_out: number;
+  pnl: number;
+  roi: number;
+};
+
 
 
 
@@ -169,6 +185,7 @@ export type {
 
   // types
   IMarketStateDependantProps,
+  ITradesAnalysis,
 
   // position
   IDecreasePriceLevels,

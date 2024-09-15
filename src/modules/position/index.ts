@@ -15,6 +15,7 @@ import { BalanceService } from './balance/index.js';
 import { TradeService } from './trade/index.js';
 import {
   calculateMarketStateDependantProps,
+  analyzeTrades,
   newReversalEventIssued,
 } from './utils.js';
 import {
@@ -32,6 +33,7 @@ import {
 } from './model.js';
 import {
   IPositionService,
+  ITradesAnalysis,
   IPosition,
   ICompactPosition,
 } from './types.js';
@@ -85,7 +87,7 @@ const positionServiceFactory = (): IPositionService => {
   let __marketStateSub: Subscription;
 
   // the subscription to the trades' stream
-  let __trades: ITrade[];
+  let __trades: ITradesAnalysis | undefined;
   let __tradesSub: Subscription;
 
 
@@ -176,6 +178,22 @@ const positionServiceFactory = (): IPositionService => {
 
   };
 
+  const __handlePositionClose = (): void => {
+    // update the record
+    // @TODO
+
+    // notify users
+    // @TODO
+
+    // complete the event history
+    __activeHist!.complete();
+    __activeHist = undefined;
+
+    // reset the local properties
+    __active = undefined;
+    __trades = undefined;
+  };
+
 
 
 
@@ -211,16 +229,26 @@ const positionServiceFactory = (): IPositionService => {
 
   /**
    * Fires whenever the trades for an active position change in any way. It will check if a new
-   * position has been opened or if the active position has changed. If so, it updates the handle
-   * the appropriate event.
+   * position has been opened or if the active position has changed. If so, it handles the
+   * appropriate event.
    * @param nextState
    */
   const __onTradesChanges = (nextState: ITrade[]): void => {
-    if (__trades.length === 0 && nextState.length > 0) {
-      __trades = nextState;
+    const newAnalysis = analyzeTrades(nextState);
+    if (__trades === undefined && newAnalysis !== undefined) {
+      __trades = newAnalysis;
       __handleNewPosition();
-    } else if (__trades.length > 0 && nextState.length > __trades.length) {
-      __handlePositionChanges();
+    } else if (
+      __trades !== undefined
+      && newAnalysis !== undefined
+      && __trades.amount !== newAnalysis.amount
+    ) {
+      __trades = newAnalysis;
+      if (__trades.amount === 0) {
+        __handlePositionClose();
+      } else {
+        __handlePositionChanges();
+      }
     }
   };
 
