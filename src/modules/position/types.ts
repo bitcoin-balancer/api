@@ -1,4 +1,4 @@
-
+import { IEventHistoryRecord } from '../shared/candlestick/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -22,6 +22,7 @@ type IPositionService = {
     startAt: number,
     endAt: number | undefined,
   ) => Promise<ICompactPosition[]>;
+  getPositionHistory: (id: string) => Promise<IEventHistoryRecord>;
 
   // initializer
   initialize: () => Promise<void>;

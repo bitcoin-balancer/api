@@ -270,6 +270,18 @@ const positionServiceFactory = (): IPositionService => {
     return listCompactPositionRecordsByRange(startAt, endAt);
   };
 
+  /**
+   * Retrieves the history in OHLC format for an active position.
+   * @param id
+   * @returns Promise<IEventHistoryRecord>
+   * @throws
+   * - 11000: if the id has an invalid format
+   * - 11001: if the record was not found in the database
+   */
+  const getPositionHistory = (id: string): Promise<IEventHistoryRecord> => (
+    CandlestickService.getEventHistory(id)
+  );
+
 
 
 
@@ -370,6 +382,7 @@ const positionServiceFactory = (): IPositionService => {
     getPosition,
     listCompactPositions,
     listCompactPositionsByRange,
+    getPositionHistory,
 
     // initializer
     initialize,

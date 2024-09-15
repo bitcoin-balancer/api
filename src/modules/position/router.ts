@@ -203,6 +203,23 @@ PositionRouter.route('/records/range').get(lowRiskLimit, async (req: Request, re
   }
 });
 
+/**
+ * Retrieves the history for a position based on its ID.
+ * @returns IAPIResponse<IEventHistoryRecord>
+ * @requirements
+ * - authority: 1
+ */
+PositionRouter.route('/event-history/:id').get(lowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+    res.json(buildResponse(await PositionService.getPositionHistory(req.params.id)));
+  } catch (e) {
+    APIErrorService.save('PositionRouter.get.event-history', e, reqUid, req.ip, req.params);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
 
 
 
