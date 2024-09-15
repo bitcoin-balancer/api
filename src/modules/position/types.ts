@@ -50,7 +50,7 @@ type IMarketStateDependantProps = {
 
 /**
  * Trades Analysis
- * 
+ * The key values extracted from the list of position trades, used to manage active positions.
  */
 type ITradesAnalysis = {
   open: number;

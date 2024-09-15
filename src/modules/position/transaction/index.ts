@@ -279,7 +279,7 @@ const transactionServiceFactory = (): ITransactionService => {
    * @param balances?
    * @returns Promise<number>
    */
-  const execute = async (side: ISide, amount: number, balances?: IBalances): Promise<number> => {
+  const __execute = async (side: ISide, amount: number, balances?: IBalances): Promise<number> => {
     // build and store the tx
     const rawTX = buildTX(side, amount, balances);
     const id = await createTransactionRecord(rawTX);
@@ -290,6 +290,30 @@ const transactionServiceFactory = (): ITransactionService => {
     // finally, return the ID
     return id;
   };
+
+  /**
+   * Starts the process that will try as hard as possible to execute a buy transaction.
+   * @param amount
+   * @param balances
+   * @returns Promise<number>
+   */
+  const buy = async (amount: number, balances?: IBalances): Promise<number> => __execute(
+    'BUY',
+    amount,
+    balances,
+  );
+
+  /**
+   * Starts the process that will try as hard as possible to execute a sell transaction.
+   * @param amount
+   * @param balances
+   * @returns Promise<number>
+   */
+  const sell = async (amount: number, balances?: IBalances): Promise<number> => __execute(
+    'SELL',
+    amount,
+    balances,
+  );
 
 
 
@@ -308,7 +332,8 @@ const transactionServiceFactory = (): ITransactionService => {
     listTransactionsByRange,
 
     // execution
-    execute,
+    buy,
+    sell,
   });
 };
 
