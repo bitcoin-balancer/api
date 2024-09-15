@@ -2,12 +2,10 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, ITrade } from '../../shared/exchange/index.js';
-import {
-  getSyncFrequency,
-  calculateSyncStartTime,
-} from './utils.js';
+import { getSyncFrequency } from './utils.js';
 import {
   listTradeRecords,
+  getLastTradeRecordTime,
   saveTradeRecords,
 } from './model.js';
 import { ITradeService } from './types.js';
@@ -32,6 +30,7 @@ const tradeServiceFactory = (): ITradeService => {
 
   // the balances will be re-fetched every __REFETCH_FREQUENCY seconds
   const __SYNC_FREQUENCY = getSyncFrequency();
+  let __syncStartTime: number;
   let __syncInterval: NodeJS.Timeout;
 
 
@@ -103,12 +102,13 @@ const tradeServiceFactory = (): ITradeService => {
     }
 
     // retrieve newer trades and store them (if any)
-    const newTrades = await __getNewTrades(calculateSyncStartTime(trades));
+    const newTrades = await __getNewTrades(__syncStartTime);
 
     // broadcast the trades if there was a change
     const combined = [...trades, ...newTrades];
     if (combined.length > __stream.value.length) {
       __stream.next(combined);
+      __syncStartTime = combined[combined.length - 1].event_time + 1;
     }
   };
 
@@ -131,6 +131,11 @@ const tradeServiceFactory = (): ITradeService => {
    * @returns Promise<void>
    */
   const initialize = async (positionOpenTime: number | undefined): Promise<void> => {
+    // set the starting point for the syncing process
+    const lastTradeTime = await getLastTradeRecordTime();
+    __syncStartTime = typeof lastTradeTime === 'number' ? lastTradeTime + 1 : Date.now();
+
+    // sync the trades and initialize the interval
     await syncTrades(positionOpenTime);
     __syncInterval = setInterval(async () => {
       try {
