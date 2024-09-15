@@ -1,6 +1,12 @@
 /* eslint-disable no-console */
 import { Subscription } from 'rxjs';
 import { encodeError, extractMessage } from 'error-message-utils';
+import {
+  CandlestickService,
+  eventHistoryFactory,
+  IEventHistory,
+  IEventHistoryRecord,
+} from '../shared/candlestick/index.js';
 import { ITrade } from '../shared/exchange/index.js';
 import { IState } from '../market-state/shared/types.js';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
@@ -70,6 +76,7 @@ const positionServiceFactory = (): IPositionService => {
 
   // the active position (if any)
   let __active: IPosition | undefined;
+  let __activeHist: IEventHistory | undefined;
 
   // the subscription to the market state's stream
   let __price: number;
@@ -86,12 +93,28 @@ const positionServiceFactory = (): IPositionService => {
 
 
   /* **********************************************************************************************
+   *                                           HELPERS                                            *
+   ********************************************************************************************** */
+
+  /**
+   * Invoked whenever an active position changes, keeping the current values in sync with the
+   * history.
+   */
+  const __updatePositionHistory = (): void => {
+    __activeHist!.handleNewData([__price, __active!.gain, __active!.entry_price, __active!.amount]);
+  };
+
+
+
+
+
+  /* **********************************************************************************************
    *                                       EVENT HANDLERS                                         *
    ********************************************************************************************** */
 
   /**
    * Fires whenever there is a new market state. If there is an active position it will update all
-   * of its dynamic properties to reflect the latest state.
+   * of its dynamic properties to reflect the latest state and also keep the history updated.
    */
   const __handleMarketStateChanges = (): void => {
     if (__active) {
@@ -108,7 +131,7 @@ const positionServiceFactory = (): IPositionService => {
       };
 
       // update the event history
-      // @TODO
+      __updatePositionHistory();
     }
   };
 
@@ -296,6 +319,9 @@ const positionServiceFactory = (): IPositionService => {
     try {
       // Active Position
       __active = await getActivePositionRecord();
+      if (__active) {
+        __activeHist = await eventHistoryFactory(__active.id, 'position', '1d');
+      }
 
       // Strategy Module
       try {

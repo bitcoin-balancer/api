@@ -22,6 +22,9 @@ const balanceServiceFactory = (): IBalanceService => {
   // the current state of the account balances
   let __balances: IBalances;
 
+  // the number of seconds Balancer will wait before attempting to refetch the balances on error
+  const __DELAYS = [2, 3, 7, 10];
+
   // the balances will be re-fetched every __REFETCH_FREQUENCY seconds
   const __REFETCH_FREQUENCY = getRefetchFrequency();
   let __refetchInterval: NodeJS.Timeout;
@@ -48,7 +51,7 @@ const balanceServiceFactory = (): IBalanceService => {
    */
   const getBalances = async (forceRefetch?: boolean): Promise<IBalances> => {
     if (forceRefetch) {
-      __balances = await invokeFuncPersistently(ExchangeService.getBalances, undefined, [2, 3, 7]);
+      __balances = await invokeFuncPersistently(ExchangeService.getBalances, undefined, __DELAYS);
     }
     return __balances;
   };
