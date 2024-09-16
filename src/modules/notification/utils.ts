@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { prettifyValue } from 'bignumber-utils';
 import { IRequestInput } from 'fetch-request-node';
 import { IPreSaveNotification } from './types.js';
@@ -31,6 +32,13 @@ const buildRequestInput = (token: string, chatID: number, message: string): IReq
 );
 
 /**
+ * Formats a timestamp into a human readable datetime.
+ * @param date
+ * @returns string
+ */
+const prettifyDate = (date: string | number | Date): string => format(date, 'p');
+
+/**
  * Prettifies a dollar value so it can be easily read by users.
  * @param value
  * @returns string
@@ -39,6 +47,14 @@ const prettifyDollarValue = (value: number): string => (
   prettifyValue(value, { processing: { decimalPlaces: 2 }, format: { prefix: '$' } })
 );
 
+/**
+ * Prettifies a btc value so it can be easily read by users.
+ * @param value
+ * @returns string
+ */
+const prettifyBitcoinValue = (value: number): string => (
+  prettifyValue(value, { processing: { decimalPlaces: 8 }, format: { prefix: '₿' } })
+);
 
 
 
@@ -49,5 +65,7 @@ const prettifyDollarValue = (value: number): string => (
 export {
   toMessage,
   buildRequestInput,
+  prettifyDate,
   prettifyDollarValue,
+  prettifyBitcoinValue,
 };

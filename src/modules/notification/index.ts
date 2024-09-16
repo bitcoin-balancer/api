@@ -4,7 +4,13 @@ import { sendPOST } from 'fetch-request-node';
 import { ENVIRONMENT, ITelegramConfig } from '../shared/environment/index.js';
 import { invokeFuncPersistently } from '../shared/utils/index.js';
 import { APIErrorService } from '../api-error/index.js';
-import { buildRequestInput, toMessage, prettifyDollarValue } from './utils.js';
+import {
+  buildRequestInput,
+  toMessage,
+  prettifyDollarValue,
+  prettifyBitcoinValue,
+  prettifyDate,
+} from './utils.js';
 import { canRecordsBeListed } from './validations.js';
 import { listRecords, saveRecord } from './model.js';
 import { throttleableNotificationFactory } from './throttleable-notification.js';
@@ -265,6 +271,56 @@ const notificationServiceFactory = (): INotificationService => {
 
 
   /* **********************************************************************************************
+   *                                         TRANSACTION                                          *
+   ********************************************************************************************** */
+
+  // ...
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                           POSITION                                           *
+   ********************************************************************************************** */
+
+  /**
+   * Broadcasts a message notifying users a new position has been opened.
+   * @param amount
+   * @param amountQuote
+   * @param marketPrice
+   */
+  const onNewPosition = (
+    amount: number,
+    amountQuote: number,
+    marketPrice: number,
+  ): void => __addToQueue({
+    sender: 'POSITION',
+    title: 'A position has been opened',
+    description: `A position worth ${prettifyBitcoinValue(amount)} (${prettifyDollarValue(amountQuote)}) has been opened at a rate of ${prettifyDollarValue(marketPrice)}.`,
+  });
+
+  /**
+   * Broadcasts a message notifying users a new position has been closed.
+   * @param openTime
+   * @param pnl
+   * @param roi
+   */
+  const onPositionClose = (
+    openTime: number,
+    pnl: number,
+    roi: number,
+  ): void => __addToQueue({
+    sender: 'POSITION',
+    title: 'The position has been closed',
+    description: `The position opened on ${prettifyDate(openTime)} has been closed with a PNL of ${pnl > 0 ? '%2b' : ''}${prettifyDollarValue(pnl)} (${roi > 0 ? '%2b' : ''}${roi}%).`,
+  });
+
+
+
+
+
+  /* **********************************************************************************************
    *                                          INITIALIZER                                         *
    ********************************************************************************************** */
 
@@ -327,6 +383,12 @@ const notificationServiceFactory = (): INotificationService => {
     coinsReInitError,
     windowState,
     onReversalEvent,
+
+    // transaction
+
+    // position
+    onNewPosition,
+    onPositionClose,
 
     // initializer
     initialize,

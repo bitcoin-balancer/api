@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { Subscription } from 'rxjs';
 import { encodeError, extractMessage } from 'error-message-utils';
+import { NotificationService } from '../notification/index.js';
 import {
   CandlestickService,
   eventHistoryFactory,
@@ -197,7 +198,7 @@ const positionServiceFactory = (): IPositionService => {
         StrategyService.config.increaseIdleDuration,
       );
       await createPositionRecord(__active);
-      // notify users @TODO
+      NotificationService.onNewPosition(__active.amount, __active.amount_quote, __price);
     }
 
     // initialize the history
@@ -231,7 +232,7 @@ const positionServiceFactory = (): IPositionService => {
     // check if the position has been closed
     if (__active.amount === 0) {
       // notify users
-      // @TODO
+      NotificationService.onPositionClose(__active.open, __active.pnl, __active.roi);
 
       // reset the trades stream
       TradeService.onPositionClose();
