@@ -76,6 +76,8 @@ const calculateMarketStateDependantProps = (
 /**
  * Analysis a list of trades and returns a summarized object containing the most relevant info
  * ready to be inserted into the position record.
+ * Important: if there are no BUY trades, the entry price will be equals to 0 and will potentially
+ * break things. If this is the case undefined will be returned.
  * @param trades
  * @param currentPrice
  * @returns ITradesAnalysis | undefined
@@ -112,22 +114,24 @@ const analyzeTrades = (
   // calculate the unrealized amount (quote)
   const unrealizedAmountQuoteOut = amountQuoteOut.plus(amountQuote);
 
-  // calculate the new entry price
+  // calculate the new entry price - if there are no buy trades, the entryPrice will be 0
   const entryPrice = calculateWeightedEntry(buyTrades);
 
-  // finally, return the analysis
-  return {
-    open: trades[0].event_time,
-    close: amount.isEqualTo(0) ? trades[trades.length - 1].event_time : null,
-    entry_price: entryPrice,
-    amount: processValue(amount, { decimalPlaces: 8, roundingMode: 'ROUND_HALF_DOWN' }),
-    amount_quote: amountQuote,
-    amount_quote_in: processValue(amountQuoteIn),
-    amount_quote_out: processValue(amountQuoteOut),
-    pnl: processValue(unrealizedAmountQuoteOut.minus(amountQuoteIn)),
-    roi: calculatePercentageChange(amountQuoteIn, unrealizedAmountQuoteOut),
-    decrease_price_levels: __calculateDecreasePriceLevels(entryPrice, decreaseLevels),
-  };
+  // finally, return the analysis if possible
+  return entryPrice > 0
+    ? {
+      open: trades[0].event_time,
+      close: amount.isEqualTo(0) ? trades[trades.length - 1].event_time : null,
+      entry_price: entryPrice,
+      amount: processValue(amount, { decimalPlaces: 8, roundingMode: 'ROUND_HALF_DOWN' }),
+      amount_quote: amountQuote,
+      amount_quote_in: processValue(amountQuoteIn),
+      amount_quote_out: processValue(amountQuoteOut),
+      pnl: processValue(unrealizedAmountQuoteOut.minus(amountQuoteIn)),
+      roi: calculatePercentageChange(amountQuoteIn, unrealizedAmountQuoteOut),
+      decrease_price_levels: __calculateDecreasePriceLevels(entryPrice, decreaseLevels),
+    }
+    : undefined;
 };
 
 
