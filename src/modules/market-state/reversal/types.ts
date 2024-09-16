@@ -96,7 +96,7 @@ type IReversalState = {
   // the identifier of the price crash state record
   id: string;
 
-  // the current number of points
+  // the % of the required points that have been accumulated
   points: number;
 
   // the timestamp (in ms) when the reversal event was issued (if any)

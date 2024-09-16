@@ -263,11 +263,19 @@ const isPriceCrashStateActive = (
  * Transforms a price crash state record into a reversal state ready to be inserted into the
  * Market State.
  * @param state
+ * @param pointsRequirement
  * @returns IReversalState
  */
-const toState = (state: IPriceCrashStateRecord): IReversalState => ({
+const toReversalStateState = (
+  state: IPriceCrashStateRecord,
+  pointsRequirement: number,
+): IReversalState => ({
   id: state.id,
-  points: state.final_points,
+  points: calculatePercentageRepresentation(
+    state.final_points,
+    pointsRequirement,
+    { roundingMode: 'ROUND_HALF_DOWN' },
+  ),
   reversalEventTime: state.reversal_event_time,
 });
 
@@ -310,7 +318,7 @@ export {
   isNewPriceCrashState,
   hasPriceCrashStateEnded,
   isPriceCrashStateActive,
-  toState,
+  toReversalStateState,
 
   // config helpers
   buildDefaultConfig,
