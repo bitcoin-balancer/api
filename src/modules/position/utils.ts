@@ -3,14 +3,44 @@ import {
   processValue,
   calculatePercentageChange,
   calculateWeightedEntry,
+  adjustByPercentage,
 } from 'bignumber-utils';
 import { delay } from '../shared/utils/index.js';
+import { generateUUID } from '../shared/uuid/index.js';
 import { IBalances, ITrade } from '../shared/exchange/index.js';
+import { IDecreaseLevels } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
-import { IMarketStateDependantProps, ITradesAnalysis } from './types.js';
+import {
+  IDecreasePriceLevels,
+  IMarketStateDependantProps,
+  IPosition,
+  IPositionAction,
+  ITradesAnalysis,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                          CALCULATORS                                           *
+ ************************************************************************************************ */
+
+/**
+ * Calculates the decrease price levels based on the strategy's decrease levels.
+ * @param entryPrice
+ * @param levels
+ * @returns IDecreasePriceLevels
+ */
+const __calculateDecreasePriceLevels = (
+  entryPrice: number,
+  levels: IDecreaseLevels,
+): IDecreasePriceLevels => levels.map(
+  (lvl) => adjustByPercentage(entryPrice, lvl.gainRequirement),
+) as IDecreasePriceLevels;
+
+
+
+
+
+/* ************************************************************************************************
+ *                                   POSITION CHANGES HANDLING                                    *
  ************************************************************************************************ */
 
 /**
@@ -42,14 +72,6 @@ const calculateMarketStateDependantProps = (
   };
 };
 
-
-
-
-
-/* ************************************************************************************************
- *                                        TRADES ANALYSIS                                         *
- ************************************************************************************************ */
-
 /**
  * Analysis a list of trades and returns a summarized object containing the most relevant info
  * ready to be inserted into the position record.
@@ -57,7 +79,11 @@ const calculateMarketStateDependantProps = (
  * @param currentPrice
  * @returns ITradesAnalysis | undefined
  */
-const analyzeTrades = (trades: ITrade[], currentPrice: number): ITradesAnalysis | undefined => {
+const analyzeTrades = (
+  trades: ITrade[],
+  currentPrice: number,
+  decreaseLevels: IDecreaseLevels,
+): ITradesAnalysis | undefined => {
   // do not analyze if there are no trades
   if (trades.length === 0) {
     return undefined;
@@ -85,19 +111,49 @@ const analyzeTrades = (trades: ITrade[], currentPrice: number): ITradesAnalysis 
   // calculate the unrealized amount (quote)
   const unrealizedAmountQuoteOut = amountQuoteOut.plus(amountQuote);
 
+  // calculate the new entry price
+  const entryPrice = calculateWeightedEntry(buyTrades);
+
   // finally, return the analysis
   return {
     open: trades[0].event_time,
     close: amount.isEqualTo(0) ? trades[trades.length - 1].event_time : null,
-    entry_price: calculateWeightedEntry(buyTrades),
+    entry_price: entryPrice,
     amount: processValue(amount, { decimalPlaces: 8, roundingMode: 'ROUND_HALF_DOWN' }),
     amount_quote: amountQuote,
     amount_quote_in: processValue(amountQuoteIn),
     amount_quote_out: processValue(amountQuoteOut),
     pnl: processValue(unrealizedAmountQuoteOut.minus(amountQuoteIn)),
     roi: calculatePercentageChange(amountQuoteIn, unrealizedAmountQuoteOut),
+    decrease_price_levels: __calculateDecreasePriceLevels(entryPrice, decreaseLevels),
   };
 };
+
+
+
+
+
+/* ************************************************************************************************
+ *                                         BUILD HELPERS                                          *
+ ************************************************************************************************ */
+
+const buildPositionAction = (txID?: number): IPositionAction => {
+
+};
+
+const buildNewPosition = (trades: ITradesAnalysis, currentPrice: number): IPosition => ({
+  id: generateUUID(),
+  ...calculateMarketStateDependantProps(
+    currentPrice,
+    trades.entry_price,
+    trades.amount,
+    trades.amount_quote_in,
+    trades.amount_quote_out,
+  ),
+  ...trades,
+  increase_actions: [],
+  decrease_actions: [[], [], [], [], []],
+});
 
 
 
@@ -141,10 +197,14 @@ const getBalances = async (
  ************************************************************************************************ */
 export {
   // calculators
-  calculateMarketStateDependantProps,
 
-  // trades analysis
+
+  // position changes handling
+  calculateMarketStateDependantProps,
   analyzeTrades,
+
+  // build helpers
+  buildNewPosition,
 
   // retrievers
   getBalances,

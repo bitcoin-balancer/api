@@ -16,6 +16,7 @@ import { TradeService } from './trade/index.js';
 import {
   calculateMarketStateDependantProps,
   analyzeTrades,
+  buildNewPosition,
   getBalances,
 } from './utils.js';
 import {
@@ -167,20 +168,56 @@ const positionServiceFactory = (): IPositionService => {
    *                                    TRADES EVENT HANDLERS                                     *
    ********************************************************************************************** */
 
-
-
-
+  /**
+   * Fires when the module has just been initialized or when a new position has just come into
+   * existance. If the position already exists, it will update its values. Otherwise, it creates the
+   * record.
+   * @returns Promise<void>
+   */
   const __handleNewPosition = async (): Promise<void> => {
-
+    if (__active) {
+      __active = {
+        ...__active,
+        ...calculateMarketStateDependantProps(
+          __price,
+          __active.entry_price,
+          __active.amount,
+          __active.amount_quote_in,
+          __active.amount_quote_out,
+        ),
+        ...__trades,
+      };
+      await updatePositionRecord(__active);
+    } else {
+      __active = buildNewPosition(__trades!, __price);
+      await createPositionRecord(__active);
+      // notify users @TODO
+    }
   };
 
   const __handlePositionChanges = (): void => {
 
   };
 
-  const __handlePositionClose = (): void => {
+  /**
+   * Fires whenever an active position has changed and now has an amount equals to 0. When this
+   * happens, the last state of the position is calculated and stored before unsetting it.
+   * @returns Promise<void>
+   */
+  const __handlePositionClose = async (): Promise<void> => {
     // update the record
-    // @TODO
+    __active = {
+      ...__active!,
+      ...calculateMarketStateDependantProps(
+        __price,
+        __active!.entry_price,
+        __active!.amount,
+        __active!.amount_quote_in,
+        __active!.amount_quote_out,
+      ),
+      ...__trades,
+    };
+    await updatePositionRecord(__active!);
 
     // notify users
     // @TODO
@@ -238,7 +275,7 @@ const positionServiceFactory = (): IPositionService => {
    * @param nextState
    */
   const __onTradesChanges = (nextState: ITrade[]): void => {
-    const newAnalysis = analyzeTrades(nextState, __price);
+    const newAnalysis = analyzeTrades(nextState, __price, StrategyService.config.decreaseLevels);
     if (__trades === undefined && newAnalysis !== undefined) {
       __trades = newAnalysis;
       __handleNewPosition();

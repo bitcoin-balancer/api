@@ -10,6 +10,7 @@ import {
   getTransactionRecord,
   listTransactionRecords,
   listTransactionRecordsByRange,
+  getLastBuyTransactionRecordID,
   createTransactionRecord,
   updateTransactionRecord,
 } from './model.js';
@@ -93,6 +94,13 @@ const transactionServiceFactory = (): ITransactionService => {
    * @returns Promise<ITransaction[]>
    */
   const listTransactionsByRange = listTransactionRecordsByRange;
+
+  /**
+   * Retrieves the ID for the last executed buy transaction. If there are no buy transactions it
+   * returns undefined.
+   * @returns Promise<number | undefined>
+   */
+  const getLastBuyTransactionID = getLastBuyTransactionRecordID;
 
 
 
@@ -293,6 +301,7 @@ const transactionServiceFactory = (): ITransactionService => {
     getTransaction,
     listTransactions,
     listTransactionsByRange,
+    getLastBuyTransactionID,
 
     // execution
     buy,

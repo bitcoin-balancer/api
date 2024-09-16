@@ -38,41 +38,6 @@ type IPositionService = {
  ************************************************************************************************ */
 
 /**
- * Market State Dependant Props
- * The properties that should be recalculated every time the market state changes.
- */
-type IMarketStateDependantProps = {
-  gain: number,
-  amount_quote: number,
-  pnl: number,
-  roi: number,
-};
-
-/**
- * Trades Analysis
- * The key values extracted from the list of position trades, used to manage active positions.
- */
-type ITradesAnalysis = {
-  open: number;
-  close: number | null;
-  entry_price: number;
-  amount: number;
-  amount_quote: number;
-  amount_quote_in: number;
-  amount_quote_out: number;
-  pnl: number;
-  roi: number;
-};
-
-
-
-
-
-/* ************************************************************************************************
- *                                            POSITION                                            *
- ************************************************************************************************ */
-
-/**
  * Decrease Price Levels
  * Each level has its own price that is calculated based on its gainRequirement%.
  */
@@ -104,6 +69,42 @@ type IDecreaseActions = [
   IPositionAction[],
   IPositionAction[],
 ];
+
+/**
+ * Market State Dependant Props
+ * The properties that should be recalculated every time the market state changes.
+ */
+type IMarketStateDependantProps = {
+  gain: number,
+  amount_quote: number,
+  pnl: number,
+  roi: number,
+};
+
+/**
+ * Trades Analysis
+ * The key values extracted from the list of position trades, used to manage active positions.
+ */
+type ITradesAnalysis = {
+  open: number;
+  close: number | null;
+  entry_price: number;
+  amount: number;
+  amount_quote: number;
+  amount_quote_in: number;
+  amount_quote_out: number;
+  pnl: number;
+  roi: number;
+  decrease_price_levels: IDecreasePriceLevels;
+};
+
+
+
+
+
+/* ************************************************************************************************
+ *                                            POSITION                                            *
+ ************************************************************************************************ */
 
 /**
  * Position
@@ -184,13 +185,13 @@ export type {
   IPositionService,
 
   // types
+  IDecreasePriceLevels,
+  IPositionAction,
+  IDecreaseActions,
   IMarketStateDependantProps,
   ITradesAnalysis,
 
   // position
-  IDecreasePriceLevels,
-  IPositionAction,
-  IDecreaseActions,
   IPosition,
   ICompactPosition,
 };

@@ -88,7 +88,7 @@ type IStrategy = {
   increaseGainRequirement: number;
 
   // the tuple containing the decrease levels that will be activated based on the position's gain%
-  decreaseLevels: [IDecreaseLevel, IDecreaseLevel, IDecreaseLevel, IDecreaseLevel, IDecreaseLevel];
+  decreaseLevels: IDecreaseLevels;
 };
 
 

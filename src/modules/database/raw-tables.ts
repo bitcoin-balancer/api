@@ -212,6 +212,7 @@ export const RAW_TABLES: IRawTable[] = [
         amount      NUMERIC(20, 8) NOT NULL,
         logs        JSONB NOT NULL
       );
-      CREATE INDEX IF NOT EXISTS ${getTableName('transactions')}_event_time_idx ON ${getTableName('transactions')}(event_time);`,
+      CREATE INDEX IF NOT EXISTS ${getTableName('transactions')}_event_time_idx ON ${getTableName('transactions')}(event_time);
+      CREATE INDEX IF NOT EXISTS ${getTableName('transactions')}_side_idx ON ${getTableName('transactions')}(side);`,
   },
 ];

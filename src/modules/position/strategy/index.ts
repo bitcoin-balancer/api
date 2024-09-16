@@ -1,7 +1,12 @@
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
 import { buildDefaultConfig } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
-import { IStrategyService, IStrategy, IDecreaseLevel } from './types.js';
+import {
+  IStrategyService,
+  IStrategy,
+  IDecreaseLevel,
+  IDecreaseLevels,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -122,4 +127,5 @@ export {
   // types
   type IStrategy,
   type IDecreaseLevel,
+  type IDecreaseLevels,
 };

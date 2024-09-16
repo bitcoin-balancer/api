@@ -109,6 +109,25 @@ const listTransactionRecordsByRange = async (
   return rows;
 };
 
+/**
+ * Retrieves the ID for the last executed buy transaction. If there are no buy transactions it
+ * returns undefined.
+ * @returns Promise<number | undefined>
+ */
+const getLastBuyTransactionRecordID = async (): Promise<number | undefined> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT id 
+      FROM ${DatabaseService.tn.transactions}
+      WHERE side = 'BUY'
+      ORDER BY id DESC
+      LIMIT 1;
+    `,
+    values: [],
+  });
+  return rows[0]?.id;
+};
+
 
 
 
@@ -162,6 +181,7 @@ export {
   getTransactionRecord,
   listTransactionRecords,
   listTransactionRecordsByRange,
+  getLastBuyTransactionRecordID,
 
   // actions
   createTransactionRecord,
