@@ -26,13 +26,13 @@ import {
 /**
  * Calculates the decrease price levels based on the strategy's decrease levels.
  * @param entryPrice
- * @param levels
+ * @param decreaseLevels
  * @returns IDecreasePriceLevels
  */
 const __calculateDecreasePriceLevels = (
   entryPrice: number,
-  levels: IDecreaseLevels,
-): IDecreasePriceLevels => levels.map(
+  decreaseLevels: IDecreaseLevels,
+): IDecreasePriceLevels => decreaseLevels.map(
   (lvl) => adjustByPercentage(entryPrice, lvl.gainRequirement),
 ) as IDecreasePriceLevels;
 
