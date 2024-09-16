@@ -199,16 +199,12 @@ const positionServiceFactory = (): IPositionService => {
     }
   };
 
-  const __handlePositionChanges = (): void => {
-
-  };
-
   /**
    * Fires whenever an active position has changed and now has an amount equals to 0. When this
    * happens, the last state of the position is calculated and stored before unsetting it.
    * @returns Promise<void>
    */
-  const __handlePositionClose = async (): Promise<void> => {
+  const __handlePositionChanges = async (): Promise<void> => {
     // update the record
     __active = {
       ...__active!,
@@ -223,16 +219,22 @@ const positionServiceFactory = (): IPositionService => {
     };
     await updatePositionRecord(__active!);
 
-    // notify users
-    // @TODO
+    // check if the position has been closed
+    if (__active.amount === 0) {
+      // notify users
+      // @TODO
 
-    // complete the event history
-    __activeHist!.complete();
-    __activeHist = undefined;
+      // reset the trades stream
+      TradeService.onPositionClose();
 
-    // reset the local properties
-    __active = undefined;
-    __trades = undefined;
+      // complete the event history
+      __activeHist!.complete();
+      __activeHist = undefined;
+
+      // reset the local properties
+      __active = undefined;
+      __trades = undefined;
+    }
   };
 
 
@@ -289,11 +291,7 @@ const positionServiceFactory = (): IPositionService => {
       && __trades.amount !== newAnalysis.amount
     ) {
       __trades = newAnalysis;
-      if (__trades.amount === 0) {
-        __handlePositionClose();
-      } else {
-        __handlePositionChanges();
-      }
+      __handlePositionChanges();
     }
   };
 

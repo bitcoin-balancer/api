@@ -108,30 +108,31 @@ const analyzeTrades = (
     }
   });
 
+  // calculate the new entry price - if there are no buy trades, the entryPrice will be 0
+  const entryPrice = calculateWeightedEntry(buyTrades);
+  if (entryPrice === 0) {
+    return undefined;
+  }
+
   // calculate the position amount in quote asset
   const amountQuote = processValue(amount.times(currentPrice));
 
   // calculate the unrealized amount (quote)
   const unrealizedAmountQuoteOut = amountQuoteOut.plus(amountQuote);
 
-  // calculate the new entry price - if there are no buy trades, the entryPrice will be 0
-  const entryPrice = calculateWeightedEntry(buyTrades);
-
   // finally, return the analysis if possible
-  return entryPrice > 0
-    ? {
-      open: trades[0].event_time,
-      close: amount.isEqualTo(0) ? trades[trades.length - 1].event_time : null,
-      entry_price: entryPrice,
-      amount: processValue(amount, { decimalPlaces: 8, roundingMode: 'ROUND_HALF_DOWN' }),
-      amount_quote: amountQuote,
-      amount_quote_in: processValue(amountQuoteIn),
-      amount_quote_out: processValue(amountQuoteOut),
-      pnl: processValue(unrealizedAmountQuoteOut.minus(amountQuoteIn)),
-      roi: calculatePercentageChange(amountQuoteIn, unrealizedAmountQuoteOut),
-      decrease_price_levels: __calculateDecreasePriceLevels(entryPrice, decreaseLevels),
-    }
-    : undefined;
+  return {
+    open: trades[0].event_time,
+    close: amount.isEqualTo(0) ? trades[trades.length - 1].event_time : null,
+    entry_price: entryPrice,
+    amount: processValue(amount, { decimalPlaces: 8, roundingMode: 'ROUND_HALF_DOWN' }),
+    amount_quote: amountQuote,
+    amount_quote_in: processValue(amountQuoteIn),
+    amount_quote_out: processValue(amountQuoteOut),
+    pnl: processValue(unrealizedAmountQuoteOut.minus(amountQuoteIn)),
+    roi: calculatePercentageChange(amountQuoteIn, unrealizedAmountQuoteOut),
+    decrease_price_levels: __calculateDecreasePriceLevels(entryPrice, decreaseLevels),
+  };
 };
 
 
