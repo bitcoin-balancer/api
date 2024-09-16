@@ -648,7 +648,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `utils.ts`
 
-- **32250:** `'The initial balances snapshot could not be extracted from the logs.`
+- **32250:** ``
 - **32251:** ``
 
 ### `validations.ts`

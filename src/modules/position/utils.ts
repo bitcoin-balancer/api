@@ -4,9 +4,10 @@ import {
   calculatePercentageChange,
   IBigNumber,
 } from 'bignumber-utils';
-import { IMarketState } from '../market-state/index.js';
+import { delay } from '../shared/utils/index.js';
+import { IBalances, ITrade } from '../shared/exchange/index.js';
+import { BalanceService } from './balance/index.js';
 import { IMarketStateDependantProps, ITradesAnalysis } from './types.js';
-import { ITrade } from '../shared/exchange/types.js';
 
 /* ************************************************************************************************
  *                                          CALCULATORS                                           *
@@ -85,20 +86,27 @@ const analyzeTrades = (trades: ITrade[]): ITradesAnalysis | undefined => (
 
 
 /* ************************************************************************************************
- *                                     EVENT HANDLING HELPERS                                     *
+ *                                           RETRIEVERS                                           *
  ************************************************************************************************ */
 
 /**
- * Checks if a reversal event has just been issued in the current market state.
- * @param lastReversal
- * @param state
- * @returns boolean
+ * Attempts to retrieve the initial balances in a very persistent manner.
+ * @param retryScheduleDuration?
+ * @returns Promise<IBalances>
  */
-const newReversalEventIssued = (lastReversal: number, state: IMarketState): boolean => (
-  state.reversalState !== undefined
-  && typeof state.reversalState.reversalEventTime === 'number'
-  && state.reversalState.reversalEventTime > lastReversal
-);
+const getBalances = async (
+  retryScheduleDuration: number[] = [5, 15, 30, 60, 180],
+): Promise<IBalances> => {
+  try {
+    return await BalanceService.getBalances(true);
+  } catch (e) {
+    if (retryScheduleDuration.length === 0) {
+      throw e;
+    }
+    await delay(retryScheduleDuration[0]);
+    return getBalances(retryScheduleDuration.slice(1));
+  }
+};
 
 
 
@@ -114,6 +122,6 @@ export {
   // trades analysis
   analyzeTrades,
 
-  // event handling helpers
-  newReversalEventIssued,
+  // retrievers
+  getBalances,
 };

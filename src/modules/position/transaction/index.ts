@@ -4,7 +4,7 @@ import { delay } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IBalances, ISide } from '../../shared/exchange/index.js';
 import { BalanceService } from '../balance/index.js';
-import { buildLog, buildTX, getInitialBalancesSnapshot } from './utils.js';
+import { buildLog, buildTX } from './utils.js';
 import { canTransactionBeRetrieved, canRecordsBeListed } from './validations.js';
 import {
   getTransactionRecord,
@@ -101,32 +101,6 @@ const transactionServiceFactory = (): ITransactionService => {
   /* **********************************************************************************************
    *                                           EXECUTION                                          *
    ********************************************************************************************** */
-
-  /**
-   * Attempts to retrieve the initial balances in a persistent manner.
-   * @param logs?
-   * @param retryScheduleDuration?
-   * @returns Promise<ITransactionActionResult>
-   */
-  const __getInitialBalances = async (
-    logs: ITransactionLog[] = [],
-    retryScheduleDuration: number[] = __RETRY_DELAYS,
-  ): Promise<ITransactionActionResult> => {
-    try {
-      const balances = await BalanceService.getBalances(true);
-      return { logs: [...logs, buildLog('INITIAL_BALANCES', true, balances)] };
-    } catch (e) {
-      const msg = extractMessage(e);
-      if (retryScheduleDuration.length === 0) {
-        return { logs: [...logs, buildLog('INITIAL_BALANCES', false, undefined, msg)], error: msg };
-      }
-      await delay(retryScheduleDuration[0]);
-      return __getInitialBalances(
-        [...logs, buildLog('INITIAL_BALANCES', false, undefined, msg)],
-        retryScheduleDuration.slice(1),
-      );
-    }
-  };
 
   /**
    * Executes the transaction and returns the log based on the outcome.
@@ -229,7 +203,8 @@ const transactionServiceFactory = (): ITransactionService => {
   };
 
   /**
-   * Schedules a transaction to be executed persistently.
+   * Builds, schedules and confirms a transaction was executed in a persistent manner. If unable to
+   * do so, it handles the failure.
    * @param id
    * @param rawTX
    * @returns Promise<void>
@@ -238,25 +213,13 @@ const transactionServiceFactory = (): ITransactionService => {
     id: number,
     rawTX: Omit<ITransaction, 'id'>,
   ): Promise<void> => {
+    // build and attempt to execute the transaction
     const tx = { ...rawTX, id };
     try {
-      // retrieve the initial balances in case they weren't provided
-      if (tx.logs.length === 0) {
-        const { logs, error } = await __getInitialBalances();
-        tx.logs = [...tx.logs, ...logs];
-        if (typeof error === 'string') {
-          throw new Error(
-            'Failed to retrieve the initial balances to start the transaction.',
-            { cause: error },
-          );
-        }
-      }
-
-      // execute and confirm the tx
       const { logs, error } = await __executeAndConfirmTransaction(
         tx.side,
         tx.amount,
-        getInitialBalancesSnapshot(tx.logs),
+        tx.logs[0].payload as IBalances,
       );
       tx.logs = [...tx.logs, ...logs];
       if (typeof error === 'string') {
@@ -276,10 +239,10 @@ const transactionServiceFactory = (): ITransactionService => {
    * Starts the process that will try as hard as possible to execute a transaction.
    * @param side
    * @param amount
-   * @param balances?
+   * @param balances
    * @returns Promise<number>
    */
-  const __execute = async (side: ISide, amount: number, balances?: IBalances): Promise<number> => {
+  const __execute = async (side: ISide, amount: number, balances: IBalances): Promise<number> => {
     // build and store the tx
     const rawTX = buildTX(side, amount, balances);
     const id = await createTransactionRecord(rawTX);
@@ -297,7 +260,7 @@ const transactionServiceFactory = (): ITransactionService => {
    * @param balances
    * @returns Promise<number>
    */
-  const buy = async (amount: number, balances?: IBalances): Promise<number> => __execute(
+  const buy = async (amount: number, balances: IBalances): Promise<number> => __execute(
     'BUY',
     amount,
     balances,
@@ -309,7 +272,7 @@ const transactionServiceFactory = (): ITransactionService => {
    * @param balances
    * @returns Promise<number>
    */
-  const sell = async (amount: number, balances?: IBalances): Promise<number> => __execute(
+  const sell = async (amount: number, balances: IBalances): Promise<number> => __execute(
     'SELL',
     amount,
     balances,

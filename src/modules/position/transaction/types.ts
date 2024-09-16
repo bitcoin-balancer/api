@@ -21,8 +21,8 @@ type ITransactionService = {
   listTransactionsByRange: (startAt: number, endAt?: number) => Promise<ITransaction[]>;
 
   // execution
-  buy (amount: number, balances?: IBalances): Promise<number>;
-  sell (amount: number, balances?: IBalances): Promise<number>;
+  buy (amount: number, balances: IBalances): Promise<number>;
+  sell (amount: number, balances: IBalances): Promise<number>;
 };
 
 

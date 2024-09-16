@@ -11,9 +11,9 @@ import { ENVIRONMENT } from '../../shared/environment/index.js';
 const getRefetchFrequency = (): number => {
   switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.trading) {
     case 'kraken':
-      return 300; // ~5 minutes
+      return 600; // ~10 minutes
     default:
-      return 180; // ~3 minutes
+      return 300; // ~5 minutes
   }
 };
 

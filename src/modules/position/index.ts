@@ -16,7 +16,7 @@ import { TradeService } from './trade/index.js';
 import {
   calculateMarketStateDependantProps,
   analyzeTrades,
-  newReversalEventIssued,
+  getBalances,
 } from './utils.js';
 import {
   canPositionRecordBeRetrieved,
@@ -216,7 +216,11 @@ const positionServiceFactory = (): IPositionService => {
     __handleMarketStateChanges();
 
     // handle a new reversal event if it has been issued
-    if (newReversalEventIssued(__lastReversalEventTime, nextState)) {
+    if (
+      nextState.reversalState !== undefined
+      && typeof nextState.reversalState.reversalEventTime === 'number'
+      && nextState.reversalState.reversalEventTime > __lastReversalEventTime
+    ) {
       __lastReversalEventTime = nextState.reversalState!.reversalEventTime as number;
       __handleNewReversalEvent();
     }
