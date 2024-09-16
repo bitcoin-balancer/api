@@ -11,6 +11,7 @@ import {
   prettifyBitcoinValue,
   prettifyDate,
 } from './utils.js';
+import { ISide } from '../shared/exchange/index.js';
 import { canRecordsBeListed } from './validations.js';
 import { listRecords, saveRecord } from './model.js';
 import { throttleableNotificationFactory } from './throttleable-notification.js';
@@ -285,6 +286,32 @@ const notificationServiceFactory = (): INotificationService => {
    ********************************************************************************************** */
 
   /**
+   * Broadcasts a message notifying users the position could not be increased or decreased because
+   * the account does not have enough balance.
+   * @param side
+   * @param has
+   * @param needs
+   */
+  const insufficientBalance = (side: ISide, has: number, needs: number): void => __addToQueue({
+    sender: 'POSITION',
+    title: 'Insufficient balance',
+    description: `The position could not be ${side === 'BUY' ? 'increased' : 'decreased'} as the balance is lower than the minimum. Has: ${side === 'BUY' ? prettifyDollarValue(has) : prettifyBitcoinValue(has)} | Needs: ${side === 'BUY' ? prettifyDollarValue(needs) : prettifyBitcoinValue(has)}.`,
+  });
+
+  /**
+   * Broadcasts a message notifying users the position will be partially increased or decreased due
+   * to insufficient funds.
+   * @param side
+   * @param has
+   * @param needs
+   */
+  const lowBalance = (side: ISide, has: number, needs: number): void => __addToQueue({
+    sender: 'POSITION',
+    title: 'Low balance',
+    description: `The position will be partially ${side === 'BUY' ? 'increased' : 'decreased'} due to insufficient funds. Has: ${side === 'BUY' ? prettifyDollarValue(has) : prettifyBitcoinValue(has)} | Needs: ${side === 'BUY' ? prettifyDollarValue(needs) : prettifyBitcoinValue(has)}.`,
+  });
+
+  /**
    * Broadcasts a message notifying users a new position has been opened.
    * @param amount
    * @param amountQuote
@@ -387,6 +414,8 @@ const notificationServiceFactory = (): INotificationService => {
     // transaction
 
     // position
+    insufficientBalance,
+    lowBalance,
     onNewPosition,
     onPositionClose,
 

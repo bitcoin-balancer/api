@@ -1,4 +1,4 @@
-
+import { ISide } from '../shared/exchange/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -41,6 +41,8 @@ type INotificationService = {
   // ...
 
   // position
+  insufficientBalance: (side: ISide, has: number, needs: number) => void;
+  lowBalance: (side: ISide, has: number, needs: number) => void;
   onNewPosition: (amount: number, amountQuote: number, marketPrice: number) => void;
   onPositionClose: (openTime: number, pnl: number, roi: number) => void;
 
