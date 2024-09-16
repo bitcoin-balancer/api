@@ -1,5 +1,4 @@
 import {
-  IBigNumber,
   getBigNumber,
   processValue,
   calculatePercentageChange,
@@ -13,14 +12,6 @@ import { IMarketStateDependantProps, ITradesAnalysis } from './types.js';
 /* ************************************************************************************************
  *                                          CALCULATORS                                           *
  ************************************************************************************************ */
-
-/**
- * Calculates the quote value of a base asset amount for a price.
- */
-const __calculateQuoteAmount = (amount: number, price: number): IBigNumber => processValue(
-  getBigNumber(amount).times(price),
-  { type: 'bignumber', roundingMode: 'ROUND_HALF_DOWN', decimalPlaces: 2 },
-);
 
 /**
  * Calculates all the position props that are affected when the market state changes.
@@ -39,7 +30,7 @@ const calculateMarketStateDependantProps = (
   amountQuoteOut: number,
 ): IMarketStateDependantProps => {
   // calculate the amount in quote asset
-  const amountQuote = __calculateQuoteAmount(amount, marketPrice);
+  const amountQuote = getBigNumber(amount).times(marketPrice);
   const unrealizedAmountQuoteOut = amountQuote.plus(amountQuoteOut);
 
   // finally, pack and return the results
