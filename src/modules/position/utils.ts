@@ -17,6 +17,7 @@ import {
   IPositionAction,
   ITradesAnalysis,
 } from './types.js';
+import { TransactionService } from './transaction/index.js';
 
 /* ************************************************************************************************
  *                                          CALCULATORS                                           *
@@ -137,23 +138,48 @@ const analyzeTrades = (
  *                                         BUILD HELPERS                                          *
  ************************************************************************************************ */
 
-const buildPositionAction = (txID?: number): IPositionAction => {
-
+/**
+ * Builds a position action and calculates the timestamp at which the next event can take place.
+ * @param txID
+ * @param idleMinutes
+ * @returns IPositionAction
+ */
+const buildPositionAction = (txID: number | undefined, idleMinutes: number): IPositionAction => {
+  const currentTime = Date.now();
+  return {
+    txID: typeof txID === 'number' ? txID : 0,
+    eventTime: currentTime,
+    nextEventTime: currentTime + ((idleMinutes * 60) * 1000),
+  };
 };
 
-const buildNewPosition = (trades: ITradesAnalysis, currentPrice: number): IPosition => ({
-  id: generateUUID(),
-  ...calculateMarketStateDependantProps(
-    currentPrice,
-    trades.entry_price,
-    trades.amount,
-    trades.amount_quote_in,
-    trades.amount_quote_out,
-  ),
-  ...trades,
-  increase_actions: [],
-  decrease_actions: [[], [], [], [], []],
-});
+/**
+ * Builds the position record based on the initial trades and the strategy.
+ * @param trades
+ * @param currentPrice
+ * @param increaseIdleDuration
+ * @returns Promise<IPosition>
+ */
+const buildNewPosition = async (
+  trades: ITradesAnalysis,
+  currentPrice: number,
+  increaseIdleDuration: number,
+): Promise<IPosition> => {
+  const lastTranctionID = await TransactionService.getLastBuyTransactionID();
+  return {
+    id: generateUUID(),
+    ...calculateMarketStateDependantProps(
+      currentPrice,
+      trades.entry_price,
+      trades.amount,
+      trades.amount_quote_in,
+      trades.amount_quote_out,
+    ),
+    ...trades,
+    increase_actions: [buildPositionAction(lastTranctionID, increaseIdleDuration * 60)],
+    decrease_actions: [[], [], [], [], []],
+  };
+};
 
 
 
@@ -204,6 +230,7 @@ export {
   analyzeTrades,
 
   // build helpers
+  buildPositionAction,
   buildNewPosition,
 
   // retrievers

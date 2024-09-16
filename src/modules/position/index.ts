@@ -189,7 +189,11 @@ const positionServiceFactory = (): IPositionService => {
       };
       await updatePositionRecord(__active);
     } else {
-      __active = buildNewPosition(__trades!, __price);
+      __active = await buildNewPosition(
+        __trades!,
+        __price,
+        StrategyService.config.increaseIdleDuration,
+      );
       await createPositionRecord(__active);
       // notify users @TODO
     }
