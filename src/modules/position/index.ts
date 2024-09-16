@@ -238,7 +238,7 @@ const positionServiceFactory = (): IPositionService => {
    * @param nextState
    */
   const __onTradesChanges = (nextState: ITrade[]): void => {
-    const newAnalysis = analyzeTrades(nextState);
+    const newAnalysis = analyzeTrades(nextState, __price);
     if (__trades === undefined && newAnalysis !== undefined) {
       __trades = newAnalysis;
       __handleNewPosition();

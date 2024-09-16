@@ -1,8 +1,9 @@
 import {
+  IBigNumber,
   getBigNumber,
   processValue,
   calculatePercentageChange,
-  IBigNumber,
+  calculateWeightedEntry,
 } from 'bignumber-utils';
 import { delay } from '../shared/utils/index.js';
 import { IBalances, ITrade } from '../shared/exchange/index.js';
@@ -59,27 +60,53 @@ const calculateMarketStateDependantProps = (
  ************************************************************************************************ */
 
 /**
- * Builds the default analsysis object to serve as a skeleton.
- * @returns ITradesAnalysis
+ * Analysis a list of trades and returns a summarized object containing the most relevant info
+ * ready to be inserted into the position record.
+ * @param trades
+ * @param currentPrice
+ * @returns ITradesAnalysis | undefined
  */
-const buildDefaultAnalysis = (): ITradesAnalysis => ({
-  open: 0,
-  close: null,
-  entry_price: 0,
-  amount: 0,
-  amount_quote: 0,
-  amount_quote_in: 0,
-  amount_quote_out: 0,
-  pnl: 0,
-  roi: 0,
-});
+const analyzeTrades = (trades: ITrade[], currentPrice: number): ITradesAnalysis | undefined => {
+  // do not analyze if there are no trades
+  if (trades.length === 0) {
+    return undefined;
+  }
 
+  // init values and iterate over each trade
+  let amount = getBigNumber(0);
+  let amountQuoteIn = getBigNumber(0);
+  let amountQuoteOut = getBigNumber(0);
+  const buyTrades: Array<[number, number]> = [];
+  trades.forEach((trade) => {
+    if (trade.side === 'BUY') {
+      amount = amount.plus(trade.amount);
+      amountQuoteIn = amountQuoteIn.plus(trade.amount_quote);
+      buyTrades.push([trade.price, trade.amount]);
+    } else {
+      amount = amount.minus(trade.amount);
+      amountQuoteOut = amountQuoteOut.plus(trade.amount_quote);
+    }
+  });
 
-const analyzeTrades = (trades: ITrade[]): ITradesAnalysis | undefined => (
-  trades.length > 0
-    ? buildDefaultAnalysis()
-    : undefined
-);
+  // calculate the position amount in quote asset
+  const amountQuote = processValue(amount.times(currentPrice));
+
+  // calculate the unrealized amount (quote)
+  const unrealizedAmountQuoteOut = amountQuoteOut.plus(amountQuote);
+
+  // finally, return the analysis
+  return {
+    open: trades[0].event_time,
+    close: amount.isEqualTo(0) ? trades[trades.length - 1].event_time : null,
+    entry_price: calculateWeightedEntry(buyTrades),
+    amount: processValue(amount, { decimalPlaces: 8, roundingMode: 'ROUND_HALF_DOWN' }),
+    amount_quote: amountQuote,
+    amount_quote_in: processValue(amountQuoteIn),
+    amount_quote_out: processValue(amountQuoteOut),
+    pnl: processValue(unrealizedAmountQuoteOut.minus(amountQuoteIn)),
+    roi: calculatePercentageChange(amountQuoteIn, unrealizedAmountQuoteOut),
+  };
+};
 
 
 
@@ -93,6 +120,12 @@ const analyzeTrades = (trades: ITrade[]): ITradesAnalysis | undefined => (
  * Attempts to retrieve the initial balances in a very persistent manner.
  * @param retryScheduleDuration?
  * @returns Promise<IBalances>
+ * @throws
+ * - 12500: if the HTTP response code is not in the acceptedCodes
+ * - 13503: if the response didn't include a valid object (binance)
+ * - 13504: if the response didn't include a valid list of balances (binance)
+ * - 13750: if the balance for the base asset is not in the response object (binance)
+ * - 13751: if the balance for the quote asset is not in the response object (binance)
  */
 const getBalances = async (
   retryScheduleDuration: number[] = [5, 15, 30, 60, 180],
