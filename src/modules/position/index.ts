@@ -175,6 +175,8 @@ const positionServiceFactory = (): IPositionService => {
    * @returns Promise<void>
    */
   const __handleNewPosition = async (): Promise<void> => {
+    // if there was an existing active position, update its properties. Otherwise, build the new
+    // position record and save it.
     if (__active) {
       __active = {
         ...__active,
@@ -197,6 +199,10 @@ const positionServiceFactory = (): IPositionService => {
       await createPositionRecord(__active);
       // notify users @TODO
     }
+
+    // initialize the history
+    __activeHist = await eventHistoryFactory(__active.id, 'position', '1d');
+    __updatePositionHistory();
   };
 
   /**
@@ -218,6 +224,9 @@ const positionServiceFactory = (): IPositionService => {
       ...__trades,
     };
     await updatePositionRecord(__active!);
+
+    // update the history
+    __updatePositionHistory();
 
     // check if the position has been closed
     if (__active.amount === 0) {
@@ -422,9 +431,6 @@ const positionServiceFactory = (): IPositionService => {
     try {
       // Active Position
       __active = await getActivePositionRecord();
-      if (__active) {
-        __activeHist = await eventHistoryFactory(__active.id, 'position', '1d');
-      }
 
       // Strategy Module
       try {
