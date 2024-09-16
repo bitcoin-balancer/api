@@ -10,6 +10,7 @@ import { generateUUID } from '../shared/uuid/index.js';
 import { IBalances, ITrade } from '../shared/exchange/index.js';
 import { IDecreaseLevels } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
+import { TransactionService } from './transaction/index.js';
 import {
   IDecreasePriceLevels,
   IMarketStateDependantProps,
@@ -17,7 +18,6 @@ import {
   IPositionAction,
   ITradesAnalysis,
 } from './types.js';
-import { TransactionService } from './transaction/index.js';
 
 /* ************************************************************************************************
  *                                          CALCULATORS                                           *

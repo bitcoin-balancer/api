@@ -284,7 +284,7 @@ const toState = (state: IPriceCrashStateRecord): IReversalState => ({
  * @returns IReversalConfig
  */
 const buildDefaultConfig = (): IReversalConfig => ({
-  crashDuration: 240,
+  crashDuration: 360,
   pointsRequirement: 75,
   weights: {
     liquidity: 30,
