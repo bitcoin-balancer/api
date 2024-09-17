@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { Subscription } from 'rxjs';
 import { encodeError, extractMessage } from 'error-message-utils';
-import { getBigNumber } from 'bignumber-utils';
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { NotificationService } from '../notification/index.js';
@@ -246,13 +245,20 @@ const positionServiceFactory = (): IPositionService => {
   };
 
   /**
-   * Fires whenever a new reversal event is issued. It checks if a position should be opened or if
-   * an open position should be increased.
+   * Fires whenever a new reversal event is issued. It checks if a position should be opened. If
+   * there is an active position, it checks if the idle state has faded away and increases it if so.
    * @returns Promise<void>
    */
   const __handleNewReversalEvent = async (): Promise<void> => {
-    if (StrategyService.config.canIncrease) {
-      // ...
+    if (
+      StrategyService.config.canIncrease
+      && (
+        !__active
+        // eslint-disable-next-line max-len
+        || Date.now() > __active.increase_actions[__active.increase_actions.length - 1].nextEventTime
+      )
+    ) {
+      await __increase();
     }
   };
 
