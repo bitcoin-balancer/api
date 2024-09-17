@@ -42,7 +42,7 @@ const liquidityServiceFactory = (): ILiquidityService => {
 
   // the liq. intensity requirements are calculated every REQUIREMENT_CALCULATION_FREQUENCY minutes
   let __nextRequirementsCalculation: number | undefined;
-  const __REQUIREMENT_CALCULATION_FREQUENCY = 2;
+  const __REQUIREMENT_CALCULATION_FREQUENCY = 1;
 
   // the module's configuration
   let __config: IRecordStore<ILiquidityConfig>;
