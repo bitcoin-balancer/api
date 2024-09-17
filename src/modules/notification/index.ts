@@ -310,10 +310,10 @@ const notificationServiceFactory = (): INotificationService => {
    * Broadcasts a message notifying users there was an error when attempting to initialize a tx.
    * @param error
    */
-  const failedToInitializeTransaction = (error: unknown): void => __addToQueue({
+  const failedToInitializeTransaction = (error: string): void => __addToQueue({
     sender: 'POSITION',
     title: 'Failed to initialize transaction',
-    description: extractMessage(error),
+    description: error,
   });
 
   /**

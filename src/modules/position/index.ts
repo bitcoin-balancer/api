@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { Subscription } from 'rxjs';
 import { encodeError, extractMessage } from 'error-message-utils';
+import { APIErrorService } from '../api-error/index.js';
 import { NotificationService } from '../notification/index.js';
 import {
   CandlestickService,
@@ -8,17 +9,19 @@ import {
   IEventHistory,
   IEventHistoryRecord,
 } from '../shared/candlestick/index.js';
-import { ITrade } from '../shared/exchange/index.js';
+import { IBalances, ITrade } from '../shared/exchange/index.js';
 import { IState } from '../market-state/shared/types.js';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { StrategyService } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
 import { TradeService } from './trade/index.js';
+import { TransactionService } from './transaction/index.js';
 import {
   calculateMarketStateDependantProps,
   analyzeTrades,
   buildNewPosition,
   getBalances,
+  buildPositionAction,
 } from './utils.js';
 import {
   canPositionRecordBeRetrieved,
@@ -35,6 +38,7 @@ import {
 } from './model.js';
 import {
   IPositionService,
+  ITransactionAmountResult,
   ITradesAnalysis,
   IPosition,
   ICompactPosition,
@@ -97,7 +101,7 @@ const positionServiceFactory = (): IPositionService => {
 
 
   /* **********************************************************************************************
-   *                                           HELPERS                                            *
+   *                                       GENERAL HELPERS                                        *
    ********************************************************************************************** */
 
   /**
@@ -105,10 +109,60 @@ const positionServiceFactory = (): IPositionService => {
    * history.
    */
   const __updatePositionHistory = (): void => {
-    if (__active && __activeHist) {
-      __activeHist.handleNewData([__price, __active.gain, __active.entry_price, __active.amount]);
+    __activeHist?.handleNewData([__price, __active!.gain, __active!.entry_price, __active!.amount]);
+  };
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                    TRANSACTION EXECUTION                                     *
+   ********************************************************************************************** */
+
+  /**
+   * Calculates the amount that will be increased. If 0 is returned, abort the transaction.
+   * @param balances
+   * @returns number
+   */
+  const __calculateIncreaseAmount = (balances: IBalances): number => {
+    // init values
+    let amount: number = 0;
+
+    // finally, return the results
+    return 0;
+  };
+
+  /**
+   * Opens or increases an existing position based on the strategy.
+   * @returns Promise<void>
+   */
+  const __increase = async (): Promise<void> => {
+    try {
+      // retrieve the balances
+      const balances = await getBalances();
+
+      // calculate the tx amount and proceed if requirements are met
+      const amount = __calculateIncreaseAmount(balances);
+      if (amount > 0) {
+        // initialize the tx and update the position (if any)
+        const txID = await TransactionService.buy(amount, balances);
+        if (__active) {
+          __active.increase_actions.push(buildPositionAction(
+            txID,
+            StrategyService.config.increaseIdleDuration * 60,
+          ));
+          await updatePositionRecord(__active);
+        }
+      }
+    } catch (e) {
+      const msg = extractMessage(e);
+      APIErrorService.save('PositionService.__increase', msg);
+      NotificationService.failedToInitializeTransaction(msg);
     }
   };
+
+
 
 
 
@@ -236,16 +290,16 @@ const positionServiceFactory = (): IPositionService => {
       // notify users
       NotificationService.onPositionClose(__active.open, __active.pnl, __active.roi);
 
-      // reset the trades stream
+      // reset the trades' stream
       TradeService.onPositionClose();
 
       // complete the event history
       __activeHist!.complete();
-      __activeHist = undefined;
 
       // reset the local properties
       __active = undefined;
       __trades = undefined;
+      __activeHist = undefined;
     }
   };
 
