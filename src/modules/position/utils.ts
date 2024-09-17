@@ -1,9 +1,11 @@
 import {
+  IBigNumberValue,
   getBigNumber,
   processValue,
   calculatePercentageChange,
   calculateWeightedEntry,
   adjustByPercentage,
+  calculateExchange,
 } from 'bignumber-utils';
 import { delay } from '../shared/utils/index.js';
 import { generateUUID } from '../shared/uuid/index.js';
@@ -22,6 +24,40 @@ import {
 /* ************************************************************************************************
  *                                          CALCULATORS                                           *
  ************************************************************************************************ */
+
+/**
+ * Processes a transaction value ready to be sent to the exchange.
+ * @param amount
+ * @param decimalPlaces
+ * @returns number
+ */
+/* const processTXAmount = (amount: IBigNumberValue, decimalPlaces: number): number => (
+  processValue(amount, { decimalPlaces, roundingMode: 'ROUND_HALF_DOWN' })
+); */
+
+/**
+ * Converts a base asset value into quote asset.
+ * @param value
+ * @param rate
+ * @returns number
+ */
+const toQuoteAsset = (value: IBigNumberValue, rate: IBigNumberValue): number => processValue(
+  getBigNumber(value).times(rate),
+  { roundingMode: 'ROUND_HALF_DOWN' },
+);
+
+/**
+ * Converts a quote asset value into base asset. This value is ready to be sent to the exchange.
+ * @param value
+ * @param rate
+ * @param decimalPlaces
+ * @returns number
+ */
+const toBaseAsset = (
+  value: IBigNumberValue,
+  rate: IBigNumberValue,
+  decimalPlaces: number,
+): number => calculateExchange(value, rate, { decimalPlaces, roundingMode: 'ROUND_HALF_DOWN' });
 
 /**
  * Calculates the decrease price levels based on the strategy's decrease levels.
@@ -228,7 +264,8 @@ const getBalances = async (
  ************************************************************************************************ */
 export {
   // calculators
-
+  toQuoteAsset,
+  toBaseAsset,
 
   // position changes handling
   calculateMarketStateDependantProps,

@@ -1,5 +1,4 @@
 import { IEventHistoryRecord } from '../shared/candlestick/index.js';
-import { IBalances } from '../shared/exchange/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -40,19 +39,6 @@ type IPositionService = {
 /* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
-
-/**
- * Transaction Amount Result
- * The object containing the amount that should be transacted (if any) as well as the balances
- * snapshot.
- */
-type ITransactionAmountResult = {
-  // the amount of base asset that will be transacted
-  amount: number;
-
-  // the latest balances snapshot
-  balances: IBalances;
-};
 
 /**
  * Decrease Price Levels
@@ -202,7 +188,6 @@ export type {
   IPositionService,
 
   // types
-  ITransactionAmountResult,
   IDecreasePriceLevels,
   IPositionAction,
   IDecreaseActions,

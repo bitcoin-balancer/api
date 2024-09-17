@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import { Subscription } from 'rxjs';
 import { encodeError, extractMessage } from 'error-message-utils';
+import { getBigNumber } from 'bignumber-utils';
+import { ENVIRONMENT } from '../shared/environment/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { NotificationService } from '../notification/index.js';
 import {
@@ -17,6 +19,8 @@ import { BalanceService } from './balance/index.js';
 import { TradeService } from './trade/index.js';
 import { TransactionService } from './transaction/index.js';
 import {
+  toQuoteAsset,
+  toBaseAsset,
   calculateMarketStateDependantProps,
   analyzeTrades,
   buildNewPosition,
@@ -38,7 +42,6 @@ import {
 } from './model.js';
 import {
   IPositionService,
-  ITransactionAmountResult,
   ITradesAnalysis,
   IPosition,
   ICompactPosition,
@@ -75,6 +78,10 @@ const positionServiceFactory = (): IPositionService => {
   /* **********************************************************************************************
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
+
+  // asset symbols
+  const __BASE_ASSET = ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset;
+  const __QUOTE_ASSET = ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset;
 
   // the number of decimal places the base asset can have
   const __BASE_ASSET_DP = 4;
@@ -126,10 +133,22 @@ const positionServiceFactory = (): IPositionService => {
    * @returns number
    */
   const __calculateIncreaseAmount = (balances: IBalances): number => {
-    // init values
-    let amount: number = 0;
+    // init the quote asset balance
+    const balance = balances[__QUOTE_ASSET]!;
 
-    // finally, return the results
+    // if there is enough balance, increase the pre-configured amount
+    if (balance >= StrategyService.config.increaseAmountQuote) {
+      return toBaseAsset(StrategyService.config.increaseAmountQuote, __price, __BASE_ASSET_DP);
+    }
+
+    // if there isn't enough balance to cover the requirement but enough to transact, do so
+    if (balance >= toQuoteAsset(__MIN_ORDER_SIZE, __price)) {
+      NotificationService.lowBalance('BUY', balance, StrategyService.config.increaseAmountQuote);
+      return toBaseAsset(balance, __price, __BASE_ASSET_DP);
+    }
+
+    // otherwise, the position cannot be opened or increased
+    NotificationService.insufficientBalance('BUY', balance, StrategyService.config.increaseAmountQuote);
     return 0;
   };
 

@@ -49,8 +49,8 @@ const canConfigBeUpdated = (newConfig: IStrategy): void => {
   if (typeof newConfig.canDecrease !== 'boolean') {
     throw new Error(encodeError(`The canDecrease '${newConfig.canDecrease}' must be a boolean value.`, 31502));
   }
-  if (!numberValid(newConfig.increaseAmountQuote, 1, Number.MAX_SAFE_INTEGER)) {
-    throw new Error(encodeError(`The increaseAmountQuote '${newConfig.increaseAmountQuote}' is invalid as it must be a valid number ranging 1 and ${Number.MAX_SAFE_INTEGER}.`, 31503));
+  if (!numberValid(newConfig.increaseAmountQuote, 20, Number.MAX_SAFE_INTEGER)) {
+    throw new Error(encodeError(`The increaseAmountQuote '${newConfig.increaseAmountQuote}' is invalid as it must be a valid number ranging 20 and ${Number.MAX_SAFE_INTEGER}.`, 31503));
   }
   const { min, max } = calculateMinPositionAmountQuoteRange(newConfig.increaseAmountQuote);
   if (!numberValid(newConfig.minPositionAmountQuote, min, max)) {
