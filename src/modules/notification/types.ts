@@ -41,6 +41,7 @@ type INotificationService = {
   // ...
 
   // position
+  failedToInitializeTransaction: (error: unknown) => void;
   insufficientBalance: (side: ISide, has: number, needs: number) => void;
   lowBalance: (side: ISide, has: number, needs: number) => void;
   onNewPosition: (amount: number, amountQuote: number, marketPrice: number) => void;
