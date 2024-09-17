@@ -2,6 +2,7 @@ import { encodeError, extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { delay } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
+import { NotificationService } from '../../notification/index.js';
 import { ExchangeService, IBalances, ISide } from '../../shared/exchange/index.js';
 import { BalanceService } from '../balance/index.js';
 import { buildLog, buildTX } from './utils.js';
@@ -235,11 +236,14 @@ const transactionServiceFactory = (): ITransactionService => {
       }
       tx.status = 'SUCCEEDED';
       await updateTransactionRecord(tx);
+      NotificationService.txExecutedSuccessfully(tx.side, tx.amount);
     } catch (e) {
       // handle the execution failure
+      const msg = extractMessage(e);
       tx.status = 'FAILED';
       await updateTransactionRecord(tx);
-      APIErrorService.save('TransactionService.__scheduleTransaction', e, undefined, undefined, tx);
+      APIErrorService.save('TransactionService.__scheduleTransaction', msg, undefined, undefined, tx);
+      NotificationService.failedToExecuteTX(tx.side, tx.amount, msg);
     }
   };
 
