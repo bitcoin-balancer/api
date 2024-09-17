@@ -12,6 +12,9 @@ type IPositionService = {
   // properties
   // ...
 
+  // actions
+  // ...
+
   // retrievers
   getPosition: (id: string) => Promise<IPosition>;
   listCompactPositions: (

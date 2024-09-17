@@ -91,7 +91,7 @@ const reversalServiceFactory = (): IReversalService => {
     __activeUntil = calculateCrashStateDuration(__state.event_time, __config.value.crashDuration);
 
     // intantiate the event history
-    __eventHist = await eventHistoryFactory(__state.id, 'reversal', '3m');
+    __eventHist = await eventHistoryFactory(__state.id, 'reversal', '5m');
   };
 
   /**

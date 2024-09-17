@@ -30,7 +30,7 @@ const isBaseAsset = (symbol: string): boolean => (
  */
 const buildDefaultConfig = (): ICoinsConfig => ({
   size: 128,
-  interval: 15,
+  interval: 20,
   requirement: 0.01,
   strongRequirement: 0.3,
   limit: 24,
