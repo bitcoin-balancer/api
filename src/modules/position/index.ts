@@ -181,7 +181,38 @@ const positionServiceFactory = (): IPositionService => {
     }
   };
 
+  /* const __calculateDecreaseAmount = (balances: IBalances, percentage: number): number => {
+    return 0;
+  }; */
 
+  /**
+   * Decreases an existing position based on the strategy.
+   * @returns Promise<void>
+   */
+  /* const __decrease = async (percentage: number): Promise<void> => {
+    try {
+      // retrieve the balances
+      const balances = await getBalances();
+
+      // calculate the tx amount and proceed if requirements are met
+      const amount = __calculateDecreaseAmount(balances, percentage);
+      if (amount > 0) {
+        // initialize the tx and update the position (if any)
+        const txID = await TransactionService.buy(amount, balances);
+        if (__active) {
+          __active.increase_actions.push(buildPositionAction(
+            txID,
+            StrategyService.config.increaseIdleDuration * 60,
+          ));
+          await updatePositionRecord(__active);
+        }
+      }
+    } catch (e) {
+      const msg = extractMessage(e);
+      APIErrorService.save('PositionService.__decrease', msg);
+      NotificationService.failedToInitializeTransaction(msg);
+    }
+  }; */
 
 
 
