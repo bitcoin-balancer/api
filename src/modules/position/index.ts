@@ -292,6 +292,10 @@ const positionServiceFactory = (): IPositionService => {
    */
   const __onTradesChanges = (nextState: ITrade[]): void => {
     const newAnalysis = analyzeTrades(nextState, __price, StrategyService.config.decreaseLevels);
+    console.log('\n------------------------');
+    console.log('Trades', nextState);
+    console.log('Analysis', newAnalysis);
+    console.log('------------------------\n');
     if (__trades === undefined && newAnalysis !== undefined) {
       __trades = newAnalysis;
       __handleNewPosition();

@@ -148,7 +148,7 @@ const createTransactionRecord = async (tx: Omit<ITransaction, 'id'>): Promise<nu
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id;
     `,
-    values: [tx.event_time, tx.status, tx.side, tx.amount, tx.logs],
+    values: [tx.event_time, tx.status, tx.side, tx.amount, JSON.stringify(tx.logs)],
   });
   return rows[0].id;
 };
@@ -165,7 +165,7 @@ const updateTransactionRecord = async (tx: ITransaction): Promise<void> => {
       SET status = $1, logs = $2
       WHERE id = $3
     `,
-    values: [tx.status, tx.logs, tx.id],
+    values: [tx.status, JSON.stringify(tx.logs), tx.id],
   });
 };
 

@@ -66,7 +66,8 @@ const createPositionRecord = async ({
     `,
     values: [
       id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out,
-      pnl, roi, decrease_price_levels, increase_actions, decrease_actions,
+      pnl, roi, JSON.stringify(decrease_price_levels), JSON.stringify(increase_actions),
+      JSON.stringify(decrease_actions),
     ],
   });
 };
@@ -99,7 +100,8 @@ const updatePositionRecord = async ({
     `,
     values: [
       close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl,
-      roi, decrease_price_levels, increase_actions, decrease_actions, id,
+      roi, JSON.stringify(decrease_price_levels), JSON.stringify(increase_actions),
+      JSON.stringify(decrease_actions), id,
     ],
   });
 };

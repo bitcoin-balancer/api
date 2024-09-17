@@ -40,9 +40,9 @@ const liquidityServiceFactory = (): ILiquidityService => {
   // the up-to-date state of the module
   const __state: ILiquidityState = buildPristineState();
 
-  // the liq. intensity requirements are calculated every REQUIREMENT_CALCULATION_FREQUENCY minutes
+  // the liq. intensity requirements are calculated every REQUIREMENT_CALCULATION_FREQUENCY seconds
   let __nextRequirementsCalculation: number | undefined;
-  const __REQUIREMENT_CALCULATION_FREQUENCY = 1;
+  const __REQUIREMENT_CALCULATION_FREQUENCY = 60;
 
   // the module's configuration
   let __config: IRecordStore<ILiquidityConfig>;
@@ -64,7 +64,7 @@ const liquidityServiceFactory = (): ILiquidityService => {
     const ts = Date.now();
     if (!__nextRequirementsCalculation || ts >= __nextRequirementsCalculation) {
       __state.intensityRequirements = calculateIntensityRequirements(levels);
-      __nextRequirementsCalculation = ts + ((__REQUIREMENT_CALCULATION_FREQUENCY * 60) * 1000);
+      __nextRequirementsCalculation = ts + (__REQUIREMENT_CALCULATION_FREQUENCY * 1000);
     }
   };
 
