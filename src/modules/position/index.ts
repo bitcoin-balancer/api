@@ -76,7 +76,7 @@ const positionServiceFactory = (): IPositionService => {
   const __BASE_ASSET_DP = 4;
 
   // the minimum amount of the base asset that can bought or sold
-  const __MIN_ORDER_SIZE = 0.0001;
+  const __MIN_ORDER_SIZE = 0.0002;
 
   // the active position (if any)
   let __active: IPosition | undefined;
@@ -105,7 +105,9 @@ const positionServiceFactory = (): IPositionService => {
    * history.
    */
   const __updatePositionHistory = (): void => {
-    __activeHist!.handleNewData([__price, __active!.gain, __active!.entry_price, __active!.amount]);
+    if (__active && __activeHist) {
+      __activeHist.handleNewData([__price, __active.gain, __active.entry_price, __active.amount]);
+    }
   };
 
 
@@ -230,7 +232,7 @@ const positionServiceFactory = (): IPositionService => {
     __updatePositionHistory();
 
     // check if the position has been closed
-    if (__active.amount === 0) {
+    if (__active.amount < __MIN_ORDER_SIZE) {
       // notify users
       NotificationService.onPositionClose(__active.open, __active.pnl, __active.roi);
 
@@ -292,10 +294,6 @@ const positionServiceFactory = (): IPositionService => {
    */
   const __onTradesChanges = (nextState: ITrade[]): void => {
     const newAnalysis = analyzeTrades(nextState, __price, StrategyService.config.decreaseLevels);
-    console.log('\n------------------------');
-    console.log('Trades', nextState);
-    console.log('Analysis', newAnalysis);
-    console.log('------------------------\n');
     if (__trades === undefined && newAnalysis !== undefined) {
       __trades = newAnalysis;
       __handleNewPosition();

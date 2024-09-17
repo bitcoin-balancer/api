@@ -36,7 +36,7 @@ const buildRequestInput = (token: string, chatID: number, message: string): IReq
  * @param date
  * @returns string
  */
-const prettifyDate = (date: string | number | Date): string => format(date, 'p');
+const prettifyDate = (date: string | number | Date): string => format(date, 'PPpp');
 
 /**
  * Prettifies a dollar value so it can be easily read by users.

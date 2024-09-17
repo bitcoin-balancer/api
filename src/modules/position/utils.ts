@@ -99,12 +99,12 @@ const analyzeTrades = (
   const buyTrades: Array<[number, number]> = [];
   trades.forEach((trade) => {
     if (trade.side === 'BUY') {
-      amount = amount.plus(trade.amount);
+      amount = amount.plus(trade.amount).minus(trade.comission);
       amountQuoteIn = amountQuoteIn.plus(trade.amount_quote);
       buyTrades.push([trade.price, trade.amount]);
     } else {
       amount = amount.minus(trade.amount);
-      amountQuoteOut = amountQuoteOut.plus(trade.amount_quote);
+      amountQuoteOut = amountQuoteOut.plus(trade.amount_quote).minus(trade.comission);
     }
   });
 
