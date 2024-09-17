@@ -38,7 +38,8 @@ type INotificationService = {
   onReversalEvent: (points: number) => void;
 
   // transaction
-  // ...
+  failedToExecuteTX: (side: ISide, amount: number, error: string) => void;
+  txExecutedSuccessfully: (side: ISide, amount: number) => void;
 
   // position
   failedToInitializeTransaction: (error: unknown) => void;

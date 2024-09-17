@@ -275,7 +275,28 @@ const notificationServiceFactory = (): INotificationService => {
    *                                         TRANSACTION                                          *
    ********************************************************************************************** */
 
-  // ...
+  /**
+   * Broadcasts a message notifying users the transaction failed to execute.
+   * @param side
+   * @param amount
+   * @param error
+   */
+  const failedToExecuteTX = (side: ISide, amount: number, error: string): void => __addToQueue({
+    sender: 'TRANSACTION',
+    title: 'Failed to execute transaction',
+    description: `The ${side === 'BUY' ? 'increase' : 'decrease'} transaction for ${prettifyBitcoinValue(amount)} could not be executed. Error: ${error}`,
+  });
+
+  /**
+   * Broadcasts a message notifying users the transaction was executed successfully.
+   * @param side
+   * @param amount
+   */
+  const txExecutedSuccessfully = (side: ISide, amount: number): void => __addToQueue({
+    sender: 'TRANSACTION',
+    title: 'Transaction executed and confirmed',
+    description: `The ${side === 'BUY' ? 'increase' : 'decrease'} transaction for ${prettifyBitcoinValue(amount)} was executed successfully.`,
+  });
 
 
 
@@ -422,6 +443,8 @@ const notificationServiceFactory = (): INotificationService => {
     onReversalEvent,
 
     // transaction
+    failedToExecuteTX,
+    txExecutedSuccessfully,
 
     // position
     failedToInitializeTransaction,
