@@ -45,6 +45,7 @@ import {
   IPosition,
   ICompactPosition,
 } from './types.js';
+import { IDecreaseLevelID } from './strategy/types.js';
 
 /* ************************************************************************************************
  *                                             NOTES                                              *
@@ -123,7 +124,7 @@ const positionServiceFactory = (): IPositionService => {
 
 
   /* **********************************************************************************************
-   *                                    TRANSACTION EXECUTION                                     *
+   *                                     INCREASE TRANSACTION                                     *
    ********************************************************************************************** */
 
   /**
@@ -180,15 +181,28 @@ const positionServiceFactory = (): IPositionService => {
     }
   };
 
-  /* const __calculateDecreaseAmount = (balances: IBalances, percentage: number): number => {
-    return 0;
-  }; */
+
+
+
+
+  /* **********************************************************************************************
+   *                                     DECREASE TRANSACTION                                     *
+   ********************************************************************************************** */
+
+  /**
+   * Calculates the amount that will be decreased. If 0 is returned, abort the transaction.
+   * @param balances
+   * @returns number
+   */
+  const __calculateDecreaseAmount = (balances: IBalances, percentage: number): number => 0;
 
   /**
    * Decreases an existing position based on the strategy.
+   * @param percentage
+   * @param activeLevel?
    * @returns Promise<void>
    */
-  /* const __decrease = async (percentage: number): Promise<void> => {
+  const __decrease = async (percentage: number, activeLevel?: IDecreaseLevelID): Promise<void> => {
     try {
       // retrieve the balances
       const balances = await getBalances();
@@ -197,13 +211,13 @@ const positionServiceFactory = (): IPositionService => {
       const amount = __calculateDecreaseAmount(balances, percentage);
       if (amount > 0) {
         // initialize the tx and update the position (if any)
-        const txID = await TransactionService.buy(amount, balances);
-        if (__active) {
-          __active.increase_actions.push(buildPositionAction(
+        const txID = await TransactionService.sell(amount, balances);
+        if (typeof activeLevel === 'number') {
+          __active!.decrease_actions[activeLevel].push(buildPositionAction(
             txID,
-            StrategyService.config.increaseIdleDuration * 60,
+            StrategyService.config.decreaseLevels[activeLevel].frequency,
           ));
-          await updatePositionRecord(__active);
+          await updatePositionRecord(__active!);
         }
       }
     } catch (e) {
@@ -211,7 +225,7 @@ const positionServiceFactory = (): IPositionService => {
       APIErrorService.save('PositionService.__decrease', msg);
       NotificationService.failedToInitializeTransaction(msg);
     }
-  }; */
+  };
 
 
 
@@ -269,7 +283,17 @@ const positionServiceFactory = (): IPositionService => {
    */
   const __handleStronglyIncreasingWindow = async (): Promise<void> => {
     if (StrategyService.config.canDecrease && __active) {
-      // ...
+      const lvl = StrategyService.getActiveDecreaseLevel(__active.gain);
+      if (
+        lvl !== undefined
+        && (
+          __active.decrease_actions[lvl].length === 0
+          // eslint-disable-next-line max-len
+          || Date.now() > __active.decrease_actions[lvl][__active.decrease_actions[lvl].length - 1].nextEventTime
+        )
+      ) {
+        await __decrease(StrategyService.config.decreaseLevels[lvl].percentage, lvl);
+      }
     }
   };
 

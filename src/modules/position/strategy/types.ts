@@ -12,6 +12,9 @@ type IStrategyService = {
   // properties
   config: IStrategy;
 
+  // retrievers
+  getActiveDecreaseLevel: (gain: number) => IDecreaseLevelID | undefined;
+
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;

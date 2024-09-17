@@ -3,6 +3,7 @@ import { buildDefaultConfig } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
 import {
   IStrategyService,
+  IDecreaseLevelID,
   IStrategy,
   IDecreaseLevel,
   IDecreaseLevels,
@@ -25,6 +26,38 @@ const strategyServiceFactory = (): IStrategyService => {
 
   // the module's configuration
   let __config: IRecordStore<IStrategy>;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                          RETRIEVERS                                          *
+   ********************************************************************************************** */
+
+  /**
+   * Retrieves the identifier for the active decrease level. If none, it returns undefined.
+   * @param gain
+   * @returns IDecreaseLevelID | undefined
+   */
+  const getActiveDecreaseLevel = (gain: number): IDecreaseLevelID | undefined => {
+    if (gain >= __config.value.decreaseLevels[4].gainRequirement) {
+      return 4;
+    }
+    if (gain >= __config.value.decreaseLevels[3].gainRequirement) {
+      return 3;
+    }
+    if (gain >= __config.value.decreaseLevels[2].gainRequirement) {
+      return 2;
+    }
+    if (gain >= __config.value.decreaseLevels[1].gainRequirement) {
+      return 1;
+    }
+    if (gain >= __config.value.decreaseLevels[0].gainRequirement) {
+      return 0;
+    }
+    return undefined;
+  };
 
 
 
@@ -94,6 +127,9 @@ const strategyServiceFactory = (): IStrategyService => {
     get config() {
       return __config.value;
     },
+
+    // retrievers
+    getActiveDecreaseLevel,
 
     // initializer
     initialize,
