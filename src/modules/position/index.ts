@@ -215,7 +215,7 @@ const positionServiceFactory = (): IPositionService => {
 
     // only proceed if there is enough balance to transact
     if (balance >= __MIN_ORDER_SIZE) {
-      // if the amount is smaller than or equals to the min. amount, close the position
+      // if the amount is smaller than or equals to the min. amount quote, close the position
       if (__active.amount_quote <= StrategyService.config.minPositionAmountQuote) {
         if (__active.amount > balance) {
           NotificationService.lowBalance('SELL', balance, __active.amount);
@@ -237,7 +237,7 @@ const positionServiceFactory = (): IPositionService => {
       // the position
       const adjustedAmount = decreaseAmount.plus(__MIN_ORDER_SIZE);
       if (adjustedAmount.isGreaterThanOrEqualTo(__active.amount)) {
-        // if the adjusted amount is larger than the balance, decrease whatever is there
+        // if the position amount is larger than the balance, decrease whatever is there
         if (__active.amount > balance) {
           NotificationService.lowBalance('SELL', balance, __active.amount);
           return processTXAmount(balance, __BASE_ASSET_DP);
