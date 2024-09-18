@@ -197,6 +197,42 @@ PositionRouter.route('/decrease').post(highRiskLimit, async (req: Request, res: 
 });
 
 /**
+ * Archives a position by ID.
+ * @returns IAPIResponse<void>
+ * @requirements
+ * - authority: 4
+ */
+PositionRouter.route('/archive/:id').patch(mediumRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 4);
+    await PositionService.archivePosition(req.params.id);
+    res.json(buildResponse());
+  } catch (e) {
+    APIErrorService.save('PositionRouter.patch.archive', e, reqUid, req.ip, req.params);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
+ * Unarchives a position by ID.
+ * @returns IAPIResponse<void>
+ * @requirements
+ * - authority: 4
+ */
+PositionRouter.route('/unarchive/:id').patch(mediumRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 4);
+    await PositionService.unarchivePosition(req.params.id);
+    res.json(buildResponse());
+  } catch (e) {
+    APIErrorService.save('PositionRouter.patch.unarchive', e, reqUid, req.ip, req.params);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
  * Retrieves a position record from the local property or from the database by ID.
  * @returns IAPIResponse<IPosition>
  * @requirements
