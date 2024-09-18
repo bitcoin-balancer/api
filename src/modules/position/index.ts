@@ -617,7 +617,7 @@ const positionServiceFactory = (): IPositionService => {
   /**
    * Retrieves a list of compact positions that were opened within a date range.
    * @param startAt
-   * @param endAt?
+   * @param endAt
    * @returns Promise<ICompactPosition[]>
    * @throws
    * - 30503: if the startAt timestamp is invalid
@@ -634,7 +634,7 @@ const positionServiceFactory = (): IPositionService => {
   };
 
   /**
-   * Retrieves the history in OHLC format for an active position.
+   * Retrieves the history in OHLC format for a position.
    * @param id
    * @returns Promise<IEventHistoryRecord>
    * @throws
