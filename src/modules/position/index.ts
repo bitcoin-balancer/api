@@ -13,13 +13,15 @@ import {
 import { IBalances, ITrade } from '../shared/exchange/index.js';
 import { IState } from '../market-state/shared/types.js';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
-import { StrategyService } from './strategy/index.js';
+import { StrategyService, IDecreaseLevelID } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
 import { TradeService } from './trade/index.js';
 import { TransactionService } from './transaction/index.js';
 import {
+  processTXAmount,
   toQuoteAsset,
   toBaseAsset,
+  calculateDecreaseAmount,
   calculateMarketStateDependantProps,
   analyzeTrades,
   buildNewPosition,
@@ -27,6 +29,7 @@ import {
   buildPositionAction,
 } from './utils.js';
 import {
+  canPositionBeDecreased,
   canPositionRecordBeRetrieved,
   canCompactPositionRecordsBeListed,
   canCompactPositionRecordsBeListedByRange,
@@ -45,7 +48,6 @@ import {
   IPosition,
   ICompactPosition,
 } from './types.js';
-import { IDecreaseLevelID } from './strategy/types.js';
 
 /* ************************************************************************************************
  *                                             NOTES                                              *
@@ -100,6 +102,7 @@ const positionServiceFactory = (): IPositionService => {
   let __marketStateSub: Subscription;
 
   // the subscription to the trades' stream
+  let __rawTrades: ITrade[] = [];
   let __trades: ITradesAnalysis | undefined;
   let __tradesSub: Subscription;
 
@@ -194,7 +197,35 @@ const positionServiceFactory = (): IPositionService => {
    * @param balances
    * @returns number
    */
-  const __calculateDecreaseAmount = (balances: IBalances, percentage: number): number => 0;
+  const __calculateDecreaseAmount = (balances: IBalances, percentage: number): number => {
+    // init the base asset balance
+    const balance = balances[__BASE_ASSET]!;
+
+    // only proceed if there is enough balance to transact
+    if (balance >= __MIN_ORDER_SIZE) {
+      // calculate the balance in quote asset
+      const balanceQuote = toQuoteAsset(balance, __price);
+
+      // calculate the amount that will be decreased
+      const decreaseAmount = calculateDecreaseAmount(balance, percentage, __MIN_ORDER_SIZE);
+
+      // close the position if the balance is less than or equals to the minPositionAmountQuote
+      if (balanceQuote <= StrategyService.config.minPositionAmountQuote) {
+        return processTXAmount(balance, __BASE_ASSET_DP);
+      }
+
+      // if there is enough balance to cover the requirement but leaves a residue smaller than the
+      // minimum order amount, close the position
+      if (decreaseAmount.plus(__MIN_ORDER_SIZE)) {
+        return processTXAmount(balance, __BASE_ASSET_DP);
+      }
+
+      // otherwise, just decrease the pre-configured amount
+      return processTXAmount(decreaseAmount, __BASE_ASSET_DP);
+    }
+    NotificationService.insufficientBalance('SELL', balance, __MIN_ORDER_SIZE);
+    return 0;
+  };
 
   /**
    * Decreases an existing position based on the strategy.
@@ -378,8 +409,9 @@ const positionServiceFactory = (): IPositionService => {
 
       // reset the local properties
       __active = undefined;
-      __trades = undefined;
       __activeHist = undefined;
+      __rawTrades = [];
+      __trades = undefined;
     }
   };
 
@@ -427,7 +459,8 @@ const positionServiceFactory = (): IPositionService => {
    * @param nextState
    */
   const __onTradesChanges = (nextState: ITrade[]): void => {
-    const newAnalysis = analyzeTrades(nextState, __price, StrategyService.config.decreaseLevels);
+    __rawTrades = nextState;
+    const newAnalysis = analyzeTrades(__rawTrades, __price, StrategyService.config.decreaseLevels);
     if (__trades === undefined && newAnalysis !== undefined) {
       __trades = newAnalysis;
       __handleNewPosition();
@@ -449,7 +482,24 @@ const positionServiceFactory = (): IPositionService => {
    *                                           ACTIONS                                            *
    ********************************************************************************************** */
 
-  // ...
+  /**
+   * Opens or increases a position.
+   * @returns Promise<void>
+   */
+  const increasePosition = (): Promise<void> => __increase();
+
+  /**
+   * Validates and attempts to decrease an active position.
+   * @param percentage
+   * @returns Promise<void>
+   * @throws
+   * - 30507: if there isn't an active position
+   * - 30508: if the percentage is not a valid number
+   */
+  const decreasePosition = (percentage: number): Promise<void> => {
+    canPositionBeDecreased(__active, percentage);
+    return __decrease(percentage);
+  };
 
 
 
@@ -623,7 +673,8 @@ const positionServiceFactory = (): IPositionService => {
     // ...
 
     // actions
-    // ...
+    increasePosition,
+    decreasePosition,
 
     // retrievers
     getPosition,

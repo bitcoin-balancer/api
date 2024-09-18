@@ -13,7 +13,8 @@ type IPositionService = {
   // ...
 
   // actions
-  // ...
+  increasePosition: () => Promise<void>;
+  decreasePosition: (percentage: number) => Promise<void>;
 
   // retrievers
   getPosition: (id: string) => Promise<IPosition>;

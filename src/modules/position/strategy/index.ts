@@ -162,6 +162,7 @@ export {
 
   // types
   type IStrategy,
+  type IDecreaseLevelID,
   type IDecreaseLevel,
   type IDecreaseLevels,
 };

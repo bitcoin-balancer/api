@@ -591,7 +591,9 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **30504:** `If the endAt arg is provided, it must be a valid timestamp. Received: ${endAt}`
 - **30505:** `If startAt '${startAt}' must be less than the endAt '${endAt}'.`
 - **30506:** `The difference between the startAt and the endAt cannot be larger than 5 years.`
-- **30507:** ``
+- **30507:** `A decrease action can only be performed if there is an active position.`
+- **30508:** `The decrease percentage must be a valid number ranging 1 - 100. Received: ${percentage}`
+- **30509:** ``
 
 
 

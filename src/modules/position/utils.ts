@@ -1,4 +1,5 @@
 import {
+  IBigNumber,
   IBigNumberValue,
   getBigNumber,
   processValue,
@@ -31,9 +32,9 @@ import {
  * @param decimalPlaces
  * @returns number
  */
-/* const processTXAmount = (amount: IBigNumberValue, decimalPlaces: number): number => (
+const processTXAmount = (amount: IBigNumberValue, decimalPlaces: number): number => (
   processValue(amount, { decimalPlaces, roundingMode: 'ROUND_HALF_DOWN' })
-); */
+);
 
 /**
  * Converts a base asset value into quote asset.
@@ -71,6 +72,25 @@ const __calculateDecreasePriceLevels = (
 ): IDecreasePriceLevels => decreaseLevels.map(
   (lvl) => adjustByPercentage(entryPrice, lvl.gainRequirement),
 ) as IDecreasePriceLevels;
+
+/**
+ * Calculates the amount that will be decreased from a position. If this amount is lower than the
+ * minimum order size, it returns the minimum amount instead.
+ * @param balance
+ * @param percentage
+ * @param minOrderSize
+ * @returns IBigNumber
+ */
+const calculateDecreaseAmount = (
+  balance: number,
+  percentage: number,
+  minOrderSize: number,
+): IBigNumber => {
+  const decreaseAmount = getBigNumber(balance).times(percentage / 100);
+  return decreaseAmount.isGreaterThanOrEqualTo(minOrderSize)
+    ? decreaseAmount
+    : getBigNumber(minOrderSize);
+};
 
 
 
@@ -264,8 +284,10 @@ const getBalances = async (
  ************************************************************************************************ */
 export {
   // calculators
+  processTXAmount,
   toQuoteAsset,
   toBaseAsset,
+  calculateDecreaseAmount,
 
   // position changes handling
   calculateMarketStateDependantProps,

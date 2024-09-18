@@ -1,5 +1,11 @@
 import { encodeError } from 'error-message-utils';
-import { integerValid, timestampValid, uuidValid } from '../shared/validations/index.js';
+import {
+  integerValid,
+  numberValid,
+  timestampValid,
+  uuidValid,
+} from '../shared/validations/index.js';
+import { IPosition } from './types.js';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
@@ -16,7 +22,32 @@ const __DATE_RANGE_LIMIT = (5 * (365 * (24 * (60 * 60)))) * 1000; // ~5 years
 
 
 /* ************************************************************************************************
- *                                         IMPLEMENTATION                                         *
+ *                                            ACTIONS                                             *
+ ************************************************************************************************ */
+
+/**
+ * Verifies if an active position can be decreased based on a percentage.
+ * @param active
+ * @param percentage
+ * @throws
+ * - 30507: if there isn't an active position
+ * - 30508: if the percentage is not a valid number
+ */
+const canPositionBeDecreased = (active: IPosition | undefined, percentage: number): void => {
+  if (active === undefined) {
+    throw new Error(encodeError('A decrease action can only be performed if there is an active position.', 30507));
+  }
+  if (!numberValid(percentage, 1, 100)) {
+    throw new Error(encodeError(`The decrease percentage must be a valid number ranging 1 - 100. Received: ${percentage}`, 30508));
+  }
+};
+
+
+
+
+
+/* ************************************************************************************************
+ *                                           RETRIEVERS                                           *
  ************************************************************************************************ */
 
 /**
@@ -87,6 +118,10 @@ const canCompactPositionRecordsBeListedByRange = async (
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // actions
+  canPositionBeDecreased,
+
+  // retrievers
   canPositionRecordBeRetrieved,
   canCompactPositionRecordsBeListed,
   canCompactPositionRecordsBeListedByRange,
