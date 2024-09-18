@@ -253,6 +253,7 @@ const toCompact = (position: IPosition): ICompactPosition => ({
   id: position.id,
   open: position.open,
   close: position.close,
+  archived: position.archived,
   entry_price: position.entry_price,
   gain: position.gain,
   amount: position.amount,

@@ -135,7 +135,7 @@ const deleteAllPositionRecords = async (): Promise<void> => {
 const __listCompactPositionRecords = async (limit: number): Promise<ICompactPosition[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
-      SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
+      SELECT id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
       FROM ${DatabaseService.tn.positions}
       ORDER BY open DESC
       LIMIT $1;
@@ -158,7 +158,7 @@ const __listNextCompactPositionRecords = async (
 ): Promise<ICompactPosition[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
-      SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
+      SELECT id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
       FROM ${DatabaseService.tn.positions}
       WHERE open < $1
       ORDER BY open DESC
@@ -197,7 +197,7 @@ const listCompactPositionRecordsByRange = async (
 ): Promise<ICompactPosition[]> => {
   // init values
   let text: string = `
-    SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
+    SELECT id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
     FROM ${DatabaseService.tn.transactions}
     WHERE open >= $1
   `;

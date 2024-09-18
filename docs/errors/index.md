@@ -593,7 +593,10 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **30506:** `The difference between the startAt and the endAt cannot be larger than 5 years.`
 - **30507:** `A decrease action can only be performed if there is an active position.`
 - **30508:** `The decrease percentage must be a valid number ranging 1 - 100. Received: ${percentage}`
-- **30509:** ``
+- **30509:** `The position '${id}' cannot be archived because it doesn't exist.`
+- **30510:** `The position '${id}' cannot be archived because it has already been.`
+- **30511:** `The position '${id}' cannot be unarchived because it is not archived.`
+- **30512:** ``
 
 
 

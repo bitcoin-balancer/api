@@ -42,6 +42,40 @@ const canPositionBeDecreased = (active: IPosition | undefined, percentage: numbe
   }
 };
 
+/**
+ * Verifies if a position can be archived.
+ * @param id
+ * @param position
+ * @throws
+ * - 30509: if the positon doesn't exist
+ * - 30510: if the positon has already been archived
+ */
+const canPositionBeArchived = (id: string, position: IPosition | undefined): void => {
+  if (position === undefined) {
+    throw new Error(encodeError(`The position '${id}' cannot be archived because it doesn't exist.`, 30509));
+  }
+  if (position.archived) {
+    throw new Error(encodeError(`The position '${id}' cannot be archived because it has already been.`, 30510));
+  }
+};
+
+/**
+ * Verifies if a position can be unarchived.
+ * @param id
+ * @param position
+ * @throws
+ * - 30509: if the positon doesn't exist
+ * - 30511: if the positon is not archived
+ */
+const canPositionBeUnarchived = (id: string, position: IPosition | undefined): void => {
+  if (position === undefined) {
+    throw new Error(encodeError(`The position '${id}' cannot be archived because it doesn't exist.`, 30509));
+  }
+  if (!position.archived) {
+    throw new Error(encodeError(`The position '${id}' cannot be unarchived because it is not archived.`, 30511));
+  }
+};
+
 
 
 
@@ -129,6 +163,8 @@ const canCompactPositionRecordsBeListedByRange = async (
 export {
   // actions
   canPositionBeDecreased,
+  canPositionBeArchived,
+  canPositionBeUnarchived,
 
   // retrievers
   canPositionRecordBeRetrieved,

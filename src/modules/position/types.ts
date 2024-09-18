@@ -15,6 +15,8 @@ type IPositionService = {
   // actions
   increasePosition: () => Promise<void>;
   decreasePosition: (percentage: number) => Promise<void>;
+  archivePosition: (id: string) => Promise<void>;
+  unarchivePosition: (id: string) => Promise<void>;
 
   // retrievers
   getActive: () => ICompactPosition | undefined;
@@ -171,6 +173,7 @@ type ICompactPosition = {
   id: string;
   open: number;
   close: number | null;
+  archived: boolean;
   entry_price: number;
   gain: number;
   amount: number;

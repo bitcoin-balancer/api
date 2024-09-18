@@ -31,6 +31,8 @@ import {
 } from './utils.js';
 import {
   canPositionBeDecreased,
+  canPositionBeArchived,
+  canPositionBeUnarchived,
   canPositionRecordBeRetrieved,
   canCompactPositionRecordsBeListed,
   canCompactPositionRecordsBeListedByRange,
@@ -501,6 +503,40 @@ const positionServiceFactory = (): IPositionService => {
     return __decrease(percentage);
   };
 
+  /**
+   * Archives a position by its ID.
+   * @param id
+   * @returns Promise<void>
+   * @throws
+   * - 30500: if the ID is not a valid uuid v4
+   * - 30509: if the positon doesn't exist
+   * - 30510: if the positon has already been archived
+   */
+  const archivePosition = async (id: string): Promise<void> => {
+    canPositionRecordBeRetrieved(id);
+    const record = await getPositionRecord(id);
+    canPositionBeArchived(id, record);
+    record!.archived = true;
+    await updatePositionRecord(record!);
+  };
+
+  /**
+   * Unarchives a position by its ID.
+   * @param id
+   * @returns Promise<void>
+   * @throws
+   * - 30500: if the ID is not a valid uuid v4
+   * - 30509: if the positon doesn't exist
+   * - 30511: if the positon is not archived
+   */
+  const unarchivePosition = async (id: string): Promise<void> => {
+    canPositionRecordBeRetrieved(id);
+    const record = await getPositionRecord(id);
+    canPositionBeUnarchived(id, record);
+    record!.archived = false;
+    await updatePositionRecord(record!);
+  };
+
 
 
 
@@ -683,6 +719,8 @@ const positionServiceFactory = (): IPositionService => {
     // actions
     increasePosition,
     decreasePosition,
+    archivePosition,
+    unarchivePosition,
 
     // retrievers
     getActive,
