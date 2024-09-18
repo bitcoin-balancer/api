@@ -1,7 +1,8 @@
 import { IUser } from '../auth/user/index.js';
 import { IVersion } from '../shared/version/index.js';
 import { IMarketState } from '../market-state/index.js';
-import { IExchangeConfig } from '../shared/environment/types.js';
+import { IExchangeConfig } from '../shared/environment/index.js';
+import { ICompactPosition } from '../position/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -59,7 +60,7 @@ type IAppEssentials = {
   marketState: IMarketState;
 
   // the active position record (if any)
-  // ...
+  position: ICompactPosition | undefined;
 };
 
 /**
@@ -77,7 +78,7 @@ type ICompactAppEssentials = {
   marketState: IMarketState;
 
   // the active position record (if any)
-  // ...
+  position: ICompactPosition | undefined;
 };
 
 

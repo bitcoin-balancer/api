@@ -16,10 +16,11 @@ import { BalanceService } from './balance/index.js';
 import { TransactionService } from './transaction/index.js';
 import {
   IDecreasePriceLevels,
-  IMarketStateDependantProps,
-  IPosition,
   IPositionAction,
+  IMarketStateDependantProps,
   ITradesAnalysis,
+  IPosition,
+  ICompactPosition,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -242,6 +243,25 @@ const buildNewPosition = async (
   };
 };
 
+/**
+ * Converts a position into its compact representation.
+ * @param position
+ * @returns ICompactPosition
+ */
+const toCompact = (position: IPosition): ICompactPosition => ({
+  id: position.id,
+  open: position.open,
+  close: position.close,
+  entry_price: position.entry_price,
+  gain: position.gain,
+  amount: position.amount,
+  amount_quote: position.amount_quote,
+  amount_quote_in: position.amount_quote_in,
+  amount_quote_out: position.amount_quote_out,
+  pnl: position.pnl,
+  roi: position.roi,
+});
+
 
 
 
@@ -296,6 +316,7 @@ export {
   // build helpers
   buildPositionAction,
   buildNewPosition,
+  toCompact,
 
   // retrievers
   getBalances,

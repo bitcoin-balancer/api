@@ -6,8 +6,9 @@ import { UserService } from '../auth/user/index.js';
 import { VersionService } from '../shared/version/index.js';
 import { SocketIOService } from '../shared/socket-io/index.js';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
-import { IDataJoinService, IAppEssentials, ICompactAppEssentials } from './types.js';
+import { PositionService } from '../position/index.js';
 import { sliceWindow } from './utils.js';
+import { IDataJoinService, IAppEssentials, ICompactAppEssentials } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -49,7 +50,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
     user: UserService.getUser(uid),
     exchangeConfig: ENVIRONMENT.EXCHANGE_CONFIGURATION,
     marketState: __marketState,
-    // ...
+    position: PositionService.getActive(),
   });
 
   /**
@@ -66,6 +67,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
         window: sliceWindow(__marketState.windowState.window),
       },
     },
+    position: PositionService.getActive(),
   });
 
 

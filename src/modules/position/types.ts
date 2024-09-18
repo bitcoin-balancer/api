@@ -17,6 +17,7 @@ type IPositionService = {
   decreasePosition: (percentage: number) => Promise<void>;
 
   // retrievers
+  getActive: () => ICompactPosition | undefined;
   getPosition: (id: string) => Promise<IPosition>;
   listCompactPositions: (
     limit: number,
