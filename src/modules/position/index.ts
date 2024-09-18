@@ -196,34 +196,56 @@ const positionServiceFactory = (): IPositionService => {
    ********************************************************************************************** */
 
   /**
-   * Calculates the amount that will be decreased. If 0 is returned, abort the transaction.
+   * Calculates the amount that will be decreased from a position. If 0 is returned, abort the
+   * transaction.
+   * @param percentage
    * @param balances
    * @returns number
+   * @throws
+   * - if there isn't an active position by the time this func is invoked
    */
   const __calculateDecreaseAmount = (percentage: number, balances: IBalances): number => {
-    // init the base asset balance
+    // only active positions can be decreased
+    if (__active === undefined) {
+      throw new Error('Unable to decrease a position that is not active.');
+    }
+
+    // init values
     const balance = balances[__BASE_ASSET]!;
 
     // only proceed if there is enough balance to transact
     if (balance >= __MIN_ORDER_SIZE) {
-      // calculate the balance in quote asset
-      const balanceQuote = toQuoteAsset(balance, __price);
+      // if the amount is smaller than or equals to the min. amount, close the position
+      if (__active.amount_quote <= StrategyService.config.minPositionAmountQuote) {
+        if (__active.amount > balance) {
+          NotificationService.lowBalance('SELL', balance, __active.amount);
+          return processTXAmount(balance, __BASE_ASSET_DP);
+        }
+        return processTXAmount(__active.amount, __BASE_ASSET_DP);
+      }
 
       // calculate the amount that will be decreased
-      const decreaseAmount = calculateDecreaseAmount(balance, percentage, __MIN_ORDER_SIZE);
+      const decreaseAmount = calculateDecreaseAmount(__active.amount, percentage, __MIN_ORDER_SIZE);
 
-      // close the position if the balance is less than or equals to the minPositionAmountQuote
-      if (balanceQuote <= StrategyService.config.minPositionAmountQuote) {
+      // if the amount is larger than the balance, reduce whatever is in the account
+      if (decreaseAmount.isGreaterThan(balance)) {
+        NotificationService.lowBalance('SELL', balance, decreaseAmount.toNumber());
         return processTXAmount(balance, __BASE_ASSET_DP);
       }
 
-      // if there is enough balance to cover the requirement but leaves a residue smaller than the
-      // minimum order amount, close the position
-      if (decreaseAmount.plus(__MIN_ORDER_SIZE)) {
-        return processTXAmount(balance, __BASE_ASSET_DP);
+      // if the decrease amount leaves a residue that is smaller than the minimum order size, close
+      // the position
+      const adjustedAmount = decreaseAmount.plus(__MIN_ORDER_SIZE);
+      if (adjustedAmount.isGreaterThanOrEqualTo(__active.amount)) {
+        // if the adjusted amount is larger than the balance, decrease whatever is there
+        if (__active.amount > balance) {
+          NotificationService.lowBalance('SELL', balance, __active.amount);
+          return processTXAmount(balance, __BASE_ASSET_DP);
+        }
+        return processTXAmount(__active.amount, __BASE_ASSET_DP);
       }
 
-      // otherwise, just decrease the pre-configured amount
+      // otherwise, decrease the calculated amount
       return processTXAmount(decreaseAmount, __BASE_ASSET_DP);
     }
     NotificationService.insufficientBalance('SELL', balance, __MIN_ORDER_SIZE);

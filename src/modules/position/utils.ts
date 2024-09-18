@@ -77,17 +77,17 @@ const __calculateDecreasePriceLevels = (
 /**
  * Calculates the amount that will be decreased from a position. If this amount is lower than the
  * minimum order size, it returns the minimum amount instead.
- * @param balance
+ * @param positionAmount
  * @param percentage
  * @param minOrderSize
  * @returns IBigNumber
  */
 const calculateDecreaseAmount = (
-  balance: number,
+  positionAmount: number,
   percentage: number,
   minOrderSize: number,
 ): IBigNumber => {
-  const decreaseAmount = getBigNumber(balance).times(percentage / 100);
+  const decreaseAmount = getBigNumber(positionAmount).times(percentage / 100);
   return decreaseAmount.isGreaterThanOrEqualTo(minOrderSize)
     ? decreaseAmount
     : getBigNumber(minOrderSize);
