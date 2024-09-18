@@ -1,5 +1,10 @@
 import { encodeError } from 'error-message-utils';
-import { authorizationHeaderValid, ipValid, objectValid } from '../validations/index.js';
+import {
+  authorizationHeaderValid,
+  ipValid,
+  arrayValid,
+  objectValid,
+} from '../validations/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -29,7 +34,7 @@ const validateArgs = (
   requiredArgs: string[] | undefined,
   args: Record<string, any> | undefined,
 ): void => {
-  if (Array.isArray(requiredArgs) && requiredArgs.length) {
+  if (arrayValid(requiredArgs)) {
     if (!objectValid(args)) {
       throw new Error(encodeError('The request cannot be served because the required arguments were not sent.', 6251));
     }

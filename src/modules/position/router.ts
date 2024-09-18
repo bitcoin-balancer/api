@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { buildResponse } from 'api-response-utils';
 import {
+  veryLowRiskLimit,
   lowRiskLimit,
   mediumRiskLimit,
-  veryLowRiskLimit,
+  highRiskLimit,
 } from '../../middlewares/rate-limit/index.js';
 import { checkRequest } from '../shared/request-guard/index.js';
 import { APIErrorService } from '../api-error/index.js';
@@ -141,6 +142,59 @@ PositionRouter.route('/transactions').get(veryLowRiskLimit, async (req: Request,
 /* ************************************************************************************************
  *                                            POSITION                                            *
  ************************************************************************************************ */
+
+/**
+ * Increases or opens a position.
+ * @returns IAPIResponse<void>
+ * @requirements
+ * - authority: 4
+ * - otp-token
+ */
+PositionRouter.route('/increase').post(highRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(
+      req.get('authorization'),
+      req.ip,
+      4,
+      [],
+      undefined,
+      req.get('otp-token') || '',
+    );
+    await PositionService.increasePosition();
+    res.json(buildResponse());
+  } catch (e) {
+    APIErrorService.save('PositionRouter.post.increase', e, reqUid, req.ip);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
+ * Validates and attempts to decrease an active position.
+ * @param percentage
+ * @returns IAPIResponse<void>
+ * @requirements
+ * - authority: 4
+ * - otp-token
+ */
+PositionRouter.route('/decrease').post(highRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(
+      req.get('authorization'),
+      req.ip,
+      4,
+      ['percentage'],
+      req.body,
+      req.get('otp-token') || '',
+    );
+    await PositionService.decreasePosition(req.body.percentage);
+    res.json(buildResponse());
+  } catch (e) {
+    APIErrorService.save('PositionRouter.post.decrease', e, reqUid, req.ip, req.body);
+    res.json(buildResponse(undefined, e));
+  }
+});
 
 /**
  * Retrieves a position record from the local property or from the database by ID.
