@@ -13,7 +13,7 @@ import { IPosition, ICompactPosition } from './types.js';
 const getPositionRecord = async (id: string): Promise<IPosition | undefined> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
-      SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions
+      SELECT id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions
       FROM ${DatabaseService.tn.positions}
       WHERE id = $1;
     `,
@@ -29,7 +29,7 @@ const getPositionRecord = async (id: string): Promise<IPosition | undefined> => 
 const getActivePositionRecord = async (): Promise<IPosition | undefined> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
-      SELECT id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions
+      SELECT id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions
       FROM ${DatabaseService.tn.positions}
       WHERE close IS NULL;
     `,
@@ -47,6 +47,7 @@ const createPositionRecord = async ({
   id,
   open,
   close,
+  archived,
   entry_price,
   gain,
   amount,
@@ -61,13 +62,13 @@ const createPositionRecord = async ({
 }: IPosition): Promise<void> => {
   await DatabaseService.pool.query({
     text: `
-      INSERT INTO ${DatabaseService.tn.positions} (id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);
+      INSERT INTO ${DatabaseService.tn.positions} (id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);
     `,
     values: [
-      id, open, close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out,
-      pnl, roi, JSON.stringify(decrease_price_levels), JSON.stringify(increase_actions),
-      JSON.stringify(decrease_actions),
+      id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in,
+      amount_quote_out, pnl, roi, JSON.stringify(decrease_price_levels),
+      JSON.stringify(increase_actions), JSON.stringify(decrease_actions),
     ],
   });
 };
@@ -80,6 +81,7 @@ const createPositionRecord = async ({
 const updatePositionRecord = async ({
   id,
   close,
+  archived,
   entry_price,
   gain,
   amount,
@@ -95,12 +97,12 @@ const updatePositionRecord = async ({
   await DatabaseService.pool.query({
     text: `
       UPDATE ${DatabaseService.tn.positions}
-      SET close = $1, entry_price = $2, gain = $3, amount = $4, amount_quote = $5, amount_quote_in = $6, amount_quote_out = $7, pnl = $8, roi = $9, decrease_price_levels = $10, increase_actions = $11, decrease_actions = $12
-      WHERE id = $13;
+      SET close = $1, archived = $2, entry_price = $3, gain = $4, amount = $5, amount_quote = $6, amount_quote_in = $7, amount_quote_out = $8, pnl = $9, roi = $10, decrease_price_levels = $11, increase_actions = $12, decrease_actions = $13
+      WHERE id = $14;
     `,
     values: [
-      close, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl,
-      roi, JSON.stringify(decrease_price_levels), JSON.stringify(increase_actions),
+      close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out,
+      pnl, roi, JSON.stringify(decrease_price_levels), JSON.stringify(increase_actions),
       JSON.stringify(decrease_actions), id,
     ],
   });

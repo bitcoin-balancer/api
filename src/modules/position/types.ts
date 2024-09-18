@@ -125,6 +125,9 @@ type IPosition = {
   // the timestamp at which the position was closed. If null, the position is still active
   close: number | null;
 
+  // if enabled, the position won't be taken into account when calculating metrics
+  archived: boolean;
+
   // the weighted average price
   entry_price: number;
 

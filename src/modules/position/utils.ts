@@ -238,6 +238,7 @@ const buildNewPosition = async (
       trades.amount_quote_out,
     ),
     ...trades,
+    archived: false,
     increase_actions: [buildPositionAction(lastTranctionID, increaseIdleDuration * 60)],
     decrease_actions: [[], [], [], [], []],
   };

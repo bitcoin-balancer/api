@@ -198,7 +198,7 @@ const positionServiceFactory = (): IPositionService => {
    * @param balances
    * @returns number
    */
-  const __calculateDecreaseAmount = (balances: IBalances, percentage: number): number => {
+  const __calculateDecreaseAmount = (percentage: number, balances: IBalances): number => {
     // init the base asset balance
     const balance = balances[__BASE_ASSET]!;
 
@@ -240,7 +240,7 @@ const positionServiceFactory = (): IPositionService => {
       const balances = await getBalances();
 
       // calculate the tx amount and proceed if requirements are met
-      const amount = __calculateDecreaseAmount(balances, percentage);
+      const amount = __calculateDecreaseAmount(percentage, balances);
       if (amount > 0) {
         // initialize the tx and update the position (if any)
         const txID = await TransactionService.sell(amount, balances);
@@ -411,7 +411,6 @@ const positionServiceFactory = (): IPositionService => {
       // reset the local properties
       __active = undefined;
       __activeHist = undefined;
-      __rawTrades = [];
       __trades = undefined;
     }
   };

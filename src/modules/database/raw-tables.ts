@@ -180,6 +180,7 @@ export const RAW_TABLES: IRawTable[] = [
         id                      UUID PRIMARY KEY,
         open                    BIGINT NOT NULL,
         close                   BIGINT NULL,
+        archived                BOOLEAN NOT NULL,
         entry_price             NUMERIC(20, 2) NOT NULL,
         gain                    NUMERIC(10, 2) NOT NULL,
         amount                  NUMERIC(20, 8) NOT NULL,
