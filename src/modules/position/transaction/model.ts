@@ -145,7 +145,7 @@ const createTransactionRecord = async (tx: Omit<ITransaction, 'id'>): Promise<nu
   const { rows } = await DatabaseService.pool.query({
     text: `
       INSERT INTO ${DatabaseService.tn.transactions} (event_time, status, side, amount, logs)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING id;
     `,
     values: [tx.event_time, tx.status, tx.side, tx.amount, JSON.stringify(tx.logs)],
