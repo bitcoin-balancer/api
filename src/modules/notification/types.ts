@@ -1,4 +1,5 @@
 import { ISide } from '../shared/exchange/index.js';
+import { IState } from '../market-state/shared/types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -34,7 +35,7 @@ type INotificationService = {
   // market state
   marketStateError: (errorMessage: string) => void;
   coinsReInitError: (error: string) => void;
-  windowState: (price: number, change: number) => void;
+  windowState: (state: IState, price: number, change: number) => void;
   onReversalEvent: (points: number) => void;
 
   // transaction

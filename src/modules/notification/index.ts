@@ -12,6 +12,7 @@ import {
   prettifyDate,
 } from './utils.js';
 import { ISide } from '../shared/exchange/index.js';
+import { IState } from '../market-state/shared/types.js';
 import { canRecordsBeListed } from './validations.js';
 import { listRecords, saveRecord } from './model.js';
 import { throttleableNotificationFactory } from './throttleable-notification.js';
@@ -248,12 +249,13 @@ const notificationServiceFactory = (): INotificationService => {
 
   /**
    * Broadcasts a message notifying users the Bitcoin price is moving strongly.
+   * @param state
    * @param price
    * @param change
    */
-  const windowState = (price: number, change: number): void => __addToQueue({
+  const windowState = (state: IState, price: number, change: number): void => __addToQueue({
     sender: 'MARKET_STATE',
-    title: `Bitcoin is ${change > 0 ? 'increasing' : 'decreasing'}`,
+    title: `Bitcoin is ${state > 0 ? 'increasing' : 'decreasing'}`,
     description: `The price has changed ${change > 0 ? '%2b' : ''}${change}% in the window and is currently at ${prettifyDollarValue(price)}`,
   });
 

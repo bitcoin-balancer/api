@@ -82,7 +82,7 @@ const windowServiceFactory = (): IWindowService => {
 
     // send a notification if the market is moving strongly
     if (mean === 2 || mean === -2) {
-      __stateNotification.broadcast([__windowVal.close.at(-1)!, splits.s100.change]);
+      __stateNotification.broadcast([mean, __windowVal.close.at(-1)!, splits.s100.change]);
     }
 
     // finally, return the state
