@@ -63,7 +63,7 @@ type IQueryResult = pg.QueryResult;
  */
 type IQueryConfig = {
   text: string;
-  values: unknown[];
+  values?: unknown[];
 };
 
 

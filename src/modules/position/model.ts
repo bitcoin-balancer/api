@@ -11,7 +11,7 @@ import { IPosition, ICompactPosition } from './types.js';
  * @returns Promise<IPosition | undefined>
  */
 const getPositionRecord = async (id: string): Promise<IPosition | undefined> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions
       FROM ${DatabaseService.tn.positions}
@@ -27,7 +27,7 @@ const getPositionRecord = async (id: string): Promise<IPosition | undefined> => 
  * @returns Promise<IPosition | undefined>
  */
 const getActivePositionRecord = async (): Promise<IPosition | undefined> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions
       FROM ${DatabaseService.tn.positions}
@@ -60,7 +60,7 @@ const createPositionRecord = async ({
   increase_actions,
   decrease_actions,
 }: IPosition): Promise<void> => {
-  await DatabaseService.pool.query({
+  await DatabaseService.query({
     text: `
       INSERT INTO ${DatabaseService.tn.positions} (id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi, decrease_price_levels, increase_actions, decrease_actions)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);
@@ -94,7 +94,7 @@ const updatePositionRecord = async ({
   increase_actions,
   decrease_actions,
 }: IPosition): Promise<void> => {
-  await DatabaseService.pool.query({
+  await DatabaseService.query({
     text: `
       UPDATE ${DatabaseService.tn.positions}
       SET close = $1, archived = $2, entry_price = $3, gain = $4, amount = $5, amount_quote = $6, amount_quote_in = $7, amount_quote_out = $8, pnl = $9, roi = $10, decrease_price_levels = $11, increase_actions = $12, decrease_actions = $13
@@ -114,7 +114,7 @@ const updatePositionRecord = async ({
  * @returns Promise<void>
  */
 const deleteAllPositionRecords = async (): Promise<void> => {
-  await DatabaseService.pool.query({
+  await DatabaseService.query({
     text: `DELETE FROM ${DatabaseService.tn.positions};`,
   });
 };
@@ -133,7 +133,7 @@ const deleteAllPositionRecords = async (): Promise<void> => {
  * @returns Promise<ICompactPosition[]>
  */
 const __listCompactPositionRecords = async (limit: number): Promise<ICompactPosition[]> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
       FROM ${DatabaseService.tn.positions}
@@ -156,7 +156,7 @@ const __listNextCompactPositionRecords = async (
   limit: number,
   startAtOpenTime: number,
 ): Promise<ICompactPosition[]> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
       FROM ${DatabaseService.tn.positions}
@@ -213,7 +213,7 @@ const listCompactPositionRecordsByRange = async (
   text += ' ORDER BY open ASC;';
 
   // execute the query and return the results
-  const { rows } = await DatabaseService.pool.query({ text, values });
+  const { rows } = await DatabaseService.query({ text, values });
   return rows;
 };
 

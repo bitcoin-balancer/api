@@ -11,7 +11,7 @@ import { ICombinedCompactCandlestickRecords, IEventHistoryRecord } from './types
  * @returns Promise<IEventHistoryRecord | undefined>
  */
 const getEventHistoryRecord = async (id: string): Promise<IEventHistoryRecord | undefined> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, event, interval, records, event_time
       FROM ${DatabaseService.tn.event_candlesticks}
@@ -28,7 +28,7 @@ const getEventHistoryRecord = async (id: string): Promise<IEventHistoryRecord | 
  * @returns Promise<void>
  */
 const createEventHistory = async (hist: IEventHistoryRecord): Promise<void> => {
-  await DatabaseService.pool.query({
+  await DatabaseService.query({
     text: `
       INSERT INTO ${DatabaseService.tn.event_candlesticks} (id, event, interval, records, event_time)
       VALUES ($1, $2, $3, $4, $5);
@@ -47,7 +47,7 @@ const updateRecords = async (
   id: string,
   records: ICombinedCompactCandlestickRecords,
 ): Promise<void> => {
-  await DatabaseService.pool.query({
+  await DatabaseService.query({
     text: `
       UPDATE ${DatabaseService.tn.event_candlesticks}
       SET records = $1
@@ -63,7 +63,7 @@ const updateRecords = async (
  * @returns Promise<void>
  */
 const deleteAllRecords = async (): Promise<void> => {
-  await DatabaseService.pool.query({
+  await DatabaseService.query({
     text: `DELETE FROM ${DatabaseService.tn.event_candlesticks};`,
     values: [],
   });

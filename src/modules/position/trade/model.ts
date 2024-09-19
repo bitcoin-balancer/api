@@ -11,7 +11,7 @@ import { ITrade } from '../../shared/exchange/index.js';
  * @returns Promise<ITrade | undefined>
  */
 const getTradeRecord = async (id: number): Promise<ITrade | undefined> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, id_alt, notes, side, price, amount, amount_quote, comission, event_time
       FROM ${DatabaseService.tn.trades}
@@ -47,7 +47,7 @@ const listTradeRecords = async (startAt: number, endAt?: number): Promise<ITrade
   text += ' ORDER BY event_time ASC;';
 
   // execute the query and return the results
-  const { rows } = await DatabaseService.pool.query({ text, values });
+  const { rows } = await DatabaseService.query({ text, values });
   return rows;
 };
 
@@ -57,7 +57,7 @@ const listTradeRecords = async (startAt: number, endAt?: number): Promise<ITrade
  * @returns Promise<number | undefined>
  */
 const getLastTradeRecordTime = async (): Promise<number | undefined> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT event_time
       FROM ${DatabaseService.tn.trades}
@@ -108,7 +108,7 @@ const saveTradeRecords = async (trades: ITrade[]): Promise<void> => {
  * @returns Promise<number>
  */
 const createTradeRecord = async (t: ITrade): Promise<number> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       INSERT INTO ${DatabaseService.tn.trades} (notes, side, price, amount, amount_quote, comission, event_time)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -125,7 +125,7 @@ const createTradeRecord = async (t: ITrade): Promise<number> => {
  * @returns Promise<void>
  */
 const updateTradeRecord = async (t: ITrade): Promise<void> => {
-  await DatabaseService.pool.query({
+  await DatabaseService.query({
     text: `
       UPDATE ${DatabaseService.tn.trades}
       SET notes = $1, side = $2, price = $3, amount = $4, amount_quote = $5, comission = $6, event_time = $7
@@ -141,7 +141,7 @@ const updateTradeRecord = async (t: ITrade): Promise<void> => {
  * @returns Promise<void>
  */
 const deleteTradeRecord = async (id: number): Promise<void> => {
-  await DatabaseService.pool.query({
+  await DatabaseService.query({
     text: `DELETE FROM ${DatabaseService.tn.trades} WHERE id = $1;`,
     values: [id],
   });

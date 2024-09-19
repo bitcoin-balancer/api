@@ -11,7 +11,7 @@ import { ITransaction } from './types.js';
  * @returns Promise<ITransaction | undefined>
  */
 const getTransactionRecord = async (id: number): Promise<ITransaction | undefined> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, event_time, status, side, amount, logs
       FROM ${DatabaseService.tn.transactions}
@@ -28,7 +28,7 @@ const getTransactionRecord = async (id: number): Promise<ITransaction | undefine
  * @returns Promise<ITransaction[]>
  */
 const __listTransactionRecords = async (limit: number): Promise<ITransaction[]> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, event_time, status, side, amount, logs
       FROM ${DatabaseService.tn.transactions}
@@ -51,7 +51,7 @@ const __listNextTransactionRecords = async (
   limit: number,
   startAtID: number,
 ): Promise<ITransaction[]> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, event_time, status, side, amount, logs
       FROM ${DatabaseService.tn.transactions}
@@ -105,7 +105,7 @@ const listTransactionRecordsByRange = async (
   text += ' ORDER BY event_time ASC;';
 
   // execute the query and return the results
-  const { rows } = await DatabaseService.pool.query({ text, values });
+  const { rows } = await DatabaseService.query({ text, values });
   return rows;
 };
 
@@ -115,7 +115,7 @@ const listTransactionRecordsByRange = async (
  * @returns Promise<number | undefined>
  */
 const getLastBuyTransactionRecordID = async (): Promise<number | undefined> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id 
       FROM ${DatabaseService.tn.transactions}
@@ -142,7 +142,7 @@ const getLastBuyTransactionRecordID = async (): Promise<number | undefined> => {
  * @returns Promise<number>
  */
 const createTransactionRecord = async (tx: Omit<ITransaction, 'id'>): Promise<number> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       INSERT INTO ${DatabaseService.tn.transactions} (event_time, status, side, amount, logs)
       VALUES ($1, $2, $3, $4, $5)
@@ -159,7 +159,7 @@ const createTransactionRecord = async (tx: Omit<ITransaction, 'id'>): Promise<nu
  * @returns Promise<void>
  */
 const updateTransactionRecord = async (tx: ITransaction): Promise<void> => {
-  await DatabaseService.pool.query({
+  await DatabaseService.query({
     text: `
       UPDATE ${DatabaseService.tn.transactions}
       SET status = $1, logs = $2

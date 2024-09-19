@@ -15,7 +15,7 @@ import {
  * @returns Promise<IUser[]>
  */
 const listUserRecords = async (): Promise<IUser[]> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT uid, nickname, authority, event_time
       FROM ${DatabaseService.tn.users}
@@ -31,7 +31,7 @@ const listUserRecords = async (): Promise<IUser[]> => {
  * @returns Promise<IUser | undefined>
  */
 const getUserRecord = async (uid: string): Promise<IUser | undefined> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT uid, nickname, authority, event_time
       FROM ${DatabaseService.tn.users}
@@ -50,7 +50,7 @@ const getUserRecord = async (uid: string): Promise<IUser | undefined> => {
  * - 3252: if no record is found for the nickname
  */
 const getUserRecordByNickname = async (nickname: string): Promise<IUser> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT uid, nickname, authority, event_time
       FROM ${DatabaseService.tn.users}
@@ -70,7 +70,7 @@ const getUserRecordByNickname = async (nickname: string): Promise<IUser> => {
  * @returns Promise<boolean>
  */
 const nicknameExists = async (nickname: string): Promise<boolean> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT 1
       FROM ${DatabaseService.tn.users}
@@ -89,7 +89,7 @@ const nicknameExists = async (nickname: string): Promise<boolean> => {
  * - 3250: if the user record does not exist or the OTP Secret is not valid
  */
 const getUserOTPSecret = async (uid: string): Promise<string> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT otp_secret
       FROM ${DatabaseService.tn.users}
@@ -115,7 +115,7 @@ const getUserOTPSecret = async (uid: string): Promise<string> => {
 const getUserSignInDataByNickname = async (
   nickname: string,
 ): Promise<{ uid: string, password_hash: string, otp_secret: string }> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT uid, password_hash, otp_secret
       FROM ${DatabaseService.tn.users}
@@ -153,7 +153,7 @@ const __listPasswordUpdateRecords = async (
   uid: string,
   limit: number,
 ): Promise<IPasswordUpdate[]> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT uid, event_time
       FROM ${DatabaseService.tn.password_updates}
@@ -179,7 +179,7 @@ const __listNextPasswordUpdateRecords = async (
   limit: number,
   startAtEventTime: number,
 ): Promise<IPasswordUpdate[]> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT uid, event_time
       FROM ${DatabaseService.tn.password_updates}
@@ -235,7 +235,7 @@ const createUserRecord = (
   passwordHash: string | undefined,
   otpSecret: string,
   eventTime: number,
-): Promise<IQueryResult> => DatabaseService.pool.query({
+): Promise<IQueryResult> => DatabaseService.query({
   text: `
     INSERT INTO ${DatabaseService.tn.users} (uid, nickname, authority, password_hash, otp_secret, event_time)
     VALUES ($1, $2, $3, $4, $5, $6);
@@ -250,7 +250,7 @@ const createUserRecord = (
  * @returns Promise<IQueryResult>
  */
 const updateUserNickname = (uid: string, newNickname: string): Promise<IQueryResult> => (
-  DatabaseService.pool.query({
+  DatabaseService.query({
     text: `UPDATE ${DatabaseService.tn.users} SET nickname = $1 WHERE uid = $2;`,
     values: [newNickname, uid],
   })
@@ -263,7 +263,7 @@ const updateUserNickname = (uid: string, newNickname: string): Promise<IQueryRes
  * @returns Promise<IQueryResult>
  */
 const updateUserAuthority = (uid: string, newAuthority: IAuthority): Promise<IQueryResult> => (
-  DatabaseService.pool.query({
+  DatabaseService.query({
     text: `UPDATE ${DatabaseService.tn.users} SET authority = $1 WHERE uid = $2;`,
     values: [newAuthority, uid],
   })
@@ -303,7 +303,7 @@ const updateUserPasswordHash = async (uid: string, newPasswordHash: string): Pro
  * @returns Promise<IQueryResult>
  */
 const updateUserOTPSecret = (uid: string, newSecret: string): Promise<IQueryResult> => (
-  DatabaseService.pool.query({
+  DatabaseService.query({
     text: `UPDATE ${DatabaseService.tn.users} SET otp_secret = $1 WHERE uid = $2;`,
     values: [newSecret, uid],
   })
@@ -315,7 +315,7 @@ const updateUserOTPSecret = (uid: string, newSecret: string): Promise<IQueryResu
  * @returns Promise<IQueryResult>
  */
 const deleteUserRecord = (uid: string): Promise<IQueryResult> => (
-  DatabaseService.pool.query({
+  DatabaseService.query({
     text: `DELETE FROM ${DatabaseService.tn.users} WHERE uid = $1;`,
     values: [uid],
   })
@@ -327,7 +327,7 @@ const deleteUserRecord = (uid: string): Promise<IQueryResult> => (
  * @returns Promise<IQueryResult>
  */
 const deleteAllUserRecords = (): Promise<IQueryResult> => (
-  DatabaseService.pool.query({
+  DatabaseService.query({
     text: `DELETE FROM ${DatabaseService.tn.users};`,
   })
 );

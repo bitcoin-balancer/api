@@ -11,7 +11,7 @@ import { INotification, INotificationSender } from './types.js';
  * @returns Promise<INotification | null>
  */
 const getRecord = async (id: number): Promise<INotification | null> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, sender, title, description, event_time
       FROM ${DatabaseService.tn.notifications} 
@@ -28,7 +28,7 @@ const getRecord = async (id: number): Promise<INotification | null> => {
  * @returns Promise<INotification[]>
  */
 const __listRecords = async (limit: number): Promise<INotification[]> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, sender, title, description, event_time
       FROM ${DatabaseService.tn.notifications} 
@@ -48,7 +48,7 @@ const __listRecords = async (limit: number): Promise<INotification[]> => {
  * @returns Promise<INotification[]>
  */
 const __listNextRecords = async (limit: number, startAtID: number): Promise<INotification[]> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       SELECT id, sender, title, description, event_time
       FROM ${DatabaseService.tn.notifications} 
@@ -86,7 +86,7 @@ const saveRecord = async (
   description: string,
   eventTime: number,
 ): Promise<number> => {
-  const { rows } = await DatabaseService.pool.query({
+  const { rows } = await DatabaseService.query({
     text: `
       INSERT INTO ${DatabaseService.tn.notifications} (sender, title, description, event_time) 
       VALUES ($1, $2, $3, $4) 
@@ -102,7 +102,7 @@ const saveRecord = async (
  * @returns Promise<void>
  */
 const deleteAllRecords = async (): Promise<void> => {
-  await DatabaseService.pool.query({
+  await DatabaseService.query({
     text: `DELETE FROM ${DatabaseService.tn.notifications};`,
   });
 };
