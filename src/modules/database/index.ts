@@ -6,6 +6,7 @@ import {
   IPool,
   IPoolClient,
   IQueryResult,
+  IQueryConfig,
   ITableName,
   ITestTableName,
   IDatabaseSummary,
@@ -71,6 +72,28 @@ const databaseServiceFactory = (): IDatabaseService => {
 
   // the table names object
   const __tn = buildTableNames(RAW_TABLES);
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                          EXECUTION                                           *
+   ********************************************************************************************** */
+
+  /**
+   * Executes a query and returns the results.
+   * @param config
+   * @returns Promise<IQueryResult>
+   */
+  const query = async (config: IQueryConfig): Promise<IQueryResult> => {
+    const client = await __pool!.connect();
+    try {
+      return await client.query(config);
+    } finally {
+      client.release();
+    }
+  };
 
 
 
@@ -245,6 +268,9 @@ const databaseServiceFactory = (): IDatabaseService => {
     get tn() {
       return __tn;
     },
+
+    // execution
+    query,
 
     // database management
     createTables,
