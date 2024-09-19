@@ -69,6 +69,25 @@ const tradeServiceFactory = (): ITradeService => {
    ********************************************************************************************** */
 
   /**
+   * When using Balancer, the user is able to execute trades independently through the Exchange's
+   * platform or another service. For the platform to be able to manage the metrics correctly, some
+   * rules have to be followed:
+   * - for a position to be opened, the first trade must be a 'BUY' transaction
+   * @param trades
+   * @returns ITrade[]
+   */
+  const __filterTrades = (trades: ITrade[]): ITrade[] => {
+    if (
+      __stream.value.length === 0
+      && trades.length > 0
+      && trades[0].side === 'SELL'
+    ) {
+      return __filterTrades(trades.slice(1));
+    }
+    return trades;
+  };
+
+  /**
    * Retrieves account trades that have not yet been processed and returns them. If any, they are
    * stored in the database.
    * @param startTime
@@ -80,10 +99,11 @@ const tradeServiceFactory = (): ITradeService => {
       [startTime],
       [2, 3, 7],
     );
-    if (trades.length) {
-      await saveTradeRecords(trades);
+    const filtered = __filterTrades(trades);
+    if (filtered.length) {
+      await saveTradeRecords(filtered);
     }
-    return trades;
+    return filtered;
   };
 
   /**
