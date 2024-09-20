@@ -14,7 +14,7 @@ import { IRefreshTokenRecord } from './types.js';
  * - 4750: if there isn't a record that matches the refreshToken
  */
 const getUidByRefreshToken = async (refreshToken: string): Promise<string> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT uid
       FROM ${DatabaseService.tn.refresh_tokens}
@@ -35,7 +35,7 @@ const getUidByRefreshToken = async (refreshToken: string): Promise<string> => {
  * @returns Promise<IRefreshTokenRecord[]>
  */
 const listRecordsByUID = async (uid: string): Promise<IRefreshTokenRecord[]> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT uid, token, event_time
       FROM ${DatabaseService.tn.refresh_tokens}
@@ -62,7 +62,7 @@ const listRecordsByUID = async (uid: string): Promise<IRefreshTokenRecord[]> => 
  * @returns Promise<IQueryResult>
  */
 const saveRecord = (uid: string, refreshJWT: string): Promise<IQueryResult> => (
-  DatabaseService.query({
+  DatabaseService.pool.query({
     text: `
       INSERT INTO ${DatabaseService.tn.refresh_tokens} (uid, token, event_time)
       VALUES ($1, $2, $3);
@@ -81,14 +81,14 @@ const saveRecord = (uid: string, refreshJWT: string): Promise<IQueryResult> => (
  */
 const deleteUserRecords = (uid: string, refreshJWT?: string) => (
   typeof refreshJWT === 'string'
-    ? DatabaseService.query({
+    ? DatabaseService.pool.query({
       text: `
         DELETE FROM ${DatabaseService.tn.refresh_tokens}
         WHERE uid = $1 AND token = $2;
       `,
       values: [uid, refreshJWT],
     })
-    : DatabaseService.query({
+    : DatabaseService.pool.query({
       text: `
         DELETE FROM ${DatabaseService.tn.refresh_tokens}
         WHERE uid = $1;
@@ -103,7 +103,7 @@ const deleteUserRecords = (uid: string, refreshJWT?: string) => (
  * @returns Promise<IQueryResult>
  */
 const deleteExpiredRecords = (startAtTimestamp: number): Promise<IQueryResult> => (
-  DatabaseService.query({
+  DatabaseService.pool.query({
     text: `
       DELETE FROM ${DatabaseService.tn.refresh_tokens}
       WHERE event_time <= $1;
@@ -117,7 +117,7 @@ const deleteExpiredRecords = (startAtTimestamp: number): Promise<IQueryResult> =
  * the users.
  * @returns Promise<IQueryResult>
  */
-const deleteAllRecords = (): Promise<IQueryResult> => DatabaseService.query({
+const deleteAllRecords = (): Promise<IQueryResult> => DatabaseService.pool.query({
   text: `DELETE FROM ${DatabaseService.tn.refresh_tokens};`,
   values: [],
 });

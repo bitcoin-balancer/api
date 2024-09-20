@@ -11,7 +11,7 @@ import { IAPIError, IAPIErrorOrigin } from './types.js';
  * @returns Promise<IAPIError | null>
  */
 const getRecord = async (id: number): Promise<IAPIError | null> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, origin, error, event_time, uid, ip, args 
       FROM ${DatabaseService.tn.api_errors} 
@@ -28,7 +28,7 @@ const getRecord = async (id: number): Promise<IAPIError | null> => {
  * @returns Promise<IAPIError[]>
  */
 const __listRecords = async (limit: number): Promise<IAPIError[]> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, origin, error, event_time, uid, ip, args 
       FROM ${DatabaseService.tn.api_errors} 
@@ -48,7 +48,7 @@ const __listRecords = async (limit: number): Promise<IAPIError[]> => {
  * @returns Promise<IAPIError[]>
  */
 const __listNextRecords = async (limit: number, startAtID: number): Promise<IAPIError[]> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, origin, error, event_time, uid, ip, args 
       FROM ${DatabaseService.tn.api_errors} 
@@ -88,7 +88,7 @@ const saveRecord = async (
   ip: string | undefined,
   args: Record<string, any> | undefined,
 ): Promise<number> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       INSERT INTO ${DatabaseService.tn.api_errors} (origin, error, event_time, uid, ip, args) 
       VALUES ($1, $2, $3, $4, $5, $6) 
@@ -104,7 +104,7 @@ const saveRecord = async (
  * @returns Promise<void>
  */
 const deleteAllRecords = async (): Promise<void> => {
-  await DatabaseService.query({
+  await DatabaseService.pool.query({
     text: `DELETE FROM ${DatabaseService.tn.api_errors};`,
   });
 };

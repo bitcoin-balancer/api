@@ -11,7 +11,7 @@ import { IStoreID } from './types.js';
  * @returns Promise<T | null>
  */
 const readRecord = async <T>(id: IStoreID): Promise<T | null> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT value
       FROM ${DatabaseService.tn.record_stores}
@@ -35,7 +35,7 @@ const writeRecord = async <T>(
   initializing?: boolean,
 ): Promise<IQueryResult> => {
   if (initializing) {
-    return DatabaseService.query({
+    return DatabaseService.pool.query({
       text: `
         INSERT INTO ${DatabaseService.tn.record_stores} (id, value)
         VALUES ($1, $2);
@@ -43,7 +43,7 @@ const writeRecord = async <T>(
       values: [id, value],
     });
   }
-  return DatabaseService.query({
+  return DatabaseService.pool.query({
     text: `
       UPDATE ${DatabaseService.tn.record_stores}
       SET value = $1
@@ -58,7 +58,7 @@ const writeRecord = async <T>(
  * @param id
  * @returns Promise<IQueryResult>
  */
-const deleteRecord = async (id: IStoreID): Promise<IQueryResult> => DatabaseService.query({
+const deleteRecord = async (id: IStoreID): Promise<IQueryResult> => DatabaseService.pool.query({
   text: `
     DELETE FROM ${DatabaseService.tn.record_stores}
     WHERE id = $1;

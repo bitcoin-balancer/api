@@ -14,9 +14,6 @@ type IDatabaseService = {
   pool: pg.Pool;
   tn: ITableNames;
 
-  // execution
-  query: (config: IQueryConfig) => Promise<IQueryResult>;
-
   // database management
   createTables: () => Promise<void>;
   dropTables: () => Promise<pg.QueryResult>;
@@ -48,23 +45,6 @@ type IPoolClient = pg.PoolClient;
 
 // the result of a query execution
 type IQueryResult = pg.QueryResult;
-
-
-
-
-
-/* ************************************************************************************************
- *                                             TYPES                                              *
- ************************************************************************************************ */
-
-/**
- * Query Cofig
- * The way a query must be provided in order to be executed against the db.
- */
-type IQueryConfig = {
-  text: string;
-  values?: unknown[];
-};
 
 
 
@@ -170,9 +150,6 @@ export type {
   IPool,
   IPoolClient,
   IQueryResult,
-
-  // types
-  IQueryConfig,
 
   // tables
   IRawTable,

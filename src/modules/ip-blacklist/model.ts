@@ -11,7 +11,7 @@ import { IIPBlacklistRecord } from './types.js';
  * @returns Promise<IIPBlacklistRecord | undefined>
  */
 const getRecord = async (id: number): Promise<IIPBlacklistRecord | undefined> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, ip, notes, event_time
       FROM ${DatabaseService.tn.ip_blacklist}
@@ -28,7 +28,7 @@ const getRecord = async (id: number): Promise<IIPBlacklistRecord | undefined> =>
  * @returns Promise<IIPBlacklistRecord | undefined>
  */
 const getRecordByIP = async (ip: string): Promise<IIPBlacklistRecord | undefined> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, ip, notes, event_time
       FROM ${DatabaseService.tn.ip_blacklist}
@@ -44,7 +44,7 @@ const getRecordByIP = async (ip: string): Promise<IIPBlacklistRecord | undefined
  * @returns Promise<string[]>
  */
 const listIPs = async (): Promise<string[]> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `SELECT ip FROM ${DatabaseService.tn.ip_blacklist};`,
     values: [],
   });
@@ -57,7 +57,7 @@ const listIPs = async (): Promise<string[]> => {
  * @returns Promise<IIPBlacklistRecord[]>
  */
 const __listRecords = async (limit: number): Promise<IIPBlacklistRecord[]> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, ip, notes, event_time
       FROM ${DatabaseService.tn.ip_blacklist}
@@ -80,7 +80,7 @@ const __listNextRecords = async (
   limit: number,
   startAtID: number,
 ): Promise<IIPBlacklistRecord[]> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT id, ip, notes, event_time
       FROM ${DatabaseService.tn.ip_blacklist}
@@ -124,7 +124,7 @@ const createRecord = async (
   notes: string | undefined,
   eventTime: number,
 ): Promise<number> => {
-  const { rows } = await DatabaseService.query({
+  const { rows } = await DatabaseService.pool.query({
     text: `
       INSERT INTO ${DatabaseService.tn.ip_blacklist} (ip, notes, event_time)
       VALUES ($1, $2, $3)
@@ -143,7 +143,7 @@ const createRecord = async (
  * @returns Promise<IQueryResult>
  */
 const updateRecord = (id: number, ip: string, notes: string | undefined): Promise<IQueryResult> => (
-  DatabaseService.query({
+  DatabaseService.pool.query({
     text: `
       UPDATE ${DatabaseService.tn.ip_blacklist}
       SET ip = $1, notes = $2
@@ -158,7 +158,7 @@ const updateRecord = (id: number, ip: string, notes: string | undefined): Promis
  * @param id
  * @returns Promise<IQueryResult>
  */
-const deleteRecord = (id: number): Promise<IQueryResult> => DatabaseService.query({
+const deleteRecord = (id: number): Promise<IQueryResult> => DatabaseService.pool.query({
   text: `DELETE FROM ${DatabaseService.tn.ip_blacklist} WHERE id = $1;`,
   values: [id],
 });
@@ -168,7 +168,7 @@ const deleteRecord = (id: number): Promise<IQueryResult> => DatabaseService.quer
  * automated tests only.
  * @returns Promise<IQueryResult>
  */
-const deleteAllRecords = (): Promise<IQueryResult> => DatabaseService.query({
+const deleteAllRecords = (): Promise<IQueryResult> => DatabaseService.pool.query({
   text: `DELETE FROM ${DatabaseService.tn.ip_blacklist};`,
   values: [],
 });
