@@ -191,7 +191,7 @@ const getOrderBookRefetchFrequency = (): number => {
  * @returns ILiquidityConfig
  */
 const buildDefaultConfig = (): ILiquidityConfig => ({
-  maxDistanceFromPrice: 0.25,
+  maxDistanceFromPrice: 0.05,
   intensityWeights: {
     1: 1,
     2: 3,
