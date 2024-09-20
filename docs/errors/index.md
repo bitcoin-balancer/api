@@ -457,6 +457,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **21505:** `The size '${newConfig.size}' is invalid as it must be a valid integer ranging 128 and 512.`
 - **21506:** `The candlestick interval '${newConfig.interval}' is invalid. Supported values include: ${JSON.stringify(ExchangeService.CANDLESTICK_INTERVALS)}.`
 - **21507:** `The number of candlesticks retrieved from the exchange '${candlesticks.id.length}' doesn't match the window size set in the configuration '${config.size}'`
+- **21508:** `The window series contains invalid ${property} values.`
 
 
 

@@ -15,6 +15,35 @@ import { IWindowConfig } from './types.js';
  ************************************************************************************************ */
 
 /**
+ * Validates the candlesticks records, ensuring all values are valid numbers.
+ * @param candlesticks
+ * @throws
+ * - 21508: if any of the values is invalid
+ */
+const validateCandlestickRecords = (candlesticks: ICompactCandlestickRecords): void => {
+  if (candlesticks.id.some((value) => !integerValid(value, 1))) {
+    console.log(candlesticks);
+    throw new Error(encodeError('The window series contains invalid id values.', 21508));
+  }
+  if (candlesticks.open.some((value) => !numberValid(value, 0.01))) {
+    console.log(candlesticks);
+    throw new Error(encodeError('The window series contains invalid open values.', 21508));
+  }
+  if (candlesticks.high.some((value) => !numberValid(value, 0.01))) {
+    console.log(candlesticks);
+    throw new Error(encodeError('The window series contains invalid high values.', 21508));
+  }
+  if (candlesticks.low.some((value) => !numberValid(value, 0.01))) {
+    console.log(candlesticks);
+    throw new Error(encodeError('The window series contains invalid low values.', 21508));
+  }
+  if (candlesticks.close.some((value) => !numberValid(value, 0.01))) {
+    console.log(candlesticks);
+    throw new Error(encodeError('The window series contains invalid close values.', 21508));
+  }
+};
+
+/**
  * Ensures the candlesticks match the requirements and can be used to initialize the state.
  * @param candlesticks
  * @param config
@@ -78,6 +107,7 @@ const canConfigBeUpdated = (newConfig: IWindowConfig): void => {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  validateCandlestickRecords,
   validateInitialCandlesticks,
   canConfigBeUpdated,
 };

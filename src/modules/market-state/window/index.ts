@@ -10,7 +10,11 @@ import {
 import { ExchangeService } from '../../shared/exchange/index.js';
 import { calculateStateForSeries } from '../shared/utils.js';
 import { buildDefaultConfig, buildPristineState, getConfigUpdatePostActions } from './utils.js';
-import { canConfigBeUpdated, validateInitialCandlesticks } from './validations.js';
+import {
+  validateCandlestickRecords,
+  validateInitialCandlesticks,
+  canConfigBeUpdated,
+} from './validations.js';
 import { IWindowConfig, IWindowService, IWindowState } from './types.js';
 
 
@@ -108,6 +112,8 @@ const windowServiceFactory = (): IWindowService => {
    * Fires when the module is being initialized or if the configuration is changed in a way that
    * requires the module to be teared down and re-initialized.
    * @param candlesticks
+   * @throws
+   * - 21507: if the number of candlesticks doesn't match the window size
    */
   const __handleInitialCandlesticks = (candlesticks: ICompactCandlestickRecords): void => {
     validateInitialCandlesticks(candlesticks, __config.value);
@@ -154,11 +160,17 @@ const windowServiceFactory = (): IWindowService => {
    * changes.
    * @param startTime
    * @param candlesticks
+   * @throws
+   * - 21507: if the number of candlesticks doesn't match the window size
+   * - 21508: if any of the values is invalid
    */
   const __onCandlestickChanges = (
     startTime: number | undefined,
     candlesticks: ICompactCandlestickRecords,
   ): void => {
+    // validate the new data
+    validateCandlestickRecords(candlesticks);
+
     // apply the changes on the local window
     if (startTime === undefined) {
       __handleInitialCandlesticks(candlesticks);
