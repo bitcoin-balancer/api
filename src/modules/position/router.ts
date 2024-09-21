@@ -310,6 +310,40 @@ PositionRouter.route('/event-history/:id').get(lowRiskLimit, async (req: Request
   }
 });
 
+/**
+ * Retrieves all the trades that were executed in a position.
+ * @returns IAPIResponse<ITrade[]>
+ * @requirements
+ * - authority: 2
+ */
+PositionRouter.route('/record/trades/:id').get(veryLowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
+    res.json(buildResponse(await PositionService.listPositionTrades(req.params.id)));
+  } catch (e) {
+    APIErrorService.save('PositionRouter.get.record.trades', e, reqUid, req.ip, req.params);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
+/**
+ * Retrieves all the transactions that were executed in a position.
+ * @returns IAPIResponse<ITransaction[]>
+ * @requirements
+ * - authority: 2
+ */
+PositionRouter.route('/record/transactions/:id').get(veryLowRiskLimit, async (req: Request, res: Response) => {
+  let reqUid: string | undefined;
+  try {
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
+    res.json(buildResponse(await PositionService.listPositionTransactions(req.params.id)));
+  } catch (e) {
+    APIErrorService.save('PositionRouter.get.record.transactions', e, reqUid, req.ip, req.params);
+    res.json(buildResponse(undefined, e));
+  }
+});
+
 
 
 

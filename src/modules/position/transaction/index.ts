@@ -330,5 +330,9 @@ const TransactionService = transactionServiceFactory();
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export {
+  // service
   TransactionService,
+
+  // types
+  type ITransaction,
 };

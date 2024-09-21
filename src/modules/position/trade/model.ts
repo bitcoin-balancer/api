@@ -28,7 +28,7 @@ const getTradeRecord = async (id: number): Promise<ITrade | undefined> => {
  * @param endAt?
  * @returns Promise<ITrade[]>
  */
-const listTradeRecords = async (startAt: number, endAt?: number): Promise<ITrade[]> => {
+const listTradeRecords = async (startAt: number, endAt?: number | null): Promise<ITrade[]> => {
   // init values
   let text: string = `
     SELECT id, id_alt, notes, side, price, amount, amount_quote, comission, event_time

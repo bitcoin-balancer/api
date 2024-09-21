@@ -14,7 +14,7 @@ type ITradeService = {
   // ...
 
   // retrievers
-  // ...
+  listTrades: (startAt: number, endAt?: number | null) => Promise<ITrade[]>;
 
   // stream
   subscribe: (callback: (value: ITrade[]) => any) => Subscription;

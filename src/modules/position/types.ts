@@ -1,4 +1,6 @@
 import { IEventHistoryRecord } from '../shared/candlestick/index.js';
+import { ITrade } from '../shared/exchange/index.js';
+import { ITransaction } from './transaction/index.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -30,6 +32,8 @@ type IPositionService = {
     endAt: number | undefined,
   ) => Promise<ICompactPosition[]>;
   getPositionHistory: (id: string) => Promise<IEventHistoryRecord>;
+  listPositionTrades: (id: string) => Promise<ITrade[]>;
+  listPositionTransactions: (id: string) => Promise<ITransaction[]>;
 
   // initializer
   initialize: () => Promise<void>;

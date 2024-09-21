@@ -85,7 +85,7 @@ const listTransactionRecords = (limit: number, startAtID?: number): Promise<ITra
  */
 const listTransactionRecordsByRange = async (
   startAt: number,
-  endAt?: number,
+  endAt?: number | null,
 ): Promise<ITransaction[]> => {
   // init values
   let text: string = `

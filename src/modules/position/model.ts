@@ -23,6 +23,25 @@ const getPositionRecord = async (id: string): Promise<IPosition | undefined> => 
 };
 
 /**
+ * Returns a position's open and close times by ID. If none is found it returns undefined.
+ * @param id
+ * @returns Promise<{ open: number, close: number | null} | undefined>
+ */
+const getPositionRecordTimes = async (
+  id: string,
+): Promise<{ open: number, close: number | null } | undefined> => {
+  const { rows } = await DatabaseService.pool.query({
+    text: `
+      SELECT open, close
+      FROM ${DatabaseService.tn.positions}
+      WHERE id = $1;
+    `,
+    values: [id],
+  });
+  return rows[0];
+};
+
+/**
  * Retrieves the record for the position that is active. If none is, it returns undefined.
  * @returns Promise<IPosition | undefined>
  */
@@ -226,6 +245,7 @@ const listCompactPositionRecordsByRange = async (
 export {
   // position
   getPositionRecord,
+  getPositionRecordTimes,
   getActivePositionRecord,
   createPositionRecord,
   updatePositionRecord,

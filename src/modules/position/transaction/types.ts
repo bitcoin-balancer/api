@@ -18,7 +18,7 @@ type ITransactionService = {
     limit: number,
     startAtID: number | undefined,
   ) => Promise<ITransaction[]>;
-  listTransactionsByRange: (startAt: number, endAt?: number) => Promise<ITransaction[]>;
+  listTransactionsByRange: (startAt: number, endAt?: number | null) => Promise<ITransaction[]>;
   getLastBuyTransactionID: () => Promise<number | undefined>;
 
   // execution

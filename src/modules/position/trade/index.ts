@@ -41,7 +41,13 @@ const tradeServiceFactory = (): ITradeService => {
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
 
-  // ...
+  /**
+   * Retrieves a list of trades from the database based on a given range.
+   * @param startAt
+   * @param endAt?
+   * @returns Promise<ITrade[]>
+   */
+  const listTrades = listTradeRecords;
 
 
 
@@ -186,7 +192,7 @@ const tradeServiceFactory = (): ITradeService => {
     // ...
 
     // retrievers
-    // ...
+    listTrades,
 
     // stream
     subscribe,

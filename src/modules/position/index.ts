@@ -16,7 +16,7 @@ import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { StrategyService, IDecreaseLevelID } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
 import { TradeService } from './trade/index.js';
-import { TransactionService } from './transaction/index.js';
+import { TransactionService, ITransaction } from './transaction/index.js';
 import {
   processTXAmount,
   toQuoteAsset,
@@ -39,6 +39,7 @@ import {
 } from './validations.js';
 import {
   getPositionRecord,
+  getPositionRecordTimes,
   getActivePositionRecord,
   createPositionRecord,
   updatePositionRecord,
@@ -645,6 +646,40 @@ const positionServiceFactory = (): IPositionService => {
     CandlestickService.getEventHistory(id)
   );
 
+  /**
+   * Retrieves all the trades that were executed in a position.
+   * @param id
+   * @returns Promise<ITrade[]>
+   * @throws
+   * - 30500: if the ID is not a valid uuid v4
+   * - 30000: if the positition is not found in the db
+   */
+  const listPositionTrades = async (id: string): Promise<ITrade[]> => {
+    canPositionRecordBeRetrieved(id);
+    const record = await getPositionRecordTimes(id);
+    if (!record) {
+      throw new Error(encodeError(`The position '${id}' was not found in the database.`, 30000));
+    }
+    return TradeService.listTrades(record.open, record.close);
+  };
+
+  /**
+   * Retrieves all the transactions that were executed in a position.
+   * @param id
+   * @returns Promise<ITransaction[]>
+   * @throws
+   * - 30500: if the ID is not a valid uuid v4
+   * - 30000: if the positition is not found in the db
+   */
+  const listPositionTransactions = async (id: string): Promise<ITransaction[]> => {
+    canPositionRecordBeRetrieved(id);
+    const record = await getPositionRecordTimes(id);
+    if (!record) {
+      throw new Error(encodeError(`The position '${id}' was not found in the database.`, 30000));
+    }
+    return TransactionService.listTransactionsByRange(record.open, record.close);
+  };
+
 
 
 
@@ -750,6 +785,8 @@ const positionServiceFactory = (): IPositionService => {
     listCompactPositions,
     listCompactPositionsByRange,
     getPositionHistory,
+    listPositionTrades,
+    listPositionTransactions,
 
     // initializer
     initialize,
