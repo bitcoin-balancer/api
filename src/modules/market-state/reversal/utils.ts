@@ -266,18 +266,21 @@ const isPriceCrashStateActive = (
  * @param pointsRequirement
  * @returns IReversalState
  */
-const toReversalStateState = (
+const toReversalState = (
   state: IPriceCrashStateRecord,
   pointsRequirement: number,
-): IReversalState => ({
-  id: state.id,
-  points: calculatePercentageRepresentation(
+): IReversalState => {
+  const percentage = calculatePercentageRepresentation(
     state.final_points,
     pointsRequirement,
     { roundingMode: 'ROUND_HALF_DOWN' },
-  ),
-  reversalEventTime: state.reversal_event_time,
-});
+  );
+  return {
+    id: state.id,
+    points: percentage > 100 ? 100 : percentage,
+    reversalEventTime: state.reversal_event_time,
+  };
+};
 
 
 
@@ -318,7 +321,7 @@ export {
   isNewPriceCrashState,
   hasPriceCrashStateEnded,
   isPriceCrashStateActive,
-  toReversalStateState,
+  toReversalState,
 
   // config helpers
   buildDefaultConfig,

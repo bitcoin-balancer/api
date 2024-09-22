@@ -18,7 +18,7 @@ import {
   isNewPriceCrashState,
   hasPriceCrashStateEnded,
   isPriceCrashStateActive,
-  toReversalStateState,
+  toReversalState,
   buildDefaultConfig,
 } from './utils.js';
 import {
@@ -179,7 +179,7 @@ const reversalServiceFactory = (): IReversalService => {
 
     // finally, return the state (if any)
     return (__state && __activeUntil !== undefined)
-      ? toReversalStateState(__state, __config.value.pointsRequirement)
+      ? toReversalState(__state, __config.value.pointsRequirement)
       : undefined;
   };
 
