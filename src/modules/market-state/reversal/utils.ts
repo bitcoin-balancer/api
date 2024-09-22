@@ -181,7 +181,7 @@ const calculatePoints = (
 
   // finally, return the points build
   return {
-    total,
+    total: processValue(total),
     liquidity,
     coinsQuote,
     coinsBase,
