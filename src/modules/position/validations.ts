@@ -45,17 +45,26 @@ const canPositionBeDecreased = (active: IPosition | undefined, percentage: numbe
 /**
  * Verifies if a position can be archived.
  * @param id
+ * @param active
  * @param position
  * @throws
  * - 30509: if the positon doesn't exist
  * - 30510: if the positon has already been archived
+ * - 30512: if the positon is currently active
  */
-const canPositionBeArchived = (id: string, position: IPosition | undefined): void => {
+const canPositionBeArchived = (
+  id: string,
+  active: IPosition | undefined,
+  position: IPosition | undefined,
+): void => {
   if (position === undefined) {
     throw new Error(encodeError(`The position '${id}' cannot be archived because it doesn't exist.`, 30509));
   }
   if (position.archived) {
     throw new Error(encodeError(`The position '${id}' cannot be archived because it has already been.`, 30510));
+  }
+  if (active && active.id === id) {
+    throw new Error(encodeError(`The position '${id}' cannot be archived because it is active.`, 30512));
   }
 };
 
