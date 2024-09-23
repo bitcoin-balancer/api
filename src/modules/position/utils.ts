@@ -34,7 +34,7 @@ import {
  * @returns number
  */
 const processTXAmount = (amount: IBigNumberValue, decimalPlaces: number): number => (
-  processValue(amount, { decimalPlaces, roundingMode: 'ROUND_HALF_DOWN' })
+  processValue(amount, { decimalPlaces, roundingMode: 'ROUND_DOWN' })
 );
 
 /**
@@ -45,7 +45,7 @@ const processTXAmount = (amount: IBigNumberValue, decimalPlaces: number): number
  */
 const toQuoteAsset = (value: IBigNumberValue, rate: IBigNumberValue): number => processValue(
   getBigNumber(value).times(rate),
-  { roundingMode: 'ROUND_HALF_DOWN' },
+  { roundingMode: 'ROUND_DOWN' },
 );
 
 /**
@@ -59,7 +59,7 @@ const toBaseAsset = (
   value: IBigNumberValue,
   rate: IBigNumberValue,
   decimalPlaces: number,
-): number => calculateExchange(value, rate, { decimalPlaces, roundingMode: 'ROUND_HALF_DOWN' });
+): number => calculateExchange(value, rate, { decimalPlaces, roundingMode: 'ROUND_DOWN' });
 
 /**
  * Calculates the decrease price levels based on the strategy's decrease levels.
