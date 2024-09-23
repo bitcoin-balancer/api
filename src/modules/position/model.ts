@@ -217,7 +217,7 @@ const listCompactPositionRecordsByRange = async (
   // init values
   let text: string = `
     SELECT id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out, pnl, roi
-    FROM ${DatabaseService.tn.transactions}
+    FROM ${DatabaseService.tn.positions}
     WHERE open >= $1
   `;
   const values: number[] = [startAt];
