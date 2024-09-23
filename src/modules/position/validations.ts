@@ -15,7 +15,7 @@ import { IPosition } from './types.js';
 const __QUERY_LIMIT = 30;
 
 // the maximum difference between the startAt and the endAt properties in milliseconds
-const __DATE_RANGE_LIMIT = (5 * (365 * (24 * (60 * 60)))) * 1000; // ~5 years
+const __DATE_RANGE_LIMIT = (6 * (365 * (24 * (60 * 60)))) * 1000; // ~6 years
 
 
 
@@ -149,7 +149,7 @@ const canCompactPositionRecordsBeListedByRange = async (
     throw new Error(encodeError(`If startAt '${startAt}' must be less than the endAt '${endAt}'.`, 30505));
   }
   if (((typeof endAt === 'number' ? endAt : Date.now()) - startAt) >= __DATE_RANGE_LIMIT) {
-    throw new Error(encodeError('The difference between the startAt and the endAt cannot be larger than 5 years.', 30506));
+    throw new Error(encodeError('The difference between the startAt and the endAt cannot be larger than 6 years.', 30506));
   }
 };
 
