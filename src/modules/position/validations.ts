@@ -113,10 +113,10 @@ const canPositionRecordBeRetrieved = (id: string): void => {
  * - 30501: if the number of requested records exceeds the limit
  * - 30502: if the startAtOpenTime is not a valid timestamp
  */
-const canCompactPositionRecordsBeListed = async (
+const canCompactPositionRecordsBeListed = (
   limit: number,
   startAtOpenTime: number | undefined,
-): Promise<void> => {
+): void => {
   if (!integerValid(limit, 1, __QUERY_LIMIT)) {
     throw new Error(encodeError(`The maximum number of compact position records that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`, 30501));
   }
@@ -135,10 +135,10 @@ const canCompactPositionRecordsBeListed = async (
  * - 30505: if the startAt is greater than or equals than the endAt
  * - 30506: if the difference between the startAt and the endAt exceeds the limit
  */
-const canCompactPositionRecordsBeListedByRange = async (
+const canCompactPositionRecordsBeListedByRange = (
   startAt: number,
   endAt: number | undefined,
-): Promise<void> => {
+): void => {
   if (!timestampValid(startAt)) {
     throw new Error(encodeError(`The startAt '${startAt}' is not a valid timestamp.`, 30503));
   }
