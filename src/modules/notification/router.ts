@@ -17,12 +17,12 @@ const NotificationRouter = Router();
  * @param startAtID?
  * @returns IAPIResponse<INotification[]>
  * @requirements
- * - authority: 2
+ * - authority: 1
  */
 NotificationRouter.route('/').get(veryLowRiskLimit, async (req: Request, res: Response) => {
   let reqUid: string | undefined;
   try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 2, ['limit'], req.query);
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 1, ['limit'], req.query);
     res.json(buildResponse(await NotificationService.list(
       Number(req.query.limit),
       typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
