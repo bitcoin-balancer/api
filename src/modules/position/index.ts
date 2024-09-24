@@ -325,8 +325,13 @@ const positionServiceFactory = (): IPositionService => {
       StrategyService.config.canIncrease
       && (
         !__active
-        // eslint-disable-next-line max-len
-        || Date.now() > __active.increase_actions[__active.increase_actions.length - 1].nextEventTime
+        || (
+          Date.now() > __active.increase_actions[__active.increase_actions.length - 1].nextEventTime
+          && (
+            StrategyService.config.increaseGainRequirement === 0
+            || __active.gain <= StrategyService.config.increaseGainRequirement
+          )
+        )
       )
     ) {
       await __increase();
