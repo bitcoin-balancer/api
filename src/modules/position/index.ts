@@ -429,6 +429,10 @@ const positionServiceFactory = (): IPositionService => {
 
     // check if the position has been closed
     if (__active.amount < __MIN_ORDER_SIZE) {
+      // set the close time
+      __active.close = Date.now();
+      await updatePositionRecord(__active!);
+
       // notify users
       NotificationService.onPositionClose(__active.open, __active.pnl, __active.roi);
 
