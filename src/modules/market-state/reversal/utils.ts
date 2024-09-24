@@ -298,9 +298,9 @@ const buildDefaultConfig = (): IReversalConfig => ({
   crashDuration: 360,
   pointsRequirement: 75,
   weights: {
-    liquidity: 25,
-    coinsQuote: 37.5,
-    coinsBase: 37.5,
+    liquidity: 30,
+    coinsQuote: 35,
+    coinsBase: 35,
   },
 });
 
