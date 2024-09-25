@@ -51,8 +51,8 @@ const validateManualTradeRecord = (record: IManualTrade): void => {
   if (record.side !== 'BUY' && record.side !== 'SELL') {
     throw new Error(encodeError(`The side '${record.side}' is invalid. Only 'BUY' and 'SELL' are accepted.`, 33503));
   }
-  if (!stringValid(record.notes, 1, 49999)) {
-    throw new Error(encodeError('The notes must be a valid string ranging 1 and 49,999 characters in length.', 33504));
+  if (!stringValid(record.notes, 10, 49999)) {
+    throw new Error(encodeError('The notes must be a valid string ranging 10 and 49,999 characters in length.', 33504));
   }
   if (!numberValid(record.price, 0.01, Number.MAX_SAFE_INTEGER)) {
     throw new Error(encodeError(`The price '${record.price}' is invalid as it must be a valid number ranging 0.01 - ${Number.MAX_SAFE_INTEGER}.`, 33505));
