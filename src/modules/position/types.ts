@@ -1,3 +1,4 @@
+import { IBigNumber } from 'bignumber-utils';
 import { IEventHistoryRecord } from '../shared/candlestick/index.js';
 import { ITrade } from '../shared/exchange/index.js';
 import { IManualTrade } from './trade/index.js';
@@ -96,6 +97,17 @@ type IMarketStateDependantProps = {
   amount_quote: number,
   pnl: number,
   roi: number,
+};
+
+/**
+ * Trades Analysis Amounts
+ * The key amount values extracted by iterating over the trades.
+ */
+type ITradesAnalysisAmounts = {
+  amount: IBigNumber;
+  amountQuoteIn: IBigNumber;
+  amountQuoteOut: IBigNumber;
+  buyTrades: Array<[number, number]>;
 };
 
 /**
@@ -210,6 +222,7 @@ export type {
   IPositionAction,
   IDecreaseActions,
   IMarketStateDependantProps,
+  ITradesAnalysisAmounts,
   ITradesAnalysis,
 
   // position

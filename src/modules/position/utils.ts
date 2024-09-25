@@ -18,6 +18,7 @@ import {
   IDecreasePriceLevels,
   IPositionAction,
   IMarketStateDependantProps,
+  ITradesAnalysisAmounts,
   ITradesAnalysis,
   IPosition,
   ICompactPosition,
@@ -131,25 +132,10 @@ const calculateMarketStateDependantProps = (
 };
 
 /**
- * Analysis a list of trades and returns a summarized object containing the most relevant info
- * ready to be inserted into the position record.
- * Important: if there are no BUY trades, the entry price will be equals to 0 and will potentially
- * break things. If this is the case undefined will be returned.
+ * Iterates over all the trades and calculates the position's key amounts.
  * @param trades
- * @param currentPrice
- * @returns ITradesAnalysis | undefined
  */
-const analyzeTrades = (
-  trades: ITrade[],
-  currentPrice: number,
-  decreaseLevels: IDecreaseLevels,
-): ITradesAnalysis | undefined => {
-  // do not analyze if there are no trades
-  if (trades.length === 0) {
-    return undefined;
-  }
-
-  // init values and iterate over each trade
+const calculateTradesAnalysisAmounts = (trades: ITrade[]): ITradesAnalysisAmounts => {
   let amount = getBigNumber(0);
   let amountQuoteIn = getBigNumber(0);
   let amountQuoteOut = getBigNumber(0);
@@ -164,6 +150,41 @@ const analyzeTrades = (
       amountQuoteOut = amountQuoteOut.plus(trade.amount_quote).minus(trade.comission);
     }
   });
+  return {
+    amount,
+    amountQuoteIn,
+    amountQuoteOut,
+    buyTrades,
+  };
+};
+
+/**
+ * Analysis a list of trades and returns a summarized object containing the most relevant info
+ * ready to be inserted into the position record.
+ * Important: if there are no BUY trades, the entry price will be equals to 0 and will potentially
+ * break things. If this is the case undefined will be returned.
+ * @param trades
+ * @param currentPrice
+ * @param decreaseLevels
+ * @returns ITradesAnalysis | undefined
+ */
+const analyzeTrades = (
+  trades: ITrade[],
+  currentPrice: number,
+  decreaseLevels: IDecreaseLevels,
+): ITradesAnalysis | undefined => {
+  // do not analyze if there are no trades
+  if (trades.length === 0) {
+    return undefined;
+  }
+
+  // init values and iterate over each trade
+  const {
+    amount,
+    amountQuoteIn,
+    amountQuoteOut,
+    buyTrades,
+  } = calculateTradesAnalysisAmounts(trades);
 
   // calculate the new entry price - if there are no buy trades, the entryPrice will be 0
   const entryPrice = calculateWeightedEntry(buyTrades);
@@ -313,6 +334,7 @@ export {
 
   // position changes handling
   calculateMarketStateDependantProps,
+  calculateTradesAnalysisAmounts,
   analyzeTrades,
 
   // build helpers
