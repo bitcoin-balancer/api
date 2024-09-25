@@ -60,7 +60,8 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'PositionRouter.get.transaction' | 'PositionRouter.get.transactions' | 'PositionRouter.get.records.range'
 | 'PositionRouter.get.event-history' | 'PositionService.__increase' | 'PositionService.__decrease'
 | 'PositionRouter.post.increase' | 'PositionRouter.post.decrease' | 'PositionRouter.patch.archive' | 'PositionRouter.patch.unarchive'
-| 'PositionRouter.get.record.trades' | 'PositionRouter.get.record.transactions';
+| 'PositionRouter.get.record.trades' | 'PositionRouter.get.record.transactions' | 'PositionRouter.post.trade'
+| 'PositionRouter.put.trade' | 'PositionRouter.delete.trade';
 
 /**
  * API Error
