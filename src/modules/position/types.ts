@@ -37,9 +37,9 @@ type IPositionService = {
   listPositionTransactions: (id: string) => Promise<ITransaction[]>;
 
   // trade management
-  createTrade: (trade: IManualTrade) => Promise<{ position: IPosition, trade: ITrade }>;
-  updateTrade: (id: number, trade: IManualTrade) => Promise<{ position: IPosition, trade: ITrade }>;
-  deleteTrade: (id: number) => Promise<IPosition>;
+  createTrade: (trade: IManualTrade) => Promise<ITrade>;
+  updateTrade: (id: number, trade: IManualTrade) => Promise<ITrade>;
+  deleteTrade: (id: number) => Promise<void>;
 
   // initializer
   initialize: () => Promise<void>;

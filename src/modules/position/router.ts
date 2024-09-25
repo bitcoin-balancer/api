@@ -355,7 +355,7 @@ PositionRouter.route('/record/transactions/:id').get(veryLowRiskLimit, async (re
 /**
  * Validates and creates a trade record for the active position.
  * @param trade
- * @returns IAPIResponse<{ position: IPosition, trade: ITrade }>
+ * @returns IAPIResponse<ITrade>
  * @requirements
  * - authority: 4
  * - otp-token
@@ -381,7 +381,7 @@ PositionRouter.route('/trade').post(mediumRiskLimit, async (req: Request, res: R
 /**
  * Validates and updates a trade record for the active position.
  * @param trade
- * @returns IAPIResponse<{ position: IPosition, trade: ITrade }>
+ * @returns IAPIResponse<ITrade>
  * @requirements
  * - authority: 4
  * - otp-token
@@ -411,7 +411,7 @@ PositionRouter.route('/trade/:id').put(mediumRiskLimit, async (req: Request, res
 
 /**
  * Validates and deletes a trade record from the active position.
- * @returns IAPIResponse<IPosition>
+ * @returns IAPIResponse<void>
  * @requirements
  * - authority: 4
  * - otp-token
@@ -427,7 +427,8 @@ PositionRouter.route('/trade/:id').delete(mediumRiskLimit, async (req: Request, 
       undefined,
       req.get('otp-token') || '',
     );
-    res.json(buildResponse(await PositionService.deleteTrade(Number(req.params.id))));
+    await PositionService.deleteTrade(Number(req.params.id));
+    res.json(buildResponse());
   } catch (e) {
     APIErrorService.save('PositionRouter.delete.trade', e, reqUid, req.ip, req.params);
     res.json(buildResponse(undefined, e));

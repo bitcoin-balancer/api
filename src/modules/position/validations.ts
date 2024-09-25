@@ -2,10 +2,12 @@ import { encodeError } from 'error-message-utils';
 import {
   integerValid,
   numberValid,
+  objectValid,
   timestampValid,
   uuidValid,
 } from '../shared/validations/index.js';
-import { TradeService } from './trade/index.js';
+import { ITrade } from '../shared/exchange/index.js';
+import { IManualTrade, TradeService } from './trade/index.js';
 import { IPosition } from './types.js';
 
 /* ************************************************************************************************
@@ -162,11 +164,53 @@ const canCompactPositionRecordsBeListedByRange = (
  *                                        TRADE MANAGEMENT                                        *
  ************************************************************************************************ */
 
+/**
+ * Ensures the Position Module's state can handle interactions with the position's trades.
+ * @param activePosition
+ * @param trade
+ * @throws
+ * - 33500: if the record is not an object
+ * - 33501: if the event_time is an invalid
+ * - 33502: if the timestamp is set ahead of time
+ * - 33503: if the side of the record is invalid
+ * - 33504: if the notes are invalid
+ * - 33505: if the price is invalid
+ * - 33506: if the amount is invalid
+ * - 30513: if there isn't an active position
+ */
+const canInteractWithPositionTrades = (
+  activePosition: IPosition | undefined,
+  trade?: IManualTrade,
+): void => {
+  if (!objectValid(activePosition)) {
+    throw new Error(encodeError('There must be an active position to be able to interact with trades.', 30513));
+  }
+  if (trade !== undefined) {
+    TradeService.validateManualTrade(trade);
+  }
+};
 
-const canTradeBeCreated = async (): Promise<void> => {
+const canTradeBeCreated = (
+  rawTrades: ITrade[],
+  trade: ITrade,
+): void => {
 
 };
 
+const canTradeBeUpdated = async (
+  rawTrades: ITrade[],
+  id: number,
+  trade: ITrade,
+): Promise<void> => {
+
+};
+
+const canTradeBeDeleted = async (
+  rawTrades: ITrade[],
+  id: number,
+): Promise<void> => {
+
+};
 
 
 
@@ -187,4 +231,8 @@ export {
   canCompactPositionRecordsBeListedByRange,
 
   // trade management
+  canInteractWithPositionTrades,
+  canTradeBeCreated,
+  canTradeBeUpdated,
+  canTradeBeDeleted,
 };

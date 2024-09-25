@@ -598,7 +598,10 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **30510:** `The position '${id}' cannot be archived because it has already been.`
 - **30511:** `The position '${id}' cannot be unarchived because it is not archived.`
 - **30512:** `The position '${id}' cannot be archived because it is active.`
-- **30513:** ``
+- **30513:** `There must be an active position to be able to interact with trades.`
+- **30514:** ``
+- **30515:** ``
+- **30516:** ``
 
 
 

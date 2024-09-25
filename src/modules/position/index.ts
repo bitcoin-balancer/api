@@ -36,6 +36,10 @@ import {
   canPositionRecordBeRetrieved,
   canCompactPositionRecordsBeListed,
   canCompactPositionRecordsBeListedByRange,
+  canInteractWithPositionTrades,
+  canTradeBeCreated,
+  canTradeBeUpdated,
+  canTradeBeDeleted,
 } from './validations.js';
 import {
   getPositionRecord,
@@ -701,13 +705,24 @@ const positionServiceFactory = (): IPositionService => {
   /**
    * Validates and creates a trade record for the active position.
    * @param trade
-   * @returns Promise<{ position: IPosition, trade: ITrade }>
+   * @returns Promise<ITrade>
+   * @throws
+   * - 33500: if the record is not an object
+   * - 33501: if the event_time is an invalid
+   * - 33502: if the timestamp is set ahead of time
+   * - 33503: if the side of the record is invalid
+   * - 33504: if the notes are invalid
+   * - 33505: if the price is invalid
+   * - 33506: if the amount is invalid
+   * - 30513: if there isn't an active position
+   * - 
    */
-  const createTrade = async (
-    trade: IManualTrade,
-  ): Promise<{ position: IPosition, trade: ITrade }> => {
-    console.log(trade);
-    return <{ position: IPosition, trade: ITrade }>{};
+  const createTrade = async (trade: IManualTrade): Promise<ITrade> => {
+    canInteractWithPositionTrades(__active, trade);
+    const newTrade = TradeService.toTrade(trade);
+    canTradeBeCreated(__rawTrades, newTrade);
+    const id = await TradeService.createTrade(newTrade);
+    return { ...newTrade, id };
   };
 
   /**
@@ -715,13 +730,23 @@ const positionServiceFactory = (): IPositionService => {
    * @param id
    * @param trade
    * @returns Promise<{ position: IPosition, trade: ITrade }>
+   * @throws
+   * - 33500: if the record is not an object
+   * - 33501: if the event_time is an invalid
+   * - 33502: if the timestamp is set ahead of time
+   * - 33503: if the side of the record is invalid
+   * - 33504: if the notes are invalid
+   * - 33505: if the price is invalid
+   * - 33506: if the amount is invalid
+   * - 30513: if there isn't an active position
+   * - 
    */
-  const updateTrade = async (
-    id: number,
-    trade: IManualTrade,
-  ): Promise<{ position: IPosition, trade: ITrade }> => {
-    console.log(id, trade);
-    return <{ position: IPosition, trade: ITrade }>{};
+  const updateTrade = async (id: number, trade: IManualTrade): Promise<ITrade> => {
+    canInteractWithPositionTrades(__active, trade);
+    const newTrade = TradeService.toTrade(trade, id);
+    await canTradeBeUpdated(__rawTrades, id, newTrade);
+    await TradeService.updateTrade(newTrade);
+    return newTrade;
   };
 
   /**
@@ -729,10 +754,21 @@ const positionServiceFactory = (): IPositionService => {
    * @param id
    * @param trade
    * @returns Promise<IPosition>
+   * @throws
+   * - 33500: if the record is not an object
+   * - 33501: if the event_time is an invalid
+   * - 33502: if the timestamp is set ahead of time
+   * - 33503: if the side of the record is invalid
+   * - 33504: if the notes are invalid
+   * - 33505: if the price is invalid
+   * - 33506: if the amount is invalid
+   * - 30513: if there isn't an active position
+   * - 
    */
-  const deleteTrade = async (id: number): Promise<IPosition> => {
-    console.log(id);
-    return __active!;
+  const deleteTrade = async (id: number): Promise<void> => {
+    canInteractWithPositionTrades(__active);
+    await canTradeBeDeleted(__rawTrades, id);
+    await TradeService.deleteTrade(id);
   };
 
 
