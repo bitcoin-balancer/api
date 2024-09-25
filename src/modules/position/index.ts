@@ -510,6 +510,7 @@ const positionServiceFactory = (): IPositionService => {
    * @param nextState
    */
   const __onTradesChanges = (nextState: ITrade[]): void => {
+    console.log(nextState);
     __rawTrades = nextState;
     const newAnalysis = analyzeTrades(__rawTrades, __price, StrategyService.config.decreaseLevels);
     if (__trades === undefined && newAnalysis !== undefined) {

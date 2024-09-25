@@ -199,7 +199,7 @@ const tradeServiceFactory = (): ITradeService => {
    */
   const deleteTrade = async (id: number): Promise<void> => {
     await deleteTradeRecord(id);
-    __stream.next(__stream.value.filter((trade) => trade.id === id));
+    __stream.next(__stream.value.filter((trade) => trade.id !== id));
   };
 
 

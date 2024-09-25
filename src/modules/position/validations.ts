@@ -310,7 +310,7 @@ const canTradeBeDeleted = async (
   }
 
   // check if the state can be committed
-  __canTradesStateBeCommitted(rawTrades.filter((trade) => trade.id === id));
+  __canTradesStateBeCommitted(rawTrades.filter((trade) => trade.id !== id));
 };
 
 
