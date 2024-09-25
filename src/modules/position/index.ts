@@ -372,6 +372,30 @@ const positionServiceFactory = (): IPositionService => {
    ********************************************************************************************** */
 
   /**
+   * Closes the active position. This function should be invoked once the position's amount is
+   * smaller than the minimum order.
+   */
+  const __closePosition = async (): Promise<void> => {
+    // set the close time
+    __active!.close = Date.now();
+    await updatePositionRecord(__active!);
+
+    // notify users
+    NotificationService.onPositionClose(__active!.open, __active!.pnl, __active!.roi);
+
+    // reset the trades' stream
+    TradeService.onPositionClose();
+
+    // complete the event history
+    __activeHist!.complete();
+
+    // reset the local properties
+    __active = undefined;
+    __activeHist = undefined;
+    __trades = undefined;
+  };
+
+  /**
    * Fires when the module has just been initialized or when a new position has just come into
    * existance. If the position already exists, it will update its values. Otherwise, it creates the
    * record.
@@ -406,6 +430,11 @@ const positionServiceFactory = (): IPositionService => {
     // initialize the history
     __activeHist = await eventHistoryFactory(__active.id, 'position', '1d');
     __updatePositionHistory();
+
+    // check if the position needs to be closed
+    if (__active.amount < __MIN_ORDER_SIZE) {
+      await __closePosition();
+    }
   };
 
   /**
@@ -431,25 +460,9 @@ const positionServiceFactory = (): IPositionService => {
     // update the history
     __updatePositionHistory();
 
-    // check if the position has been closed
+    // check if the position needs to be closed
     if (__active.amount < __MIN_ORDER_SIZE) {
-      // set the close time
-      __active.close = Date.now();
-      await updatePositionRecord(__active!);
-
-      // notify users
-      NotificationService.onPositionClose(__active.open, __active.pnl, __active.roi);
-
-      // reset the trades' stream
-      TradeService.onPositionClose();
-
-      // complete the event history
-      __activeHist!.complete();
-
-      // reset the local properties
-      __active = undefined;
-      __activeHist = undefined;
-      __trades = undefined;
+      await __closePosition();
     }
   };
 
