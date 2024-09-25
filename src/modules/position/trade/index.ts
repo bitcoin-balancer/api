@@ -1,5 +1,5 @@
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { invokeFuncPersistently } from '../../shared/utils/index.js';
+import { invokeFuncPersistently, sortRecords } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, ITrade } from '../../shared/exchange/index.js';
 import { getSyncFrequency, toTradeRecord } from './utils.js';
@@ -84,7 +84,7 @@ const tradeServiceFactory = (): ITradeService => {
 
   /**
    * Retrieves account trades that have not yet been processed and returns them. If any, they are
-   * stored in the database.
+   * stored in the database and their ID id inserted into the object.
    * @param startTime
    * @returns Promise<ITrade[]>
    */
@@ -94,9 +94,10 @@ const tradeServiceFactory = (): ITradeService => {
       [startTime],
       [2, 3, 7],
     );
-    const filtered = __filterTrades(trades);
+    let filtered = __filterTrades(trades);
     if (filtered.length) {
-      await saveTradeRecords(filtered);
+      const ids = await saveTradeRecords(filtered);
+      filtered = filtered.map((trade, i) => ({ ...trade, id: ids[i] }));
     }
     return filtered;
   };
@@ -168,21 +169,38 @@ const tradeServiceFactory = (): ITradeService => {
    * @param trade
    * @returns Promise<number>
    */
-  const createTrade = createTradeRecord;
+  const createTrade = async (trade: ITrade): Promise<number> => {
+    const id = await createTradeRecord(trade);
+    __stream.next([...__stream.value, { ...trade, id }].sort(sortRecords('event_time', 'asc')));
+    return id;
+  };
 
   /**
    * Updates a trade that was manually created.
    * @param trade
    * @returns Promise<void>
    */
-  const updateTrade = updateTradeRecord;
+  const updateTrade = async (trade: ITrade): Promise<void> => {
+    await updateTradeRecord(trade);
+    __stream.next(
+      __stream.value.map((record) => {
+        if (record.id === trade.id) {
+          return trade;
+        }
+        return record;
+      }).sort(sortRecords('event_time', 'asc')),
+    );
+  };
 
   /**
    * Deletes a trade record that was manually created from the database.
    * @param id
    * @returns Promise<void>
    */
-  const deleteTrade = deleteTradeRecord;
+  const deleteTrade = async (id: number): Promise<void> => {
+    await deleteTradeRecord(id);
+    __stream.next(__stream.value.filter((trade) => trade.id === id));
+  };
 
 
 

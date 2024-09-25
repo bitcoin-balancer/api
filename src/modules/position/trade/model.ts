@@ -80,20 +80,22 @@ const getLastTradeRecordTime = async (): Promise<number | undefined> => {
 /**
  * Saves a list of trades into the database that have just been retrieved from the database.
  * @param trades
- * @returns Promise<void>
+ * @returns Promise<number[]>
  */
-const saveTradeRecords = async (trades: ITrade[]): Promise<void> => {
+const saveTradeRecords = async (trades: ITrade[]): Promise<number[]> => {
   const client = await DatabaseService.pool.connect();
   try {
     await client.query('BEGIN');
-    await Promise.all(trades.map((t) => client.query({
+    const results = await Promise.all(trades.map((t) => client.query({
       text: `
         INSERT INTO ${DatabaseService.tn.trades} (id_alt, side, price, amount, amount_quote, comission, event_time)
-        VALUES ($1, $2, $3, $4, $5, $6, $7);
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING id;
       `,
       values: [t.id_alt, t.side, t.price, t.amount, t.amount_quote, t.comission, t.event_time],
     })));
     await client.query('COMMIT');
+    return results.map((res) => res.rows[0].id);
   } catch (e) {
     await client.query('ROLLBACK');
     throw e;
