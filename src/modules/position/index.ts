@@ -15,7 +15,7 @@ import { IState } from '../market-state/shared/types.js';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { StrategyService, IDecreaseLevelID } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
-import { TradeService } from './trade/index.js';
+import { IManualTrade, TradeService } from './trade/index.js';
 import { TransactionService, ITransaction } from './transaction/index.js';
 import {
   processTXAmount,
@@ -575,6 +575,45 @@ const positionServiceFactory = (): IPositionService => {
 
 
   /* **********************************************************************************************
+   *                                       TRADE MANAGEMENT                                       *
+   ********************************************************************************************** */
+
+  /**
+   * Validates and creates a trade record for the active position.
+   * @param trade
+   * @returns Promise<ITrade>
+   */
+  const createTrade = async (trade: IManualTrade): Promise<ITrade> => {
+    console.log(trade);
+    return <ITrade>{};
+  };
+
+  /**
+   * Validates and updates a trade record for the active position.
+   * @param id
+   * @param trade
+   * @returns Promise<ITrade>
+   */
+  const updateTrade = async (id: number, trade: IManualTrade): Promise<ITrade> => {
+    console.log(id, trade);
+    return <ITrade>{};
+  };
+
+  /**
+   * Validates and deletes a trade record from the active position.
+   * @param id
+   * @param trade
+   * @returns Promise<void>
+   */
+  const deleteTrade = async (id: number): Promise<void> => {
+    console.log(id);
+  };
+
+
+
+
+
+  /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
 
@@ -797,6 +836,11 @@ const positionServiceFactory = (): IPositionService => {
     getPositionHistory,
     listPositionTrades,
     listPositionTransactions,
+
+    // trade management
+    createTrade,
+    updateTrade,
+    deleteTrade,
 
     // initializer
     initialize,
