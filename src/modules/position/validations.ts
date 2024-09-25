@@ -5,6 +5,7 @@ import {
   timestampValid,
   uuidValid,
 } from '../shared/validations/index.js';
+import { TradeService } from './trade/index.js';
 import { IPosition } from './types.js';
 
 /* ************************************************************************************************
@@ -156,6 +157,21 @@ const canCompactPositionRecordsBeListedByRange = (
 
 
 
+
+/* ************************************************************************************************
+ *                                        TRADE MANAGEMENT                                        *
+ ************************************************************************************************ */
+
+
+const canTradeBeCreated = async (): Promise<void> => {
+
+};
+
+
+
+
+
+
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
@@ -169,4 +185,6 @@ export {
   canPositionRecordBeRetrieved,
   canCompactPositionRecordsBeListed,
   canCompactPositionRecordsBeListedByRange,
+
+  // trade management
 };

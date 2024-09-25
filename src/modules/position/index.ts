@@ -575,45 +575,6 @@ const positionServiceFactory = (): IPositionService => {
 
 
   /* **********************************************************************************************
-   *                                       TRADE MANAGEMENT                                       *
-   ********************************************************************************************** */
-
-  /**
-   * Validates and creates a trade record for the active position.
-   * @param trade
-   * @returns Promise<ITrade>
-   */
-  const createTrade = async (trade: IManualTrade): Promise<ITrade> => {
-    console.log(trade);
-    return <ITrade>{};
-  };
-
-  /**
-   * Validates and updates a trade record for the active position.
-   * @param id
-   * @param trade
-   * @returns Promise<ITrade>
-   */
-  const updateTrade = async (id: number, trade: IManualTrade): Promise<ITrade> => {
-    console.log(id, trade);
-    return <ITrade>{};
-  };
-
-  /**
-   * Validates and deletes a trade record from the active position.
-   * @param id
-   * @param trade
-   * @returns Promise<void>
-   */
-  const deleteTrade = async (id: number): Promise<void> => {
-    console.log(id);
-  };
-
-
-
-
-
-  /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
 
@@ -727,6 +688,51 @@ const positionServiceFactory = (): IPositionService => {
       throw new Error(encodeError(`The position '${id}' was not found in the database.`, 30000));
     }
     return TransactionService.listTransactionsByRange(record.open, record.close);
+  };
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                       TRADE MANAGEMENT                                       *
+   ********************************************************************************************** */
+
+  /**
+   * Validates and creates a trade record for the active position.
+   * @param trade
+   * @returns Promise<{ position: IPosition, trade: ITrade }>
+   */
+  const createTrade = async (
+    trade: IManualTrade,
+  ): Promise<{ position: IPosition, trade: ITrade }> => {
+    console.log(trade);
+    return <{ position: IPosition, trade: ITrade }>{};
+  };
+
+  /**
+   * Validates and updates a trade record for the active position.
+   * @param id
+   * @param trade
+   * @returns Promise<{ position: IPosition, trade: ITrade }>
+   */
+  const updateTrade = async (
+    id: number,
+    trade: IManualTrade,
+  ): Promise<{ position: IPosition, trade: ITrade }> => {
+    console.log(id, trade);
+    return <{ position: IPosition, trade: ITrade }>{};
+  };
+
+  /**
+   * Validates and deletes a trade record from the active position.
+   * @param id
+   * @param trade
+   * @returns Promise<IPosition>
+   */
+  const deleteTrade = async (id: number): Promise<IPosition> => {
+    console.log(id);
+    return __active!;
   };
 
 
