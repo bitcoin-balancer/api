@@ -202,11 +202,14 @@ type ITrade = {
   // the identifier of the trade in the exchange
   id_alt?: string | null;
 
-  // if this property is set it means the trade was created manually through the GUI
-  notes?: string | null;
+  // the timestamp (ms) at which the trade was executed
+  event_time: number;
 
   // the kind of action that was executed
   side: ISide;
+
+  // if this property is set it means the trade was created manually through the GUI
+  notes?: string | null;
 
   // the rate of the trade in quote asset
   price: number;
@@ -219,9 +222,6 @@ type ITrade = {
 
   // the total comission charged in base or quote asset (whichever asset was received)
   comission: number;
-
-  // the timestamp (ms) at which the trade was executed
-  event_time: number;
 };
 
 

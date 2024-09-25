@@ -2,13 +2,15 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, ITrade } from '../../shared/exchange/index.js';
-import { getSyncFrequency } from './utils.js';
+import { getSyncFrequency, toTradeRecord } from './utils.js';
+import { validateTradeRecordID, validateManualTradeRecord } from './validations.js';
 import {
+  getTradeRecord,
   listTradeRecords,
   getLastTradeRecordTime,
   saveTradeRecords,
 } from './model.js';
-import { ITradeService } from './types.js';
+import { ITradeService, IManualTrade } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -32,22 +34,6 @@ const tradeServiceFactory = (): ITradeService => {
   const __SYNC_FREQUENCY = getSyncFrequency();
   let __syncStartTime: number;
   let __syncInterval: NodeJS.Timeout;
-
-
-
-
-
-  /* **********************************************************************************************
-   *                                          RETRIEVERS                                          *
-   ********************************************************************************************** */
-
-  /**
-   * Retrieves a list of trades from the database based on a given range.
-   * @param startAt
-   * @param endAt?
-   * @returns Promise<ITrade[]>
-   */
-  const listTrades = listTradeRecords;
 
 
 
@@ -148,6 +134,67 @@ const tradeServiceFactory = (): ITradeService => {
 
 
   /* **********************************************************************************************
+   *                                          RETRIEVERS                                          *
+   ********************************************************************************************** */
+
+  /**
+   * Retrieves a trade record. Returns undefined if the record is not found.
+   * @param id
+   * @returns Promise<ITrade | undefined>
+   */
+  const getTrade = getTradeRecord;
+
+  /**
+   * Retrieves a list of trades from the database based on a given range.
+   * @param startAt
+   * @param endAt?
+   * @returns Promise<ITrade[]>
+   */
+  const listTrades = listTradeRecords;
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                           HELPERS                                            *
+   ********************************************************************************************** */
+
+  /**
+   * Converts a manual trade into a full trade object.
+   * @param trade
+   * @param id?
+   * @returns ITrade
+   */
+  const toTrade = toTradeRecord;
+
+  /**
+   * Validates the identifier for a record.
+   * @param id
+   * @throws
+   * - 33507: if the record's ID has an invalid format
+   */
+  const validateTradeID = validateTradeRecordID;
+
+  /**
+   * Ensures a manual trades contains all the required properties with valid values.
+   * @param record
+   * @throws
+   * - 33500: if the record is not an object
+   * - 33501: if the event_time is an invalid
+   * - 33502: if the timestamp is set ahead of time
+   * - 33503: if the side of the record is invalid
+   * - 33504: if the notes are invalid
+   * - 33505: if the price is invalid
+   * - 33506: if the amount is invalid
+   */
+  const validateManualTrade = validateManualTradeRecord;
+
+
+
+
+
+  /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
 
@@ -191,12 +238,18 @@ const tradeServiceFactory = (): ITradeService => {
     // properties
     // ...
 
-    // retrievers
-    listTrades,
-
     // stream
     subscribe,
     onPositionClose,
+
+    // retrievers
+    getTrade,
+    listTrades,
+
+    // helpers
+    toTrade,
+    validateTradeID,
+    validateManualTrade,
 
     // initializer
     initialize,
@@ -224,9 +277,6 @@ export {
   // service
   TradeService,
 
-  // validations
-  // ...
-
   // types
-  // ...
+  type IManualTrade,
 };

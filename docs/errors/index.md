@@ -666,3 +666,36 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **32503:** ``
 
 
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Trade` (33000 - 33999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **33000:** ``
+
+### `utils.ts`
+
+- **33250:** ``
+
+### `validations.ts`
+
+- **33500:** `The trade record is not a valid object.`
+- **33501:** `The event_time '${record.event_time}' is invalid as it must be a timestamp earlier than the current time.`
+- **33502:** `The event_time '${record.event_time}' is invalid as it cannot be set ahead of time.`
+- **33503:** `The side '${record.side}' is invalid. Only 'BUY' and 'SELL' are accepted.`
+- **33504:** `The notes must be a valid string ranging 1 and 49,999 characters in length.`
+- **33505:** `The price '${record.price}' is invalid as it must be a valid number ranging 0.01 - ${Number.MAX_SAFE_INTEGER}.`
+- **33506:** `The amount '${record.amount}' is invalid as it must be a valid number ranging 0.00000001 - ${Number.MAX_SAFE_INTEGER}.`
+- **33507:** `The identifier '${id}' is not a valid trade ID.`
+- **33508:** ``
+
+
