@@ -8,7 +8,9 @@ import {
 } from '../shared/validations/index.js';
 import { ITrade } from '../shared/exchange/index.js';
 import { IManualTrade, TradeService } from './trade/index.js';
+import { calculateTradesAnalysisAmounts } from './utils.js';
 import { IPosition } from './types.js';
+import { calculateWeightedEntry } from 'bignumber-utils';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
@@ -187,6 +189,35 @@ const canInteractWithPositionTrades = (
   }
   if (trade !== undefined) {
     TradeService.validateManualTrade(trade);
+  }
+};
+
+/**
+ * Dry-runs the trades calculations and ensures the given state can be fully committed.
+ * @param trades
+ * @throws
+ * - 30514: if there no items in the list of trades
+ * - 30515: if the state causes the amount to be less than 0
+ * - 30516: if the state causes the entry price to be less than or equals to 0
+ */
+const __canTradesStateBeCommitted = (trades: ITrade[]): void => {
+  // ensure there are trades
+  if (trades.length === 0) {
+    throw new Error(encodeError('The trades\' state cannot be committed because the list is empty.', 30514));
+  }
+
+  // calculate the amounts based on the trades
+  const { amount, buyTrades } = calculateTradesAnalysisAmounts(trades);
+
+  // the amount cannot be negative
+  if (amount.isLessThan(0)) {
+    throw new Error(encodeError(`The trades' state cannot be committed because the amount of the position must be a positive number. The provided state resulted in: ${amount.toString()}`, 30515));
+  }
+
+  // calculate the new entry price and validate it
+  const entryPrice = calculateWeightedEntry(buyTrades);
+  if (entryPrice <= 0) {
+    throw new Error(encodeError(`The trades' state cannot be committed because the entry price of the position must be greater than 0. The provided state resulted in: ${entryPrice}`, 30516));
   }
 };
 

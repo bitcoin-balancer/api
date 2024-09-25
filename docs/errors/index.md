@@ -599,9 +599,10 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **30511:** `The position '${id}' cannot be unarchived because it is not archived.`
 - **30512:** `The position '${id}' cannot be archived because it is active.`
 - **30513:** `There must be an active position to be able to interact with trades.`
-- **30514:** ``
-- **30515:** ``
-- **30516:** ``
+- **30514:** `The trades\' state cannot be commited because there are no position trades.`
+- **30515:** `The trades' state cannot be committed because the amount of the position must be a positive number. The provided state resulted in: ${amount.toString()}`
+- **30516:** `The trades' state cannot be committed because the entry price of the position must be greater than 0. The provided state resulted in: ${entryPrice}`
+- **30517:** ``
 
 
 

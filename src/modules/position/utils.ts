@@ -178,7 +178,7 @@ const analyzeTrades = (
     return undefined;
   }
 
-  // init values and iterate over each trade
+  // calculate the amounts based on the trades
   const {
     amount,
     amountQuoteIn,
@@ -188,7 +188,7 @@ const analyzeTrades = (
 
   // calculate the new entry price - if there are no buy trades, the entryPrice will be 0
   const entryPrice = calculateWeightedEntry(buyTrades);
-  if (entryPrice === 0) {
+  if (entryPrice <= 0) {
     return undefined;
   }
 
