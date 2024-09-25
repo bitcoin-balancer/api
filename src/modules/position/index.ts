@@ -762,7 +762,6 @@ const positionServiceFactory = (): IPositionService => {
   /**
    * Validates and deletes a trade record from the active position.
    * @param id
-   * @param trade
    * @returns Promise<void>
    * @throws
    * - 33500: if the record is not an object
