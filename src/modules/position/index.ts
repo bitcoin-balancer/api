@@ -715,7 +715,11 @@ const positionServiceFactory = (): IPositionService => {
    * - 33505: if the price is invalid
    * - 33506: if the amount is invalid
    * - 30513: if there isn't an active position
-   * - 
+   * - 30517: if the timestamp of the trade is older than the position's open time
+   * - 30514: if there no items in the list of trades
+   * - 30515: if the state causes the amount to be less than 0
+   * - 30516: if the state causes the entry price to be less than or equals to 0
+   * - 30519: if the first trade is a sell
    */
   const createTrade = async (trade: IManualTrade): Promise<ITrade> => {
     canInteractWithPositionTrades(__active, trade);
@@ -729,7 +733,7 @@ const positionServiceFactory = (): IPositionService => {
    * Validates and updates a trade record for the active position.
    * @param id
    * @param trade
-   * @returns Promise<{ position: IPosition, trade: ITrade }>
+   * @returns Promise<ITrade>
    * @throws
    * - 33500: if the record is not an object
    * - 33501: if the event_time is an invalid
@@ -739,7 +743,13 @@ const positionServiceFactory = (): IPositionService => {
    * - 33505: if the price is invalid
    * - 33506: if the amount is invalid
    * - 30513: if there isn't an active position
-   * - 
+   * - 30517: if the timestamp of the trade is older than the position's open time
+   * - 33507: if the record's ID has an invalid format
+   * - 30518: if the trade doesn't exist
+   * - 30514: if there no items in the list of trades
+   * - 30515: if the state causes the amount to be less than 0
+   * - 30516: if the state causes the entry price to be less than or equals to 0
+   * - 30519: if the first trade is a sell
    */
   const updateTrade = async (id: number, trade: IManualTrade): Promise<ITrade> => {
     canInteractWithPositionTrades(__active, trade);
@@ -753,7 +763,7 @@ const positionServiceFactory = (): IPositionService => {
    * Validates and deletes a trade record from the active position.
    * @param id
    * @param trade
-   * @returns Promise<IPosition>
+   * @returns Promise<void>
    * @throws
    * - 33500: if the record is not an object
    * - 33501: if the event_time is an invalid
@@ -763,7 +773,12 @@ const positionServiceFactory = (): IPositionService => {
    * - 33505: if the price is invalid
    * - 33506: if the amount is invalid
    * - 30513: if there isn't an active position
-   * - 
+   * - 30517: if the timestamp of the trade is older than the position's open time
+   * - 30514: if there no items in the list of trades
+   * - 30515: if the state causes the amount to be less than 0
+   * - 30516: if the state causes the entry price to be less than or equals to 0
+   * - 30519: if the first trade is a sell
+   * - 30518: if the trade doesn't exist
    */
   const deleteTrade = async (id: number): Promise<void> => {
     canInteractWithPositionTrades(__active);

@@ -602,7 +602,12 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **30514:** `The trades\' state cannot be commited because there are no position trades.`
 - **30515:** `The trades' state cannot be committed because the amount of the position must be a positive number. The provided state resulted in: ${amount.toString()}`
 - **30516:** `The trades' state cannot be committed because the entry price of the position must be greater than 0. The provided state resulted in: ${entryPrice}`
-- **30517:** ``
+- **30517:** `The time of the trade must be set after the position was opened.`
+- **30518:** `The trade '${id}' was not found in the database.`
+- **30519:** `The first trade from the list cannot be a SELL execution.`
+- **30520:** ``
+- **30521:** ``
+- **30522:** ``
 
 
 

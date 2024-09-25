@@ -1,4 +1,6 @@
+/* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
+import { calculateWeightedEntry } from 'bignumber-utils';
 import {
   integerValid,
   numberValid,
@@ -10,7 +12,7 @@ import { ITrade } from '../shared/exchange/index.js';
 import { IManualTrade, TradeService } from './trade/index.js';
 import { calculateTradesAnalysisAmounts } from './utils.js';
 import { IPosition } from './types.js';
-import { calculateWeightedEntry } from 'bignumber-utils';
+import { sortRecords } from '../shared/utils/index.js';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
@@ -179,6 +181,7 @@ const canCompactPositionRecordsBeListedByRange = (
  * - 33505: if the price is invalid
  * - 33506: if the amount is invalid
  * - 30513: if there isn't an active position
+ * - 30517: if the timestamp of the trade is older than the position's open time
  */
 const canInteractWithPositionTrades = (
   activePosition: IPosition | undefined,
@@ -188,7 +191,13 @@ const canInteractWithPositionTrades = (
     throw new Error(encodeError('There must be an active position to be able to interact with trades.', 30513));
   }
   if (trade !== undefined) {
+    // validate the integrity of the trade object
     TradeService.validateManualTrade(trade);
+
+    // ensure the timestamp took place after the position was opened
+    if (trade.event_time < activePosition.open) {
+      throw new Error(encodeError('The time of the trade must be set after the position was opened.', 30517));
+    }
   }
 };
 
@@ -199,11 +208,18 @@ const canInteractWithPositionTrades = (
  * - 30514: if there no items in the list of trades
  * - 30515: if the state causes the amount to be less than 0
  * - 30516: if the state causes the entry price to be less than or equals to 0
+ * - 30519: if the first trade is a sell
  */
 const __canTradesStateBeCommitted = (trades: ITrade[]): void => {
   // ensure there are trades
   if (trades.length === 0) {
     throw new Error(encodeError('The trades\' state cannot be committed because the list is empty.', 30514));
+  }
+
+  // the first trade can never be a sell
+  if (trades[0].side === 'SELL') {
+    console.log(trades);
+    throw new Error(encodeError('The first trade from the list cannot be a SELL execution.', 30519));
   }
 
   // calculate the amounts based on the trades
@@ -221,26 +237,80 @@ const __canTradesStateBeCommitted = (trades: ITrade[]): void => {
   }
 };
 
+/**
+ * Verifies if creating a trade maintains the integrity of the position.
+ * @param rawTrades
+ * @param trade
+ * @throws
+ * - 30514: if there no items in the list of trades
+ * - 30515: if the state causes the amount to be less than 0
+ * - 30516: if the state causes the entry price to be less than or equals to 0
+ * - 30519: if the first trade is a sell
+ */
 const canTradeBeCreated = (
   rawTrades: ITrade[],
   trade: ITrade,
-): void => {
+): void => __canTradesStateBeCommitted([...rawTrades, trade].sort(sortRecords('event_time', 'asc')));
 
-};
-
+/**
+ * Verifies if updating a trade maintains the integrity of the position.
+ * @param rawTrades
+ * @param id
+ * @param trade
+ * @throws
+ * - 33507: if the record's ID has an invalid format
+ * - 30518: if the trade doesn't exist
+ * - 30514: if there no items in the list of trades
+ * - 30515: if the state causes the amount to be less than 0
+ * - 30516: if the state causes the entry price to be less than or equals to 0
+ * - 30519: if the first trade is a sell
+ */
 const canTradeBeUpdated = async (
   rawTrades: ITrade[],
   id: number,
   trade: ITrade,
 ): Promise<void> => {
+  // make sure the trade exists
+  TradeService.validateTradeID(id);
+  if (await TradeService.getTrade(id) === undefined) {
+    throw new Error(encodeError(`The trade '${id}' was not found in the database.`, 30518));
+  }
 
+  // check if the state can be committed
+  __canTradesStateBeCommitted(
+    rawTrades.map((record) => {
+      if (record.id === trade.id) {
+        return trade;
+      }
+      return record;
+    }).sort(sortRecords('event_time', 'asc')),
+  );
 };
 
+/**
+ * Verifies if deleting a trade maintains the integrity of the position.
+ * @param rawTrades
+ * @param id
+ * @throws
+ * - 33507: if the record's ID has an invalid format
+ * - 30518: if the trade doesn't exist
+ * - 30514: if there no items in the list of trades
+ * - 30515: if the state causes the amount to be less than 0
+ * - 30516: if the state causes the entry price to be less than or equals to 0
+ * - 30519: if the first trade is a sell
+ */
 const canTradeBeDeleted = async (
   rawTrades: ITrade[],
   id: number,
 ): Promise<void> => {
+  // make sure the trade exists
+  TradeService.validateTradeID(id);
+  if (await TradeService.getTrade(id) === undefined) {
+    throw new Error(encodeError(`The trade '${id}' was not found in the database.`, 30518));
+  }
 
+  // check if the state can be committed
+  __canTradesStateBeCommitted(rawTrades.filter((trade) => trade.id === id));
 };
 
 
