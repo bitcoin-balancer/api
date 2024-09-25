@@ -75,12 +75,12 @@ PositionRouter.route('/strategy').put(mediumRiskLimit, async (req: Request, res:
  * Retrieves the balances object from the local state.
  * @returns IAPIResponse<IBalances>
  * @requirements
- * - authority: 1
+ * - authority: 2
  */
 PositionRouter.route('/balances').get(lowRiskLimit, async (req: Request, res: Response) => {
   let reqUid: string | undefined;
   try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
     res.json(buildResponse(await BalanceService.getBalances()));
   } catch (e) {
     APIErrorService.save('PositionRouter.get.balances', e, reqUid, req.ip);
