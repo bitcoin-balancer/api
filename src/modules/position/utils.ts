@@ -134,6 +134,7 @@ const calculateMarketStateDependantProps = (
 /**
  * Iterates over all the trades and calculates the position's key amounts.
  * @param trades
+ * @returns ITradesAnalysisAmounts
  */
 const calculateTradesAnalysisAmounts = (trades: ITrade[]): ITradesAnalysisAmounts => {
   let amount = getBigNumber(0);
