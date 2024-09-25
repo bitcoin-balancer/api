@@ -9,6 +9,9 @@ import {
   listTradeRecords,
   getLastTradeRecordTime,
   saveTradeRecords,
+  createTradeRecord,
+  updateTradeRecord,
+  deleteTradeRecord,
 } from './model.js';
 import { ITradeService, IManualTrade } from './types.js';
 
@@ -157,6 +160,35 @@ const tradeServiceFactory = (): ITradeService => {
 
 
   /* **********************************************************************************************
+   *                                           ACTIONS                                            *
+   ********************************************************************************************** */
+
+  /**
+   * Inserts a trade that was manually created into the database.
+   * @param trade
+   * @returns Promise<number>
+   */
+  const createTrade = createTradeRecord;
+
+  /**
+   * Updates a trade that was manually created.
+   * @param trade
+   * @returns Promise<void>
+   */
+  const updateTrade = updateTradeRecord;
+
+  /**
+   * Deletes a trade record that was manually created from the database.
+   * @param id
+   * @returns Promise<void>
+   */
+  const deleteTrade = deleteTradeRecord;
+
+
+
+
+
+  /* **********************************************************************************************
    *                                           HELPERS                                            *
    ********************************************************************************************** */
 
@@ -245,6 +277,11 @@ const tradeServiceFactory = (): ITradeService => {
     // retrievers
     getTrade,
     listTrades,
+
+    // actions
+    createTrade,
+    updateTrade,
+    deleteTrade,
 
     // helpers
     toTrade,

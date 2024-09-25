@@ -21,6 +21,11 @@ type ITradeService = {
   getTrade: (id: number) => Promise<ITrade | undefined>;
   listTrades: (startAt: number, endAt?: number | null) => Promise<ITrade[]>;
 
+  // actions
+  createTrade: (trade: ITrade) => Promise<number>;
+  updateTrade: (trade: ITrade) => Promise<void>;
+  deleteTrade: (id: number) => Promise<void>;
+
   // helpers
   toTrade: (trade: IManualTrade, id?: number) => ITrade;
   validateTradeID: (id: number) => void;
