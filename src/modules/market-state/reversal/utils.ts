@@ -28,57 +28,7 @@ const __calculateLiquidityPoints = (
   { bidDominance }: ICompactLiquidityState,
   weight: number,
 ): number => {
-  let score;
-  if (bidDominance >= 98) { score = 1.00; }
-  else if (bidDominance >= 96) { score = 0.99; }
-  else if (bidDominance >= 94) { score = 0.98; }
-  else if (bidDominance >= 92) { score = 0.97; }
-  else if (bidDominance >= 90) { score = 0.96; }
-  else if (bidDominance >= 88) { score = 0.95; }
-  else if (bidDominance >= 86) { score = 0.94; }
-  else if (bidDominance >= 84) { score = 0.92; }
-  else if (bidDominance >= 82) { score = 0.90; }
-  else if (bidDominance >= 80) { score = 0.88; }
-  else if (bidDominance >= 78) { score = 0.86; }
-  else if (bidDominance >= 76) { score = 0.84; }
-  else if (bidDominance >= 74) { score = 0.82; }
-  else if (bidDominance >= 72) { score = 0.80; }
-  else if (bidDominance >= 70) { score = 0.77; }
-  else if (bidDominance >= 68) { score = 0.74; }
-  else if (bidDominance >= 66) { score = 0.71; }
-  else if (bidDominance >= 64) { score = 0.68; }
-  else if (bidDominance >= 62) { score = 0.65; }
-  else if (bidDominance >= 60) { score = 0.62; }
-  else if (bidDominance >= 58) { score = 0.59; }
-  else if (bidDominance >= 56) { score = 0.56; }
-  else if (bidDominance >= 54) { score = 0.53; }
-  else if (bidDominance >= 52) { score = 0.50; }
-  else if (bidDominance >= 50) { score = 0.47; }
-  else if (bidDominance >= 48) { score = 0.44; }
-  else if (bidDominance >= 46) { score = 0.41; }
-  else if (bidDominance >= 44) { score = 0.38; }
-  else if (bidDominance >= 42) { score = 0.35; }
-  else if (bidDominance >= 40) { score = 0.32; }
-  else if (bidDominance >= 38) { score = 0.29; }
-  else if (bidDominance >= 36) { score = 0.26; }
-  else if (bidDominance >= 34) { score = 0.23; }
-  else if (bidDominance >= 32) { score = 0.20; }
-  else if (bidDominance >= 30) { score = 0.17; }
-  else if (bidDominance >= 28) { score = 0.15; }
-  else if (bidDominance >= 26) { score = 0.14; }
-  else if (bidDominance >= 24) { score = 0.13; }
-  else if (bidDominance >= 22) { score = 0.12; }
-  else if (bidDominance >= 20) { score = 0.11; }
-  else if (bidDominance >= 18) { score = 0.10; }
-  else if (bidDominance >= 16) { score = 0.09; }
-  else if (bidDominance >= 14) { score = 0.08; }
-  else if (bidDominance >= 12) { score = 0.07; }
-  else if (bidDominance >= 10) { score = 0.06; }
-  else if (bidDominance >= 8) { score = 0.05; }
-  else if (bidDominance >= 6) { score = 0.04; }
-  else if (bidDominance >= 4) { score = 0.03; }
-  else if (bidDominance >= 2) { score = 0.02; }
-  else { score = 0.01; }
+  const score = Math.max(0.01, Math.min(1.00, (bidDominance - 2) / 98));
   return processValue(score * weight);
 };
 
