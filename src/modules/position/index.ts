@@ -99,6 +99,11 @@ const positionServiceFactory = (): IPositionService => {
   // the minimum amount of the base asset that can bought or sold
   const __MIN_ORDER_SIZE = 0.0002;
 
+  // the percentage that will be used to calculate the min. position amount quote. This value is
+  // derived from the Strategy.increaseAmountQuote property and closes a position fully if it falls
+  // to this value or less
+  const __MIN_POSITION_AMOUNT_PERCENTAGE = 30;
+
   // the active position (if any)
   let __active: IPosition | undefined;
   let __activeHist: IEventHistory | undefined;
@@ -221,7 +226,11 @@ const positionServiceFactory = (): IPositionService => {
     // only proceed if there is enough balance to transact
     if (balance >= __MIN_ORDER_SIZE) {
       // if the amount is smaller than or equals to the min. amount quote, close the position
-      if (__active.amount_quote <= StrategyService.config.minPositionAmountQuote) {
+      if (
+        __active.amount_quote <= StrategyService.calculateMinPositionAmountQuote(
+          __MIN_POSITION_AMOUNT_PERCENTAGE,
+        )
+      ) {
         if (__active.amount > balance) {
           NotificationService.lowBalance('SELL', balance, __active.amount);
           return processTXAmount(balance, __BASE_ASSET_DP);

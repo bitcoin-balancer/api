@@ -636,7 +636,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **31501:** `The canIncrease '${newConfig.canIncrease}' must be a boolean.`
 - **31502:** `The canDecrease '${newConfig.canIncrease}' must be a boolean value.`
 - **31503:** `The increaseAmountQuote '${newConfig.increaseAmountQuote}' is invalid as it must be a valid number ranging 1 and ${Number.MAX_SAFE_INTEGER}.`
-- **31504:** `The minPositionAmountQuote '${newConfig.minPositionAmountQuote}' is invalid as it must be a valid number ranging ${min} and ${max}.`
+- **31504:** ``
 - **31505:** `The increaseIdleDuration '${newConfig.increaseIdleDuration}' is invalid as it must be a valid number ranging 1 and 1440.`
 - **31506:** `The increaseGainRequirement '${newConfig.increaseGainRequirement}' is invalid as it must be a valid number ranging -99 and 0.`
 - **31507:** `The decreaseLevels property doesn\'t contain a valid tuple with 5 items.`

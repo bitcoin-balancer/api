@@ -12,8 +12,9 @@ type IStrategyService = {
   // properties
   config: IStrategy;
 
-  // retrievers
+  // calculators
   getActiveDecreaseLevel: (gain: number) => IDecreaseLevelID | undefined;
+  calculateMinPositionAmountQuote: (minPositionAmountPercentage: number) => number;
 
   // initializer
   initialize: () => Promise<void>;
@@ -76,10 +77,6 @@ type IStrategy = {
 
   // if enabled, Balancer will automatically decrease positions when conditions apply
   canDecrease: boolean;
-
-  // if the position's amount_quote is <= minPositionAmountQuote, it will be completely closed on
-  // the next decrease action
-  minPositionAmountQuote: number;
 
   // the amount of quote asset (USDT) that will be used to open/increase positions
   increaseAmountQuote: number;

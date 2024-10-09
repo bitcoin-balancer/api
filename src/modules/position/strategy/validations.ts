@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
 import { arrayValid, numberValid, objectValid } from '../../shared/validations/index.js';
-import { calculateMinPositionAmountQuoteRange } from './utils.js';
 import { IDecreaseLevel, IStrategy } from './types.js';
 
 /* ************************************************************************************************
@@ -30,7 +29,6 @@ const __MAX_FREQUENCY = 43200;
  * - 31501: if the canIncrease property is not a boolean
  * - 31502: if the canDecrease property is not a boolean
  * - 31503: if the increaseAmountQuote property is not a valid number
- * - 31504: if the minPositionAmountQuote property is not a valid number
  * - 31505: if the increaseIdleDuration property is not a valid number
  * - 31506: if the increaseGainRequirement property is not a valid number
  * - 31507: if the decreaseLevels property is not a valid tuple
@@ -51,10 +49,6 @@ const canConfigBeUpdated = (newConfig: IStrategy): void => {
   }
   if (!numberValid(newConfig.increaseAmountQuote, 20, Number.MAX_SAFE_INTEGER)) {
     throw new Error(encodeError(`The increaseAmountQuote '${newConfig.increaseAmountQuote}' is invalid as it must be a valid number ranging 20 and ${Number.MAX_SAFE_INTEGER}.`, 31503));
-  }
-  const { min, max } = calculateMinPositionAmountQuoteRange(newConfig.increaseAmountQuote);
-  if (!numberValid(newConfig.minPositionAmountQuote, min, max)) {
-    throw new Error(encodeError(`The minPositionAmountQuote '${newConfig.minPositionAmountQuote}' is invalid as it must be a valid number ranging ${min} and ${max}.`, 31504));
   }
   if (!numberValid(newConfig.increaseIdleDuration, 1, 1440)) {
     throw new Error(encodeError(`The increaseIdleDuration '${newConfig.increaseIdleDuration}' is invalid as it must be a valid number ranging 1 and 1440.`, 31505));
