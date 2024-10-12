@@ -52,9 +52,6 @@ const reversalServiceFactory = (): IReversalService => {
    *                                          PROPERTIES                                          *
    ********************************************************************************************** */
 
-  // the previously passed window state
-  let __previousWindowState: IWindowState | undefined;
-
   // the current price crash state
   let __state: IPriceCrashStateRecord;
 
@@ -166,16 +163,13 @@ const reversalServiceFactory = (): IReversalService => {
     const ts = Date.now();
 
     // handle the new data based on the current state
-    if (isNewPriceCrashState(__previousWindowState, windowState, __activeUntil)) {
+    if (isNewPriceCrashState(windowState, __activeUntil)) {
       __onNewPriceCrashState();
     } else if (hasPriceCrashStateEnded(ts, __activeUntil)) {
       __onPriceCrashStateEnd();
     } else if (isPriceCrashStateActive(ts, __activeUntil, __state)) {
       __onMarketStateChanges(ts, liquidityState, coinsStates);
     }
-
-    // store the window state in memory
-    __previousWindowState = windowState;
 
     // finally, return the state (if any)
     return (__state && __activeUntil !== undefined)

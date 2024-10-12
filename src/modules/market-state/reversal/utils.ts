@@ -170,19 +170,12 @@ const calculateCrashStateDuration = (currentTime: number, crashDuration: number)
 
 /**
  * Checks if the price has just crashed and a new state should be created.
- * @param previousWindowState
- * @param currentWindowState
+ * @param window
  * @param activeUntil
  * @returns boolean
  */
-const isNewPriceCrashState = (
-  previousWindowState: IWindowState | undefined,
-  currentWindowState: IWindowState,
-  activeUntil: number | undefined,
-): boolean => (
-  activeUntil === undefined
-  && previousWindowState !== undefined
-  && (currentWindowState.state === -2 && previousWindowState.state > -2)
+const isNewPriceCrashState = (window: IWindowState, activeUntil: number | undefined): boolean => (
+  activeUntil === undefined && window.state === -2
 );
 
 /**
