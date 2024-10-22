@@ -239,7 +239,7 @@ const toReversalState = (
  */
 const buildDefaultConfig = (): IReversalConfig => ({
   crashDuration: 360,
-  pointsRequirement: 80,
+  pointsRequirement: 77,
   weights: {
     liquidity: 35,
     coinsQuote: 32.5,
