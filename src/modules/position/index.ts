@@ -94,7 +94,7 @@ const positionServiceFactory = (): IPositionService => {
   const __QUOTE_ASSET = ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset;
 
   // the number of decimal places the base asset can have
-  const __BASE_ASSET_DP = 4;
+  const __BASE_ASSET_DP = 5;
 
   // the minimum amount of the base asset that can bought or sold
   const __MIN_ORDER_SIZE = 0.0002;
