@@ -48,7 +48,7 @@ type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRou
 | 'DataJoinRouter.get.app-essentials' | 'DataJoinService.initialize.emitCompactAppEssentials'
 | 'NotificationRouter.get' | 'WindowService.__refetchInterval' | 'WindowService.updateConfiguration.shouldReInitialize'
 | 'WindowService.updateConfiguration.shouldFetchInitialCandlesticks' | 'MarketStateService.__onWindowChanges'
-| 'MarketStateRouter.get.window.config' | 'MarketStateRouter.put.window.config' | 'CoinsService.updateConfiguration.postActions'
+| 'MarketStateRouter.get.window.config' | 'MarketStateRouter.put.window.config' | 'CoinsService.teardownAndInitializeModule'
 | 'MarketStateRouter.get.coins.config' | 'MarketStateRouter.put.coins.config' | 'WebSocket.COINS.error'
 | 'WebSocket.LIQUIDITY.error' | 'WebSocket.COINS.close' | 'WebSocket.LIQUIDITY.close' | 'WebSocket.HealthCheck'
 | 'MarketStateRouter.get.coins.state.asset.symbol' | 'MarketStateRouter.get.coins.state.asset'

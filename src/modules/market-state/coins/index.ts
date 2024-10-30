@@ -382,6 +382,22 @@ const coinsServiceFactory = (): ICoinsService => {
     setTimeout(__evaluateInitialization, __INITIALIZATION_EVALUATION_DELAY * (60 * 1000));
   };
 
+  /**
+   * Tears down and re-initializes the Coins Module. Keep in mind this method triggers a coin
+   * rotation that will reset the current state.
+   * @returns Promise<void>
+   */
+  const teardownAndInitializeModule = async (): Promise<void> => {
+    try {
+      await teardown();
+      await initialize();
+    } catch (e) {
+      const msg = extractMessage(e);
+      APIErrorService.save('CoinsService.teardownAndInitializeModule', msg);
+      NotificationService.coinsReInitError(msg);
+    }
+  };
+
 
 
 
@@ -413,14 +429,7 @@ const coinsServiceFactory = (): ICoinsService => {
     await __config.update(newConfig);
 
     // execute post actions
-    try {
-      await teardown();
-      await initialize();
-    } catch (e) {
-      const msg = extractMessage(e);
-      APIErrorService.save('CoinsService.updateConfiguration.postActions', msg);
-      NotificationService.coinsReInitError(msg);
-    }
+    await teardownAndInitializeModule();
   };
 
 
@@ -447,6 +456,7 @@ const coinsServiceFactory = (): ICoinsService => {
     // initializer
     initialize,
     teardown,
+    teardownAndInitializeModule,
 
     // configuration
     updateConfiguration,
