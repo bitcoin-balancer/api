@@ -98,6 +98,17 @@ const saveRecord = async (
 };
 
 /**
+ * Deletes old records older than startAt (timestamp in ms).
+ * @returns Promise<void>
+ */
+const deleteOldRecords = async (startAt: number): Promise<void> => {
+  await DatabaseService.pool.query({
+    text: `DELETE FROM ${DatabaseService.tn.notifications} WHERE event_time <= $1;`,
+    values: [startAt],
+  });
+};
+
+/**
  * Deletes all the existing records from the database.
  * @returns Promise<void>
  */
@@ -118,5 +129,6 @@ export {
   getRecord,
   listRecords,
   saveRecord,
+  deleteOldRecords,
   deleteAllRecords,
 };

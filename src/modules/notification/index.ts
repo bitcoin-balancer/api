@@ -14,7 +14,7 @@ import {
 import { ISide } from '../shared/exchange/index.js';
 import { IState } from '../market-state/shared/types.js';
 import { canRecordsBeListed } from './validations.js';
-import { listRecords, saveRecord } from './model.js';
+import { listRecords, saveRecord, deleteOldRecords } from './model.js';
 import { throttleableNotificationFactory } from './throttleable-notification.js';
 import { INotificationService, INotification, IPreSaveNotification } from './types.js';
 
@@ -47,6 +47,9 @@ const notificationServiceFactory = (): INotificationService => {
   const __queueLimit: number = 7;
   const __broadcastFrequencySeconds: number = 10;
   let __broadcastInterval: NodeJS.Timeout;
+
+  // the highest number of days notification records will be kept for
+  const __MAX_AGE = 30;
 
 
 
@@ -389,6 +392,7 @@ const notificationServiceFactory = (): INotificationService => {
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
+    // start the broadcasting interval
     if (__CONFIG) {
       __broadcastInterval = setInterval(async () => {
         if (__queue.length) {
@@ -396,6 +400,9 @@ const notificationServiceFactory = (): INotificationService => {
         }
       }, __broadcastFrequencySeconds * 1000);
     }
+
+    // delete old notifications
+    await deleteOldRecords(Date.now() - (__MAX_AGE * (24 * 60 * 60 * 1000)));
   };
 
   /**
