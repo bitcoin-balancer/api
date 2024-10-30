@@ -385,6 +385,7 @@ const coinsServiceFactory = (): ICoinsService => {
   /**
    * Tears down and re-initializes the Coins Module. Keep in mind this method triggers a coin
    * rotation that will reset the current state.
+   * Note: this function is safe to invoke as it doesn't throw errors.
    * @returns Promise<void>
    */
   const teardownAndInitializeModule = async (): Promise<void> => {

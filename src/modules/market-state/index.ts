@@ -7,7 +7,7 @@ import { WindowService } from './window/index.js';
 import { LiquidityService } from './liquidity/index.js';
 import { CoinsService } from './coins/index.js';
 import { ReversalService } from './reversal/index.js';
-import { buildPristineState } from './utils.js';
+import { buildPristineState, canCoinsBeRotated } from './utils.js';
 import { IMarketStateService, IMarketState } from './types.js';
 
 /* ************************************************************************************************
@@ -29,6 +29,11 @@ const marketStateServiceFactory = (): IMarketStateService => {
 
   // the market state stream that will be calculated and broadcasted on window changes
   const __state = new BehaviorSubject(buildPristineState());
+
+  // the coins will be rotated every __COINS_ROTATION_FREQUENCY days if the current market state
+  // meets the requirements
+  const __COINS_ROTATION_FREQUENCY = 3;
+  let __coinsRotationInterval: NodeJS.Timeout;
 
   // if there is an error during the calculation of the market state, a notification is sent
   const __errorNotification = throttleableNotificationFactory(
@@ -109,6 +114,18 @@ const marketStateServiceFactory = (): IMarketStateService => {
    ********************************************************************************************** */
 
   /**
+   * Initializes the interval that will rotate the coins every __COINS_ROTATION_FREQUENCY days
+   * if the requirements are met by the current market state.
+   */
+  const initializeCoinRotationInterval = (): void => {
+    __coinsRotationInterval = setInterval(async () => {
+      if (canCoinsBeRotated(__state.value.windowState, __state.value.reversalState)) {
+        await CoinsService.teardownAndInitializeModule();
+      }
+    }, __COINS_ROTATION_FREQUENCY * (24 * 60 * 60 * 1000));
+  };
+
+  /**
    * Tears down the Market State Module.
    * @returns Promise<void>
    */
@@ -134,6 +151,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
     } catch (e) {
       console.error('CoinsService.teardown()', e);
     }
+    clearInterval(__coinsRotationInterval);
 
     // Reversal Module
     try {
@@ -169,6 +187,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
       } catch (e) {
         throw new Error(`CoinsService.initialize() -> ${extractMessage(e)}`);
       }
+      initializeCoinRotationInterval();
 
       // Reversal Module
       try {

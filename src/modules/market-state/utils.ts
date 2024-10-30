@@ -1,6 +1,7 @@
-import { WindowService } from './window/index.js';
+import { IWindowState, WindowService } from './window/index.js';
 import { LiquidityService } from './liquidity/index.js';
 import { CoinsService } from './coins/index.js';
+import { IReversalState } from './reversal/index.js';
 import { IMarketState } from './types.js';
 
 /* ************************************************************************************************
@@ -18,6 +19,15 @@ const buildPristineState = (): IMarketState => ({
   reversalState: undefined,
 });
 
+/**
+ * Determines if the coins can be rotated based on the current market state.
+ * @param window
+ * @param reversal
+ * @returns boolean
+ */
+const canCoinsBeRotated = (window: IWindowState, reversal: IReversalState | undefined): boolean => (
+  window.state >= 0 && reversal === undefined
+);
 
 
 
@@ -27,4 +37,5 @@ const buildPristineState = (): IMarketState => ({
  ************************************************************************************************ */
 export {
   buildPristineState,
+  canCoinsBeRotated,
 };
