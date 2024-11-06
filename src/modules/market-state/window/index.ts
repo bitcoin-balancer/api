@@ -140,6 +140,8 @@ const windowServiceFactory = (): IWindowService => {
     ) {
       __handleCanclestickUpdate(candlesticks);
       __window.next(__windowVal);
+    } else {
+      NotificationService.onInvalidWindowIntegrity();
     }
   };
 

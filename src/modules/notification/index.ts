@@ -263,6 +263,15 @@ const notificationServiceFactory = (): INotificationService => {
   });
 
   /**
+   * Broadcasts a message notifying users the window could not be updated.
+   */
+  const onInvalidWindowIntegrity = (): void => __addToQueue({
+    sender: 'MARKET_STATE',
+    title: 'Failed to refetch window',
+    description: 'It appears there\'s an issue with the candlestick data received from the exchange (invalid integrity), preventing the window from updating. This could be due to a temporary data glitch or a more persistent issue. Check the logs for more information. If this error persists, consider restarting Balancer.',
+  });
+
+  /**
    * Broadcasts a message notifying users a reversal event has just been issued.
    * @param points
    */
@@ -449,6 +458,7 @@ const notificationServiceFactory = (): INotificationService => {
     marketStateError,
     coinsReInitError,
     windowState,
+    onInvalidWindowIntegrity,
     onReversalEvent,
 
     // transaction

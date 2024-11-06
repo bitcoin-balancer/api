@@ -36,6 +36,7 @@ type INotificationService = {
   marketStateError: (errorMessage: string) => void;
   coinsReInitError: (error: string) => void;
   windowState: (state: IState, price: number, change: number) => void;
+  onInvalidWindowIntegrity: () => void;
   onReversalEvent: (points: number) => void;
 
   // transaction
