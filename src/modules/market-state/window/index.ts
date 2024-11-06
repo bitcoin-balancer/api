@@ -127,19 +127,20 @@ const windowServiceFactory = (): IWindowService => {
     startTime: number | undefined,
     candlesticks: ICompactCandlestickRecords,
   ): void => {
-    // apply the changes on the local window
     if (startTime === undefined) {
       __handleInitialCandlesticks(candlesticks);
+      __window.next(__windowVal);
     } else if (
-      __windowVal.id[__windowVal.id.length - 1] !== candlesticks.id[candlesticks.id.length - 1]
+      candlesticks.id[candlesticks.id.length - 1] > __windowVal.id[__windowVal.id.length - 1]
     ) {
       __handleNewCandlestick(candlesticks);
-    } else {
+      __window.next(__windowVal);
+    } else if (
+      __windowVal.id[__windowVal.id.length - 1] === candlesticks.id[candlesticks.id.length - 1]
+    ) {
       __handleCanclestickUpdate(candlesticks);
+      __window.next(__windowVal);
     }
-
-    // broadcast the new window
-    __window.next(__windowVal);
   };
 
   /**
