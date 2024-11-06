@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
@@ -186,7 +187,9 @@ const windowServiceFactory = (): IWindowService => {
       return { state: mean, splitStates: splits, window: __windowVal };
     } catch (e) {
       // if the state cannot be calculated for any reason, re-sync the whole window
-      __fetchCandlesticks();
+      __fetchCandlesticks()
+        .then(() => console.log('The window has been re-synced successfully.'))
+        .catch(console.error);
       throw e;
     }
   };
