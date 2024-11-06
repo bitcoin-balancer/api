@@ -10,11 +10,7 @@ import {
 import { ExchangeService } from '../../shared/exchange/index.js';
 import { calculateStateForSeries } from '../shared/utils.js';
 import { buildDefaultConfig, buildPristineState, getConfigUpdatePostActions } from './utils.js';
-import {
-  validateCandlestickRecords,
-  validateInitialCandlesticks,
-  canConfigBeUpdated,
-} from './validations.js';
+import { validateInitialCandlesticks, canConfigBeUpdated } from './validations.js';
 import { IWindowConfig, IWindowService, IWindowState } from './types.js';
 
 
@@ -62,43 +58,6 @@ const windowServiceFactory = (): IWindowService => {
   const subscribe = (callback: (value: ICompactCandlestickRecords) => any): Subscription => (
     __window.subscribe(callback)
   );
-
-
-
-
-
-  /* **********************************************************************************************
-   *                                       STATE CALCULATOR                                       *
-   ********************************************************************************************** */
-
-  /**
-   * Calculates the current window state and returns it. If the state is strong, it will send a
-   * notification.
-   * @returns IWindowState
-   */
-  const calculateState = (): IWindowState => {
-    // calculate the state
-    const { mean, splits } = calculateStateForSeries(
-      __windowVal.close,
-      __config.value.requirement,
-      __config.value.strongRequirement,
-    );
-
-    // send a notification if the market is moving strongly
-    if (mean === 2 || mean === -2) {
-      __stateNotification.broadcast([mean, __windowVal.close.at(-1)!, splits.s100.change]);
-    }
-
-    // finally, return the state
-    return { state: mean, splitStates: splits, window: __windowVal };
-  };
-
-
-  /**
-   * Builds the default window state.
-   * @returns IWindowState
-   */
-  const getPristineState = (): IWindowState => buildPristineState();
 
 
 
@@ -162,15 +121,11 @@ const windowServiceFactory = (): IWindowService => {
    * @param candlesticks
    * @throws
    * - 21507: if the number of candlesticks doesn't match the window size
-   * - 21508: if any of the values is invalid
    */
   const __onCandlestickChanges = (
     startTime: number | undefined,
     candlesticks: ICompactCandlestickRecords,
   ): void => {
-    // validate the new data
-    validateCandlestickRecords(candlesticks);
-
     // apply the changes on the local window
     if (startTime === undefined) {
       __handleInitialCandlesticks(candlesticks);
@@ -199,6 +154,49 @@ const windowServiceFactory = (): IWindowService => {
       startTime,
     ),
   );
+
+
+
+
+
+  /* **********************************************************************************************
+   *                                       STATE CALCULATOR                                       *
+   ********************************************************************************************** */
+
+  /**
+   * Calculates the current window state and returns it. If the state is strong, it will send a
+   * notification.
+   * @returns IWindowState
+   */
+  const calculateState = (): IWindowState => {
+    try {
+      // calculate the state
+      const { mean, splits } = calculateStateForSeries(
+        __windowVal.close,
+        __config.value.requirement,
+        __config.value.strongRequirement,
+      );
+
+      // send a notification if the market is moving strongly
+      if (mean === 2 || mean === -2) {
+        __stateNotification.broadcast([mean, __windowVal.close.at(-1)!, splits.s100.change]);
+      }
+
+      // finally, return the state
+      return { state: mean, splitStates: splits, window: __windowVal };
+    } catch (e) {
+      // if the state cannot be calculated for any reason, re-sync the whole window
+      __fetchCandlesticks();
+      throw e;
+    }
+  };
+
+
+  /**
+   * Builds the default window state.
+   * @returns IWindowState
+   */
+  const getPristineState = (): IWindowState => buildPristineState();
 
 
 
