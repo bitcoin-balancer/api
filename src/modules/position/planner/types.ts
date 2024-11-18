@@ -38,7 +38,7 @@ type IDecreasePlan = {
  */
 type IPositionPlan = {
   increase: IIncreasePlan;
-  decrease: IDecreasePlan;
+  decrease?: IDecreasePlan;
 };
 
 

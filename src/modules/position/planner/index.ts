@@ -6,7 +6,7 @@ import { IPositionPlan } from './types.js';
 
 
 
-const calculatePlan = (): IPositionPlan => ({});
+const calculatePlan = (): IPositionPlan => ({ increase: { canIncrease: false } });
 
 
 
