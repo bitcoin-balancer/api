@@ -9,8 +9,19 @@
  * ..
  */
 type IIncreasePlan = {
-
-};
+  canIncrease: boolean;
+} & (
+  | {
+    canIncrease: false;
+  }
+  | {
+    canIncrease: true;
+    targetPrice: number;
+    targetPercentageChange: number;
+    targetReversalEventPoints: number;
+    targetTime: number;
+  }
+);
 
 /**
  * Decrease Plan
