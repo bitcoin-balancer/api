@@ -28,8 +28,16 @@ type IIncreasePlan = {
  * ..
  */
 type IDecreasePlan = {
+  canDecrease: boolean;
+} & (
+  | {
+    canDecrease: false;
+  }
+  | {
+    canDecrease: true;
 
-};
+  }
+);
 
 /**
  * Position Plan
