@@ -183,6 +183,12 @@ type IEnvironment = {
   POSTGRES_PORT: number;
   POSTGRES_PASSWORD_FILE: string;
 
+  // the secret that will be used to hash data, such as passwords
+  HASHING_SECRET: string;
+
+  // the secret that will be used to encrypt data, such as OTP secrets
+  ENCRYPTING_SECRET: string;
+
   // the only account that can have an authority of 5 in Balancer
   ROOT_ACCOUNT: IRootAccountConfig;
 

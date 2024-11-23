@@ -42,6 +42,8 @@ const ENVIRONMENT: IEnvironment = {
   POSTGRES_DB: getString('POSTGRES_DB'),
   POSTGRES_PORT: getInteger('POSTGRES_PORT'),
   POSTGRES_PASSWORD_FILE: getSecretString('POSTGRES_PASSWORD_FILE'),
+  HASHING_SECRET: getSecretString('HASHING_SECRET'),
+  ENCRYPTING_SECRET: getSecretString('ENCRYPTING_SECRET'),
   ROOT_ACCOUNT: <IRootAccountConfig>getSecretObject('ROOT_ACCOUNT'),
   TELEGRAM: <ITelegramConfig>getSecretObject('TELEGRAM'),
   ALTCHA_SECRET: getSecretString('ALTCHA_SECRET'),
