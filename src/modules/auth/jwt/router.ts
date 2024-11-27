@@ -65,6 +65,7 @@ JWTRouter.route('/sign-in').post(veryHighRiskLimit, async (req: Request, res: Re
       secure: ENVIRONMENT.HAS_TUNNEL_TOKEN,
       signed: true,
       maxAge: JWTService.REFRESH_JWT_DURATION_MS,
+      sameSite: 'strict',
     });
 
     // finally, return the access token
