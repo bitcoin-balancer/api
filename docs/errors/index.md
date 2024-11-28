@@ -708,3 +708,21 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **33508:** ``
 
 
+
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+
+## `Encrypt` (34000 - 34999)
+
+- ...
+- ...
+- ...
+
+### `index.ts`
+
+- **34000:** `The integrity of the encrypted data could not be validated.`
