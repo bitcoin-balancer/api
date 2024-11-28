@@ -78,6 +78,7 @@ export {
   type IExchangesCredentials,
   type IBaseAsset,
   type IQuoteAsset,
+  type IEnvironment,
 
   // implementation
   ENVIRONMENT,
