@@ -54,6 +54,7 @@
     "vitest": "1.6.0"
   },
   "dependencies": {
+    "aes256": "1.1.0",
     "altcha-lib": "0.3.0",
     "api-response-utils": "1.0.0",
     "argon2": "0.41.1",
