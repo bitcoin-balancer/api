@@ -31,8 +31,8 @@ export const RAW_TABLES: IRawTable[] = [
         uid             UUID PRIMARY KEY,
         nickname        VARCHAR(20) NOT NULL UNIQUE,
         authority       SMALLINT NOT NULL,
-        password_hash   VARCHAR(100) NULL,
-        otp_secret      VARCHAR(100) NOT NULL UNIQUE,
+        password_hash   TEXT NULL,
+        otp_secret      TEXT NOT NULL UNIQUE,
         event_time      BIGINT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS ${getTableName('users')}_nickname_idx ON ${getTableName('users')}(LOWER(nickname));`,
