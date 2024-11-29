@@ -30,6 +30,9 @@ describe('Data Encrypting', () => {
   test.each([
     ['This is the message that will be encrypted.'],
     ['Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam nemo, quae atque laboriosam odit tempora praesentium quia voluptas similique excepturi recusandae cupiditate repellendus quas! Repellat officiis dignissimos nobis officia quae.'],
+    ['HFLR63CLOQQC2RYA'],
+    ['GAFSO3AAFICU6XB4FUXA2BIUE5XWI3BGDQGWUCQ3FB7TULKV'],
+    ['81fa13b8-a769-491d-8050-714b36912b89'],
     ['k.EGYjMq4Edf/Q5C*ksMdX2/s/gNa%me%@*X_Vg(~CYP|x1Wjtd:T/C0dn3[JV.;pM:p$og[|N:oyAqjSXJyh;lNCe<A~7($XPMJXMc,f13ix1hzpim_)Rv$VB9e4(x1X!NN@Un-P^(WOd>?s!->x%f)TMdPvgwR-Yr<i9[7>i2UGJJ.BxMNO^w@aUtrlJf;JF~xY[4?'],
     [LONG_MESSAGE],
   ])('can encrypt and decrypt a string of any length', (a) => {
