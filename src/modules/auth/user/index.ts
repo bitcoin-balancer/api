@@ -2,6 +2,7 @@ import { encodeError } from 'error-message-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { sortRecords } from '../../shared/utils/index.js';
 import { generateUUID } from '../../shared/uuid/index.js';
+import { decryptData, encryptData } from '../../shared/encrypt/index.js';
 import {
   IUserService,
   IAuthority,
@@ -85,7 +86,7 @@ const userServiceFactory = (): IUserService => {
   };
 
   /**
-   * Validates & retrieves the OTP Secret for an ID.
+   * Validates, retrieves and decrypts the OTP Secret for an ID.
    * @param uid
    * @returns Promise<string>
    * @throws
@@ -96,7 +97,7 @@ const userServiceFactory = (): IUserService => {
    */
   const getOTPSecret = async (uid: string): Promise<string> => {
     await validateUserRecordExistance(uid, true);
-    return getUserOTPSecret(uid);
+    return decryptData(await getUserOTPSecret(uid));
   };
 
   /**
@@ -150,7 +151,7 @@ const userServiceFactory = (): IUserService => {
    * Validates and verifies an OTP Token for a user against the secret.
    * @param uid
    * @param otpToken
-   * @param otpSecret
+   * @param otpSecret? (encrypted)
    * @returns Promise<void>
    * @throws
    * - 3250: if the user record does not exist or the OTP Secret is not valid
@@ -165,7 +166,7 @@ const userServiceFactory = (): IUserService => {
   ): Promise<void> => {
     canVerifyOTPToken(uid, otpToken);
     const secret = typeof otpSecret === 'string' ? otpSecret : await getUserOTPSecret(uid);
-    if (!checkOTPToken(otpToken, secret)) {
+    if (!checkOTPToken(otpToken, decryptData(secret))) {
       throw new Error(encodeError(`The OTP Token '${otpToken}' for uid '${uid}' is invalid.`, 3000));
     }
   };
@@ -255,7 +256,7 @@ const userServiceFactory = (): IUserService => {
 
     // init record values
     const fUID = uid ?? generateUUID();
-    const fOTPSecret = otpSecret ?? generateOTPSecret();
+    const fOTPSecret = encryptData(otpSecret ?? generateOTPSecret());
     const eventTime = Date.now();
     let passwordHash: string | undefined;
     if (typeof password === 'string') {
@@ -364,7 +365,7 @@ const userServiceFactory = (): IUserService => {
   const updateOTPSecret = async (uid: string): Promise<string> => {
     await validateUserRecordExistance(uid);
     const newSecret = generateOTPSecret();
-    await updateUserOTPSecret(uid, newSecret);
+    await updateUserOTPSecret(uid, encryptData(newSecret));
     return newSecret;
   };
 

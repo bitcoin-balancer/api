@@ -83,7 +83,7 @@ type IUser = {
   // the hashed version of the user's password
   password_hash?: string;
 
-  // secret key used in order to generate OTP Tokens
+  // secret key used in order to generate OTP Tokens (encrypted)
   otp_secret?: string;
 
   // the timestamp in ms when the account was first created by root
