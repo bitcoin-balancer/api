@@ -174,29 +174,32 @@ const jwtServiceFactory = (): IJWTService => {
   );
 
   /**
-   * Verifies if a Refresh JWT belongs to a user.
+   * Retrieves the hashed representation of a Refresh JWT if it is currently active. Otherwise, it
+   * returns undefined.
    * @param uid
    * @param refreshJWT
-   * @returns Promise<boolean>
+   * @returns Promise<string | undefined>
    * @throws
    * - 4750: if the user doesn't have Refresh JWTs
    */
-  const __isRefreshTokenAssignedToUID = async (
+  const __toRefreshTokenHash = async (
     uid: string,
     refreshJWT: string,
-  ): Promise<boolean> => {
+  ): Promise<string | undefined> => {
     // retrieve all the tokens that have been assigned to the user
     const tokens = await getRefreshTokensByUID(uid);
 
     // check if the token was assigned to the uid
     let i = 0;
-    let isAssigned: boolean = false;
-    while (!isAssigned && i < tokens.length) {
+    let hash: string | undefined;
+    while (hash === undefined && i < tokens.length) {
       // eslint-disable-next-line no-await-in-loop
-      isAssigned = await verifyHashedData(tokens[i], refreshJWT);
+      if (await verifyHashedData(tokens[i], refreshJWT)) {
+        hash = tokens[i];
+      }
       i += 1;
     }
-    return isAssigned;
+    return hash;
   };
 
   /**
@@ -215,9 +218,9 @@ const jwtServiceFactory = (): IJWTService => {
     // decode the JWT
     const decodedUID = await verifyRefreshToken(refreshJWT);
 
-    // ensure the token was assigned to the user
-    if (!await __isRefreshTokenAssignedToUID(decodedUID, refreshJWT)) {
-      throw new Error(encodeError(`The provided Refresh JWT has not been assigned to uid '${decodedUID}'.`, 0));
+    // ensure the token is active
+    if (await __toRefreshTokenHash(decodedUID, refreshJWT) === undefined) {
+      throw new Error(encodeError(`The provided Refresh JWT has not been assigned to uid '${decodedUID}'.`, 4000));
     }
 
     // finally, generate the token and return it
@@ -233,13 +236,17 @@ const jwtServiceFactory = (): IJWTService => {
    * @throws
    * - 4500: if the uid has an invalid format
    * - 4501: if the Refresh JWT has an invalid format
+   * - 4750: if the user doesn't have Refresh JWTs
    */
   const signOut = async (uid: string, refreshJWT: string, allDevices?: boolean): Promise<void> => {
     // validate the request
     canUserSignOut(uid, refreshJWT);
 
     // sign the user out accordingly
-    await deleteUserRecords(uid, allDevices === true ? undefined : refreshJWT);
+    await deleteUserRecords(
+      uid,
+      allDevices === true ? undefined : await __toRefreshTokenHash(uid, refreshJWT),
+    );
   };
 
 
