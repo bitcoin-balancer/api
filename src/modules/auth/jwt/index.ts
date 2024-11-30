@@ -1,12 +1,13 @@
 import { addMinutes, addDays, subDays } from 'date-fns';
+import { encodeError } from 'error-message-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
-import { hashData } from '../../shared/hash/index.js';
+import { hashData, verifyHashedData } from '../../shared/hash/index.js';
 import { UserService } from '../user/index.js';
 import { IJWTService, IRefreshTokenRecord } from './types.js';
-import { canRecordsBeListed, canRefreshAccessJWT, canUserSignOut } from './validations.js';
+import { canRecordsBeListed, canUserSignOut } from './validations.js';
 import { sign, verify } from './jwt.js';
 import {
-  //getUidByRefreshToken,
+  getRefreshTokensByUID,
   listRecordsByUID,
   saveRecord,
   deleteUserRecords,
@@ -173,6 +174,32 @@ const jwtServiceFactory = (): IJWTService => {
   );
 
   /**
+   * Verifies if a Refresh JWT belongs to a user.
+   * @param uid
+   * @param refreshJWT
+   * @returns Promise<boolean>
+   * @throws
+   * - 4750: if the user doesn't have Refresh JWTs
+   */
+  const __isRefreshTokenAssignedToUID = async (
+    uid: string,
+    refreshJWT: string,
+  ): Promise<boolean> => {
+    // retrieve all the tokens that have been assigned to the user
+    const tokens = await getRefreshTokensByUID(uid);
+
+    // check if the token was assigned to the uid
+    let i = 0;
+    let isAssigned: boolean = false;
+    while (!isAssigned && i < tokens.length) {
+      // eslint-disable-next-line no-await-in-loop
+      isAssigned = await verifyHashedData(tokens[i], refreshJWT);
+      i += 1;
+    }
+    return isAssigned;
+  };
+
+  /**
    * Refreshes an access token based on a long lived Refresh JWT.
    * @param refreshJWT
    * @returns Promise<string>
@@ -181,17 +208,17 @@ const jwtServiceFactory = (): IJWTService => {
    * - 4251: if the signed token has an invalid format
    * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
    * - 4253: if the decoded data is an invalid object or does not contain the uid
-   * - 4750: if there isn't a record that matches the refreshToken
+   * - 4750: if the user doesn't have Refresh JWTs
+   * - 4000: if the token was not assigned to the uid claiming it
    */
   const refreshAccessJWT = async (refreshJWT: string): Promise<string> => {
     // decode the JWT
     const decodedUID = await verifyRefreshToken(refreshJWT);
 
-    // extract the uid from the Refresh JWT Records
-    //const retrievedUID = await getUidByRefreshToken(refreshJWT);
-
-    // validate the data
-    //canRefreshAccessJWT(decodedUID, retrievedUID);
+    // ensure the token was assigned to the user
+    if (!await __isRefreshTokenAssignedToUID(decodedUID, refreshJWT)) {
+      throw new Error(encodeError(`The provided Refresh JWT has not been assigned to uid '${decodedUID}'.`, 0));
+    }
 
     // finally, generate the token and return it
     return __generateAccessToken(decodedUID);

@@ -18,19 +18,6 @@ const canRecordsBeListed = (uid: string): void => {
 };
 
 /**
- * Verifies if an access token can be refreshed based on the validity of the Refresh JWT.
- * @param decodedUID
- * @param retrievedUID
- * @throws
- * - 4502: if the Decoded UID is different to the one stored in the database
- */
-const canRefreshAccessJWT = (decodedUID: string, retrievedUID: string): void => {
-  if (decodedUID !== retrievedUID) {
-    throw new Error(encodeError(`The UID decoded from the Refresh JWT '${decodedUID}' is different to the one stored in the database '${retrievedUID}'.`, 4502));
-  }
-};
-
-/**
  * Verifies if an user has provided the correct details in order to sign out.
  * @param uid
  * @param refreshJWT
@@ -56,6 +43,5 @@ const canUserSignOut = (uid: string, refreshJWT: string): void => {
  ************************************************************************************************ */
 export {
   canRecordsBeListed,
-  canRefreshAccessJWT,
   canUserSignOut,
 };
