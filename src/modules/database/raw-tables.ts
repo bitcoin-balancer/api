@@ -65,6 +65,7 @@ export const RAW_TABLES: IRawTable[] = [
         event_time  BIGINT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_uid_idx ON ${getTableName('refresh_tokens')}(uid);
+      CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_uid_token_idx ON ${getTableName('refresh_tokens')}(uid, token);
       CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_uid_event_time_idx ON ${getTableName('refresh_tokens')}(uid, event_time DESC);`,
   },
 
