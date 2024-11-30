@@ -9,7 +9,7 @@ import { createUserRecord, deleteAllUserRecords } from '../user/model.js';
 import { IUser } from '../user/types.js';
 import { sign, verify } from './jwt.js';
 import {
-  getUidByRefreshToken,
+  getRefreshTokensByUID,
   listRecordsByUID,
   saveRecord,
   deleteExpiredRecords,
@@ -85,22 +85,35 @@ describe('JWT Model', () => {
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
-  describe('getUidByRefreshToken', () => {
-    test('can retrieve the uid from a refresh token (if exists)', async () => {
+  describe('getRefreshTokensByUID', () => {
+    test('can retrieve the list of Refresh JWTs owned by users', async () => {
       await Promise.all(U.map(createUser));
       await Promise.all([
         await saveRecord(U[0].uid, 'some_fake_token-1'),
-        await saveRecord(U[1].uid, 'some_fake_token-2'),
-        await saveRecord(U[2].uid, 'some_fake_token-3'),
+        await saveRecord(U[0].uid, 'some_fake_token-2'),
+        await saveRecord(U[0].uid, 'some_fake_token-3'),
+        await saveRecord(U[1].uid, 'some_fake_token-4'),
+        await saveRecord(U[1].uid, 'some_fake_token-5'),
+        await saveRecord(U[2].uid, 'some_fake_token-6'),
       ]);
-
-      await expect(getUidByRefreshToken('some_fake_token-1')).resolves.toBe(U[0].uid);
-      await expect(getUidByRefreshToken('some_fake_token-2')).resolves.toBe(U[1].uid);
-      await expect(getUidByRefreshToken('some_fake_token-3')).resolves.toBe(U[2].uid);
+      const records = await Promise.all([
+        getRefreshTokensByUID(U[0].uid),
+        getRefreshTokensByUID(U[1].uid),
+        getRefreshTokensByUID(U[2].uid),
+      ]);
+      expect(records[0].length).toBe(3);
+      expect(records[0]).toContain('some_fake_token-1');
+      expect(records[0]).toContain('some_fake_token-2');
+      expect(records[0]).toContain('some_fake_token-3');
+      expect(records[1].length).toBe(2);
+      expect(records[1]).toContain('some_fake_token-4');
+      expect(records[1]).toContain('some_fake_token-5');
+      expect(records[2].length).toBe(1);
+      expect(records[2]).toContain('some_fake_token-6');
     });
 
-    test('throws if the Refresh JWT doesn\'t exist', async () => {
-      await expect(getUidByRefreshToken('some_fake_token-1')).rejects.toThrowError('4750');
+    test('throws if the user does not have a Refresh JWT', async () => {
+      await expect(getRefreshTokensByUID('27d6ed25-c001-4d35-a1e6-a735d844a581')).rejects.toThrowError('4750');
     });
   });
 

@@ -7,25 +7,25 @@ import { IRefreshTokenRecord } from './types.js';
  ************************************************************************************************ */
 
 /**
- * Retrieves an uid based on a Refresh JWT.
- * @param refreshToken
- * @returns Promise<string>
+ * Retrieves the list of Refresh JWTs a user has in the database.
+ * @param uid
+ * @returns Promise<string[]>
  * @throws
- * - 4750: if there isn't a record that matches the refreshToken
+ * - 4750: if the user doesn't have Refresh JWTs
  */
-const getUidByRefreshToken = async (refreshToken: string): Promise<string> => {
+const getRefreshTokensByUID = async (uid: string): Promise<string[]> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
-      SELECT uid
+      SELECT token
       FROM ${DatabaseService.tn.refresh_tokens}
-      WHERE token = $1;
+      WHERE uid = $1;
     `,
-    values: [refreshToken],
+    values: [uid],
   });
   if (!rows.length) {
-    throw new Error(encodeError('The provided Refresh JWT did not match any uids stored in the database.', 4750));
+    throw new Error(encodeError(`The uid '${uid}' has no registered Refresh JWTs in the database.`, 4750));
   }
-  return rows[0].uid;
+  return rows.map((row) => row.token);
 };
 
 /**
@@ -131,7 +131,7 @@ const deleteAllRecords = (): Promise<IQueryResult> => DatabaseService.pool.query
  ************************************************************************************************ */
 export {
   // retrievers
-  getUidByRefreshToken,
+  getRefreshTokensByUID,
   listRecordsByUID,
 
   // record management

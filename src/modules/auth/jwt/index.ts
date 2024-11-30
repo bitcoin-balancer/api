@@ -6,7 +6,7 @@ import { IJWTService, IRefreshTokenRecord } from './types.js';
 import { canRecordsBeListed, canRefreshAccessJWT, canUserSignOut } from './validations.js';
 import { sign, verify } from './jwt.js';
 import {
-  getUidByRefreshToken,
+  //getUidByRefreshToken,
   listRecordsByUID,
   saveRecord,
   deleteUserRecords,
@@ -188,10 +188,10 @@ const jwtServiceFactory = (): IJWTService => {
     const decodedUID = await verifyRefreshToken(refreshJWT);
 
     // extract the uid from the Refresh JWT Records
-    const retrievedUID = await getUidByRefreshToken(refreshJWT);
+    //const retrievedUID = await getUidByRefreshToken(refreshJWT);
 
     // validate the data
-    canRefreshAccessJWT(decodedUID, retrievedUID);
+    //canRefreshAccessJWT(decodedUID, retrievedUID);
 
     // finally, generate the token and return it
     return __generateAccessToken(decodedUID);

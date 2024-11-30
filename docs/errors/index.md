@@ -127,7 +127,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 
 ### `model.ts`
 
-- **4750:** `The provided Refresh JWT did not match any uids stored in the database.`
+- **4750:** `The uid '${uid}' has no registered Refresh JWTs in the database.`
 
 
 
