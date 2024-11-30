@@ -1,5 +1,6 @@
 import { addMinutes, addDays, subDays } from 'date-fns';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
+import { hashData } from '../../shared/hash/index.js';
 import { UserService } from '../user/index.js';
 import { IJWTService, IRefreshTokenRecord } from './types.js';
 import { canRecordsBeListed, canRefreshAccessJWT, canUserSignOut } from './validations.js';
@@ -141,7 +142,7 @@ const jwtServiceFactory = (): IJWTService => {
     ]);
 
     // store the refresh token (user's session)
-    await saveRecord(uid, refresh);
+    await saveRecord(uid, await hashData(refresh));
 
     // finally, return both JWTs
     return { access, refresh };

@@ -117,6 +117,7 @@ JWTRouter.route('/sign-out').post(veryHighRiskLimit, async (req: Request, res: R
       httpOnly: true,
       secure: ENVIRONMENT.HAS_TUNNEL_TOKEN,
       signed: true,
+      sameSite: 'strict',
     });
     res.json(buildResponse());
   } catch (e) {
