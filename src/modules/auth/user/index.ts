@@ -3,6 +3,7 @@ import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { sortRecords } from '../../shared/utils/index.js';
 import { generateUUID } from '../../shared/uuid/index.js';
 import { decryptData, encryptData } from '../../shared/encrypt/index.js';
+import { hashData, verifyHashedData } from '../../shared/hash/index.js';
 import {
   IUserService,
   IAuthority,
@@ -10,7 +11,6 @@ import {
   IPasswordUpdate,
 } from './types.js';
 import { generateOTPSecret, checkOTPToken } from './otp.js';
-import { comparePassword, hashPassword } from './bcrypt.js';
 import {
   validateUserRecordExistance,
   canListUserPasswordUpdates,
@@ -205,7 +205,7 @@ const userServiceFactory = (): IUserService => {
       await verifyOTPToken(uid, otpToken, otp_secret);
 
       // compare the password
-      if (!await comparePassword(password, password_hash)) {
+      if (!await verifyHashedData(password_hash, password)) {
         throw new Error(encodeError('The password doesn\'t match the one stored in the database. Please double check it and try again.', 3004));
       }
 
@@ -260,7 +260,7 @@ const userServiceFactory = (): IUserService => {
     const eventTime = Date.now();
     let passwordHash: string | undefined;
     if (typeof password === 'string') {
-      passwordHash = await hashPassword(password);
+      passwordHash = await hashData(password);
     }
 
     // create the record and add it to the local object
@@ -350,7 +350,7 @@ const userServiceFactory = (): IUserService => {
     await verifyOTPToken(uid, otpToken);
 
     // hash the new password and update the record
-    await updateUserPasswordHash(uid, await hashPassword(newPassword));
+    await updateUserPasswordHash(uid, await hashData(newPassword));
   };
 
   /**

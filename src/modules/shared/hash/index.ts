@@ -22,7 +22,7 @@ const hashData = (data: string): Promise<string> => argon2.hash(data, {
  * @param data
  * @returns Promise<boolean>
  */
-const verifyData = (dataHash: string, data: string): Promise<boolean> => (
+const verifyHashedData = (dataHash: string, data: string): Promise<boolean> => (
   argon2.verify(dataHash, data, {
     secret: Buffer.from(ENVIRONMENT.HASHING_SECRET),
   })
@@ -37,5 +37,5 @@ const verifyData = (dataHash: string, data: string): Promise<boolean> => (
  ************************************************************************************************ */
 export {
   hashData,
-  verifyData,
+  verifyHashedData,
 };
