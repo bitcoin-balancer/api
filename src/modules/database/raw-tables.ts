@@ -61,10 +61,10 @@ export const RAW_TABLES: IRawTable[] = [
     sql:
       `CREATE TABLE IF NOT EXISTS ${getTableName('refresh_tokens')} (
         uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
-        token       VARCHAR(3000) NOT NULL UNIQUE,
+        token       TEXT NOT NULL UNIQUE,
         event_time  BIGINT NOT NULL
       );
-      CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_uid_token_idx ON ${getTableName('refresh_tokens')}(uid, token);
+      CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_uid_idx ON ${getTableName('refresh_tokens')}(uid);
       CREATE INDEX IF NOT EXISTS ${getTableName('refresh_tokens')}_uid_event_time_idx ON ${getTableName('refresh_tokens')}(uid, event_time DESC);`,
   },
 
