@@ -373,7 +373,7 @@ const positionServiceFactory = (): IPositionService => {
           || currentTS > __active.decrease_actions[lvl][__active.decrease_actions[lvl].length - 1].nextEventTime
         )
         && (
-          __nextSell === undefined || currentTS >= __nextSell
+          __nextSell === undefined || currentTS > __nextSell
         )
       ) {
         __nextSell = currentTS + (60 * 1000);
