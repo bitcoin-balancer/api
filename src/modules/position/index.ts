@@ -114,6 +114,11 @@ const positionServiceFactory = (): IPositionService => {
   let __lastReversalEventTime: number = 0;
   let __marketStateSub: Subscription;
 
+  // it is possible for Balancer to attempt to execute the same sale multiple times as the market
+  // state can be broadcasted multiple times before the transaction is actually stored in the
+  // position. To avoid this, sell txs can only be triggered once every minutes.
+  let __nextSell: number | undefined;
+
   // the subscription to the trades' stream
   let __rawTrades: ITrade[] = [];
   let __trades: ITradesAnalysis | undefined;
@@ -358,15 +363,20 @@ const positionServiceFactory = (): IPositionService => {
    */
   const __handleStronglyIncreasingWindow = async (): Promise<void> => {
     if (StrategyService.config.canDecrease && __active) {
+      const currentTS = Date.now();
       const lvl = StrategyService.getActiveDecreaseLevel(__active.gain);
       if (
         lvl !== undefined
         && (
           __active.decrease_actions[lvl].length === 0
           // eslint-disable-next-line max-len
-          || Date.now() > __active.decrease_actions[lvl][__active.decrease_actions[lvl].length - 1].nextEventTime
+          || currentTS > __active.decrease_actions[lvl][__active.decrease_actions[lvl].length - 1].nextEventTime
+        )
+        && (
+          __nextSell === undefined || currentTS >= __nextSell
         )
       ) {
+        __nextSell = currentTS + (60 * 1000);
         await __decrease(StrategyService.config.decreaseLevels[lvl].percentage, lvl);
       }
     }
