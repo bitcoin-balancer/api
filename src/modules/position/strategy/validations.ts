@@ -1,6 +1,11 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
-import { arrayValid, numberValid, objectValid } from '../../shared/validations/index.js';
+import {
+  arrayValid,
+  numberValid,
+  integerValid,
+  objectValid,
+} from '../../shared/validations/index.js';
 import { IDecreaseLevel, IStrategy } from './types.js';
 
 /* ************************************************************************************************
@@ -70,8 +75,8 @@ const canConfigBeUpdated = (newConfig: IStrategy): void => {
     if (!numberValid(level.percentage, minPercentage, 100)) {
       throw new Error(encodeError(`The percentage for level ${i} '${level.percentage}' is invalid as it must be a valid number ranging ${minPercentage} and 100.`, 31509));
     }
-    if (!numberValid(level.frequency, 1, maxFrequency)) {
-      throw new Error(encodeError(`The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid number ranging 1 and ${maxFrequency}.`, 31510));
+    if (!integerValid(level.frequency, 3, maxFrequency)) {
+      throw new Error(encodeError(`The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid integer ranging 3 and ${maxFrequency}.`, 31510));
     }
     previous = level;
   });
