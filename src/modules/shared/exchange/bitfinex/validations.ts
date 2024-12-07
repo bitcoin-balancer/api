@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
+import { isArrayValid } from 'web-utils-kit';
 import { IRequestResponse } from 'fetch-request-node';
-import { arrayValid } from '../../validations/index.js';
 import { validateResponse } from '../validations.js';
 
 /* ************************************************************************************************
@@ -17,7 +17,7 @@ import { validateResponse } from '../validations.js';
  */
 const validateCandlesticksResponse = (res: IRequestResponse): void => {
   validateResponse(res);
-  if (!arrayValid(res.data)) {
+  if (!isArrayValid(res.data)) {
     console.log(res);
     throw new Error(encodeError('Bitfinex returned an invalid list of candlesticks.', 14500));
   }
@@ -32,7 +32,7 @@ const validateCandlesticksResponse = (res: IRequestResponse): void => {
  */
 const validateOrderBookResponse = (res: IRequestResponse): void => {
   validateResponse(res);
-  if (!arrayValid(res.data)) {
+  if (!isArrayValid(res.data)) {
     console.log(res);
     throw new Error(encodeError('Bitfinex returned an invalid order book snapshot.', 14502));
   }
@@ -47,7 +47,7 @@ const validateOrderBookResponse = (res: IRequestResponse): void => {
  */
 const validateTickersResponse = (res: IRequestResponse): void => {
   validateResponse(res);
-  if (!arrayValid(res.data)) {
+  if (!isArrayValid(res.data)) {
     console.log(res);
     throw new Error(encodeError('Bitfinex returned an invalid list of tickers.', 14501));
   }

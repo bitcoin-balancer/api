@@ -1,5 +1,6 @@
 import { encodeError } from 'error-message-utils';
-import { integerValid, ipNotesValid, ipValid } from '../shared/validations/index.js';
+import { isIntegerValid } from 'web-utils-kit';
+import { ipNotesValid, ipValid } from '../shared/validations/index.js';
 import { IIPBlacklistRecord } from './types.js';
 import { getRecordByIP } from './model.js';
 
@@ -27,10 +28,10 @@ const __BLACKLIST_QUERY_LIMIT = 30;
  * - 5256: if the query limit is larger than the limit
  */
 const canBlacklistBeListed = (limit: number, startAtID: number | undefined): void => {
-  if (!integerValid(limit, 1, __BLACKLIST_QUERY_LIMIT)) {
+  if (!isIntegerValid(limit, 1, __BLACKLIST_QUERY_LIMIT)) {
     throw new Error(encodeError(`The maximum number of IP Blacklist records that can be retrieved at a time is ${__BLACKLIST_QUERY_LIMIT}. Received: ${limit}`, 5256));
   }
-  if (startAtID !== undefined && !integerValid(startAtID, 1)) {
+  if (startAtID !== undefined && !isIntegerValid(startAtID, 1)) {
     throw new Error(encodeError(`The IP Blacklist Records cannot be listed with an invalid startAtID. Received: ${startAtID}.`, 5255));
   }
 };
@@ -80,7 +81,7 @@ const canIPRegistrationBeUpdated = async (
   if (notes !== undefined && !ipNotesValid(notes)) {
     throw new Error(encodeError(`The IP Address Blacklisting notes are invalid. Received '${notes}'`, 5251));
   }
-  if (!integerValid(id, 1)) {
+  if (!isIntegerValid(id, 1)) {
     throw new Error(encodeError(`The identifier '${id}' for the IP Blacklist Record is invalid.`, 5252));
   }
 

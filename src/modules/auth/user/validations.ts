@@ -1,13 +1,13 @@
 import { encodeError } from 'error-message-utils';
-import { isUUIDValid } from 'web-utils-kit';
 import {
-  timestampValid,
-  nicknameValid,
-  authorityValid,
-  passwordValid,
-  otpTokenValid,
-  integerValid,
-} from '../../shared/validations/index.js';
+  isIntegerValid,
+  isTimestampValid,
+  isSlugValid,
+  isPasswordValid,
+  isOTPTokenValid,
+  isUUIDValid,
+} from 'web-utils-kit';
+import { authorityValid } from '../../shared/validations/index.js';
 import { AltchaService } from '../../altcha/index.js';
 import { IAuthority } from './types.js';
 import { isRoot } from './utils.js';
@@ -76,10 +76,10 @@ const canListUserPasswordUpdates = async (
   limit: number,
   startAtEventTime: number | undefined,
 ): Promise<void> => {
-  if (!integerValid(limit, 1, __PASSWORD_UPDATE_QUERY_LIMIT)) {
+  if (!isIntegerValid(limit, 1, __PASSWORD_UPDATE_QUERY_LIMIT)) {
     throw new Error(encodeError(`The maximum number of password update records that can be retrieved at a time is ${__PASSWORD_UPDATE_QUERY_LIMIT}. Received: ${limit}`, 3512));
   }
-  if (startAtEventTime !== undefined && !timestampValid(startAtEventTime)) {
+  if (startAtEventTime !== undefined && !isTimestampValid(startAtEventTime)) {
     throw new Error(encodeError(`If the startAtEventTime arg is provided, it must be a valid timestamp. Received: ${startAtEventTime}`, 3511));
   }
   await validateUserRecordExistance(uid);
@@ -105,7 +105,7 @@ const canVerifyOTPToken = (uid: string, otpToken: string): void => {
   if (!isUUIDValid(uid, 4)) {
     throw new Error(encodeError(`The uid '${uid}' is invalid.`, 3506));
   }
-  if (!otpTokenValid(otpToken)) {
+  if (!isOTPTokenValid(otpToken)) {
     throw new Error(encodeError(`The OTP Token '${otpToken}' is invalid.`, 3510));
   }
 };
@@ -130,13 +130,13 @@ const canVerifySignInCredentials = async (
   otpToken: string,
   altchaPayload: string,
 ): Promise<void> => {
-  if (!nicknameValid(nickname)) {
+  if (!isSlugValid(nickname)) {
     throw new Error(encodeError(`The nickname '${nickname}' is invalid.`, 3500));
   }
-  if (!passwordValid(password)) {
+  if (!isPasswordValid(password)) {
     throw new Error(encodeError('The password is invalid or too weak. Make sure the password meets the requirements and try again.', 3509));
   }
-  if (!otpTokenValid(otpToken)) {
+  if (!isOTPTokenValid(otpToken)) {
     throw new Error(encodeError(`The OTP Token '${otpToken}' is invalid.`, 3510));
   }
   await AltchaService.verify(altchaPayload);
@@ -159,7 +159,7 @@ const canVerifySignInCredentials = async (
  * - 3501: if the nickname is already being used
  */
 const __canNicknameBeUsed = async (nickname: string): Promise<void> => {
-  if (!nicknameValid(nickname)) {
+  if (!isSlugValid(nickname)) {
     throw new Error(encodeError(`The nickname '${nickname}' is invalid.`, 3500));
   }
   if (await nicknameExists(nickname)) {
@@ -194,7 +194,7 @@ const canUserBeCreated = async (
     if (authority !== 5) {
       throw new Error(encodeError(`The root's authority must be 5. Received: ${authority}`, 3502));
     }
-    if (!passwordValid(password)) {
+    if (!isPasswordValid(password)) {
       throw new Error(encodeError('The root account cannot be created with an invalid|weak password.', 3503));
     }
   } else {
@@ -262,7 +262,7 @@ const canPasswordBeUpdated = async (
   if (isRoot(uid)) {
     throw new Error(encodeError(`The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`, 3508));
   }
-  if (!passwordValid(newPassword)) {
+  if (!isPasswordValid(newPassword)) {
     throw new Error(encodeError(`The password for uid '${uid}' is invalid or too weak. Make sure the password meets the requirements and try again.`, 3509));
   }
   await AltchaService.verify(altchaPayload);

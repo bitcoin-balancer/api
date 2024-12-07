@@ -1,13 +1,14 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
-import { delay, retryAsyncFunction } from 'web-utils-kit';
-import { sendGET } from 'fetch-request-node';
 import {
-  arrayValid,
-  objectValid,
-  semverValid,
-  stringValid,
-} from '../validations/index.js';
+  isArrayValid,
+  isObjectValid,
+  isStringValid,
+  isSemverValid,
+  delay,
+  retryAsyncFunction,
+} from 'web-utils-kit';
+import { sendGET } from 'fetch-request-node';
 import { APIErrorService } from '../../api-error/index.js';
 import {
   IVersionService,
@@ -72,7 +73,7 @@ const versionServiceFactory = (): IVersionService => {
         headers: new Headers({ Accept: 'text/plain' }),
       },
     });
-    if (!objectValid(data) || !semverValid(data.version)) {
+    if (!isObjectValid(data) || !isSemverValid(data.version)) {
       throw new Error(encodeError(`The package.json file retrieved from ${url} does not contain a valid version.`, 7000));
     }
     return data.version;
@@ -89,12 +90,12 @@ const versionServiceFactory = (): IVersionService => {
   ): Promise<{ sha: string, eventTime: number }> => {
     const { data } = await sendGET(url);
     if (
-      !arrayValid(data)
-      || !objectValid(data[0])
-      || !stringValid(data[0].sha)
-      || !objectValid(data[0].commit)
-      || !objectValid(data[0].commit.committer)
-      || !stringValid(data[0].commit.committer.date)
+      !isArrayValid(data)
+      || !isObjectValid(data[0])
+      || !isStringValid(data[0].sha)
+      || !isObjectValid(data[0].commit)
+      || !isObjectValid(data[0].commit.committer)
+      || !isStringValid(data[0].commit.committer.date)
     ) {
       console.log(data);
       throw new Error(encodeError(`The list of commits retrieved from ${url} are invalid.`, 7001));

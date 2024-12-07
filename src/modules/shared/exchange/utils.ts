@@ -1,4 +1,4 @@
-import { arrayValid, objectValid, stringValid } from '../validations/index.js';
+import { isStringValid, isObjectValid, isArrayValid } from 'web-utils-kit';
 
 /* ************************************************************************************************
  *                                            HELPERS                                             *
@@ -37,10 +37,10 @@ const __isBitfinexError = (payload: any[]): boolean => (
  */
 const extractErrorPayload = (payload: unknown): string => {
   // if the payload is a string, return it right away
-  if (stringValid(payload, 1)) {
+  if (isStringValid(payload, 1)) {
     return `Error Payload: ${payload}`;
   }
-  if (objectValid(payload)) {
+  if (isObjectValid(payload)) {
     // binance error payload - e.g. { "code": -1120, "msg": "Invalid interval." }
     if (__isBinanceError(payload)) {
       return `Error Payload: ${payload.msg} (${payload.code ?? -1})`;
@@ -49,7 +49,7 @@ const extractErrorPayload = (payload: unknown): string => {
     // kraken error payload
     // ...
   }
-  if (arrayValid(payload)) {
+  if (isArrayValid(payload)) {
     // bitfinex error payload - e.g. ["error", 10020, "limit: invalid"]
     if (__isBitfinexError(payload)) {
       return `Error Payload: ${payload[2]} (${payload[1]})`;

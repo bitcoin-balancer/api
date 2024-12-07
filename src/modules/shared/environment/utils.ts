@@ -1,8 +1,8 @@
 import process from 'node:process';
 import { readFileSync } from 'node:fs';
 import { extractMessage } from 'error-message-utils';
+import { isStringValid, isObjectValid } from 'web-utils-kit';
 import { isInteger } from 'bignumber-utils';
-import { stringValid, objectValid } from '../validations/index.js';
 
 /* ************************************************************************************************
  *                                        READABLE VALUES                                         *
@@ -19,7 +19,7 @@ import { stringValid, objectValid } from '../validations/index.js';
  */
 const getString = (key: string, allowedValues?: string[]): string => {
   const val: string | undefined = process.env[key];
-  if (!stringValid(val, 1)) {
+  if (!isStringValid(val, 1)) {
     throw new Error(`The environment property '${key}' has not been properly set. Received: ${val}`);
   }
   if (Array.isArray(allowedValues) && !allowedValues.includes(val)) {
@@ -65,7 +65,7 @@ const getObject = (key: string): Record<string, any> => {
   const val = getString(key);
   try {
     const parsedVal = JSON.parse(val);
-    if (!objectValid(parsedVal)) {
+    if (!isObjectValid(parsedVal)) {
       throw new Error(`The parsed value is not a valid object. Received: ${JSON.stringify(parsedVal)}`);
     }
     return parsedVal;
@@ -93,7 +93,7 @@ const getSecretString = (key: string): string => {
   const srcPath = getString(key);
   try {
     const content = readFileSync(srcPath, { encoding: 'utf8' });
-    if (!stringValid(content, 1)) {
+    if (!isStringValid(content, 1)) {
       throw new Error(`The secret '${key}' has no content. Received: ${content}`);
     }
     return content;
@@ -114,7 +114,7 @@ const getSecretObject = (key: string): Record<string, any> => {
   const val = getSecretString(key);
   try {
     const parsedVal = JSON.parse(val);
-    if (!objectValid(parsedVal)) {
+    if (!isObjectValid(parsedVal)) {
       throw new Error(`The secret parsed value is not a valid object. Received: ${JSON.stringify(parsedVal)}`);
     }
     return parsedVal;

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
-import { numberValid, objectValid } from '../shared/validations/index.js';
+import { isNumberValid, isObjectValid } from 'web-utils-kit';
 import { IAlarmsConfiguration } from './types.js';
 
 /* ************************************************************************************************
@@ -17,17 +17,17 @@ import { IAlarmsConfiguration } from './types.js';
  * - 8253: if the maxCPULoad is invalid
  */
 const canAlarmsBeUpdated = (config: IAlarmsConfiguration): void => {
-  if (!objectValid(config)) {
+  if (!isObjectValid(config)) {
     console.log(config);
     throw new Error(encodeError('The alarms configuration is not a valid object.', 8250));
   }
-  if (!numberValid(config.maxFileSystemUsage, 30, 99)) {
+  if (!isNumberValid(config.maxFileSystemUsage, 30, 99)) {
     throw new Error(encodeError(`The maxFileSystemUsage must be a number ranging 30-99. Received: ${config.maxFileSystemUsage}`, 8251));
   }
-  if (!numberValid(config.maxMemoryUsage, 30, 99)) {
+  if (!isNumberValid(config.maxMemoryUsage, 30, 99)) {
     throw new Error(encodeError(`The maxMemoryUsage must be a number ranging 30-99. Received: ${config.maxMemoryUsage}`, 8252));
   }
-  if (!numberValid(config.maxCPULoad, 30, 99)) {
+  if (!isNumberValid(config.maxCPULoad, 30, 99)) {
     throw new Error(encodeError(`The maxCPULoad must be a number ranging 30-99. Received: ${config.maxMemoryUsage}`, 8253));
   }
 };

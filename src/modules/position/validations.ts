@@ -1,13 +1,14 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
-import { isUUIDValid, sortRecords } from 'web-utils-kit';
-import { calculateWeightedEntry } from 'bignumber-utils';
 import {
-  integerValid,
-  numberValid,
-  objectValid,
-  timestampValid,
-} from '../shared/validations/index.js';
+  isNumberValid,
+  isIntegerValid,
+  isObjectValid,
+  isTimestampValid,
+  isUUIDValid,
+  sortRecords,
+} from 'web-utils-kit';
+import { calculateWeightedEntry } from 'bignumber-utils';
 import { ITrade } from '../shared/exchange/index.js';
 import { IManualTrade, TradeService } from './trade/index.js';
 import { calculateTradesAnalysisAmounts } from './utils.js';
@@ -43,7 +44,7 @@ const canPositionBeDecreased = (active: IPosition | undefined, percentage: numbe
   if (active === undefined) {
     throw new Error(encodeError('A decrease action can only be performed if there is an active position.', 30507));
   }
-  if (!numberValid(percentage, 1, 100)) {
+  if (!isNumberValid(percentage, 1, 100)) {
     throw new Error(encodeError(`The decrease percentage must be a valid number ranging 1 - 100. Received: ${percentage}`, 30508));
   }
 };
@@ -123,10 +124,10 @@ const canCompactPositionRecordsBeListed = (
   limit: number,
   startAtOpenTime: number | undefined,
 ): void => {
-  if (!integerValid(limit, 1, __QUERY_LIMIT)) {
+  if (!isIntegerValid(limit, 1, __QUERY_LIMIT)) {
     throw new Error(encodeError(`The maximum number of compact position records that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`, 30501));
   }
-  if (startAtOpenTime !== undefined && !timestampValid(startAtOpenTime)) {
+  if (startAtOpenTime !== undefined && !isTimestampValid(startAtOpenTime)) {
     throw new Error(encodeError(`If the startAtOpenTime arg is provided, it must be a valid timestamp. Received: ${startAtOpenTime}`, 30502));
   }
 };
@@ -145,10 +146,10 @@ const canCompactPositionRecordsBeListedByRange = (
   startAt: number,
   endAt: number | undefined,
 ): void => {
-  if (!timestampValid(startAt)) {
+  if (!isTimestampValid(startAt)) {
     throw new Error(encodeError(`The startAt '${startAt}' is not a valid timestamp.`, 30503));
   }
-  if (endAt !== undefined && !timestampValid(endAt)) {
+  if (endAt !== undefined && !isTimestampValid(endAt)) {
     throw new Error(encodeError(`If the endAt arg is provided, it must be a valid timestamp. Received: ${endAt}`, 30504));
   }
   if (typeof endAt === 'number' && startAt >= endAt) {
@@ -186,7 +187,7 @@ const canInteractWithPositionTrades = (
   activePosition: IPosition | undefined,
   trade?: IManualTrade,
 ): void => {
-  if (!objectValid(activePosition)) {
+  if (!isObjectValid(activePosition)) {
     throw new Error(encodeError('There must be an active position to be able to interact with trades.', 30513));
   }
   if (trade !== undefined) {

@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 import { describe, afterEach, test, expect } from 'vitest';
+import { isObjectValid } from 'web-utils-kit';
 import { IAPIError } from './types.js';
 import { deleteAllRecords, getRecord, listRecords, saveRecord } from './model.js';
-import { objectValid } from '../shared/validations/index.js';
 
 /* ************************************************************************************************
  *                                            HELPERS                                             *
@@ -75,7 +75,7 @@ describe('APIError Model', () => {
         expect(id).toBeGreaterThan(0);
 
         const savedRecord = <IAPIError> await getRecord(id);
-        expect(objectValid(savedRecord)).toBe(true);
+        expect(isObjectValid(savedRecord)).toBe(true);
         expect(savedRecord).toStrictEqual({ ...r, id, event_time: savedRecord.event_time });
 
         // store the id for later

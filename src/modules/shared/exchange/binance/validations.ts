@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
+import { isArrayValid, isObjectValid } from 'web-utils-kit';
 import { IRequestResponse } from 'fetch-request-node';
-import { arrayValid, objectValid } from '../../validations/index.js';
 import { validateResponse } from '../validations.js';
 
 /* ************************************************************************************************
@@ -17,7 +17,7 @@ import { validateResponse } from '../validations.js';
  */
 const validateCandlesticksResponse = (res: IRequestResponse): void => {
   validateResponse(res);
-  if (!arrayValid(res.data)) {
+  if (!isArrayValid(res.data)) {
     console.log(res);
     throw new Error(encodeError('Binance returned an invalid list of candlesticks.', 13500));
   }
@@ -32,7 +32,7 @@ const validateCandlesticksResponse = (res: IRequestResponse): void => {
  */
 const validateTickersResponse = (res: IRequestResponse): void => {
   validateResponse(res);
-  if (!arrayValid(res.data)) {
+  if (!isArrayValid(res.data)) {
     console.log(res);
     throw new Error(encodeError('Binance returned an invalid list of tickers.', 13501));
   }
@@ -47,15 +47,15 @@ const validateTickersResponse = (res: IRequestResponse): void => {
  */
 const validateOrderBookResponse = (res: IRequestResponse): void => {
   validateResponse(res);
-  if (!objectValid(res.data)) {
+  if (!isObjectValid(res.data)) {
     console.log(res.data);
     throw new Error(encodeError('Binance returned an invalid order book object.', 13502));
   }
-  if (!arrayValid(res.data.asks)) {
+  if (!isArrayValid(res.data.asks)) {
     console.log(res.data);
     throw new Error(encodeError('Binance returned an invalid order book object. The \'asks\' property is not a valid array of tuples.', 13502));
   }
-  if (!arrayValid(res.data.bids)) {
+  if (!isArrayValid(res.data.bids)) {
     console.log(res.data);
     throw new Error(encodeError('Binance returned an invalid order book object. The \'bids\' property is not a valid array of tuples.', 13502));
   }
@@ -71,11 +71,11 @@ const validateOrderBookResponse = (res: IRequestResponse): void => {
  */
 const validateBalancesResponse = (res: IRequestResponse): void => {
   validateResponse(res);
-  if (!objectValid(res.data)) {
+  if (!isObjectValid(res.data)) {
     console.log(res);
     throw new Error(encodeError('Binance returned an invalid account information object.', 13503));
   }
-  if (!arrayValid(res.data.balances)) {
+  if (!isArrayValid(res.data.balances)) {
     console.log(res.data);
     throw new Error(encodeError('Binance returned an invalid list of balances.', 13504));
   }
@@ -90,7 +90,7 @@ const validateBalancesResponse = (res: IRequestResponse): void => {
  */
 const validateTradesResponse = (res: IRequestResponse): void => {
   validateResponse(res);
-  if (!arrayValid(res.data, true)) {
+  if (!isArrayValid(res.data, true)) {
     console.log(res);
     throw new Error(encodeError('Binance returned an invalid list of trades.', 13505));
   }
@@ -105,7 +105,7 @@ const validateTradesResponse = (res: IRequestResponse): void => {
  */
 const validateOrderExecutionResponse = (res: IRequestResponse): void => {
   validateResponse(res);
-  if (!objectValid(res.data)) {
+  if (!isObjectValid(res.data)) {
     console.log(res);
     throw new Error(encodeError('Binance returned an invalid order execution payload.', 13506));
   }

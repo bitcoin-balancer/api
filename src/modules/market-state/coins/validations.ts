@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
-import { ENVIRONMENT } from '../../shared/environment/index.js';
 import {
-  arrayValid,
-  integerValid,
-  numberValid,
-  objectValid,
-  symbolValid,
-} from '../../shared/validations/index.js';
+  isNumberValid,
+  isIntegerValid,
+  isObjectValid,
+  isArrayValid,
+} from 'web-utils-kit';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
+import { symbolValid } from '../../shared/validations/index.js';
 import {
   ICoinsConfig,
   ICoinState,
@@ -67,29 +67,29 @@ const validateSymbol = (
  * - 23511: if the requirement is equals or larger than the strongRequirement
  */
 const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
-  if (!objectValid(newConfig)) {
+  if (!isObjectValid(newConfig)) {
     console.log(newConfig);
     throw new Error(encodeError('The provided coins configuration is not a valid object.', 23500));
   }
-  if (!numberValid(newConfig.size, 128, 512)) {
+  if (!isNumberValid(newConfig.size, 128, 512)) {
     throw new Error(encodeError(`The size '${newConfig.size}' is invalid as it must be a valid number ranging 128 and 512.`, 23501));
   }
-  if (!numberValid(newConfig.interval, 5, 3600)) {
+  if (!isNumberValid(newConfig.interval, 5, 3600)) {
     throw new Error(encodeError(`The interval '${newConfig.interval}' is invalid as it must be a valid number ranging 5 and 3600 seconds.`, 23502));
   }
-  if (!numberValid(newConfig.requirement, 0.01, 100)) {
+  if (!isNumberValid(newConfig.requirement, 0.01, 100)) {
     throw new Error(encodeError(`The requirement '${newConfig.requirement}' is invalid as it must be a valid number ranging 1 and 100.`, 23503));
   }
-  if (!numberValid(newConfig.strongRequirement, 0.01, 100)) {
+  if (!isNumberValid(newConfig.strongRequirement, 0.01, 100)) {
     throw new Error(encodeError(`The strongRequirement '${newConfig.strongRequirement}' is invalid as it must be a valid number ranging 1 and 100.`, 23504));
   }
   if (newConfig.requirement >= newConfig.strongRequirement) {
     throw new Error(encodeError(`The requirement '${newConfig.requirement}' must be less than the strong requirement '${newConfig.strongRequirement}'.`, 23511));
   }
-  if (!integerValid(newConfig.limit, 1, 24)) {
+  if (!isIntegerValid(newConfig.limit, 1, 24)) {
     throw new Error(encodeError(`The limit '${newConfig.limit}' is invalid as it must be a valid integer ranging 1 and 24.`, 23507));
   }
-  if (!arrayValid(newConfig.whitelistedSymbols)) {
+  if (!isArrayValid(newConfig.whitelistedSymbols)) {
     console.log(newConfig.whitelistedSymbols);
     throw new Error(encodeError('The whitelistedSymbols property is not a valid array.', 23505));
   }

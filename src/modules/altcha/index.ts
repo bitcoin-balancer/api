@@ -1,8 +1,8 @@
 import { addMinutes } from 'date-fns';
 import { createChallenge, verifySolution } from 'altcha-lib';
 import { encodeError } from 'error-message-utils';
+import { isStringValid } from 'web-utils-kit';
 import { ENVIRONMENT } from '../shared/environment/index.js';
-import { stringValid } from '../shared/validations/index.js';
 import { IAltchaService, IChallenge } from './types.js';
 
 /* ************************************************************************************************
@@ -55,7 +55,7 @@ const altchaServiceFactory = (): IAltchaService => {
    */
   const verify = async (payload: string): Promise<void> => {
     // ensure the payload is a valid string
-    if (!stringValid(payload, 100, 1000)) {
+    if (!isStringValid(payload, 100, 1000)) {
       throw new Error(encodeError(`The provided altcha payload '${payload}' has an invalid format. Please try again.`, 2000));
     }
 

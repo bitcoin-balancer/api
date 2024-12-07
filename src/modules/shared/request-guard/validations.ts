@@ -1,10 +1,6 @@
 import { encodeError } from 'error-message-utils';
-import {
-  authorizationHeaderValid,
-  ipValid,
-  arrayValid,
-  objectValid,
-} from '../validations/index.js';
+import { isObjectValid, isArrayValid, isAuthorizationHeaderValid } from 'web-utils-kit';
+import { ipValid } from '../validations/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -34,8 +30,8 @@ const validateArgs = (
   requiredArgs: string[] | undefined,
   args: Record<string, any> | undefined,
 ): void => {
-  if (arrayValid(requiredArgs)) {
-    if (!objectValid(args)) {
+  if (isArrayValid(requiredArgs)) {
+    if (!isObjectValid(args)) {
       throw new Error(encodeError('The request cannot be served because the required arguments were not sent.', 6251));
     }
     requiredArgs.forEach((argKey) => {
@@ -58,7 +54,7 @@ const validateArgs = (
  * - 6253: if the authorization header is not present or has an invalid format
  */
 const validateAuthorizationHeader = (authorization: string | undefined): void => {
-  if (!authorizationHeaderValid(authorization)) {
+  if (!isAuthorizationHeaderValid(authorization)) {
     throw new Error(encodeError('The Authorization Header is invalid. Please review the docs and try again.', 6253));
   }
 };

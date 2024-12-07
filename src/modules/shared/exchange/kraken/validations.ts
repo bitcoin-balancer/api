@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
+import { isArrayValid, isObjectValid } from 'web-utils-kit';
 import { IRequestResponse } from 'fetch-request-node';
-import { arrayValid, objectValid } from '../../validations/index.js';
 import { validateResponse } from '../validations.js';
 import { IKrakenAPIResponse } from './types.js';
 
@@ -18,14 +18,14 @@ import { IKrakenAPIResponse } from './types.js';
  * - 15502: if the response does not contain a valid result property
  */
 const validateAPIResponse = (res: IKrakenAPIResponse): void => {
-  if (!objectValid(res) || !arrayValid(res.error, true)) {
+  if (!isObjectValid(res) || !isArrayValid(res.error, true)) {
     console.log(res);
     throw new Error(encodeError('The Kraken API returned an invalid response object.', 15500));
   }
   if (res.error.length > 0) {
     throw new Error(encodeError(`The Kraken API returned the following errors: ${res.error.join(' | ')}.`, 15501));
   }
-  if (!objectValid(res.result)) {
+  if (!isObjectValid(res.result)) {
     console.log(res);
     throw new Error(encodeError('The Kraken API returned a response object with an invalid \'result\' property.', 15502));
   }
@@ -45,7 +45,7 @@ const validateAPIResponse = (res: IKrakenAPIResponse): void => {
 const validateCandlesticksResponse = (res: IRequestResponse, resultKey: string): void => {
   validateResponse(res);
   validateAPIResponse(res.data);
-  if (!arrayValid(res.data.result[resultKey])) {
+  if (!isArrayValid(res.data.result[resultKey])) {
     console.log(res);
     throw new Error(encodeError('Kraken returned an invalid list of candlesticks.', 15503));
   }
@@ -65,15 +65,15 @@ const validateCandlesticksResponse = (res: IRequestResponse, resultKey: string):
 const validateOrderBookResponse = (res: IRequestResponse, resultKey: string): void => {
   validateResponse(res);
   validateAPIResponse(res.data);
-  if (!objectValid(res.data.result[resultKey])) {
+  if (!isObjectValid(res.data.result[resultKey])) {
     console.log(res);
     throw new Error(encodeError('Kraken returned an invalid order book object.', 15505));
   }
-  if (!arrayValid(res.data.result[resultKey].asks)) {
+  if (!isArrayValid(res.data.result[resultKey].asks)) {
     console.log(res);
     throw new Error(encodeError('Kraken returned an invalid order book object. The \'asks\' property is not a valid list.', 15505));
   }
-  if (!arrayValid(res.data.result[resultKey].bids)) {
+  if (!isArrayValid(res.data.result[resultKey].bids)) {
     console.log(res);
     throw new Error(encodeError('Kraken returned an invalid order book object. The \'bids\' property is not a valid list.', 15505));
   }
@@ -92,7 +92,7 @@ const validateOrderBookResponse = (res: IRequestResponse, resultKey: string): vo
 const validateTickersResponse = (res: IRequestResponse): void => {
   validateResponse(res);
   validateAPIResponse(res.data);
-  if (!arrayValid(Object.keys(res.data.result))) {
+  if (!isArrayValid(Object.keys(res.data.result))) {
     console.log(res);
     throw new Error(encodeError('Kraken returned an invalid list of tickers.', 15504));
   }

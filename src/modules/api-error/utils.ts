@@ -1,4 +1,4 @@
-import { objectValid } from '../shared/validations/index.js';
+import { isObjectValid } from 'web-utils-kit';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -15,7 +15,7 @@ const buildArgs = (
   args: Record<string, any> | undefined,
   sensitiveDataKeys: string[],
 ): Record<string, any> | undefined => (
-  objectValid(args)
+  isObjectValid(args)
     ? Object.keys(args).reduce(
       (previous, current) => ({
         ...previous,

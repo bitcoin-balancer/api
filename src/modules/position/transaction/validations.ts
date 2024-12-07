@@ -1,5 +1,5 @@
 import { encodeError } from 'error-message-utils';
-import { integerValid } from '../../shared/validations/index.js';
+import { isIntegerValid } from 'web-utils-kit';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
@@ -23,7 +23,7 @@ const __QUERY_LIMIT: number = 30;
  * - 32500: if the identifier is invalid
  */
 const canTransactionBeRetrieved = (id: number): void => {
-  if (!integerValid(id, 1)) {
+  if (!isIntegerValid(id, 1)) {
     throw new Error(encodeError(`The transaction cannot be retrieved for an invalid id. Received: ${id}`, 32500));
   }
 };
@@ -37,10 +37,10 @@ const canTransactionBeRetrieved = (id: number): void => {
  * - 32502: if the startAtID was provided and is not a valid identifier
  */
 const canRecordsBeListed = (limit: number, startAtID: number | undefined): void => {
-  if (!integerValid(limit, 1, __QUERY_LIMIT)) {
+  if (!isIntegerValid(limit, 1, __QUERY_LIMIT)) {
     throw new Error(encodeError(`The maximum number of transactions that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`, 32501));
   }
-  if (startAtID !== undefined && !integerValid(startAtID, 1)) {
+  if (startAtID !== undefined && !isIntegerValid(startAtID, 1)) {
     throw new Error(encodeError(`The transactions cannot be listed with an invalid startAtID. Received: ${startAtID}.`, 32502));
   }
 };

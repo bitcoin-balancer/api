@@ -1,6 +1,5 @@
 import { encodeError } from 'error-message-utils';
-import { isUUIDValid } from 'web-utils-kit';
-import { jwtValid } from '../../shared/validations/index.js';
+import { isUUIDValid, isJWTValid } from 'web-utils-kit';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -30,7 +29,7 @@ const canUserSignOut = (uid: string, refreshJWT: string): void => {
   if (!isUUIDValid(uid, 4)) {
     throw new Error(encodeError(`The uid '${uid}' is invalid.`, 4500));
   }
-  if (!jwtValid(refreshJWT)) {
+  if (!isJWTValid(refreshJWT)) {
     throw new Error(encodeError(`The refresh JWT '${refreshJWT}' is invalid.`, 4501));
   }
 };
