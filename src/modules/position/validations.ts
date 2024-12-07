@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
-import { isUUIDValid } from 'web-utils-kit';
+import { isUUIDValid, sortRecords } from 'web-utils-kit';
 import { calculateWeightedEntry } from 'bignumber-utils';
 import {
   integerValid,
@@ -12,7 +12,6 @@ import { ITrade } from '../shared/exchange/index.js';
 import { IManualTrade, TradeService } from './trade/index.js';
 import { calculateTradesAnalysisAmounts } from './utils.js';
 import { IPosition } from './types.js';
-import { sortRecords } from '../shared/utils/index.js';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *

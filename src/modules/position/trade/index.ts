@@ -1,5 +1,6 @@
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { invokeFuncPersistently, sortRecords } from '../../shared/utils/index.js';
+import { sortRecords } from 'web-utils-kit';
+import { invokeFuncPersistently } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, ITrade } from '../../shared/exchange/index.js';
 import { getSyncFrequency, toTradeRecord } from './utils.js';

@@ -1,7 +1,6 @@
 import { encodeError } from 'error-message-utils';
-import { generateUUID } from 'web-utils-kit';
+import { generateUUID, sortRecords } from 'web-utils-kit';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
-import { sortRecords } from '../../shared/utils/index.js';
 import { decryptData, encryptData } from '../../shared/encrypt/index.js';
 import { hashData, verifyHashedData } from '../../shared/hash/index.js';
 import {

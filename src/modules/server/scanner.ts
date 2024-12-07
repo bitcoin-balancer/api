@@ -1,6 +1,6 @@
 import systeminformation from 'systeminformation';
+import { sortRecords } from 'web-utils-kit';
 import { calculatePercentageRepresentation, processValue } from 'bignumber-utils';
-import { sortRecords } from '../shared/utils/index.js';
 import { ICPUState, IMemoryState, IFileSystemState } from './types.js';
 
 /* ************************************************************************************************
