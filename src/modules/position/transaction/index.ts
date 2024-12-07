@@ -1,6 +1,6 @@
 import { encodeError, extractMessage } from 'error-message-utils';
+import { delay } from 'web-utils-kit';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
-import { delay } from '../../shared/utils/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { NotificationService } from '../../notification/index.js';
 import { ExchangeService, IBalances, ISide } from '../../shared/exchange/index.js';

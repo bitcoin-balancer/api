@@ -1,4 +1,4 @@
-import { invokeFuncPersistently } from '../../shared/utils/index.js';
+import { retryAsyncFunction } from 'web-utils-kit';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IBalances } from '../../shared/exchange/index.js';
 import { getRefetchFrequency } from './utils.js';
@@ -51,7 +51,7 @@ const balanceServiceFactory = (): IBalanceService => {
    */
   const getBalances = async (forceRefetch?: boolean): Promise<IBalances> => {
     if (forceRefetch) {
-      __balances = await invokeFuncPersistently(ExchangeService.getBalances, undefined, __DELAYS);
+      __balances = await retryAsyncFunction(ExchangeService.getBalances, undefined, __DELAYS);
     }
     return __balances;
   };

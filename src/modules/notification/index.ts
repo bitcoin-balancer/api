@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { extractMessage } from 'error-message-utils';
+import { retryAsyncFunction } from 'web-utils-kit';
 import { sendPOST } from 'fetch-request-node';
 import { ENVIRONMENT, ITelegramConfig } from '../shared/environment/index.js';
-import { invokeFuncPersistently } from '../shared/utils/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import {
   buildRequestInput,
@@ -101,7 +101,7 @@ const notificationServiceFactory = (): INotificationService => {
           notification.event_time,
         );
         __unreadCount += 1;
-        await invokeFuncPersistently(
+        await retryAsyncFunction(
           sendPOST,
           [buildRequestInput(__CONFIG.token, __CONFIG.chatID, toMessage(notification))],
           [3, 5],

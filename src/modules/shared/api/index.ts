@@ -2,9 +2,9 @@
 import process from 'node:process';
 import { Express } from 'express';
 import { extractMessage } from 'error-message-utils';
+import { delay } from 'web-utils-kit';
 import { ENVIRONMENT } from '../environment/index.js';
 import { IPackageFile, IHTTPServer, ITerminationSignal } from '../types.js';
-import { delay } from '../utils/index.js';
 import { SocketIOService } from '../socket-io/index.js';
 import { DatabaseService } from '../../database/index.js';
 import { NotificationService } from '../../notification/index.js';

@@ -1,7 +1,7 @@
 import { Buffer } from 'node:buffer';
 import { WebSocket } from 'ws';
 import { extractMessage } from 'error-message-utils';
-import { delay } from '../utils/index.js';
+import { delay } from 'web-utils-kit';
 import { APIErrorService } from '../../api-error/index.js';
 import { NotificationService } from '../../notification/index.js';
 import { formatConnectionClosePayload, exceededIdleLimit } from './utils.js';

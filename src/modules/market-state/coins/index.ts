@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs';
 import { extractMessage } from 'error-message-utils';
-import { invokeFuncPersistently } from '../../shared/utils/index.js';
+import { retryAsyncFunction } from 'web-utils-kit';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { NotificationService } from '../../notification/index.js';
@@ -351,7 +351,7 @@ const coinsServiceFactory = (): ICoinsService => {
    * Retrieves the top symbols based on the module's configuration.
    * @returns Promise<string[]>
    */
-  const __getTopSymbols = (): Promise<string[]> => invokeFuncPersistently(
+  const __getTopSymbols = (): Promise<string[]> => retryAsyncFunction(
     ExchangeService.getTopSymbols,
     [__config.value.whitelistedSymbols, __config.value.limit],
     [3, 5, 15, 60],

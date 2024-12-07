@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { invokeFuncPersistently } from '../../shared/utils/index.js';
+import { retryAsyncFunction } from 'web-utils-kit';
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
 import { NotificationService, throttleableNotificationFactory } from '../../notification/index.js';
@@ -234,7 +234,7 @@ const windowServiceFactory = (): IWindowService => {
     __config = await recordStoreFactory('WINDOW', buildDefaultConfig());
 
     // fetch the candlesticks
-    await invokeFuncPersistently(__fetchCandlesticks, undefined, [3, 5, 15, 45, 120]);
+    await retryAsyncFunction(__fetchCandlesticks, undefined, [3, 5, 15, 45, 120]);
 
     // initialize the refetch interval
     __initializeRefetchInterval();
@@ -282,7 +282,7 @@ const windowServiceFactory = (): IWindowService => {
       }
     } else if (shouldFetchInitialCandlesticks) {
       try {
-        await invokeFuncPersistently(__fetchCandlesticks, undefined, [3, 5, 15, 45, 120]);
+        await retryAsyncFunction(__fetchCandlesticks, undefined, [3, 5, 15, 45, 120]);
       } catch (e) {
         APIErrorService.save(
           'WindowService.updateConfiguration.shouldFetchInitialCandlesticks',

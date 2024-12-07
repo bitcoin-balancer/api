@@ -1,6 +1,5 @@
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { sortRecords } from 'web-utils-kit';
-import { invokeFuncPersistently } from '../../shared/utils/index.js';
+import { sortRecords, retryAsyncFunction } from 'web-utils-kit';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, ITrade } from '../../shared/exchange/index.js';
 import { getSyncFrequency, toTradeRecord } from './utils.js';
@@ -90,7 +89,7 @@ const tradeServiceFactory = (): ITradeService => {
    * @returns Promise<ITrade[]>
    */
   const __getNewTrades = async (startTime: number): Promise<ITrade[]> => {
-    const trades = await invokeFuncPersistently(
+    const trades = await retryAsyncFunction(
       ExchangeService.listTrades,
       [startTime],
       [2, 3, 7],

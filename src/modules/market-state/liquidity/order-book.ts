@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Subscription } from 'rxjs';
-import { invokeFuncPersistently } from '../../shared/utils/index.js';
+import { retryAsyncFunction } from 'web-utils-kit';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IOrderBookWebSocketMessage } from '../../shared/exchange/index.js';
 import {
@@ -190,7 +190,7 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
    */
   const __on = async (): Promise<void> => {
     // fetch and sync the order book
-    await invokeFuncPersistently(__fetchSnapshot, undefined, [3, 5, 7]);
+    await retryAsyncFunction(__fetchSnapshot, undefined, [3, 5, 7]);
 
     // subscribe to the stream
     __streamSub = ExchangeService.getOrderBookStream().subscribe(__onOrderBookChanges);
