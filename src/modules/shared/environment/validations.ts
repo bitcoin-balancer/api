@@ -1,7 +1,7 @@
+import { isUUIDValid } from 'web-utils-kit';
 import {
   stringValid,
   objectValid,
-  uuidValid,
   nicknameValid,
   passwordValid,
   otpSecretValid,
@@ -44,7 +44,7 @@ const EXCHANGE_IDS: IExchangeID[] = ['binance', 'bitfinex', 'coinbase', 'kraken'
  */
 const validateRootAccountConfig = (config: IRootAccountConfig): void => {
   if (!objectValid(config)) throw new Error(`The environment property ROOT_ACCOUNT is not a valid object. Received: ${JSON.stringify(config)}`);
-  if (!uuidValid(config.uid)) throw new Error(`The environment property ROOT_ACCOUNT.uid is not a valid UUID. Received: ${config.uid}`);
+  if (!isUUIDValid(config.uid, 4)) throw new Error(`The environment property ROOT_ACCOUNT.uid is not a valid UUID. Received: ${config.uid}`);
   if (!nicknameValid(config.nickname)) throw new Error(`The environment property ROOT_ACCOUNT.nickname is not a valid nickname. Received: ${config.nickname}`);
   if (!passwordValid(config.password)) throw new Error(`The environment property ROOT_ACCOUNT.password is not a valid password. Received: ${config.password}`);
   if (!otpSecretValid(config.otpSecret)) throw new Error(`The environment property ROOT_ACCOUNT.otpSecret is not a valid secret. Received: ${config.otpSecret}`);

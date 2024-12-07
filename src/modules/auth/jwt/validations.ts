@@ -1,5 +1,6 @@
 import { encodeError } from 'error-message-utils';
-import { jwtValid, uuidValid } from '../../shared/validations/index.js';
+import { isUUIDValid } from 'web-utils-kit';
+import { jwtValid } from '../../shared/validations/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -12,7 +13,7 @@ import { jwtValid, uuidValid } from '../../shared/validations/index.js';
  * - 4500: if the uid has an invalid format
  */
 const canRecordsBeListed = (uid: string): void => {
-  if (!uuidValid(uid)) {
+  if (!isUUIDValid(uid, 4)) {
     throw new Error(encodeError(`The uid '${uid}' is invalid.`, 4500));
   }
 };
@@ -26,7 +27,7 @@ const canRecordsBeListed = (uid: string): void => {
  * - 4501: if the Refresh JWT has an invalid format
  */
 const canUserSignOut = (uid: string, refreshJWT: string): void => {
-  if (!uuidValid(uid)) {
+  if (!isUUIDValid(uid, 4)) {
     throw new Error(encodeError(`The uid '${uid}' is invalid.`, 4500));
   }
   if (!jwtValid(refreshJWT)) {

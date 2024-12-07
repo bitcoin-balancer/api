@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { generateUUID } from '../../shared/uuid/index.js';
+import { generateUUID } from 'web-utils-kit';
 import { UserService } from './index.js';
 
 /* ************************************************************************************************
@@ -15,7 +15,7 @@ describe('isAuthorized', () => {
   });
 
   test('throws when checking the authorization state for a user that doesn\'t exist', () => {
-    expect(() => UserService.isAuthorized(generateUUID(), 3)).toThrowError('3001');
+    expect(() => UserService.isAuthorized(generateUUID(4), 3)).toThrowError('3001');
   });
 
   test('throws when the user is not authorized to perform the action', async () => {

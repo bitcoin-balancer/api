@@ -1,7 +1,7 @@
 import { encodeError } from 'error-message-utils';
+import { generateUUID } from 'web-utils-kit';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { sortRecords } from '../../shared/utils/index.js';
-import { generateUUID } from '../../shared/uuid/index.js';
 import { decryptData, encryptData } from '../../shared/encrypt/index.js';
 import { hashData, verifyHashedData } from '../../shared/hash/index.js';
 import {
@@ -255,7 +255,7 @@ const userServiceFactory = (): IUserService => {
     await canUserBeCreated(nickname, authority, password);
 
     // init record values
-    const fUID = uid ?? generateUUID();
+    const fUID = uid ?? generateUUID(4);
     const fOTPSecret = encryptData(otpSecret ?? generateOTPSecret());
     const eventTime = Date.now();
     let passwordHash: string | undefined;

@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
+import { isUUIDValid } from 'web-utils-kit';
 import { calculateWeightedEntry } from 'bignumber-utils';
 import {
   integerValid,
   numberValid,
   objectValid,
   timestampValid,
-  uuidValid,
 } from '../shared/validations/index.js';
 import { ITrade } from '../shared/exchange/index.js';
 import { IManualTrade, TradeService } from './trade/index.js';
@@ -107,7 +107,7 @@ const canPositionBeUnarchived = (id: string, position: IPosition | undefined): v
  * - 30500: if the ID is not a valid uuid v4
  */
 const canPositionRecordBeRetrieved = (id: string): void => {
-  if (!uuidValid(id)) {
+  if (!isUUIDValid(id, 4)) {
     throw new Error(encodeError(`The position record cannot be retrieved for an invalid ID '${id}'.`, 30500));
   }
 };

@@ -1,4 +1,3 @@
-import { version as uuidVersion, validate as uuidValidate } from 'uuid';
 import { isInteger } from 'bignumber-utils';
 import { IAuthority } from '../../auth/user/types.js';
 
@@ -80,13 +79,6 @@ const arrayValid = (value: any, allowEmpty?: boolean): value is Array<any> => (
 const timestampValid = (value: any): value is number => (
   integerValid(value, 14400000, Number.MAX_SAFE_INTEGER)
 );
-
-/**
- * Verifies if a value is a UUID Version 4.
- * @param value
- * @returns boolean
- */
-const uuidValid = (value: any): value is string => uuidValidate(value) && uuidVersion(value) === 4;
 
 /**
  * Verifies if a nickname meets the following requirements:
@@ -227,7 +219,6 @@ export {
   objectValid,
   arrayValid,
   timestampValid,
-  uuidValid,
   nicknameValid,
   passwordValid,
   authorityValid,

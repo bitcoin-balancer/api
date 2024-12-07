@@ -1,5 +1,5 @@
 import { encodeError } from 'error-message-utils';
-import { uuidValid } from '../validations/index.js';
+import { isUUIDValid } from 'web-utils-kit';
 import { buildPristineCompactCandlestickRecords } from './utils.js';
 import { getEventHistoryRecord } from './model.js';
 import { eventHistoryFactory } from './event-history.js';
@@ -44,7 +44,7 @@ const candlestickServiceFactory = (): ICandlestickService => {
    * - 11001: if the record was not found in the database
    */
   const getEventHistory = async (id: string): Promise<IEventHistoryRecord> => {
-    if (!uuidValid(id)) {
+    if (!isUUIDValid(id, 4)) {
       throw new Error(encodeError(`The event history ID '${id}' is invalid.`, 11000));
     }
     const record = await getEventHistoryRecord(id);

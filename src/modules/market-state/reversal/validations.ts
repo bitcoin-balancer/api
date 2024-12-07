@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
+import { isUUIDValid } from 'web-utils-kit';
 import {
   integerValid,
   numberValid,
   objectValid,
-  uuidValid,
 } from '../../shared/validations/index.js';
 import { IReversalConfig } from './types.js';
 
@@ -30,7 +30,7 @@ const __QUERY_LIMIT: number = 30;
  * - 24509: if the ID is not a valid UUID v4
  */
 const canRecordBeRetrieved = (id: string): void => {
-  if (!uuidValid(id)) {
+  if (!isUUIDValid(id, 4)) {
     throw new Error(encodeError(`The record for ID '${id}' cannot be retrieved because it isn't a valid UUID v4.`, 24509));
   }
 };

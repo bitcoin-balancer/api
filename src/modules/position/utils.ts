@@ -1,3 +1,4 @@
+import { generateUUID } from 'web-utils-kit';
 import {
   IBigNumber,
   IBigNumberValue,
@@ -9,7 +10,6 @@ import {
   calculateExchange,
 } from 'bignumber-utils';
 import { delay } from '../shared/utils/index.js';
-import { generateUUID } from '../shared/uuid/index.js';
 import { IBalances, ITrade } from '../shared/exchange/index.js';
 import { IDecreaseLevels } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
@@ -251,7 +251,7 @@ const buildNewPosition = async (
 ): Promise<IPosition> => {
   const lastTranctionID = await TransactionService.getLastBuyTransactionID();
   return {
-    id: generateUUID(),
+    id: generateUUID(4),
     ...calculateMarketStateDependantProps(
       currentPrice,
       trades.entry_price,

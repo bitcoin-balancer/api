@@ -7,7 +7,6 @@ import {
   objectValid,
   arrayValid,
   timestampValid,
-  uuidValid,
   nicknameValid,
   passwordValid,
   authorityValid,
@@ -239,50 +238,6 @@ describe('timestampValid', () => {
     [14400000.5, false],
   ])('timestampValid(%s) -> %s', (a, expected) => {
     expect(timestampValid(a)).toBe(expected);
-  });
-});
-
-
-
-
-
-describe('uuidValid', () => {
-  test.each([
-    // valid
-    ['fcd089f1-6a2c-48b8-b2d7-9faebd1fdfb6', true],
-    ['876cce51-a546-4256-a067-5bc7cdc673ca', true],
-    ['a2047635-3d32-4774-b83d-f9474b9606db', true],
-    ['62af1b6c-6e82-489f-89e4-a5f84b2ec7eb', true],
-    ['06ddec6e-a973-4bd0-b2c8-5b01233eee02', true],
-    ['9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d', true],
-
-    // invalid
-    [undefined, false],
-    [null, false],
-    [{}, false],
-    [[], false],
-    ['a', false],
-    ['JESUSGRATEROL@', false],
-    ['Jes15-Gratero_.!', false],
-    ['@@', false],
-    ['Jes15-Gratero_.as', false],
-    ['jesu()', false],
-    ['asdjkhxaslkdj546512asdkasd', false],
-    ['', false],
-    [' ', false],
-    ['   ', false],
-    [123, false],
-    ['9b1deb4d-3b7d4bad-9bdd-2b0d7b3dcb6d', false],
-    ['9b1deb4d-3b7d4bad-9bdd-2b0d7b3dcb6d', false],
-    ['9b1deb4d-3%7d-4bad-9bdd-2b0d7b3d-b6d', false],
-    ['d9428888-122b-11e1-b85c-61cd3cbb3210', false],
-    ['c106a26a-21bb-5538-8bf2-57095d1976c1', false],
-    ['630eb68f-e0fa-5ecc-887a-7c7a62614681', false],
-    ['06ddec6e-a973-4bd0-b2c8-5b01233eee02a', false],
-    ['06ddec6e-a973-4bd0-b2c8-5b01233eee0', false],
-    [true, false],
-  ])('uuidValid(%s) -> %s', (a, expected) => {
-    expect(uuidValid(a)).toBe(expected);
   });
 });
 

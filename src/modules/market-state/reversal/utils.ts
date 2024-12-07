@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/brace-style */
+import { generateUUID } from 'web-utils-kit';
 import { calculatePercentageRepresentation, processValue } from 'bignumber-utils';
-import { generateUUID } from '../../shared/uuid/index.js';
 import { ISplitStateID, IState } from '../shared/types.js';
 import { IWindowState } from '../window/types.js';
 import { ICompactLiquidityState } from '../liquidity/index.js';
@@ -151,7 +151,7 @@ const calculatePoints = (
  * @returns IPriceCrashStateRecord
  */
 const buildPristinePriceCrashState = (): IPriceCrashStateRecord => ({
-  id: generateUUID(),
+  id: generateUUID(4),
   highest_points: 0,
   final_points: 0,
   event_time: Date.now(),

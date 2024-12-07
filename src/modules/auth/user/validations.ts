@@ -1,7 +1,7 @@
 import { encodeError } from 'error-message-utils';
+import { isUUIDValid } from 'web-utils-kit';
 import {
   timestampValid,
-  uuidValid,
   nicknameValid,
   authorityValid,
   passwordValid,
@@ -39,7 +39,7 @@ const __PASSWORD_UPDATE_QUERY_LIMIT = 30;
  * - 3508: if the record belongs to the root and has not been explicitly allowed
  */
 const validateUserRecordExistance = async (uid: string, allowRoot?: boolean): Promise<void> => {
-  if (!uuidValid(uid)) {
+  if (!isUUIDValid(uid, 4)) {
     throw new Error(encodeError(`The uid '${uid}' is invalid.`, 3506));
   }
   if (!allowRoot && isRoot(uid)) {
@@ -102,7 +102,7 @@ const canListUserPasswordUpdates = async (
  * - 3510: if the OTP Token has an invalid format
  */
 const canVerifyOTPToken = (uid: string, otpToken: string): void => {
-  if (!uuidValid(uid)) {
+  if (!isUUIDValid(uid, 4)) {
     throw new Error(encodeError(`The uid '${uid}' is invalid.`, 3506));
   }
   if (!otpTokenValid(otpToken)) {

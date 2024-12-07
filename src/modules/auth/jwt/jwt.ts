@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { encodeError, extractMessage } from 'error-message-utils';
+import { isUUIDValid } from 'web-utils-kit';
 import { toSeconds } from '../../shared/utils/index.js';
-import { jwtValid, objectValid, uuidValid } from '../../shared/validations/index.js';
+import { jwtValid, objectValid } from '../../shared/validations/index.js';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
@@ -82,7 +83,7 @@ const verify = (
   jwt.verify(token, secret, { algorithms: [ALG], ignoreExpiration }, (err, decodedData) => {
     if (err) {
       reject(new Error(encodeError(`Failed to verify the JWT. Error: ${extractMessage(err)}`, 4252)));
-    } else if (!objectValid(decodedData) || !uuidValid(decodedData.sub)) {
+    } else if (!objectValid(decodedData) || !isUUIDValid(decodedData.sub, 4)) {
       reject(new Error(encodeError('The data decoded from the JWT is not a valid object or contains an invalid UUID.', 4253)));
     } else {
       resolve(decodedData.sub);
