@@ -1,6 +1,6 @@
 import { encodeError } from 'error-message-utils';
 import { isIntegerValid } from 'web-utils-kit';
-import { ipNotesValid, ipValid } from '../shared/validations/index.js';
+import { isIPNotesValid, isIPValid } from '../shared/validations/index.js';
 import { IIPBlacklistRecord } from './types.js';
 import { getRecordByIP } from './model.js';
 
@@ -47,10 +47,10 @@ const canBlacklistBeListed = (limit: number, startAtID: number | undefined): voi
  * - 5252: if the IP Address has already been registered
  */
 const canIPBeRegistered = async (ip: string, notes: string | undefined): Promise<void> => {
-  if (!ipValid(ip)) {
+  if (!isIPValid(ip)) {
     throw new Error(encodeError(`The IP Address '${ip}' is invalid.`, 5250));
   }
-  if (notes !== undefined && !ipNotesValid(notes)) {
+  if (notes !== undefined && !isIPNotesValid(notes)) {
     throw new Error(encodeError(`The IP Address Blacklisting notes are invalid. Received '${notes}'`, 5251));
   }
   if (await getRecordByIP(ip) !== undefined) {
@@ -75,10 +75,10 @@ const canIPRegistrationBeUpdated = async (
   ip: string,
   notes: string | undefined,
 ): Promise<void> => {
-  if (!ipValid(ip)) {
+  if (!isIPValid(ip)) {
     throw new Error(encodeError(`The IP Address '${ip}' is invalid.`, 5250));
   }
-  if (notes !== undefined && !ipNotesValid(notes)) {
+  if (notes !== undefined && !isIPNotesValid(notes)) {
     throw new Error(encodeError(`The IP Address Blacklisting notes are invalid. Received '${notes}'`, 5251));
   }
   if (!isIntegerValid(id, 1)) {

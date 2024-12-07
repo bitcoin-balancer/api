@@ -1,18 +1,18 @@
 import { describe, test, expect } from 'vitest';
 import { IAuthority } from '../../auth/user/types.js';
 import {
-  authorityValid,
-  altchaPayloadValid,
-  ipValid,
-  ipNotesValid,
-  symbolValid,
+  isAuthorityValid,
+  isAltchaPayloadValid,
+  isIPValid,
+  isIPNotesValid,
+  isSymbolValid,
 } from './index.js';
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
  ************************************************************************************************ */
 
-describe('authorityValid', () => {
+describe('isAuthorityValid', () => {
   test.each(<Array<[IAuthority, IAuthority | undefined, boolean]>>[
     // essential
     [0, undefined, false],
@@ -35,8 +35,8 @@ describe('authorityValid', () => {
     ['5', undefined, false],
     [true, undefined, false],
     [123, undefined, false],
-  ])('authorityValid(%s, %s) -> %s', (a, b, expected) => {
-    expect(authorityValid(a, b)).toBe(expected);
+  ])('isAuthorityValid(%s, %s) -> %s', (a, b, expected) => {
+    expect(isAuthorityValid(a, b)).toBe(expected);
   });
 });
 
@@ -44,7 +44,7 @@ describe('authorityValid', () => {
 
 
 
-describe('altchaPayloadValid', () => {
+describe('isAltchaPayloadValid', () => {
   test.each([
     // valid
     ['eyJhbGdvcml0aG0iOiJTSEEtMjU2IiwiY2hhbGxlbmdlIjoiMjIzMTFiMDhmY2M0N2VhNGRjMTBhZjkyOGU1Yjg0NDhjMTViZmI5NjExNGRkNjYxYjhhYjA1NjZmNjljZWRhZCIsIm51bWJlciI6ODIzMzQ1LCJzYWx0IjoiODk4YzZlM2I2NTlmMGQyMGYxM2U1MjJkP2V4cGlyZXM9MTcyMTMzMjA1MSIsInNpZ25hdHVyZSI6Ijk2NzY4YzY0NDBkYjAwOGIyYjU2ZmRjM2QyNjVhZDJhZGExMTVlZDhlNTExNjhlZDNhM2FjODM4MTAxMDk1ODkiLCJ0b29rIjo3NTh9', true],
@@ -58,8 +58,8 @@ describe('altchaPayloadValid', () => {
     [true, false],
     [Array(50).fill('a').join(), false], // ~ 99 characters
     [Array(510).fill('a').join(), false], // ~ 1019 characters
-  ])('altchaPayloadValid(%s) -> %s', (a, expected) => {
-    expect(altchaPayloadValid(a)).toBe(expected);
+  ])('isAltchaPayloadValid(%s) -> %s', (a, expected) => {
+    expect(isAltchaPayloadValid(a)).toBe(expected);
   });
 });
 
@@ -67,7 +67,7 @@ describe('altchaPayloadValid', () => {
 
 
 
-describe('ipValid', () => {
+describe('isIPValid', () => {
   test.each([
     // valid
     ['192.168.1.1', true],
@@ -81,8 +81,8 @@ describe('ipValid', () => {
     ['4565', false],
     [true, false],
     ['eyJ0eXAiOieyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wbJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTk1MjA4MjUsImV4cCI6MTc1MTA1NjgyNSwiYXVkIjoid3d3LmV4YW1wb', false],
-  ])('ipValid(%s) -> %s', (a, expected) => {
-    expect(ipValid(a)).toBe(expected);
+  ])('isIPValid(%s) -> %s', (a, expected) => {
+    expect(isIPValid(a)).toBe(expected);
   });
 });
 
@@ -90,7 +90,7 @@ describe('ipValid', () => {
 
 
 
-describe('ipNotesValid', () => {
+describe('isIPNotesValid', () => {
   test.each([
     // valid
     ['These are some cool notes to be used when banning an ip :)', true],
@@ -99,8 +99,8 @@ describe('ipNotesValid', () => {
     ['4565', false],
     [true, false],
     [Array(12600).fill('a').join(), false], // ~ 25200 characters
-  ])('ipNotesValid(%s) -> %s', (a, expected) => {
-    expect(ipNotesValid(a)).toBe(expected);
+  ])('isIPNotesValid(%s) -> %s', (a, expected) => {
+    expect(isIPNotesValid(a)).toBe(expected);
   });
 });
 
@@ -108,7 +108,7 @@ describe('ipNotesValid', () => {
 
 
 
-describe('symbolValid', () => {
+describe('isSymbolValid', () => {
   test.each([
     // valid
     ['BTC', true],
@@ -136,7 +136,7 @@ describe('symbolValid', () => {
     ['BTCCCCCCCCCCCCCCCCCCC', false],
     ['btc', false],
     ['BTc', false],
-  ])('symbolValid(%s) -> %s', (a, expected) => {
-    expect(symbolValid(a)).toBe(expected);
+  ])('isSymbolValid(%s) -> %s', (a, expected) => {
+    expect(isSymbolValid(a)).toBe(expected);
   });
 });

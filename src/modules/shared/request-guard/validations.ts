@@ -1,6 +1,6 @@
 import { encodeError } from 'error-message-utils';
 import { isObjectValid, isArrayValid, isAuthorizationHeaderValid } from 'web-utils-kit';
-import { ipValid } from '../validations/index.js';
+import { isIPValid } from '../validations/index.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -13,7 +13,7 @@ import { ipValid } from '../validations/index.js';
  * - 6250: if the IP's format is invalid
  */
 const validateIP = (ip: string | undefined): void => {
-  if (!ipValid(ip)) {
+  if (!isIPValid(ip)) {
     throw new Error(encodeError(`The request's IP Address '${ip}' is invalid and therefore cannot be served.`, 6250));
   }
 };

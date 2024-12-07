@@ -7,7 +7,7 @@ import {
   isArrayValid,
 } from 'web-utils-kit';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
-import { symbolValid } from '../../shared/validations/index.js';
+import { isSymbolValid } from '../../shared/validations/index.js';
 import {
   ICoinsConfig,
   ICoinState,
@@ -94,7 +94,7 @@ const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
     throw new Error(encodeError('The whitelistedSymbols property is not a valid array.', 23505));
   }
   newConfig.whitelistedSymbols.forEach((symbol) => {
-    if (!symbolValid(symbol)) {
+    if (!isSymbolValid(symbol)) {
       throw new Error(encodeError(`The whitelisted symbol '${symbol}' is invalid as it must only contain uppercased letters and/or numbers.`, 23506));
     }
   });

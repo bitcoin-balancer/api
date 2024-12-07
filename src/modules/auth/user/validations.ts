@@ -7,7 +7,7 @@ import {
   isOTPTokenValid,
   isUUIDValid,
 } from 'web-utils-kit';
-import { authorityValid } from '../../shared/validations/index.js';
+import { isAuthorityValid } from '../../shared/validations/index.js';
 import { AltchaService } from '../../altcha/index.js';
 import { IAuthority } from './types.js';
 import { isRoot } from './utils.js';
@@ -201,7 +201,7 @@ const canUserBeCreated = async (
     if (password !== undefined) {
       throw new Error(encodeError('A password cannot be provided when creating a nonroot user.', 3504));
     }
-    if (!authorityValid(authority, 4)) {
+    if (!isAuthorityValid(authority, 4)) {
       throw new Error(encodeError(`The nonroot user's authority must range 1 - 4. Received: ${authority}`, 3505));
     }
   }
@@ -236,7 +236,7 @@ const canNicknameBeUpdated = async (uid: string, newNickname: string): Promise<v
  * - 3508: if the record belongs to the root and has not been explicitly allowed
  */
 const canAuthorityBeUpdated = async (uid: string, newAuthority: IAuthority): Promise<void> => {
-  if (!authorityValid(newAuthority, 4)) {
+  if (!isAuthorityValid(newAuthority, 4)) {
     throw new Error(encodeError(`The nonroot user's authority must range 1 - 4. Received: ${newAuthority}`, 3505));
   }
   await validateUserRecordExistance(uid);
