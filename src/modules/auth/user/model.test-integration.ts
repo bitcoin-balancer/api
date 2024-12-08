@@ -1,8 +1,8 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
+import ms from 'ms';
 import { describe, beforeEach, afterEach, test, expect, vi } from 'vitest';
 import { sortRecords } from 'web-utils-kit';
-import { toMilliseconds } from '../../shared/utils/index.js';
 import { encryptData } from '../../shared/encrypt/index.js';
 import { IQueryResult } from '../../database/types.js';
 import {
@@ -32,7 +32,7 @@ import {
  ************************************************************************************************ */
 
 // 1 hour worth of milliseconds in order to simulate actions happening sequentially
-const TIME_INCREMENT: number = toMilliseconds(60 * 60);
+const TIME_INCREMENT: number = ms('1 hours');
 
 // list of mock users
 const U: IUser[] = [

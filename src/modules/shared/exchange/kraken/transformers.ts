@@ -1,4 +1,4 @@
-import { toMilliseconds } from '../../utils/index.js';
+import ms from 'ms';
 import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
@@ -28,7 +28,7 @@ import {
 const transformCandlesticks = (source: IKrakenCandlestick[]): ICompactCandlestickRecords => (
   source.reduce(
     (prev, current) => {
-      prev.id.push(toMilliseconds(current[0]));
+      prev.id.push(ms(`${current[0]} seconds`));
       prev.open.push(Number(current[1]));
       prev.high.push(Number(current[2]));
       prev.low.push(Number(current[3]));
