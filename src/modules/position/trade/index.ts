@@ -1,3 +1,4 @@
+import ms from 'ms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { sortRecords, retryAsyncFunction } from 'web-utils-kit';
 import { APIErrorService } from '../../api-error/index.js';
@@ -266,7 +267,7 @@ const tradeServiceFactory = (): ITradeService => {
       } catch (e) {
         APIErrorService.save('TradeService.__syncInterval', e);
       }
-    }, __SYNC_FREQUENCY * 1000);
+    }, ms(`${__SYNC_FREQUENCY} seconds`));
   };
 
   /**

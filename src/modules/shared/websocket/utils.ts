@@ -1,4 +1,5 @@
 import { Buffer } from 'node:buffer';
+import { subSeconds } from 'date-fns';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -37,10 +38,10 @@ const formatConnectionClosePayload = (code: unknown, reason: unknown): string =>
  * @param limit
  * @returns boolean
  */
-const exceededIdleLimit = (
-  lastMessage: number | undefined,
-  limit: number,
-): boolean => typeof lastMessage !== 'number' || (Date.now() - (limit * 1000)) > lastMessage;
+const exceededIdleLimit = (lastMessage: number | undefined, limit: number): boolean => (
+  typeof lastMessage !== 'number'
+  || subSeconds(Date.now(), limit).getTime() > lastMessage
+);
 
 
 

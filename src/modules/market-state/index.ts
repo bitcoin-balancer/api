@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import ms from 'ms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { extractMessage } from 'error-message-utils';
 import { APIErrorService } from '../api-error/index.js';
@@ -122,7 +123,7 @@ const marketStateServiceFactory = (): IMarketStateService => {
       if (canCoinsBeRotated(__state.value.windowState, __state.value.reversalState)) {
         await CoinsService.teardownAndInitializeModule();
       }
-    }, __COINS_ROTATION_FREQUENCY * (24 * 60 * 60 * 1000));
+    }, ms(`${__COINS_ROTATION_FREQUENCY} days`));
   };
 
   /**

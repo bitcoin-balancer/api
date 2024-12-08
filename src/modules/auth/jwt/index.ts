@@ -1,4 +1,5 @@
 import { addMinutes, addDays, subDays } from 'date-fns';
+import ms from 'ms';
 import { encodeError } from 'error-message-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { hashData, verifyHashedData } from '../../shared/hash/index.js';
@@ -36,7 +37,7 @@ const jwtServiceFactory = (): IJWTService => {
 
   // the number of days a refresh token is valid for
   const __REFRESH_JWT_DURATION = 30;
-  const __REFRESH_JWT_DURATION_MS = __REFRESH_JWT_DURATION * ((24 * 60 * 60) * 1000);
+  const __REFRESH_JWT_DURATION_MS = ms(`${__REFRESH_JWT_DURATION} days`);
 
   // the name of the property that will contain the user's Refresh JWT
   const __REFRESH_JWT_COOKIE_NAME = 'refreshJWT';
@@ -78,7 +79,7 @@ const jwtServiceFactory = (): IJWTService => {
    */
   const __generateAccessToken = (uid: string): Promise<string> => sign(
     uid,
-    addMinutes(new Date(), __ACCESS_JWT_DURATION),
+    addMinutes(Date.now(), __ACCESS_JWT_DURATION),
     __SECRET.access,
   );
 
@@ -92,7 +93,7 @@ const jwtServiceFactory = (): IJWTService => {
    */
   const __generateRefreshToken = (uid: string): Promise<string> => sign(
     uid,
-    addDays(new Date(), __REFRESH_JWT_DURATION),
+    addDays(Date.now(), __REFRESH_JWT_DURATION),
     __SECRET.refresh,
   );
 
@@ -263,7 +264,7 @@ const jwtServiceFactory = (): IJWTService => {
    */
   const __runMaintenance = async (): Promise<void> => {
     // delete expired records
-    await deleteExpiredRecords(subDays(new Date(), __REFRESH_JWT_DURATION + 1).getTime());
+    await deleteExpiredRecords(subDays(Date.now(), __REFRESH_JWT_DURATION + 1).getTime());
 
     // ...
   };

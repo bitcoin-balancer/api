@@ -1,3 +1,4 @@
+import { addSeconds } from 'date-fns';
 import { calculateExchange } from 'bignumber-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { ISplitStates } from '../shared/types.js';
@@ -106,7 +107,8 @@ const calculateSymbolPriceInBaseAsset = (
  * @returns boolean
  */
 const isIntervalActive = (startTime: number, duration: number, currentTime: number): boolean => (
-  typeof startTime === 'number' && (startTime + (duration * 1000)) >= currentTime
+  typeof startTime === 'number'
+  && addSeconds(startTime, duration).getTime() >= currentTime
 );
 
 /**

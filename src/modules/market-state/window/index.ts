@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import ms from 'ms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { retryAsyncFunction } from 'web-utils-kit';
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
@@ -222,7 +223,7 @@ const windowServiceFactory = (): IWindowService => {
       } catch (e) {
         APIErrorService.save('WindowService.__refetchInterval', e);
       }
-    }, __config.value.refetchFrequency * 1000);
+    }, ms(`${__config.value.refetchFrequency} seconds`));
   };
 
   /**

@@ -92,7 +92,7 @@ const getObject = (key: string): Record<string, any> => {
 const getSecretString = (key: string): string => {
   const srcPath = getString(key);
   try {
-    const content = readFileSync(srcPath, { encoding: 'utf8' });
+    const content = readFileSync(srcPath, { encoding: 'utf-8' });
     if (!isStringValid(content, 1)) {
       throw new Error(`The secret '${key}' has no content. Received: ${content}`);
     }

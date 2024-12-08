@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import ms from 'ms';
 import { Subscription } from 'rxjs';
 import { retryAsyncFunction } from 'web-utils-kit';
 import { APIErrorService } from '../../api-error/index.js';
@@ -203,7 +204,7 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
         console.error(e);
         APIErrorService.save('OrderBook.interval.refetch', e);
       }
-    }, __REFETCH_FREQUENCY);
+    }, ms(`${__REFETCH_FREQUENCY} seconds`));
   };
 
   /**

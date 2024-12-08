@@ -1,3 +1,4 @@
+import ms from 'ms';
 import { rateLimit, Options } from 'express-rate-limit';
 
 /* ************************************************************************************************
@@ -14,7 +15,7 @@ import { rateLimit, Options } from 'express-rate-limit';
  * public, should make use of higher risk limits.
  */
 const options: Partial<Options> = {
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: ms('15 minutes'),
   standardHeaders: false, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   statusCode: 429,

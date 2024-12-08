@@ -1,3 +1,5 @@
+import ms from 'ms';
+import { addMilliseconds } from 'date-fns';
 import {
   ICandlestickIntervalID,
   IEventName,
@@ -11,18 +13,18 @@ import {
 
 // the number of milliseconds contained by each interval
 const __INTERVAL_VALUES: Record<ICandlestickIntervalID, number> = {
-  '1m': (1 * 60) * 1000,
-  '3m': (3 * 60) * 1000,
-  '5m': (5 * 60) * 1000,
-  '15m': (15 * 60) * 1000,
-  '30m': (30 * 60) * 1000,
-  '1h': (1 * (60 * 60)) * 1000,
-  '2h': (2 * (60 * 60)) * 1000,
-  '4h': (4 * (60 * 60)) * 1000,
-  '6h': (6 * (60 * 60)) * 1000,
-  '8h': (8 * (60 * 60)) * 1000,
-  '12h': (12 * (60 * 60)) * 1000,
-  '1d': (24 * (60 * 60)) * 1000,
+  '1m': ms('1 minutes'),
+  '3m': ms('3 minutes'),
+  '5m': ms('5 minutes'),
+  '15m': ms('15 minutes'),
+  '30m': ms('30 minutes'),
+  '1h': ms('1 hours'),
+  '2h': ms('2 hours'),
+  '4h': ms('4 hours'),
+  '6h': ms('6 hours'),
+  '8h': ms('8 hours'),
+  '12h': ms('12 hours'),
+  '1d': ms('1 days'),
 };
 
 
@@ -86,7 +88,7 @@ const buildPristineEventHistory = (
  * @returns boolean
  */
 const isActive = (open: number, interval: ICandlestickIntervalID, current: number): boolean => (
-  (open + __INTERVAL_VALUES[interval]) >= current
+  addMilliseconds(open, __INTERVAL_VALUES[interval]).getTime() >= current
 );
 
 

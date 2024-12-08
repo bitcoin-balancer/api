@@ -8,7 +8,7 @@ import { IManualTrade } from './types.js';
  ************************************************************************************************ */
 
 /**
- * Retrieves the syncing frequency based on the exchange used for trading.
+ * Retrieves the syncing frequency in seconds based on the exchange used for trading.
  * @returns number
  */
 const getSyncFrequency = (): number => {

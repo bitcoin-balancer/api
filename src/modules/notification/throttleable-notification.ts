@@ -48,7 +48,7 @@ const throttleableNotificationFactory: IThrottleableNotificationFactory = (
   const broadcast = (args?: any[]) => {
     if (
       __lastBroadcastedNotification === undefined
-      || __lastBroadcastedNotification < subMinutes(new Date(), __DURATION).getTime()
+      || __lastBroadcastedNotification < subMinutes(Date.now(), __DURATION).getTime()
     ) {
       __executeFunc(args);
       __lastBroadcastedNotification = Date.now();

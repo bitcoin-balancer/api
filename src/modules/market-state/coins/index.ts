@@ -1,3 +1,4 @@
+import ms from 'ms';
 import { Subscription } from 'rxjs';
 import { extractMessage } from 'error-message-utils';
 import { retryAsyncFunction } from 'web-utils-kit';
@@ -379,7 +380,7 @@ const coinsServiceFactory = (): ICoinsService => {
     __streamSub = ExchangeService.getTickersStream(topSymbols).subscribe(__onTickersChanges);
 
     // check if any of the top symbols need to be removed
-    setTimeout(__evaluateInitialization, __INITIALIZATION_EVALUATION_DELAY * (60 * 1000));
+    setTimeout(__evaluateInitialization, ms(`${__INITIALIZATION_EVALUATION_DELAY} minutes`));
   };
 
   /**

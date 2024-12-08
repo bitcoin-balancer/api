@@ -5,7 +5,7 @@ import { ENVIRONMENT } from '../../shared/environment/index.js';
  ************************************************************************************************ */
 
 /**
- * Retrieves the refetch frequency based on the exchange used for trading.
+ * Retrieves the refetch frequency in seconds based on the exchange used for trading.
  * @returns number
  */
 const getRefetchFrequency = (): number => {

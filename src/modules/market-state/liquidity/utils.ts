@@ -5,7 +5,6 @@ import {
   calculatePercentageRepresentation,
   processValue,
 } from 'bignumber-utils';
-import { toMilliseconds } from '../../shared/utils/index.js';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import {
   ICompactLiquidityState,
@@ -170,19 +169,19 @@ const buildPristineCompactState = (): ICompactLiquidityState => ({ bidDominance:
  ************************************************************************************************ */
 
 /**
- * Returns the frequency at which the order book will be refetched.
+ * Returns the frequency in seconds at which the order book will be refetched.
  * @returns number
  */
 const getOrderBookRefetchFrequency = (): number => {
   switch (ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity) {
     case 'binance':
-      return toMilliseconds(10);
+      return 10;
     case 'bitfinex':
-      return toMilliseconds(10);
+      return 10;
     case 'kraken':
-      return toMilliseconds(20);
+      return 20;
     default:
-      return toMilliseconds(10);
+      return 10;
   }
 };
 

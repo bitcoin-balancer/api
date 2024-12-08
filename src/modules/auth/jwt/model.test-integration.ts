@@ -71,7 +71,7 @@ describe('JWT Model', () => {
     test('can sign and verify a JSON Web Token', async () => {
       for (const user of U) {
         await createUser(user);
-        const refreshToken = await sign(user.uid, addDays(new Date(), 30), S);
+        const refreshToken = await sign(user.uid, addDays(Date.now(), 30), S);
         const decodedUID = await verify(refreshToken, S);
         expect(user.uid).toBe(decodedUID);
       }
@@ -162,7 +162,7 @@ describe('JWT Model', () => {
       for (const user of U) {
         await createUser(user);
 
-        const refreshToken = await sign(user.uid, addDays(new Date(), 30), S);
+        const refreshToken = await sign(user.uid, addDays(Date.now(), 30), S);
         await saveRecord(user.uid, refreshToken);
 
         const records = await listRecordsByUID(user.uid);

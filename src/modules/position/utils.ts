@@ -1,4 +1,5 @@
-import { generateUUID, delay } from 'web-utils-kit';
+import { addMinutes } from 'date-fns';
+import { generateUUID, retryAsyncFunction } from 'web-utils-kit';
 import {
   IBigNumber,
   IBigNumberValue,
@@ -22,6 +23,7 @@ import {
   IPosition,
   ICompactPosition,
 } from './types.js';
+import { fromHoursToMinutes } from '../shared/utils/index.js';
 
 /* ************************************************************************************************
  *                                          CALCULATORS                                           *
@@ -232,7 +234,7 @@ const buildPositionAction = (txID: number | undefined, idleMinutes: number): IPo
   return {
     txID: typeof txID === 'number' ? txID : 0,
     eventTime: currentTime,
-    nextEventTime: currentTime + ((idleMinutes * 60) * 1000),
+    nextEventTime: addMinutes(currentTime, idleMinutes).getTime(),
   };
 };
 
@@ -260,7 +262,9 @@ const buildNewPosition = async (
     ),
     ...trades,
     archived: false,
-    increase_actions: [buildPositionAction(lastTranctionID, increaseIdleDuration * 60)],
+    increase_actions: [
+      buildPositionAction(lastTranctionID, fromHoursToMinutes(increaseIdleDuration)),
+    ],
     decrease_actions: [[], [], [], [], []],
   };
 };
@@ -304,19 +308,11 @@ const toCompact = (position: IPosition): ICompactPosition => ({
  * - 13750: if the balance for the base asset is not in the response object (binance)
  * - 13751: if the balance for the quote asset is not in the response object (binance)
  */
-const getBalances = async (
-  retryScheduleDuration: number[] = [5, 15, 30, 60, 180],
-): Promise<IBalances> => {
-  try {
-    return await BalanceService.getBalances(true);
-  } catch (e) {
-    if (retryScheduleDuration.length === 0) {
-      throw e;
-    }
-    await delay(retryScheduleDuration[0]);
-    return getBalances(retryScheduleDuration.slice(1));
-  }
-};
+const getBalances = async (): Promise<IBalances> => retryAsyncFunction(
+  BalanceService.getBalances,
+  [true],
+  [5, 15, 30, 60, 180],
+);
 
 
 

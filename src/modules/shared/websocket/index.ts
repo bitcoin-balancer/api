@@ -1,3 +1,4 @@
+import ms from 'ms';
 import { Buffer } from 'node:buffer';
 import { WebSocket } from 'ws';
 import { extractMessage } from 'error-message-utils';
@@ -132,7 +133,7 @@ const websocketFactory: IWebSocketFactory = <T>(
         APIErrorService.save('WebSocket.HealthCheck', e);
       }
     }
-  }, __HEALTH_CHECK_FREQUENCY * 1000);
+  }, ms(`${__HEALTH_CHECK_FREQUENCY} seconds`));
 
 
 

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/brace-style */
+import { addMinutes } from 'date-fns';
 import { generateUUID } from 'web-utils-kit';
 import { calculatePercentageRepresentation, processValue } from 'bignumber-utils';
 import { ISplitStateID, IState } from '../shared/types.js';
@@ -165,7 +166,7 @@ const buildPristinePriceCrashState = (): IPriceCrashStateRecord => ({
  * @returns number
  */
 const calculateCrashStateDuration = (currentTime: number, crashDuration: number): number => (
-  currentTime + ((crashDuration * 60) * 1000)
+  addMinutes(currentTime, crashDuration).getTime()
 );
 
 /**

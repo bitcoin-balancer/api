@@ -1,3 +1,4 @@
+import ms from 'ms';
 import { buildPristineEventHistory, isActive } from './utils.js';
 import {
   createEventHistory,
@@ -131,7 +132,7 @@ const eventHistoryFactory = async (
    */
   __updateInterval = setInterval(() => {
     updateRecords(__hist.id, __hist.records);
-  }, __UPDATE_FREQUENCY * 1000);
+  }, ms(`${__UPDATE_FREQUENCY} seconds`));
 
 
 

@@ -1,3 +1,4 @@
+import ms from 'ms';
 import { IRecordStore, recordStoreFactory } from '../../shared/record-store/index.js';
 import {
   calculatePriceRange,
@@ -64,7 +65,7 @@ const liquidityServiceFactory = (): ILiquidityService => {
     const ts = Date.now();
     if (!__nextRequirementsCalculation || ts >= __nextRequirementsCalculation) {
       __state.intensityRequirements = calculateIntensityRequirements(levels);
-      __nextRequirementsCalculation = ts + (__REQUIREMENT_CALCULATION_FREQUENCY * 1000);
+      __nextRequirementsCalculation = ts + ms(`${__REQUIREMENT_CALCULATION_FREQUENCY} seconds`);
     }
   };
 

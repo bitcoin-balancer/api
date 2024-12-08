@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import ms from 'ms';
 import { encodeError } from 'error-message-utils';
 import {
   isArrayValid,
@@ -50,7 +51,7 @@ const versionServiceFactory = (): IVersionService => {
   // the number of seconds that will be awaited between requests
   const __REQUEST_DELAY = 2;
 
-  // the latest versions will be re-fetched every __refreshFrequency hours
+  // the latest versions will be re-fetched every __REFETCH_FREQUENCY hours
   const __REFETCH_FREQUENCY: number = 6;
   let __refetchInterval: NodeJS.Timeout;
 
@@ -179,7 +180,7 @@ const versionServiceFactory = (): IVersionService => {
       } catch (e) {
         APIErrorService.save('VersionService.initialize.__buildVersion', e);
       }
-    }, (__REFETCH_FREQUENCY * (60 * 60)) * 1000);
+    }, ms(`${__REFETCH_FREQUENCY} hours`));
   };
 
   /**

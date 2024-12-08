@@ -1,3 +1,4 @@
+import ms from 'ms';
 import { retryAsyncFunction } from 'web-utils-kit';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IBalances } from '../../shared/exchange/index.js';
@@ -76,7 +77,7 @@ const balanceServiceFactory = (): IBalanceService => {
       } catch (e) {
         APIErrorService.save('BalanceService.__refetchInterval', e);
       }
-    }, __REFETCH_FREQUENCY * 1000);
+    }, ms(`${__REFETCH_FREQUENCY} seconds`));
   };
 
   /**

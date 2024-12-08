@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { addMinutes } from 'date-fns';
 import { Subscription } from 'rxjs';
 import { encodeError, extractMessage } from 'error-message-utils';
 import { ENVIRONMENT } from '../shared/environment/index.js';
@@ -116,7 +117,7 @@ const positionServiceFactory = (): IPositionService => {
 
   // it is possible for Balancer to attempt to execute the same sale multiple times as the market
   // state can be broadcasted multiple times before the transaction is actually stored in the
-  // position. To avoid this, sell txs can only be triggered once every minutes.
+  // position. To avoid this, sell txs can only be triggered once every minute.
   let __nextSell: number | undefined;
 
   // the subscription to the trades' stream
@@ -376,7 +377,7 @@ const positionServiceFactory = (): IPositionService => {
           __nextSell === undefined || currentTS > __nextSell
         )
       ) {
-        __nextSell = currentTS + (60 * 1000);
+        __nextSell = addMinutes(currentTS, 1).getTime();
         await __decrease(StrategyService.config.decreaseLevels[lvl].percentage, lvl);
       }
     }

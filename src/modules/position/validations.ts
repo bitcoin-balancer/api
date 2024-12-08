@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import ms from 'ms';
 import { encodeError } from 'error-message-utils';
 import {
   isNumberValid,
@@ -22,7 +23,7 @@ import { IPosition } from './types.js';
 const __QUERY_LIMIT = 30;
 
 // the maximum difference between the startAt and the endAt properties in milliseconds
-const __DATE_RANGE_LIMIT = (6 * (365 * (24 * (60 * 60)))) * 1000; // ~6 years
+const __DATE_RANGE_LIMIT = ms('6 years');
 
 
 

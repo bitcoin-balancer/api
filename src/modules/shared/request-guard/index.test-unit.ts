@@ -1,4 +1,4 @@
-import { describe, beforeAll, afterAll, beforeEach, afterEach, test, expect, vi } from 'vitest';
+import { describe, afterEach, test, expect, vi } from 'vitest';
 import { IEnvironment } from '../environment/types.js';
 import * as ENVIRONMENT from '../environment/index.js';
 import { APIService } from '../api/index.js';
@@ -44,12 +44,6 @@ const mockInitializedState = (state: boolean) => (
  *                                             TESTS                                              *
  ************************************************************************************************ */
 describe('RequestGuard', () => {
-  beforeAll(() => { });
-
-  afterAll(() => { });
-
-  beforeEach(() => { });
-
   afterEach(() => {
     vi.restoreAllMocks();
   });

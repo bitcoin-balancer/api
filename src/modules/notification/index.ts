@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import ms from 'ms';
 import { extractMessage } from 'error-message-utils';
 import { retryAsyncFunction } from 'web-utils-kit';
 import { sendPOST } from 'fetch-request-node';
@@ -42,10 +43,11 @@ const notificationServiceFactory = (): INotificationService => {
       : undefined
   );
 
-  // notifications are broadcasted in a queue because modules like APIErrors can spam messages
+  // notifications are broadcasted (every __BROADCAST_FREQUENCY seconds) in a queue because modules
+  // like APIErrors can spam messages
   const __queue: IPreSaveNotification[] = [];
-  const __queueLimit: number = 7;
-  const __broadcastFrequencySeconds: number = 10;
+  const __QUEUE_LIMIT: number = 7;
+  const __BROADCAST_FREQUENCY: number = 10;
   let __broadcastInterval: NodeJS.Timeout;
 
   // the highest number of days notification records will be kept for
@@ -118,7 +120,7 @@ const notificationServiceFactory = (): INotificationService => {
    * @param notification
    */
   const __addToQueue = (notification: Omit<IPreSaveNotification, 'event_time'>): void => {
-    if (__CONFIG && __queue.length < __queueLimit) {
+    if (__CONFIG && __queue.length < __QUEUE_LIMIT) {
       __queue.push({ ...notification, event_time: Date.now() });
     }
   };
@@ -407,7 +409,7 @@ const notificationServiceFactory = (): INotificationService => {
         if (__queue.length) {
           await broadcast(<INotification>__queue.shift());
         }
-      }, __broadcastFrequencySeconds * 1000);
+      }, ms(`${__BROADCAST_FREQUENCY} seconds`));
     }
 
     // delete old notifications

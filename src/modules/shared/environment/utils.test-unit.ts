@@ -1,13 +1,7 @@
-import { describe, beforeAll, afterAll, beforeEach, afterEach, test, expect, vi } from 'vitest';
+import { describe, afterEach, test, expect, vi } from 'vitest';
 import { getBoolean, getInteger, getObject, getString } from './utils.js';
 
 describe('Environment Utilities', () => {
-  beforeAll(() => { });
-
-  afterAll(() => { });
-
-  beforeEach(() => { });
-
   afterEach(() => {
     vi.unstubAllEnvs();
   });

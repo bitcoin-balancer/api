@@ -1,3 +1,4 @@
+import ms from 'ms';
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { recordStoreFactory, IRecordStore } from '../shared/record-store/index.js';
 import { APIErrorService } from '../api-error/index.js';
@@ -165,7 +166,7 @@ const serverServiceFactory = (): IServerService => {
       } catch (e) {
         APIErrorService.save('ServerService.initialize.__refetchState', e);
       }
-    }, __REFETCH_FREQUENCY * 1000);
+    }, ms(`${__REFETCH_FREQUENCY} seconds`));
   };
 
   /**
