@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import ms from 'ms';
+import { subDays } from 'date-fns';
 import { extractMessage } from 'error-message-utils';
 import { retryAsyncFunction } from 'web-utils-kit';
 import { sendPOST } from 'fetch-request-node';
@@ -413,7 +414,7 @@ const notificationServiceFactory = (): INotificationService => {
     }
 
     // delete old notifications
-    await deleteOldRecords(Date.now() - (__MAX_AGE * (24 * 60 * 60 * 1000)));
+    await deleteOldRecords(subDays(Date.now(), __MAX_AGE).getTime());
   };
 
   /**
