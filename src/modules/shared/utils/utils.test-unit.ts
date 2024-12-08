@@ -1,16 +1,16 @@
 import { describe, test, expect } from 'vitest';
-import { toSeconds, fromHoursToMinutes } from './index.js';
+import { fromMillisecondstoSeconds, fromHoursToMinutes } from './index.js';
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
  ************************************************************************************************ */
 
 describe('Time Converters', () => {
-  describe('toSeconds', () => {
+  describe('fromMillisecondstoSeconds', () => {
     test('can convert any number of milliseconds into seconds', () => {
-      expect(toSeconds(1000)).toBe(1);
-      expect(toSeconds(15123135451)).toBe(15123135);
-      expect(toSeconds(65421484579)).toBe(65421485);
+      expect(fromMillisecondstoSeconds(1000)).toBe(1);
+      expect(fromMillisecondstoSeconds(15123135451)).toBe(15123135);
+      expect(fromMillisecondstoSeconds(65421484579)).toBe(65421485);
     });
   });
 

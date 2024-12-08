@@ -9,7 +9,7 @@
  * @param ms
  * @returns number
  */
-const toSeconds = (milliseconds: number) => Math.round(milliseconds / 1000);
+const fromMillisecondstoSeconds = (milliseconds: number): number => Math.round(milliseconds / 1000);
 
 
 /**
@@ -17,7 +17,7 @@ const toSeconds = (milliseconds: number) => Math.round(milliseconds / 1000);
  * @param seconds
  * @returns number
  */
-const fromHoursToMinutes = (hours: number) => Math.round(hours * 60);
+const fromHoursToMinutes = (hours: number): number => Math.round(hours * 60);
 
 
 
@@ -27,6 +27,6 @@ const fromHoursToMinutes = (hours: number) => Math.round(hours * 60);
  ************************************************************************************************ */
 export {
   // time converters
-  toSeconds,
+  fromMillisecondstoSeconds,
   fromHoursToMinutes,
 };

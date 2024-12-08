@@ -1,4 +1,4 @@
-import { toSeconds } from '../../utils/index.js';
+import { fromMillisecondstoSeconds } from '../../utils/index.js';
 import {
   IKrakenCandlestickInterval,
   IKrakenOrderBookWebSocketSubscription,
@@ -24,7 +24,7 @@ const buildGetCandlesticksURL = (
 ): string => {
   let url: string = `https://api.kraken.com/0/public/OHLC?pair=${symbol}&interval=${interval}`;
   if (startTime) {
-    url += `&since=${toSeconds(startTime) - 1}`;
+    url += `&since=${fromMillisecondstoSeconds(startTime) - 1}`;
   }
   return url;
 };

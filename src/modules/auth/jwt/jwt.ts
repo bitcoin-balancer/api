@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { encodeError, extractMessage } from 'error-message-utils';
 import { isObjectValid, isJWTValid, isUUIDValid } from 'web-utils-kit';
-import { toSeconds } from '../../shared/utils/index.js';
+import { fromMillisecondstoSeconds } from '../../shared/utils/index.js';
 
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
@@ -27,7 +27,7 @@ const ALG: jwt.Algorithm = 'HS256';
  */
 const __buildPayload = (uid: string, expiry: Date): Record<string, string | number> => ({
   sub: uid,
-  exp: toSeconds(expiry.getTime()),
+  exp: fromMillisecondstoSeconds(expiry.getTime()),
 });
 
 
