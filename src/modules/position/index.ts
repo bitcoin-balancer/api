@@ -59,6 +59,7 @@ import {
   ICompactPosition,
   IPositionState,
 } from './types.js';
+import { fromHoursToMinutes } from '../shared/utils/index.js';
 
 /* ************************************************************************************************
  *                                             NOTES                                              *
@@ -193,7 +194,7 @@ const positionServiceFactory = (): IPositionService => {
         if (__active) {
           __active.increase_actions.push(buildPositionAction(
             txID,
-            StrategyService.config.increaseIdleDuration * 60,
+            fromHoursToMinutes(StrategyService.config.increaseIdleDuration),
           ));
           await updatePositionRecord(__active);
         }
@@ -625,7 +626,9 @@ const positionServiceFactory = (): IPositionService => {
     const active = __active === undefined ? undefined : toCompact(__active);
     return {
       active,
-      plan: calculatePlan(),
+      plan: calculatePlan(
+        active,
+      ),
     };
   };
 

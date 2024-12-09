@@ -1,3 +1,5 @@
+import { StrategyService } from '../strategy/index.js';
+import { ICompactPosition } from '../types.js';
 import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
 
 /* ************************************************************************************************
@@ -20,7 +22,10 @@ const __calculateDecreasePlan = (): IDecreasePlan | undefined => undefined;
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
 
-const calculatePlan = (): IPositionPlan => ({
+const calculatePlan = (
+  active: ICompactPosition | undefined,
+
+): IPositionPlan => ({
   increase: __calculateIncreasePlan(),
   decrease: __calculateDecreasePlan(),
 });
