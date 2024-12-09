@@ -15,11 +15,15 @@ type IIncreasePlan = {
     canIncrease: false;
   }
   | {
+    // StrategyService.config.canIncrease
     canIncrease: true;
-    targetPrice: number;
+
+    // true if the plan is for opening a position instead of increasing an existing one
+    isOpen: boolean;
+    /* targetPrice: number;
     targetPercentageChange: number;
     targetReversalEventPoints: number;
-    targetTime: number;
+    targetTime: number; */
   }
 );
 
@@ -34,6 +38,7 @@ type IDecreasePlan = {
     canDecrease: false;
   }
   | {
+    // StrategyService.config.canDecrease
     canDecrease: true;
 
   }

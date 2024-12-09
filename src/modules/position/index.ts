@@ -2,6 +2,7 @@
 import { addMinutes } from 'date-fns';
 import { Subscription } from 'rxjs';
 import { encodeError, extractMessage } from 'error-message-utils';
+import { fromHoursToMinutes } from '../shared/utils/index.js';
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { NotificationService } from '../notification/index.js';
@@ -12,7 +13,7 @@ import {
   IEventHistoryRecord,
 } from '../shared/candlestick/index.js';
 import { IBalances, ITrade } from '../shared/exchange/index.js';
-import { IState } from '../market-state/shared/types.js';
+import { ISplitStates, IState } from '../market-state/shared/types.js';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { StrategyService, IDecreaseLevelID } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
@@ -59,7 +60,6 @@ import {
   ICompactPosition,
   IPositionState,
 } from './types.js';
-import { fromHoursToMinutes } from '../shared/utils/index.js';
 
 /* ************************************************************************************************
  *                                             NOTES                                              *
@@ -115,6 +115,7 @@ const positionServiceFactory = (): IPositionService => {
   // the subscription to the market state's stream
   let __price: number;
   let __windowState: IState;
+  let __windowSplitStates: ISplitStates;
   let __lastReversalEventTime: number = 0;
   let __marketStateSub: Subscription;
 
@@ -506,6 +507,7 @@ const positionServiceFactory = (): IPositionService => {
     // update local properties
     __price = nextState.windowState.window.close[nextState.windowState.window.close.length - 1];
     __windowState = nextState.windowState.state;
+    __windowSplitStates = nextState.windowState.splitStates;
 
     // handle the syncing of the active position (if any)
     __handleMarketStateChanges();
@@ -627,7 +629,10 @@ const positionServiceFactory = (): IPositionService => {
     return {
       active,
       plan: calculatePlan(
+        Date.now(),
         active,
+        __price,
+        __windowSplitStates,
       ),
     };
   };
