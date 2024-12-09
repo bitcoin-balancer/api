@@ -3,6 +3,7 @@ import { IEventHistoryRecord } from '../shared/candlestick/index.js';
 import { ITrade } from '../shared/exchange/index.js';
 import { IManualTrade } from './trade/index.js';
 import { ITransaction } from './transaction/index.js';
+import { IPositionPlan } from './planner/types.js';
 
 /* ************************************************************************************************
  *                                            SERVICE                                             *
@@ -23,6 +24,7 @@ type IPositionService = {
   unarchivePosition: (id: string) => Promise<void>;
 
   // retrievers
+  getState: () => IPositionState;
   getActive: () => ICompactPosition | undefined;
   getPosition: (id: string) => Promise<IPosition>;
   listCompactPositions: (
@@ -206,6 +208,18 @@ type ICompactPosition = {
   roi: number;
 };
 
+/**
+ * Position State
+ * The state is comprised by an active position (if any) and a plan (increase and decrease).
+ */
+type IPositionState = {
+  // the compact object of the active position (if any)
+  active: ICompactPosition | undefined;
+
+  // the plan based on the active position, strategy and the state of the market
+  plan: IPositionPlan;
+};
+
 
 
 
@@ -228,4 +242,5 @@ export type {
   // position
   IPosition,
   ICompactPosition,
+  IPositionState,
 };

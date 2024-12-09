@@ -18,6 +18,7 @@ import { StrategyService, IDecreaseLevelID } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
 import { IManualTrade, TradeService } from './trade/index.js';
 import { TransactionService, ITransaction } from './transaction/index.js';
+import { calculatePlan } from './planner/index.js';
 import {
   processTXAmount,
   toQuoteAsset,
@@ -56,6 +57,7 @@ import {
   ITradesAnalysis,
   IPosition,
   ICompactPosition,
+  IPositionState,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -616,6 +618,18 @@ const positionServiceFactory = (): IPositionService => {
    ********************************************************************************************** */
 
   /**
+   * Retrieves the current state of the position module.
+   * @returns IPositionState
+   */
+  const getState = (): IPositionState => {
+    const active = __active === undefined ? undefined : toCompact(__active);
+    return {
+      active,
+      plan: calculatePlan(),
+    };
+  };
+
+  /**
    * Retrieves the compact position object if there is an active one.
    * @returns ICompactPosition | undefined
    */
@@ -918,6 +932,7 @@ const positionServiceFactory = (): IPositionService => {
     unarchivePosition,
 
     // retrievers
+    getState,
     getActive,
     getPosition,
     listCompactPositions,
@@ -960,4 +975,5 @@ export {
   // types
   type IPosition,
   type ICompactPosition,
+  type IPositionState,
 };
