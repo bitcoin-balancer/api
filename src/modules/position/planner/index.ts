@@ -1,7 +1,7 @@
 import { ISplitStates } from '../../market-state/shared/types.js';
 import { WindowService } from '../../market-state/window/index.js';
 import { StrategyService } from '../strategy/index.js';
-import { ICompactPosition } from '../types.js';
+import { IPosition } from '../types.js';
 import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
 
 /* ************************************************************************************************
@@ -18,7 +18,7 @@ import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
  */
 const __calculateIncreasePlan = (
   currentTime: number,
-  active: ICompactPosition | undefined,
+  active: IPosition | undefined,
   price: number,
   splitStates: ISplitStates,
 ): IIncreasePlan => {
@@ -28,10 +28,16 @@ const __calculateIncreasePlan = (
   }
 
   // init values
-  // ...
+  let canIncreaseAtTime = null;
+  let canIncreaseAtPrice;
+  let canIncreaseAtPriceChange = null;
 
-  // ...
+  // calculate the properties based on the active position (if any)
   if (active) {
+    // the idle state must have expired
+    if (active.increase_actions[active.increase_actions.length - 1].nextEventTime > currentTime) {
+      canIncreaseAtTime = active.increase_actions[active.increase_actions.length - 1].nextEventTime;
+    }
 
   } else {
 
@@ -41,7 +47,11 @@ const __calculateIncreasePlan = (
   return {
     canIncrease: true,
     isOpen: active === undefined,
-    // ...
+    canIncreaseAtTime,
+    canIncreaseAtPrice,
+    canIncreaseAtPriceChange,
+    increaseAmountQuote: StrategyService.config.increaseAmountQuote,
+    missingQuoteAmount: 0,
   };
 };
 
@@ -61,7 +71,7 @@ const __calculateIncreasePlan = (
  */
 const __calculateDecreasePlan = (
   currentTime: number,
-  active: ICompactPosition | undefined,
+  active: IPosition | undefined,
   price: number,
   splitStates: ISplitStates,
 ): IDecreasePlan | undefined => {
@@ -103,7 +113,7 @@ const __calculateDecreasePlan = (
  */
 const calculatePlan = (
   currentTime: number,
-  active: ICompactPosition | undefined,
+  active: IPosition | undefined,
   price: number,
   splitStates: ISplitStates,
 ): IPositionPlan => ({

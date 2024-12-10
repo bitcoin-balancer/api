@@ -6,7 +6,8 @@
 
 /**
  * Increase Plan
- * ..
+ * The plan to increase the position when the price drops significantly and a reversal event
+ * is issued.
  */
 type IIncreasePlan = {
   canIncrease: boolean;
@@ -20,10 +21,22 @@ type IIncreasePlan = {
 
     // true if the plan is for opening a position instead of increasing an existing one
     isOpen: boolean;
-    /* targetPrice: number;
-    targetPercentageChange: number;
-    targetReversalEventPoints: number;
-    targetTime: number; */
+
+    // the timestamp at which the position can be increased (null if it can be increased right away)
+    canIncreaseAtTime: number | null;
+
+    // the price at which the position can be increased
+    canIncreaseAtPrice: number;
+
+    // the price percentage change at which the position can be increased (null if the current price
+    // is lower than the canIncreaseAtPrice)
+    canIncreaseAtPriceChange: number | null;
+
+    // the amount of quote asset that will be used to increase the position
+    increaseAmountQuote: number;
+
+    // the amount of quote asset that is missing from the balance (null if there is enough balance)
+    missingQuoteAmount: number | null;
   }
 );
 

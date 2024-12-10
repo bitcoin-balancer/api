@@ -624,18 +624,15 @@ const positionServiceFactory = (): IPositionService => {
    * Retrieves the current state of the position module.
    * @returns IPositionState
    */
-  const getState = (): IPositionState => {
-    const active = __active === undefined ? undefined : toCompact(__active);
-    return {
-      active,
-      plan: calculatePlan(
-        Date.now(),
-        active,
-        __price,
-        __windowSplitStates,
-      ),
-    };
-  };
+  const getState = (): IPositionState => ({
+    active: __active === undefined ? undefined : toCompact(__active),
+    plan: calculatePlan(
+      Date.now(),
+      __active,
+      __price,
+      __windowSplitStates,
+    ),
+  });
 
   /**
    * Retrieves the compact position object if there is an active one.
