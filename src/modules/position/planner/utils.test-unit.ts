@@ -37,7 +37,7 @@ const b = (balances: Partial<IBalances>): IBalances => ({
 
 describe('calculateMissingQuoteAmount', () => {
   test('can identify when there is enough balance', () => {
-    expect(calculateMissingQuoteAmount(1000, b({ [QUOTE_ASSET]: 1500 }))).toBeNull();
+    expect(calculateMissingQuoteAmount(1000, b({ [QUOTE_ASSET]: 1500 }))).toBe(0);
   });
   test('can identify when there is a balance gap', () => {
     expect(calculateMissingQuoteAmount(2000, b({ [QUOTE_ASSET]: 1500 }))).toBe(500);

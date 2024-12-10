@@ -630,6 +630,7 @@ const positionServiceFactory = (): IPositionService => {
       Date.now(),
       __active,
       __price,
+      __windowState,
       __windowSplitStates,
     ),
   });

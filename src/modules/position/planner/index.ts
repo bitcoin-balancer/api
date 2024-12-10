@@ -1,10 +1,11 @@
-import { ISplitStates } from '../../market-state/shared/types.js';
+import { adjustByPercentage } from 'bignumber-utils';
+import { ISplitStates, IState } from '../../market-state/shared/types.js';
 import { WindowService } from '../../market-state/window/index.js';
 import { StrategyService } from '../strategy/index.js';
 import { BalanceService } from '../balance/index.js';
 import { IPosition } from '../types.js';
+import { calculateMissingQuoteAmount, calculateStrongWindowStateRequirement } from './utils.js';
 import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
-import { calculateMissingQuoteAmount } from './utils.js';
 
 /* ************************************************************************************************
  *                                         INCREASE PLAN                                          *
@@ -15,14 +16,16 @@ import { calculateMissingQuoteAmount } from './utils.js';
  * @param currentTime
  * @param active
  * @param price
- * @param splitStates
+ * @param windowState
+ * @param windowSplitStates
  * @returns IIncreasePlan
  */
 const __calculateIncreasePlan = (
   currentTime: number,
   active: IPosition | undefined,
   price: number,
-  splitStates: ISplitStates,
+  windowState: IState,
+  windowSplitStates: ISplitStates,
 ): IIncreasePlan => {
   // auto-increase must be enabled
   if (!StrategyService.config.canIncrease) {
@@ -30,9 +33,9 @@ const __calculateIncreasePlan = (
   }
 
   // init values
-  let canIncreaseAtTime = null;
-  let canIncreaseAtPrice;
-  let canIncreaseAtPriceChange = null;
+  let canIncreaseAtTime: number | null = null;
+  let canIncreaseAtPrice: number | null = null;
+  let canIncreaseAtPriceChange: number | null = null;
 
   // calculate the properties based on the active position (if any)
   if (active) {
@@ -41,8 +44,45 @@ const __calculateIncreasePlan = (
       canIncreaseAtTime = active.increase_actions[active.increase_actions.length - 1].nextEventTime;
     }
 
-  } else {
+    // calculate the price change requirement for a decreasing strongly state to become active
+    const strongWindowStateRequirement = calculateStrongWindowStateRequirement(
+      price,
+      -2,
+      windowState,
+      windowSplitStates,
+      WindowService.config.strongRequirement,
+    );
 
+    if (active.gain > StrategyService.config.increaseGainRequirement) {
+      const gainDiff = StrategyService.config.increaseGainRequirement - active.gain;
+      canIncreaseAtPriceChange = (
+        typeof strongWindowStateRequirement === 'number'
+        && strongWindowStateRequirement < gainDiff
+          ? strongWindowStateRequirement
+          : gainDiff
+      );
+      canIncreaseAtPrice = adjustByPercentage(price, canIncreaseAtPriceChange);
+    }
+  } else {
+    canIncreaseAtPriceChange = calculateStrongWindowStateRequirement(
+      price,
+      -2,
+      windowState,
+      windowSplitStates,
+      WindowService.config.strongRequirement,
+    );
+    if (canIncreaseAtPriceChange) {
+      canIncreaseAtPrice = adjustByPercentage(price, canIncreaseAtPriceChange);
+    }
+  }
+
+  // calculate the missing quote amount (if any)
+  const missingQuoteAmount = calculateMissingQuoteAmount(
+    StrategyService.config.increaseAmountQuote,
+    BalanceService.balances,
+  );
+  if (missingQuoteAmount > 0) {
+    // @TODO
   }
 
   // finally, return the plan
@@ -50,13 +90,10 @@ const __calculateIncreasePlan = (
     canIncrease: true,
     isOpen: active === undefined,
     canIncreaseAtTime,
-    canIncreaseAtPrice: 0,
+    canIncreaseAtPrice,
     canIncreaseAtPriceChange,
     increaseAmountQuote: StrategyService.config.increaseAmountQuote,
-    missingQuoteAmount: calculateMissingQuoteAmount(
-      StrategyService.config.increaseAmountQuote,
-      BalanceService.balances,
-    ),
+    missingQuoteAmount,
   };
 };
 
@@ -73,14 +110,16 @@ const __calculateIncreasePlan = (
  * @param currentTime
  * @param active
  * @param price
- * @param splitStates
+ * @param windowState
+ * @param windowSplitStates
  * @returns IDecreasePlan | undefined
  */
 const __calculateDecreasePlan = (
   currentTime: number,
   active: IPosition | undefined,
   price: number,
-  splitStates: ISplitStates,
+  windowState: IState,
+  windowSplitStates: ISplitStates,
 ): IDecreasePlan | undefined => {
   // there must be an active position
   if (!active) {
@@ -115,17 +154,19 @@ const __calculateDecreasePlan = (
  * @param currentTime
  * @param active
  * @param price
- * @param splitStates
+ * @param windowState
+ * @param windowSplitStates
  * @returns IPositionPlan
  */
 const calculatePlan = (
   currentTime: number,
   active: IPosition | undefined,
   price: number,
-  splitStates: ISplitStates,
+  windowState: IState,
+  windowSplitStates: ISplitStates,
 ): IPositionPlan => ({
-  increase: __calculateIncreasePlan(currentTime, active, price, splitStates),
-  decrease: __calculateDecreasePlan(currentTime, active, price, splitStates),
+  increase: __calculateIncreasePlan(currentTime, active, price, windowState, windowSplitStates),
+  decrease: __calculateDecreasePlan(currentTime, active, price, windowState, windowSplitStates),
 });
 
 

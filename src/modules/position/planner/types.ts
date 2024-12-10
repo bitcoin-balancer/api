@@ -26,7 +26,7 @@ type IIncreasePlan = {
     canIncreaseAtTime: number | null;
 
     // the price at which the position can be increased
-    canIncreaseAtPrice: number;
+    canIncreaseAtPrice: number | null;
 
     // the price percentage change at which the position can be increased (null if the current price
     // is lower than the canIncreaseAtPrice)
@@ -36,7 +36,7 @@ type IIncreasePlan = {
     increaseAmountQuote: number;
 
     // the amount of quote asset that is missing from the balance (null if there is enough balance)
-    missingQuoteAmount: number | null;
+    missingQuoteAmount: number;
   }
 );
 
