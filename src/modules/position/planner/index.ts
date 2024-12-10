@@ -53,7 +53,10 @@ const __calculateIncreasePlan = (
       WindowService.config.strongRequirement,
     );
 
-    if (active.gain > StrategyService.config.increaseGainRequirement) {
+    // calculate the price change requirement based on the strategy and the current gain%
+    if (StrategyService.config.increaseGainRequirement === 0) {
+      canIncreaseAtPriceChange = strongWindowStateRequirement;
+    } else if (active.gain > StrategyService.config.increaseGainRequirement) {
       const gainDiff = StrategyService.config.increaseGainRequirement - active.gain;
       canIncreaseAtPriceChange = (
         typeof strongWindowStateRequirement === 'number'
@@ -61,9 +64,14 @@ const __calculateIncreasePlan = (
           ? strongWindowStateRequirement
           : gainDiff
       );
+    }
+
+    // calculate the target price unless the position can be increased right away
+    if (canIncreaseAtPriceChange) {
       canIncreaseAtPrice = adjustByPercentage(price, canIncreaseAtPriceChange);
     }
   } else {
+    // calculate the price change requirement for a strong decreasing state to become active
     canIncreaseAtPriceChange = calculateStrongWindowStateRequirement(
       price,
       -2,
