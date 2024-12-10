@@ -147,7 +147,7 @@ const transactionServiceFactory = (): ITransactionService => {
   ): Promise<ITransactionActionResult> => {
     try {
       // retrieve the balances
-      const balances = await BalanceService.getBalances(true);
+      const balances = await BalanceService.getBalances();
 
       // confirm the tx took place
       if (initialBalances[__BASE_ASSET] !== balances[__BASE_ASSET]) {

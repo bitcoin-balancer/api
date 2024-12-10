@@ -4,6 +4,7 @@ import { StrategyService } from '../strategy/index.js';
 import { BalanceService } from '../balance/index.js';
 import { IPosition } from '../types.js';
 import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
+import { calculateMissingQuoteAmount } from './utils.js';
 
 /* ************************************************************************************************
  *                                         INCREASE PLAN                                          *
@@ -49,10 +50,13 @@ const __calculateIncreasePlan = (
     canIncrease: true,
     isOpen: active === undefined,
     canIncreaseAtTime,
-    canIncreaseAtPrice,
+    canIncreaseAtPrice: 0,
     canIncreaseAtPriceChange,
     increaseAmountQuote: StrategyService.config.increaseAmountQuote,
-    missingQuoteAmount: 0,
+    missingQuoteAmount: calculateMissingQuoteAmount(
+      StrategyService.config.increaseAmountQuote,
+      BalanceService.balances,
+    ),
   };
 };
 
