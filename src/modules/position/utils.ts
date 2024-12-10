@@ -310,7 +310,7 @@ const toCompact = (position: IPosition): ICompactPosition => ({
  */
 const getBalances = async (): Promise<IBalances> => retryAsyncFunction(
   BalanceService.getBalances,
-  [true],
+  undefined,
   [5, 15, 30, 60, 180],
 );
 

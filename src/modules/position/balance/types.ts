@@ -11,10 +11,10 @@ import { IBalances } from '../../shared/exchange/index.js';
  */
 type IBalanceService = {
   // properties
-  // ...
+  balances: IBalances;
 
   // retrievers
-  getBalances: (forceRefetch?: boolean) => Promise<IBalances>;
+  getBalances: () => Promise<IBalances>;
 
   // initializer
   initialize: () => Promise<void>;

@@ -39,9 +39,7 @@ const balanceServiceFactory = (): IBalanceService => {
    ********************************************************************************************** */
 
   /**
-   * Retrieves the balances object from the local state. If forceRefetch is true, it will update
-   * the state before returning it.
-   * @param forceRefetch
+   * Fetches the current balances, updates the local state and returns them.
    * @returns Promise<IBalances>
    * @throws
    * - 12500: if the HTTP response code is not in the acceptedCodes
@@ -50,10 +48,8 @@ const balanceServiceFactory = (): IBalanceService => {
    * - 13750: if the balance for the base asset is not in the response object (binance)
    * - 13751: if the balance for the quote asset is not in the response object (binance)
    */
-  const getBalances = async (forceRefetch?: boolean): Promise<IBalances> => {
-    if (forceRefetch) {
-      __balances = await retryAsyncFunction(ExchangeService.getBalances, undefined, __DELAYS);
-    }
+  const getBalances = async (): Promise<IBalances> => {
+    __balances = await retryAsyncFunction(ExchangeService.getBalances, undefined, __DELAYS);
     return __balances;
   };
 
@@ -70,10 +66,10 @@ const balanceServiceFactory = (): IBalanceService => {
    * @returns Promise<void>
    */
   const initialize = async (): Promise<void> => {
-    await getBalances(true);
+    await getBalances();
     __refetchInterval = setInterval(async () => {
       try {
-        await getBalances(true);
+        await getBalances();
       } catch (e) {
         APIErrorService.save('BalanceService.__refetchInterval', e);
       }
@@ -97,7 +93,9 @@ const balanceServiceFactory = (): IBalanceService => {
    ********************************************************************************************** */
   return Object.freeze({
     // properties
-    // ...
+    get balances() {
+      return __balances;
+    },
 
     // retrievers
     getBalances,

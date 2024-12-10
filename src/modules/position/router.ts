@@ -81,7 +81,7 @@ PositionRouter.route('/balances').get(lowRiskLimit, async (req: Request, res: Re
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
-    res.json(buildResponse(await BalanceService.getBalances()));
+    res.json(buildResponse(BalanceService.balances));
   } catch (e) {
     APIErrorService.save('PositionRouter.get.balances', e, reqUid, req.ip);
     res.json(buildResponse(undefined, e));

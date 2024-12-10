@@ -1,6 +1,7 @@
 import { ISplitStates } from '../../market-state/shared/types.js';
 import { WindowService } from '../../market-state/window/index.js';
 import { StrategyService } from '../strategy/index.js';
+import { BalanceService } from '../balance/index.js';
 import { IPosition } from '../types.js';
 import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
 
@@ -54,6 +55,8 @@ const __calculateIncreasePlan = (
     missingQuoteAmount: 0,
   };
 };
+
+
 
 
 
