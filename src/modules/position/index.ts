@@ -632,6 +632,7 @@ const positionServiceFactory = (): IPositionService => {
       __price,
       __windowState,
       __windowSplitStates,
+      __MIN_ORDER_SIZE,
     ),
   });
 

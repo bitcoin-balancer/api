@@ -54,6 +54,8 @@ const __calculateIncreasePlan = (
     );
 
     // calculate the price change requirement based on the strategy and the current gain%
+    // if the increaseGainRequirement it means the position's gain is irrelevant and should
+    // increase the position on every reversal event
     if (StrategyService.config.increaseGainRequirement === 0) {
       canIncreaseAtPriceChange = strongWindowStateRequirement;
     } else if (active.gain > StrategyService.config.increaseGainRequirement) {
@@ -120,6 +122,7 @@ const __calculateIncreasePlan = (
  * @param price
  * @param windowState
  * @param windowSplitStates
+ * @param minOrderSize
  * @returns IDecreasePlan | undefined
  */
 const __calculateDecreasePlan = (
@@ -128,6 +131,7 @@ const __calculateDecreasePlan = (
   price: number,
   windowState: IState,
   windowSplitStates: ISplitStates,
+  minOrderSize: number,
 ): IDecreasePlan | undefined => {
   // there must be an active position
   if (!active) {
@@ -164,6 +168,7 @@ const __calculateDecreasePlan = (
  * @param price
  * @param windowState
  * @param windowSplitStates
+ * @param minOrderSize
  * @returns IPositionPlan
  */
 const calculatePlan = (
@@ -172,9 +177,23 @@ const calculatePlan = (
   price: number,
   windowState: IState,
   windowSplitStates: ISplitStates,
+  minOrderSize: number,
 ): IPositionPlan => ({
-  increase: __calculateIncreasePlan(currentTime, active, price, windowState, windowSplitStates),
-  decrease: __calculateDecreasePlan(currentTime, active, price, windowState, windowSplitStates),
+  increase: __calculateIncreasePlan(
+    currentTime,
+    active,
+    price,
+    windowState,
+    windowSplitStates,
+  ),
+  decrease: __calculateDecreasePlan(
+    currentTime,
+    active,
+    price,
+    windowState,
+    windowSplitStates,
+    minOrderSize,
+  ),
 });
 
 
