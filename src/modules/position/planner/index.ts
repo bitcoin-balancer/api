@@ -80,7 +80,7 @@ const __calculateIncreasePlan = (
     if (canIncreaseAtPriceChange) {
       canIncreaseAtPrice = adjustByPercentage(price, canIncreaseAtPriceChange);
     }
-  } else if (reversalState !== undefined) {
+  } else if (reversalState === undefined) {
     // calculate the price change requirement for a strong decreasing state to become active
     canIncreaseAtPriceChange = calculateStrongWindowStateRequirement(
       -2,
