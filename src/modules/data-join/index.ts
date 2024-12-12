@@ -50,7 +50,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
     user: UserService.getUser(uid),
     exchangeConfig: ENVIRONMENT.EXCHANGE_CONFIGURATION,
     marketState: __marketState,
-    position: PositionService.getActive(),
+    position: PositionService.getState(),
   });
 
   /**
@@ -67,7 +67,7 @@ const dataJoinServiceFactory = (): IDataJoinService => {
         window: sliceWindow(__marketState.windowState.window),
       },
     },
-    position: PositionService.getActive(),
+    position: PositionService.getState(),
   });
 
 

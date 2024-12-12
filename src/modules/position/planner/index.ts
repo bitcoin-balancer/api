@@ -38,6 +38,7 @@ const __calculateIncreasePlan = (
   }
 
   // init values
+  const isOpen: boolean = active === undefined;
   let canIncreaseAtTime: number | null = null;
   let canIncreaseAtPrice: number | null = null;
   let canIncreaseAtPriceChange: number | null = null;
@@ -98,13 +99,13 @@ const __calculateIncreasePlan = (
     BalanceService.balances,
   );
   if (missingQuoteAmount > 0) {
-    onInsufficientQuoteBalance.broadcast([missingQuoteAmount, active === undefined]);
+    onInsufficientQuoteBalance.broadcast([missingQuoteAmount, isOpen]);
   }
 
   // finally, return the plan
   return {
     canIncrease: true,
-    isOpen: active === undefined,
+    isOpen,
     canIncreaseAtTime,
     canIncreaseAtPrice,
     canIncreaseAtPriceChange,

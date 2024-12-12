@@ -641,14 +641,6 @@ const positionServiceFactory = (): IPositionService => {
   });
 
   /**
-   * Retrieves the compact position object if there is an active one.
-   * @returns ICompactPosition | undefined
-   */
-  const getActive = (): ICompactPosition | undefined => (
-    __active === undefined ? undefined : toCompact(__active)
-  );
-
-  /**
    * Retrieves a position record from the local property or from the database by ID.
    * @param id
    * @returns Promise<IPosition>
@@ -944,7 +936,6 @@ const positionServiceFactory = (): IPositionService => {
 
     // retrievers
     getState,
-    getActive,
     getPosition,
     listCompactPositions,
     listCompactPositionsByRange,

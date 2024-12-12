@@ -25,7 +25,6 @@ type IPositionService = {
 
   // retrievers
   getState: () => IPositionState;
-  getActive: () => ICompactPosition | undefined;
   getPosition: (id: string) => Promise<IPosition>;
   listCompactPositions: (
     limit: number,
