@@ -7,6 +7,7 @@ import { StrategyService } from '../strategy/index.js';
 import { BalanceService } from '../balance/index.js';
 import { IPosition } from '../types.js';
 import { calculateMissingQuoteAmount, calculateStrongWindowStateRequirement } from './utils.js';
+import { onInsufficientQuoteBalance } from './notifications.js';
 import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
 
 /* ************************************************************************************************
@@ -97,7 +98,7 @@ const __calculateIncreasePlan = (
     BalanceService.balances,
   );
   if (missingQuoteAmount > 0) {
-    // @TODO
+    onInsufficientQuoteBalance.broadcast([missingQuoteAmount, active === undefined]);
   }
 
   // finally, return the plan

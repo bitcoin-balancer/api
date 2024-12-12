@@ -396,6 +396,40 @@ const notificationServiceFactory = (): INotificationService => {
 
 
   /* **********************************************************************************************
+   *                                       POSITION PLANNER                                       *
+   ********************************************************************************************** */
+
+  /**
+   * Broadcasts a message notifying users that Balancer will be unable to open/increase a position
+   * if the balance isn't filled.
+   * @param missingQuoteAmount
+   * @param isOpen
+   */
+  const onInsufficientQuoteBalance = (
+    missingQuoteAmount: number,
+    isOpen: boolean,
+  ): void => __addToQueue({
+    sender: 'POSITION_PLANNER',
+    title: 'Insufficient funds',
+    description: `Please deposit ${prettifyDollarValue(missingQuoteAmount)} to your Spot Wallet to ${isOpen ? 'open a position' : 'increase the position'}. Disable "Auto-increase" in Adjustments/Strategy to silence this alert.`,
+  });
+
+  /**
+   * Broadcasts a message notifying users that Balancer will be unable to decrease a position
+   * if the balance isn't filled.
+   * @param missingBaseAmount
+   */
+  const onInsufficientBaseBalance = (missingBaseAmount: number): void => __addToQueue({
+    sender: 'POSITION_PLANNER',
+    title: 'Insufficient funds',
+    description: `Please deposit ${prettifyBitcoinValue(missingBaseAmount)} to your Spot Wallet to decrease the amount of the position. Disable "Auto-decrease" in Adjustments/Strategy to silence this alert.`,
+  });
+
+
+
+
+
+  /* **********************************************************************************************
    *                                          INITIALIZER                                         *
    ********************************************************************************************** */
 
@@ -474,6 +508,10 @@ const notificationServiceFactory = (): INotificationService => {
     lowBalance,
     onNewPosition,
     onPositionClose,
+
+    // position planner
+    onInsufficientQuoteBalance,
+    onInsufficientBaseBalance,
 
     // initializer
     initialize,

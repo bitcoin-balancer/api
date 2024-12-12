@@ -8,6 +8,8 @@ import { IThrottleableNotificationFactory, IThrottleableNotification } from './t
 /**
  * Some Service Factory
  * Generates the object in charge of throttling the broadcasting of a notification.
+ * @param func
+ * @param duration (minutes)
  * @returns IThrottleableNotification
  */
 const throttleableNotificationFactory: IThrottleableNotificationFactory = (

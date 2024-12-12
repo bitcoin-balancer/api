@@ -50,6 +50,10 @@ type INotificationService = {
   onNewPosition: (amount: number, amountQuote: number, marketPrice: number) => void;
   onPositionClose: (openTime: number, pnl: number, roi: number) => void;
 
+  // position planner
+  onInsufficientQuoteBalance: (missingQuoteAmount: number, isOpen: boolean) => void;
+  onInsufficientBaseBalance: (missingBaseAmount: number) => void;
+
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;
@@ -99,7 +103,7 @@ type IThrottleableNotification = {
  * The sender can be a module or even a specific event.
  */
 type INotificationSender = 'AUTOMATED_TEST' | 'API_ERROR' | 'API_INITIALIZER' | 'SERVER'
-| 'WEBSOCKET' | 'MARKET_STATE' | 'TRANSACTION' | 'POSITION';
+| 'WEBSOCKET' | 'MARKET_STATE' | 'TRANSACTION' | 'POSITION' | 'POSITION_PLANNER';
 
 /**
  * Notification
