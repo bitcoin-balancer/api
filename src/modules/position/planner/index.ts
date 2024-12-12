@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { adjustByPercentage } from 'bignumber-utils';
 import { ISplitStates, IState } from '../../market-state/shared/types.js';
 import { WindowService } from '../../market-state/window/index.js';
@@ -60,13 +61,16 @@ const __calculateIncreasePlan = (
     // if the increaseGainRequirement it means the position's gain is irrelevant and should
     // increase the position on every reversal event
     if (StrategyService.config.increaseGainRequirement === 0) {
-      canIncreaseAtPriceChange = strongWindowStateRequirement;
+      canIncreaseAtPriceChange = reversalState === undefined ? strongWindowStateRequirement : null;
     } else if (active.gain > StrategyService.config.increaseGainRequirement) {
+      // calculate the difference between the gain requirement and the current gain
       const gainDiff = StrategyService.config.increaseGainRequirement - active.gain;
+
+      // if there is an active reversal state, the price requirement has been met
       canIncreaseAtPriceChange = (
         typeof strongWindowStateRequirement === 'number'
         && strongWindowStateRequirement < gainDiff
-          ? strongWindowStateRequirement
+          ? reversalState === undefined ? strongWindowStateRequirement : null
           : gainDiff
       );
     }
@@ -75,7 +79,7 @@ const __calculateIncreasePlan = (
     if (canIncreaseAtPriceChange) {
       canIncreaseAtPrice = adjustByPercentage(price, canIncreaseAtPriceChange);
     }
-  } else {
+  } else if (reversalState !== undefined) {
     // calculate the price change requirement for a strong decreasing state to become active
     canIncreaseAtPriceChange = calculateStrongWindowStateRequirement(
       price,
