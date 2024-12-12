@@ -1,6 +1,7 @@
 import { adjustByPercentage } from 'bignumber-utils';
 import { ISplitStates, IState } from '../../market-state/shared/types.js';
 import { WindowService } from '../../market-state/window/index.js';
+import { IReversalState } from '../../market-state/reversal/index.js';
 import { StrategyService } from '../strategy/index.js';
 import { BalanceService } from '../balance/index.js';
 import { IPosition } from '../types.js';
@@ -18,6 +19,7 @@ import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
  * @param price
  * @param windowState
  * @param windowSplitStates
+ * @param reversalState
  * @returns IIncreasePlan
  */
 const __calculateIncreasePlan = (
@@ -26,6 +28,7 @@ const __calculateIncreasePlan = (
   price: number,
   windowState: IState,
   windowSplitStates: ISplitStates,
+  reversalState: IReversalState | undefined,
 ): IIncreasePlan => {
   // auto-increase must be enabled
   if (!StrategyService.config.canIncrease) {
@@ -168,6 +171,7 @@ const __calculateDecreasePlan = (
  * @param price
  * @param windowState
  * @param windowSplitStates
+ * @param reversalState
  * @param minOrderSize
  * @returns IPositionPlan
  */
@@ -177,6 +181,7 @@ const calculatePlan = (
   price: number,
   windowState: IState,
   windowSplitStates: ISplitStates,
+  reversalState: IReversalState | undefined,
   minOrderSize: number,
 ): IPositionPlan => ({
   increase: __calculateIncreasePlan(
@@ -185,6 +190,7 @@ const calculatePlan = (
     price,
     windowState,
     windowSplitStates,
+    reversalState,
   ),
   decrease: __calculateDecreasePlan(
     currentTime,

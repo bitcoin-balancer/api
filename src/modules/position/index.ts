@@ -14,6 +14,7 @@ import {
 } from '../shared/candlestick/index.js';
 import { IBalances, ITrade } from '../shared/exchange/index.js';
 import { ISplitStates, IState } from '../market-state/shared/types.js';
+import { IReversalState } from '../market-state/reversal/index.js';
 import { MarketStateService, IMarketState } from '../market-state/index.js';
 import { StrategyService, IDecreaseLevelID } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
@@ -116,6 +117,7 @@ const positionServiceFactory = (): IPositionService => {
   let __price: number;
   let __windowState: IState;
   let __windowSplitStates: ISplitStates;
+  let __reversalState: IReversalState | undefined;
   let __lastReversalEventTime: number = 0;
   let __marketStateSub: Subscription;
 
@@ -508,6 +510,7 @@ const positionServiceFactory = (): IPositionService => {
     __price = nextState.windowState.window.close[nextState.windowState.window.close.length - 1];
     __windowState = nextState.windowState.state;
     __windowSplitStates = nextState.windowState.splitStates;
+    __reversalState = nextState.reversalState;
 
     // handle the syncing of the active position (if any)
     __handleMarketStateChanges();
@@ -632,6 +635,7 @@ const positionServiceFactory = (): IPositionService => {
       __price,
       __windowState,
       __windowSplitStates,
+      __reversalState,
       __MIN_ORDER_SIZE,
     ),
   });
