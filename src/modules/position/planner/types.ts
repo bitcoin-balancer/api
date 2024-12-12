@@ -5,6 +5,12 @@
  ************************************************************************************************ */
 
 /**
+ * Target State
+ * The window state that needs that's required by the plan (increase or decrease).
+ */
+type ITargetState = 2 | -2;
+
+/**
  * Increase Plan
  * The plan to increase the position when the price drops significantly and a reversal event
  * is issued.
@@ -75,6 +81,7 @@ type IPositionPlan = {
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
 export type {
+  ITargetState,
   IIncreasePlan,
   IDecreasePlan,
   IPositionPlan,

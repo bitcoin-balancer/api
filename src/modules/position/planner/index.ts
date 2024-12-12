@@ -50,7 +50,6 @@ const __calculateIncreasePlan = (
 
     // calculate the price change requirement for a decreasing strongly state to become active
     const strongWindowStateRequirement = calculateStrongWindowStateRequirement(
-      price,
       -2,
       windowState,
       windowSplitStates,
@@ -82,7 +81,6 @@ const __calculateIncreasePlan = (
   } else if (reversalState !== undefined) {
     // calculate the price change requirement for a strong decreasing state to become active
     canIncreaseAtPriceChange = calculateStrongWindowStateRequirement(
-      price,
       -2,
       windowState,
       windowSplitStates,
