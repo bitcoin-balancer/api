@@ -150,13 +150,24 @@ const __calculateDecreasePlan = (
     return { canDecrease: false };
   }
 
+  // calculate the price change requirement for a decreasing strongly state to become active
+  const strongWindowStateRequirement = calculateStrongWindowStateRequirement(
+    2,
+    windowState,
+    windowSplitStates,
+    WindowService.config.strongRequirement,
+  );
+
   // ...
 
 
   // finally, return the plan
   return {
     canDecrease: true,
-    // ...
+    canDecreaseAtTime: 0,
+    canDecreaseAtPrice: 0,
+    canDecreaseAtPriceChange: 0,
+    missingBaseAmount: 0,
   };
 };
 
