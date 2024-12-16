@@ -6,8 +6,12 @@ import { IReversalState } from '../../market-state/reversal/index.js';
 import { StrategyService } from '../strategy/index.js';
 import { BalanceService } from '../balance/index.js';
 import { IPosition } from '../types.js';
-import { calculateMissingQuoteAmount, calculateStrongWindowStateRequirement } from './utils.js';
-import { onInsufficientQuoteBalance } from './notifications.js';
+import {
+  calculateStrongWindowStateRequirement,
+  calculateMissingQuoteAmount,
+  buildDecreaseLevels,
+} from './utils.js';
+import { onInsufficientQuoteBalance, onInsufficientBaseBalance } from './notifications.js';
 import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
 
 /* ************************************************************************************************
@@ -150,7 +154,13 @@ const __calculateDecreasePlan = (
     return { canDecrease: false };
   }
 
-  // calculate the price change requirement for a decreasing strongly state to become active
+  // init values
+  let canDecreaseAtTime: number | null = null;
+  let canDecreaseAtPrice: number | null = null;
+  let canDecreaseAtPriceChange: number | null = null;
+  const decreaseLevels = buildDecreaseLevels(currentTime, active);
+
+  // calculate the price change requirement for an increasing strongly state to become active
   const strongWindowStateRequirement = calculateStrongWindowStateRequirement(
     2,
     windowState,
@@ -158,16 +168,30 @@ const __calculateDecreasePlan = (
     WindowService.config.strongRequirement,
   );
 
-  // ...
+  // calculate the active decrease level (if any)
+  const lvl = StrategyService.getActiveDecreaseLevel(active.gain);
 
+  // proceed based on the state of the profitability
+  if (typeof lvl === 'number') {
+
+  } else {
+
+  }
+
+  // calculate the missing base amount (if any)
+  const missingBaseAmount = 0;
+  if (missingBaseAmount > 0) {
+    onInsufficientBaseBalance.broadcast([missingBaseAmount]);
+  }
 
   // finally, return the plan
   return {
     canDecrease: true,
-    canDecreaseAtTime: 0,
-    canDecreaseAtPrice: 0,
-    canDecreaseAtPriceChange: 0,
-    missingBaseAmount: 0,
+    canDecreaseAtTime,
+    canDecreaseAtPrice,
+    canDecreaseAtPriceChange,
+    missingBaseAmount,
+    decreaseLevels,
   };
 };
 

@@ -59,6 +59,13 @@ type IDecreaseLevel = {
   // it right away)
   idleUntil: number | null;
 };
+type IDecreaseLevels = [
+  IDecreaseLevel,
+  IDecreaseLevel,
+  IDecreaseLevel,
+  IDecreaseLevel,
+  IDecreaseLevel,
+];
 
 /**
  * Decrease Plan
@@ -90,13 +97,7 @@ type IDecreasePlan = {
     missingBaseAmount: number;
 
     // the list of decrease level records
-    decreaseLevels: [
-      IDecreaseLevel,
-      IDecreaseLevel,
-      IDecreaseLevel,
-      IDecreaseLevel,
-      IDecreaseLevel,
-    ];
+    decreaseLevels: IDecreaseLevels;
   }
 );
 
@@ -120,6 +121,7 @@ type IPositionPlan = {
 export type {
   ITargetState,
   IIncreasePlan,
+  IDecreaseLevels,
   IDecreasePlan,
   IPositionPlan,
 };
