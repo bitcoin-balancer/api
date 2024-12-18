@@ -54,12 +54,6 @@ const __calculateDecreaseAmount = (
   decreasePercentage: number,
   minOrderSize: number,
 ): IBigNumber => {
-  // if the decrease percentage couldn't be established due to lack of profitability, return 0
-  if (decreasePercentage === 0) {
-    return getBigNumber(0);
-  }
-
-  // ensure the amount is larger than the minOrderSize, otherwise minOrderSize is returned
   const decreaseAmount = getBigNumber(positionAmount).times(decreasePercentage / 100);
   return decreaseAmount.isGreaterThanOrEqualTo(minOrderSize)
     ? decreaseAmount
@@ -162,11 +156,11 @@ const calculateMissingBaseAmount = (
   baseAssetBalance: number,
 ): number => {
   // calculate the amount that will be decreased
-  const amount = __calculateDecreaseAmount(positionAmount, decreasePercentage, minOrderSize);
+  const decrAmount = __calculateDecreaseAmount(positionAmount, decreasePercentage, minOrderSize);
 
-  // if there isn't enough balance, calculate the difference
-  if (amount.isGreaterThan(baseAssetBalance)) {
-    return processValue(amount.minus(baseAssetBalance), { decimalPlaces: 8 });
+  // if there isn't enough balance, calculate the difference. Otherwise, the missing amount is 0
+  if (decrAmount.isGreaterThan(baseAssetBalance)) {
+    return processValue(decrAmount.minus(baseAssetBalance), { decimalPlaces: 8 });
   }
   return 0;
 };

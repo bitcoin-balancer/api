@@ -183,7 +183,9 @@ const __calculateDecreasePlan = (
   // calculate the missing base amount (if any)
   const missingBaseAmount = calculateMissingBaseAmount(
     active.amount,
-    typeof lvl === 'number' ? StrategyService.config.decreaseLevels[lvl].percentage : 0,
+    typeof lvl === 'number'
+      ? StrategyService.config.decreaseLevels[lvl].percentage
+      : StrategyService.config.decreaseLevels[0].percentage,
     minOrderSize,
     BalanceService.balances[ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset],
   );
