@@ -60,6 +60,7 @@ import {
   IPosition,
   ICompactPosition,
   IPositionState,
+  IPositionAction,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -975,6 +976,7 @@ export {
   PositionService,
 
   // types
+  type IPositionAction,
   type IPosition,
   type ICompactPosition,
   type IPositionState,

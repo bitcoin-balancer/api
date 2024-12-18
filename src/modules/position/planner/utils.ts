@@ -3,7 +3,7 @@ import { getBigNumber, processValue } from 'bignumber-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { ISplitStateResult, ISplitStates, IState } from '../../market-state/shared/types.js';
 import { IBalances } from '../../shared/exchange/index.js';
-import { IPosition } from '../index.js';
+import { IPositionAction, IPosition } from '../index.js';
 import { IDecreaseLevels, ITargetState } from './types.js';
 
 /* ************************************************************************************************
@@ -41,6 +41,26 @@ const __calculateDifferenceBetweenRequirementAndSplitChange = (
     ? processValue(windowStrongRequirement - splitChange)
     : -(processValue(splitChange - (-windowStrongRequirement)))
 );
+
+/**
+ * Based on the list of decrease actions that have been executed, it checks if a level is currently
+ * idling. If so, it returns the timestamp at which the idling state fades away. Otherwise, it
+ * returns null.
+ * @param currentTime
+ * @param decreaseActions
+ * @returns number | null
+ */
+const getDecreaseLevelIdleUntil = (
+  currentTime: number,
+  decreaseActions: IPositionAction[],
+): number | null => {
+  if (!decreaseActions.length) {
+    return null;
+  }
+  return currentTime > decreaseActions[decreaseActions.length - 1].nextEventTime
+    ? null
+    : decreaseActions[decreaseActions.length - 1].nextEventTime;
+};
 
 
 
@@ -102,10 +122,18 @@ const calculateMissingQuoteAmount = (
   return 0;
 };
 
-
-
+/**
+ * Builds the decrease levels based on the current time and the decrease actions that have taken
+ * place.
+ * @param currentTime
+ * @param position
+ * @returns IDecreaseLevels
+ */
 const buildDecreaseLevels = (currentTime: number, position: IPosition): IDecreaseLevels => (
-  [] as unknown as IDecreaseLevels
+  position.decrease_price_levels.map((price, idx) => ({
+    price,
+    idleUntil: getDecreaseLevelIdleUntil(currentTime, position.decrease_actions[idx]),
+  })) as IDecreaseLevels
 );
 
 
