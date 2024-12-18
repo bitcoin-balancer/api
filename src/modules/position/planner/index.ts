@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { adjustByPercentage } from 'bignumber-utils';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { ISplitStates, IState } from '../../market-state/shared/types.js';
 import { WindowService } from '../../market-state/window/index.js';
 import { IReversalState } from '../../market-state/reversal/index.js';
@@ -14,7 +15,6 @@ import {
 } from './utils.js';
 import { onInsufficientQuoteBalance, onInsufficientBaseBalance } from './notifications.js';
 import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
-import { ENVIRONMENT } from '../../shared/environment/index.js';
 
 /* ************************************************************************************************
  *                                         INCREASE PLAN                                          *
@@ -157,7 +157,6 @@ const __calculateDecreasePlan = (
   }
 
   // init values
-  let canDecreaseAtTime: number | null = null;
   let canDecreaseAtPrice: number | null = null;
   let canDecreaseAtPriceChange: number | null = null;
   const decreaseLevels = buildDecreaseLevels(currentTime, active);
@@ -171,21 +170,20 @@ const __calculateDecreasePlan = (
   );
 
   // calculate the active decrease level (if any)
-  const lvl = StrategyService.getActiveDecreaseLevel(active.gain);
+  const lvl = StrategyService.getActiveDecreaseLevel(active.gain) ?? 0;
 
-  // proceed based on the state of the profitability
-  if (typeof lvl === 'number') {
+  // calculate the time at which the position can be decreased (if applies)
+  const canDecreaseAtTime = decreaseLevels[lvl].idleUntil;
 
-  } else {
+  // ..
 
-  }
+  // calculate the percentage that will be decreased
+  const decreasePercentage = StrategyService.config.decreaseLevels[lvl].percentage;
 
   // calculate the missing base amount (if any)
   const missingBaseAmount = calculateMissingBaseAmount(
     active.amount,
-    typeof lvl === 'number'
-      ? StrategyService.config.decreaseLevels[lvl].percentage
-      : StrategyService.config.decreaseLevels[0].percentage,
+    StrategyService.config.decreaseLevels[lvl].percentage,
     minOrderSize,
     BalanceService.balances[ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset],
   );
@@ -199,6 +197,7 @@ const __calculateDecreasePlan = (
     canDecreaseAtTime,
     canDecreaseAtPrice,
     canDecreaseAtPriceChange,
+    decreasePercentage,
     missingBaseAmount,
     decreaseLevels,
   };

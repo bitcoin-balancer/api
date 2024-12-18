@@ -93,6 +93,9 @@ type IDecreasePlan = {
     // is higher than the canDecreaseAtPrice)
     canDecreaseAtPriceChange: number | null;
 
+    // the percentage of the position amount that will be decreased (based on the active level)
+    decreasePercentage: number;
+
     // the amount of base asset that is missing from the balance (null if there is enough balance)
     missingBaseAmount: number;
 
