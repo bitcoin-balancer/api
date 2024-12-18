@@ -1,5 +1,5 @@
 import { sortRecords } from 'web-utils-kit';
-import { getBigNumber, processValue } from 'bignumber-utils';
+import { getBigNumber, IBigNumber, processValue } from 'bignumber-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { ISplitStateResult, ISplitStates, IState } from '../../market-state/shared/types.js';
 import { IBalances } from '../../shared/exchange/index.js';
@@ -43,6 +43,30 @@ const __calculateDifferenceBetweenRequirementAndSplitChange = (
 );
 
 /**
+ * Calculates the amount of base asset needed in order to decrease the amount of the position.
+ * @param positionAmount
+ * @param decreasePercentage
+ * @param minOrderSize
+ * @returns IBigNumber
+ */
+const __calculateDecreaseAmount = (
+  positionAmount: number,
+  decreasePercentage: number,
+  minOrderSize: number,
+): IBigNumber => {
+  // if the decrease percentage couldn't be established due to lack of profitability, return 0
+  if (decreasePercentage === 0) {
+    return getBigNumber(0);
+  }
+
+  // ensure the amount is larger than the minOrderSize, otherwise minOrderSize is returned
+  const decreaseAmount = getBigNumber(positionAmount).times(decreasePercentage / 100);
+  return decreaseAmount.isGreaterThanOrEqualTo(minOrderSize)
+    ? decreaseAmount
+    : getBigNumber(minOrderSize);
+};
+
+/**
  * Based on the list of decrease actions that have been executed, it checks if a level is currently
  * idling. If so, it returns the timestamp at which the idling state fades away. Otherwise, it
  * returns null.
@@ -50,7 +74,7 @@ const __calculateDifferenceBetweenRequirementAndSplitChange = (
  * @param decreaseActions
  * @returns number | null
  */
-const getDecreaseLevelIdleUntil = (
+const __getDecreaseLevelIdleUntil = (
   currentTime: number,
   decreaseActions: IPositionAction[],
 ): number | null => {
@@ -106,7 +130,7 @@ const calculateStrongWindowStateRequirement = (
 
 /**
  * Calculates the amount of quote asset needed in order to be able to open/increase a position. If
- * there is sufficient balance, it returns null.
+ * there is sufficient balance, it returns 0.
  * @param increaseAmountQuote
  * @param balances
  * @returns number
@@ -123,6 +147,31 @@ const calculateMissingQuoteAmount = (
 };
 
 /**
+ * Calculates the amount of base asset needed in order to decrease the amount of a position. If
+ * there is sufficient balance, it returns 0.
+ * @param positionAmount
+ * @param decreasePercentage
+ * @param minOrderSize
+ * @param baseAssetBalance
+ * @returns number
+ */
+const calculateMissingBaseAmount = (
+  positionAmount: number,
+  decreasePercentage: number,
+  minOrderSize: number,
+  baseAssetBalance: number,
+): number => {
+  // calculate the amount that will be decreased
+  const amount = __calculateDecreaseAmount(positionAmount, decreasePercentage, minOrderSize);
+
+  // if there isn't enough balance, calculate the difference
+  if (amount.isGreaterThan(baseAssetBalance)) {
+    return processValue(amount.minus(baseAssetBalance), { decimalPlaces: 8 });
+  }
+  return 0;
+};
+
+/**
  * Builds the decrease levels based on the current time and the decrease actions that have taken
  * place.
  * @param currentTime
@@ -132,7 +181,7 @@ const calculateMissingQuoteAmount = (
 const buildDecreaseLevels = (currentTime: number, position: IPosition): IDecreaseLevels => (
   position.decrease_price_levels.map((price, idx) => ({
     price,
-    idleUntil: getDecreaseLevelIdleUntil(currentTime, position.decrease_actions[idx]),
+    idleUntil: __getDecreaseLevelIdleUntil(currentTime, position.decrease_actions[idx]),
   })) as IDecreaseLevels
 );
 
@@ -146,5 +195,6 @@ const buildDecreaseLevels = (currentTime: number, position: IPosition): IDecreas
 export {
   calculateStrongWindowStateRequirement,
   calculateMissingQuoteAmount,
+  calculateMissingBaseAmount,
   buildDecreaseLevels,
 };

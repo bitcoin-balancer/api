@@ -9,10 +9,12 @@ import { IPosition } from '../types.js';
 import {
   calculateStrongWindowStateRequirement,
   calculateMissingQuoteAmount,
+  calculateMissingBaseAmount,
   buildDecreaseLevels,
 } from './utils.js';
 import { onInsufficientQuoteBalance, onInsufficientBaseBalance } from './notifications.js';
 import { IDecreasePlan, IIncreasePlan, IPositionPlan } from './types.js';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
 
 /* ************************************************************************************************
  *                                         INCREASE PLAN                                          *
@@ -179,7 +181,12 @@ const __calculateDecreasePlan = (
   }
 
   // calculate the missing base amount (if any)
-  const missingBaseAmount = 0;
+  const missingBaseAmount = calculateMissingBaseAmount(
+    active.amount,
+    typeof lvl === 'number' ? StrategyService.config.decreaseLevels[lvl].percentage : 0,
+    minOrderSize,
+    BalanceService.balances[ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset],
+  );
   if (missingBaseAmount > 0) {
     onInsufficientBaseBalance.broadcast([missingBaseAmount]);
   }
