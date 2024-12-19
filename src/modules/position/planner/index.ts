@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import { adjustByPercentage } from 'bignumber-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { ISplitStates, IState } from '../../market-state/shared/types.js';
@@ -56,35 +55,35 @@ const __calculateIncreasePlan = (
       canIncreaseAtTime = active.increase_actions[active.increase_actions.length - 1].nextEventTime;
     }
 
-    // calculate the price change requirement for a decreasing strongly state to become active
-    const strongWindowStateRequirement = calculateStrongWindowStateRequirement(
-      -2,
-      windowState,
-      windowSplitStates,
-      WindowService.config.strongRequirement,
-    );
-
-    // calculate the price change requirement based on the strategy and the current gain%
-    // if the increaseGainRequirement it means the position's gain is irrelevant and should
-    // increase the position on every reversal event
-    if (StrategyService.config.increaseGainRequirement === 0) {
-      canIncreaseAtPriceChange = reversalState === undefined ? strongWindowStateRequirement : null;
-    } else if (active.gain > StrategyService.config.increaseGainRequirement) {
-      // calculate the difference between the gain requirement and the current gain
-      const gainDiff = StrategyService.config.increaseGainRequirement - active.gain;
-
-      // if there is an active reversal state, the price requirement has been met
-      canIncreaseAtPriceChange = (
-        typeof strongWindowStateRequirement === 'number'
-        && strongWindowStateRequirement < gainDiff
-          ? reversalState === undefined ? strongWindowStateRequirement : null
-          : gainDiff
+    // calculate how much the price needs to change for a position to be increased in case there
+    // isn't an active reversal state
+    if (reversalState === undefined) {
+      // calculate the price change requirement for a decreasing strongly state to become active
+      const strongWindowStateRequirement = calculateStrongWindowStateRequirement(
+        -2,
+        windowState,
+        windowSplitStates,
+        WindowService.config.strongRequirement,
       );
-    }
 
-    // calculate the target price unless the position can be increased right away
-    if (canIncreaseAtPriceChange) {
-      canIncreaseAtPrice = adjustByPercentage(price, canIncreaseAtPriceChange);
+      // calculate the price change requirement based on the strategy and the current gain%
+      // if the increaseGainRequirement is 0, it means the position's gain is irrelevant and should
+      // increase the position on every reversal event
+      if (StrategyService.config.increaseGainRequirement === 0) {
+        canIncreaseAtPriceChange = strongWindowStateRequirement;
+      } else if (active.gain > StrategyService.config.increaseGainRequirement) {
+        // calculate the difference between the gain requirement and the current gain
+        const gainDiff = active.gain - StrategyService.config.increaseGainRequirement;
+
+        // if there is an active reversal state, the price requirement has been met
+        canIncreaseAtPriceChange = (
+          (typeof strongWindowStateRequirement === 'number' && strongWindowStateRequirement < gainDiff)
+            ? strongWindowStateRequirement
+            : gainDiff
+        );
+      } else {
+        canIncreaseAtPriceChange = strongWindowStateRequirement;
+      }
     }
   } else if (reversalState === undefined) {
     // calculate the price change requirement for a strong decreasing state to become active
@@ -94,9 +93,11 @@ const __calculateIncreasePlan = (
       windowSplitStates,
       WindowService.config.strongRequirement,
     );
-    if (canIncreaseAtPriceChange) {
-      canIncreaseAtPrice = adjustByPercentage(price, canIncreaseAtPriceChange);
-    }
+  }
+
+  // calculate the target price unless the position can be increased right away
+  if (canIncreaseAtPriceChange) {
+    canIncreaseAtPrice = adjustByPercentage(price, canIncreaseAtPriceChange);
   }
 
   // calculate the missing quote amount (if any)
@@ -157,8 +158,8 @@ const __calculateDecreasePlan = (
   }
 
   // init values
-  let canDecreaseAtPrice: number | null = null;
-  let canDecreaseAtPriceChange: number | null = null;
+  const canDecreaseAtPrice: number | null = null;
+  const canDecreaseAtPriceChange: number | null = null;
   const decreaseLevels = buildDecreaseLevels(currentTime, active);
 
   // calculate the price change requirement for an increasing strongly state to become active
@@ -170,20 +171,24 @@ const __calculateDecreasePlan = (
   );
 
   // calculate the active decrease level (if any)
-  const lvl = StrategyService.getActiveDecreaseLevel(active.gain) ?? 0;
+  const level = StrategyService.getActiveDecreaseLevel(active.gain);
+  const adjustedLevel = level ?? 0;
 
   // calculate the time at which the position can be decreased (if applies)
-  const canDecreaseAtTime = decreaseLevels[lvl].idleUntil;
+  const canDecreaseAtTime = decreaseLevels[adjustedLevel].idleUntil;
 
   // ..
+  if (strongWindowStateRequirement) {
+
+  }
 
   // calculate the percentage that will be decreased
-  const decreasePercentage = StrategyService.config.decreaseLevels[lvl].percentage;
+  const decreasePercentage = StrategyService.config.decreaseLevels[adjustedLevel].percentage;
 
   // calculate the missing base amount (if any)
   const missingBaseAmount = calculateMissingBaseAmount(
     active.amount,
-    StrategyService.config.decreaseLevels[lvl].percentage,
+    StrategyService.config.decreaseLevels[adjustedLevel].percentage,
     minOrderSize,
     BalanceService.balances[ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset],
   );
