@@ -6,6 +6,7 @@ import {
   isObjectValid,
   isArrayValid,
 } from 'web-utils-kit';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { IDecreaseLevel, IStrategy } from './types.js';
 
 /* ************************************************************************************************
@@ -17,6 +18,13 @@ const __MAX_GAIN_REQUIREMENT = 1000000;
 
 // the maximum value allowed for decrease levels (~30 days)
 const __MAX_FREQUENCY = 43200;
+
+// To prevent automatic closure of positions, ensure the quote asset amount used to buy BTC always
+// exceeds PositionService.__MIN_ORDER_SIZE. Positions with a quote asset amount below this
+// threshold will be automatically closed at the database level, without selling the BTC
+// For example, a __MIN_INCREASE_AMOUNT_QUOTE will only work until BTC is worth $500,000.
+// 0.0002 * 500000 = 100
+const __MIN_INCREASE_AMOUNT_QUOTE = ENVIRONMENT.NODE_ENV === 'production' ? 100 : 25;
 
 
 
@@ -52,8 +60,12 @@ const canConfigBeUpdated = (newConfig: IStrategy): void => {
   if (typeof newConfig.canDecrease !== 'boolean') {
     throw new Error(encodeError(`The canDecrease '${newConfig.canDecrease}' must be a boolean value.`, 31502));
   }
-  if (!isNumberValid(newConfig.increaseAmountQuote, 20, Number.MAX_SAFE_INTEGER)) {
-    throw new Error(encodeError(`The increaseAmountQuote '${newConfig.increaseAmountQuote}' is invalid as it must be a valid number ranging 20 and ${Number.MAX_SAFE_INTEGER}.`, 31503));
+  if (!isNumberValid(
+    newConfig.increaseAmountQuote,
+    __MIN_INCREASE_AMOUNT_QUOTE,
+    Number.MAX_SAFE_INTEGER,
+  )) {
+    throw new Error(encodeError(`The increaseAmountQuote '${newConfig.increaseAmountQuote}' is invalid as it must be a valid number ranging ${__MIN_INCREASE_AMOUNT_QUOTE} and ${Number.MAX_SAFE_INTEGER}.`, 31503));
   }
   if (!isNumberValid(newConfig.increaseIdleDuration, 1, 1440)) {
     throw new Error(encodeError(`The increaseIdleDuration '${newConfig.increaseIdleDuration}' is invalid as it must be a valid number ranging 1 and 1440.`, 31505));
