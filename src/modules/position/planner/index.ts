@@ -158,8 +158,8 @@ const __calculateDecreasePlan = (
   }
 
   // init values
-  const canDecreaseAtPrice: number | null = null;
-  const canDecreaseAtPriceChange: number | null = null;
+  let canDecreaseAtPrice: number | null = null;
+  let canDecreaseAtPriceChange: number | null = null;
   const decreaseLevels = buildDecreaseLevels(currentTime, active);
 
   // calculate the price change requirement for an increasing strongly state to become active
@@ -174,16 +174,24 @@ const __calculateDecreasePlan = (
   const level = StrategyService.getActiveDecreaseLevel(active.gain);
   const adjustedLevel = level ?? 0;
 
-  // calculate the time at which the position can be decreased (if applies)
-  const canDecreaseAtTime = decreaseLevels[adjustedLevel].idleUntil;
-
-  // ..
+  // calculate the price requirement if the window isn't increasing strongly
   if (strongWindowStateRequirement) {
+    // if there isn't an active decrease level, calculate the difference between the current gain
+    // and pick whichever is higher: the strong window state requirement or the first decrease level
+    if (level === undefined) {
+      const diff = StrategyService.config.decreaseLevels[0].gainRequirement - active.gain;
+      canDecreaseAtPriceChange = (
+        strongWindowStateRequirement > diff ? strongWindowStateRequirement : diff
+      );
+    } else {
+      canDecreaseAtPriceChange = strongWindowStateRequirement;
+    }
 
+    // calculate the price at which the position can be decreased
+    if (canDecreaseAtPriceChange) {
+      canDecreaseAtPrice = adjustByPercentage(price, canDecreaseAtPriceChange);
+    }
   }
-
-  // calculate the percentage that will be decreased
-  const decreasePercentage = StrategyService.config.decreaseLevels[adjustedLevel].percentage;
 
   // calculate the missing base amount (if any)
   const missingBaseAmount = calculateMissingBaseAmount(
@@ -199,10 +207,10 @@ const __calculateDecreasePlan = (
   // finally, return the plan
   return {
     canDecrease: true,
-    canDecreaseAtTime,
+    canDecreaseAtTime: decreaseLevels[adjustedLevel].idleUntil,
     canDecreaseAtPrice,
     canDecreaseAtPriceChange,
-    decreasePercentage,
+    decreasePercentage: StrategyService.config.decreaseLevels[adjustedLevel].percentage,
     missingBaseAmount,
     decreaseLevels,
   };
