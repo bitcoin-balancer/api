@@ -1,4 +1,9 @@
-import { adjustByPercentage } from 'bignumber-utils';
+import {
+  adjustByPercentage,
+  calculatePercentageChange,
+  getBigNumber,
+  processValue,
+} from 'bignumber-utils';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { ISplitStates, IState } from '../../market-state/shared/types.js';
 import { WindowService } from '../../market-state/window/index.js';
@@ -73,13 +78,18 @@ const __calculateIncreasePlan = (
         canIncreaseAtPriceChange = strongWindowStateRequirement;
       } else if (active.gain > StrategyService.config.increaseGainRequirement) {
         // calculate the difference between the gain requirement and the current gain
-        const gainDiff = active.gain - StrategyService.config.increaseGainRequirement;
+        const gainDiff = (
+          getBigNumber(active.gain).minus(StrategyService.config.increaseGainRequirement)
+        );
 
         // if there is an active reversal state, the price requirement has been met
         canIncreaseAtPriceChange = (
-          (typeof strongWindowStateRequirement === 'number' && strongWindowStateRequirement < gainDiff)
+          (
+            typeof strongWindowStateRequirement === 'number'
+            && gainDiff.isGreaterThan(strongWindowStateRequirement)
+          )
             ? strongWindowStateRequirement
-            : gainDiff
+            : processValue(gainDiff)
         );
       } else {
         canIncreaseAtPriceChange = strongWindowStateRequirement;
@@ -179,18 +189,20 @@ const __calculateDecreasePlan = (
     // if there isn't an active decrease level, calculate the difference between the current gain
     // and pick whichever is higher: the strong window state requirement or the first decrease level
     if (level === undefined) {
-      const diff = StrategyService.config.decreaseLevels[0].gainRequirement - active.gain;
+      const diff = calculatePercentageChange(price, decreaseLevels[0].price);
       canDecreaseAtPriceChange = (
         strongWindowStateRequirement > diff ? strongWindowStateRequirement : diff
       );
     } else {
       canDecreaseAtPriceChange = strongWindowStateRequirement;
     }
+  } else if (level === undefined) {
+    canDecreaseAtPriceChange = calculatePercentageChange(price, decreaseLevels[0].price);
+  }
 
-    // calculate the price at which the position can be decreased
-    if (canDecreaseAtPriceChange) {
-      canDecreaseAtPrice = adjustByPercentage(price, canDecreaseAtPriceChange);
-    }
+  // calculate the price at which the position can be decreased
+  if (canDecreaseAtPriceChange) {
+    canDecreaseAtPrice = adjustByPercentage(price, canDecreaseAtPriceChange);
   }
 
   // calculate the missing base amount (if any)
