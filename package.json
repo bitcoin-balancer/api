@@ -2,7 +2,7 @@
   "name": "api",
   "description": "The Balancer API is a user-friendly RESTful interface designed to simplify the implementation of Value Averaging Strategies on any Bitcoin Spot Market.",
   "private": false,
-  "version": "1.0.11",
+  "version": "1.0.12",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -75,7 +75,7 @@
     "pg": "8.13.1",
     "rxjs": "7.8.1",
     "socket.io": "4.8.1",
-    "systeminformation": "5.23.5",
+    "systeminformation": "5.23.23",
     "web-utils-kit": "1.0.3",
     "ws": "8.18.0"
   }
