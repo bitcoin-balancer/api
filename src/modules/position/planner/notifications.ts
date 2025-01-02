@@ -6,7 +6,7 @@ import { NotificationService, throttleableNotificationFactory } from '../../noti
  ************************************************************************************************ */
 
 // the number of hours it will take for Balancer to re-send the notification
-const __THROTTLE_DURATION = fromHoursToMinutes(6);
+const __THROTTLE_DURATION = fromHoursToMinutes(24);
 
 
 
