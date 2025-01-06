@@ -184,8 +184,17 @@ const __calculateDecreasePlan = (
   const level = StrategyService.getActiveDecreaseLevel(active.gain);
   const adjustedLevel = level ?? 0;
 
+  // calculate the percentage that will be decreased based on the active decrease level
+  let decreasePercentage = StrategyService.config.decreaseLevels[adjustedLevel].percentage;
+
   // calculate the price requirement if the window isn't increasing strongly
   if (strongWindowStateRequirement) {
+    // calculate the decrease percentage as if the price has increased to meet the requirement
+    const activeIfPriceRises = StrategyService.getActiveDecreaseLevel(
+      active.gain + strongWindowStateRequirement,
+    );
+    decreasePercentage = StrategyService.config.decreaseLevels[activeIfPriceRises ?? 0].percentage;
+
     // if there isn't an active decrease level, calculate the difference between the current gain
     // and pick whichever is higher: the strong window state requirement or the first decrease level
     if (level === undefined) {
@@ -208,7 +217,7 @@ const __calculateDecreasePlan = (
   // calculate the missing base amount (if any)
   const missingBaseAmount = calculateMissingBaseAmount(
     active.amount,
-    StrategyService.config.decreaseLevels[adjustedLevel].percentage,
+    decreasePercentage,
     minOrderSize,
     BalanceService.balances[ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset],
   );
@@ -222,7 +231,7 @@ const __calculateDecreasePlan = (
     canDecreaseAtTime: decreaseLevels[adjustedLevel].idleUntil,
     canDecreaseAtPrice,
     canDecreaseAtPriceChange,
-    decreasePercentage: StrategyService.config.decreaseLevels[adjustedLevel].percentage,
+    decreasePercentage,
     missingBaseAmount,
     decreaseLevels,
   };
