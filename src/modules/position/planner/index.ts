@@ -79,7 +79,7 @@ const __calculateIncreasePlan = (
       } else if (active.gain > StrategyService.config.increaseGainRequirement) {
         // calculate the difference between the gain requirement and the current gain
         const gainDiff = (
-          getBigNumber(active.gain).minus(StrategyService.config.increaseGainRequirement)
+          getBigNumber(active.gain).minus(StrategyService.config.increaseGainRequirement).times(-1)
         );
 
         // if there is an active reversal state, the price requirement has been met
