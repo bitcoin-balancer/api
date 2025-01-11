@@ -165,7 +165,7 @@ const userServiceFactory = (): IUserService => {
   ): Promise<void> => {
     canVerifyOTPToken(uid, otpToken);
     const secret = typeof otpSecret === 'string' ? otpSecret : await getUserOTPSecret(uid);
-    if (!checkOTPToken(otpToken, decryptData(secret))) {
+    if (!checkOTPToken(otpToken, await decryptData(secret))) {
       throw new Error(encodeError(`The OTP Token '${otpToken}' for uid '${uid}' is invalid.`, 3000));
     }
   };
@@ -255,7 +255,7 @@ const userServiceFactory = (): IUserService => {
 
     // init record values
     const fUID = uid ?? generateUUID(4);
-    const fOTPSecret = encryptData(otpSecret ?? generateOTPSecret());
+    const fOTPSecret = await encryptData(otpSecret ?? generateOTPSecret());
     const eventTime = Date.now();
     let passwordHash: string | undefined;
     if (typeof password === 'string') {
@@ -364,7 +364,7 @@ const userServiceFactory = (): IUserService => {
   const updateOTPSecret = async (uid: string): Promise<string> => {
     await validateUserRecordExistance(uid);
     const newSecret = generateOTPSecret();
-    await updateUserOTPSecret(uid, encryptData(newSecret));
+    await updateUserOTPSecret(uid, await encryptData(newSecret));
     return newSecret;
   };
 

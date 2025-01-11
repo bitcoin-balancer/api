@@ -3,7 +3,8 @@
 import ms from 'ms';
 import { describe, beforeEach, afterEach, test, expect, vi } from 'vitest';
 import { sortRecords } from 'web-utils-kit';
-import { encryptData } from '../../shared/encrypt/index.js';
+import { encryptSync } from 'aes256-async';
+import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { IQueryResult } from '../../database/types.js';
 import {
   saveRecord as saveRefreshTokenRecord,
@@ -35,10 +36,11 @@ import {
 const TIME_INCREMENT: number = ms('1 hours');
 
 // list of mock users
+const __encrypt = (data: string): string => encryptSync(ENVIRONMENT.ENCRYPTING_SECRET, data);
 const U: IUser[] = [
-  { uid: 'a44a6414-7d7a-4b32-8bc1-a5ce7ab96b2e', nickname: 'user-1', authority: 1, password_hash: '$ome_password', otp_secret: encryptData('NFDCMADPEVFEMSIC'), event_time: Date.now() + TIME_INCREMENT },
-  { uid: '99720f31-d944-4e21-a402-b420ed413fed', nickname: 'user-2', authority: 2, password_hash: '$ome_password', otp_secret: encryptData('L5IFQI2EHAYAODTF'), event_time: Date.now() + (TIME_INCREMENT * 2) },
-  { uid: 'e9a214bb-c4da-4af7-a514-d57bfd91e94e', nickname: 'user-3', authority: 3, password_hash: '$ome_password', otp_secret: encryptData('DEVC63QFD4OS2UKY'), event_time: Date.now() + (TIME_INCREMENT * 3) },
+  { uid: 'a44a6414-7d7a-4b32-8bc1-a5ce7ab96b2e', nickname: 'user-1', authority: 1, password_hash: '$ome_password', otp_secret: __encrypt('NFDCMADPEVFEMSIC'), event_time: Date.now() + TIME_INCREMENT },
+  { uid: '99720f31-d944-4e21-a402-b420ed413fed', nickname: 'user-2', authority: 2, password_hash: '$ome_password', otp_secret: __encrypt('L5IFQI2EHAYAODTF'), event_time: Date.now() + (TIME_INCREMENT * 2) },
+  { uid: 'e9a214bb-c4da-4af7-a514-d57bfd91e94e', nickname: 'user-3', authority: 3, password_hash: '$ome_password', otp_secret: __encrypt('DEVC63QFD4OS2UKY'), event_time: Date.now() + (TIME_INCREMENT * 3) },
 ];
 
 
