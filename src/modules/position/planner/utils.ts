@@ -123,6 +123,17 @@ const calculateStrongWindowStateRequirement = (
 };
 
 /**
+ * Calculates the difference between the current gain% and the one required for the position to be
+ * increased.
+ * @param gain
+ * @param increaseGainRequirement
+ * @returns IBigNumber
+ */
+const calculateGainDiff = (gain: number, increaseGainRequirement: number): IBigNumber => (
+  getBigNumber(gain).minus(increaseGainRequirement).times(-1)
+);
+
+/**
  * Calculates the amount of quote asset needed in order to be able to open/increase a position. If
  * there is sufficient balance, it returns 0.
  * @param increaseAmountQuote
@@ -188,6 +199,7 @@ const buildDecreaseLevels = (currentTime: number, position: IPosition): IDecreas
  ************************************************************************************************ */
 export {
   calculateStrongWindowStateRequirement,
+  calculateGainDiff,
   calculateMissingQuoteAmount,
   calculateMissingBaseAmount,
   buildDecreaseLevels,
