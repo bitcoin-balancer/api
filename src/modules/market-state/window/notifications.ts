@@ -28,6 +28,11 @@ const broadcastState = (state: 2 | -2, price: number, change: number): void => {
   }
 };
 
+/**
+ * Broadcasts a message notifying users the window could not be updated.
+ */
+const broadcastInvalidWindowIntegrity = (): void => NotificationService.onInvalidWindowIntegrity();
+
 
 
 
@@ -37,4 +42,5 @@ const broadcastState = (state: 2 | -2, price: number, change: number): void => {
  ************************************************************************************************ */
 export {
   broadcastState,
+  broadcastInvalidWindowIntegrity,
 };

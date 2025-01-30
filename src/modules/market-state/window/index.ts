@@ -4,7 +4,6 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { retryAsyncFunction } from 'web-utils-kit';
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
-import { NotificationService } from '../../notification/index.js';
 import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
@@ -13,7 +12,7 @@ import { ExchangeService } from '../../shared/exchange/index.js';
 import { calculateStateForSeries } from '../shared/utils.js';
 import { buildDefaultConfig, buildPristineState, getConfigUpdatePostActions } from './utils.js';
 import { validateInitialCandlesticks, canConfigBeUpdated } from './validations.js';
-import { broadcastState } from './notifications.js';
+import { broadcastState, broadcastInvalidWindowIntegrity } from './notifications.js';
 import { IWindowConfig, IWindowService, IWindowState } from './types.js';
 
 
@@ -140,7 +139,7 @@ const windowServiceFactory = (): IWindowService => {
       __handleCanclestickUpdate(candlesticks);
       __window.next(__windowVal);
     } else {
-      NotificationService.onInvalidWindowIntegrity();
+      broadcastInvalidWindowIntegrity();
     }
   };
 
