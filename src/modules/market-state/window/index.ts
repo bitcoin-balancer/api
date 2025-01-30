@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { retryAsyncFunction } from 'web-utils-kit';
 import { recordStoreFactory, IRecordStore } from '../../shared/record-store/index.js';
 import { APIErrorService } from '../../api-error/index.js';
-import { NotificationService, throttleableNotificationFactory } from '../../notification/index.js';
+import { NotificationService } from '../../notification/index.js';
 import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
@@ -13,6 +13,7 @@ import { ExchangeService } from '../../shared/exchange/index.js';
 import { calculateStateForSeries } from '../shared/utils.js';
 import { buildDefaultConfig, buildPristineState, getConfigUpdatePostActions } from './utils.js';
 import { validateInitialCandlesticks, canConfigBeUpdated } from './validations.js';
+import { broadcastState } from './notifications.js';
 import { IWindowConfig, IWindowService, IWindowState } from './types.js';
 
 
@@ -40,9 +41,6 @@ const windowServiceFactory = (): IWindowService => {
 
   // the candlesticks will be refetched every __config.refetchFrequency seconds
   let __refetchInterval: NodeJS.Timeout;
-
-  // if the window has a strong state, a notification will be sent every ~60 minutes
-  const __stateNotification = throttleableNotificationFactory(NotificationService.windowState, 60);
 
 
 
@@ -184,7 +182,7 @@ const windowServiceFactory = (): IWindowService => {
 
       // send a notification if the market is moving strongly
       if (mean === 2 || mean === -2) {
-        __stateNotification.broadcast([mean, __windowVal.close.at(-1)!, splits.s100.change]);
+        broadcastState(mean, __windowVal.close.at(-1)!, splits.s100.change);
       }
 
       // finally, return the state
