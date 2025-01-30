@@ -15,7 +15,6 @@ import { validateInitialCandlesticks, canConfigBeUpdated } from './validations.j
 import { broadcastState, broadcastInvalidWindowIntegrity } from './notifications.js';
 import { IWindowConfig, IWindowService, IWindowState } from './types.js';
 
-
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
