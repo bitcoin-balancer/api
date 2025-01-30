@@ -165,7 +165,7 @@ const reversalServiceFactory = (): IReversalService => {
     // handle the new data based on the current state
     if (isNewPriceCrashState(windowState, __activeUntil)) {
       __onNewPriceCrashState();
-    } else if (hasPriceCrashStateEnded(ts, __activeUntil)) {
+    } else if (hasPriceCrashStateEnded(ts, __activeUntil, windowState.state)) {
       __onPriceCrashStateEnd();
     } else if (isPriceCrashStateActive(ts, __activeUntil, __state)) {
       __onMarketStateChanges(ts, liquidityState, coinsStates);

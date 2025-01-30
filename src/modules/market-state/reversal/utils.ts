@@ -183,11 +183,14 @@ const isNewPriceCrashState = (window: IWindowState, activeUntil: number | undefi
  * Checks if the price crash state has ended and should be wrapped up.
  * @param currentTime
  * @param activeUntil
+ * @param windowState
  * @returns boolean
  */
-const hasPriceCrashStateEnded = (currentTime: number, activeUntil: number | undefined): boolean => (
-  typeof activeUntil === 'number' && currentTime > activeUntil
-);
+const hasPriceCrashStateEnded = (
+  currentTime: number,
+  activeUntil: number | undefined,
+  windowState: IState,
+): boolean => (typeof activeUntil === 'number' && currentTime > activeUntil) || windowState === 2;
 
 /**
  * Checks if there is an active price crash state and should be updated with the new data.
