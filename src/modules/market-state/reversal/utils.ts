@@ -190,7 +190,7 @@ const hasPriceCrashStateEnded = (
   currentTime: number,
   activeUntil: number | undefined,
   windowState: IState,
-): boolean => (typeof activeUntil === 'number' && currentTime > activeUntil) || windowState === 2;
+): boolean => typeof activeUntil === 'number' && (currentTime > activeUntil || windowState === 2);
 
 /**
  * Checks if there is an active price crash state and should be updated with the new data.
