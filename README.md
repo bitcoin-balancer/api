@@ -2,7 +2,7 @@
 
 The `api` is a RESTful service that seamlessly integrates with your configured exchange(s), feeds real-time market data to indicators, and executes your defined trading strategy. It enables you to:
 
-* **Automate your strategy** – Implement a customized version of the Value Averaging or Dollar-Cost Averaging strategy with ease
+* **Automate your strategy** – Eliminate the need for constant monitoring and manual trades
 * **Trade on any exchange** – Stay flexible by using your preferred exchange platform
 * **Effortless configuration** – Manage and fine-tune your strategy’s parameters directly via the [`gui`](https://github.com/bitcoin-balancer/gui)
 
