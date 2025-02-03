@@ -19,18 +19,17 @@
   "keywords": [
     "bitcoin",
     "trading",
-    "bitcoin-trading",
+    "dollar-cost-averaging",
+    "dca",
     "strategy",
     "trading-strategy",
-    "bitcoin-trading-strategy",
-    "spot",
-    "spot-market",
-    "bitcoin-spot-market",
-    "automated",
-    "self-hosted"
+    "value-averaging",
+    "open-source",
+    "profit",
+    "investment"
   ],
   "author": "Jesus Graterol",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/bitcoin-balancer/api/issues"
   },

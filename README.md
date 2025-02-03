@@ -1,6 +1,6 @@
-# Balancer API
+# `api`
 
-The Balancer API is a user-friendly RESTful interface designed to simplify the implementation of Value Averaging Strategies on any Bitcoin Spot Market. Its intuitive design and powerful features empower you to:
+The `api` is a user-friendly RESTful interface designed to simplify the implementation of Value Averaging Strategies on any Bitcoin Spot Market. Its intuitive design and powerful features empower you to:
 
 * **Automate Your Investment Strategy:**  Execute Value Averaging trades automatically, freeing you from manual execution and market timing concerns.
 * **Adapt to Any Market:**  Seamlessly deploy your Value Averaging Strategy across multiple Bitcoin Spot Markets, providing flexibility and adaptability.
@@ -48,7 +48,7 @@ npm run build
 
 ## Tests
 
-**Important:** these tests are to be executed from [Balancer CLI](https://github.com/bitcoin-balancer/cli) as they must run in a containerized environment.
+**Important:** these tests are to be executed from [`cli`](https://github.com/bitcoin-balancer/cli) as they must run in a containerized environment.
 
 ```bash
 # run the integration tests
