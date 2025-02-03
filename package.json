@@ -2,7 +2,7 @@
   "name": "api",
   "description": "The api is a RESTful service that seamlessly integrates with your configured exchange(s), feeds real-time market data to indicators, and executes your defined trading strategy.",
   "private": false,
-  "version": "1.0.15",
+  "version": "1.0.16",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
