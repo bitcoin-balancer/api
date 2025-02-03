@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "description": "The Balancer API is a user-friendly RESTful interface designed to simplify the implementation of Value Averaging Strategies on any Bitcoin Spot Market.",
+  "description": "The api is a RESTful service that seamlessly integrates with your configured exchange(s), feeds real-time market data to indicators, and executes your defined trading strategy.",
   "private": false,
   "version": "1.0.15",
   "type": "module",

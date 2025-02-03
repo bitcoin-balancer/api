@@ -1,12 +1,13 @@
 # `api`
 
-The `api` is a user-friendly RESTful interface designed to simplify the implementation of Value Averaging Strategies on any Bitcoin Spot Market. Its intuitive design and powerful features empower you to:
+The `api` is a RESTful service that seamlessly integrates with your configured exchange(s), feeds real-time market data to indicators, and executes your defined trading strategy. It enables you to:
 
-* **Automate Your Investment Strategy:**  Execute Value Averaging trades automatically, freeing you from manual execution and market timing concerns.
-* **Adapt to Any Market:**  Seamlessly deploy your Value Averaging Strategy across multiple Bitcoin Spot Markets, providing flexibility and adaptability.
-* **Configure with Ease:**  Manage and configure your Value Averaging parameters through a user-friendly GUI, simplifying setup and customization.
+* **Automate your strategy** – Implement a customized version of the Value Averaging or Dollar-Cost Averaging strategy with ease
+* **Trade on any exchange** – Stay flexible by using your preferred exchange platform
+* **Effortless configuration** – Manage and fine-tune your strategy’s parameters directly via the [`gui`](https://github.com/bitcoin-balancer/gui)
 
-With the Balancer API, you can confidently implement a proven investment strategy, maximizing your potential returns while minimizing the time and effort required. 
+With the `api`, you can confidently execute a proven trading strategy, optimizing returns while minimizing manual effort.
+
 
 
 
