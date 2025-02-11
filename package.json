@@ -55,7 +55,7 @@
   "dependencies": {
     "aes256-async": "1.0.0",
     "altcha-lib": "0.3.0",
-    "api-response-utils": "1.0.2",
+    "api-response-utils": "1.0.3",
     "argon2": "0.41.1",
     "bignumber-utils": "1.0.4",
     "body-parser": "2.0.2",
