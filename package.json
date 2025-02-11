@@ -65,7 +65,7 @@
     "error-message-utils": "1.1.2",
     "express": "5.0.1",
     "express-rate-limit": "7.4.1",
-    "fetch-request-node": "1.0.6",
+    "fetch-request-node": "1.0.7",
     "helmet": "7.2.0",
     "jsonwebtoken": "9.0.2",
     "morgan": "1.10.0",
@@ -75,7 +75,7 @@
     "rxjs": "7.8.1",
     "socket.io": "4.8.1",
     "systeminformation": "5.23.23",
-    "web-utils-kit": "1.0.3",
+    "web-utils-kit": "1.0.5",
     "ws": "8.18.0"
   }
 }
