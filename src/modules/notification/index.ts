@@ -105,8 +105,11 @@ const notificationServiceFactory = (): INotificationService => {
         );
         __unreadCount += 1;
         await retryAsyncFunction(
-          sendPOST,
-          [buildRequestInput(__CONFIG.token, __CONFIG.chatID, toMessage(notification))],
+          () => sendPOST(buildRequestInput(
+            __CONFIG.token,
+            __CONFIG.chatID,
+            toMessage(notification),
+          )),
           [3, 5],
         );
       } catch (e) {

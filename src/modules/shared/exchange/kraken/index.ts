@@ -29,8 +29,11 @@ import {
   transformTicker,
 } from './transformers.js';
 import {
+  IKrakenAPIResponse,
+  IKrakenCandlestick,
   IKrakenCoinTicker,
   IKrakenCoinTickers,
+  IKrakenOrderBook,
   IKrakenService,
   IKrakenWebSocketMessage,
   ISupportedCandlestickIntervals,
@@ -96,7 +99,7 @@ const krakenServiceFactory = (): IKrakenService => {
     limit: number,
     startTime?: number,
   ): Promise<ICompactCandlestickRecords> => {
-    const res = await sendGET(
+    const res = await sendGET<IKrakenAPIResponse<{ XXBTZUSD: IKrakenCandlestick[] }>>(
       buildGetCandlesticksURL(__SYMBOL, __CANDLESTICK_INTERVALS[interval], startTime),
       { skipStatusCodeValidation: true },
     );
@@ -119,7 +122,7 @@ const krakenServiceFactory = (): IKrakenService => {
    * - 15505: if the response doesn't include a valid order book object
    */
   const getOrderBook = async (): Promise<IOrderBook> => {
-    const res = await sendGET(
+    const res = await sendGET<IKrakenAPIResponse<{ XXBTZUSD: IKrakenOrderBook }>>(
       `https://api.kraken.com/0/public/Depth?pair=${__SYMBOL}&count=500`,
       { skipStatusCodeValidation: true },
     );
@@ -168,12 +171,12 @@ const krakenServiceFactory = (): IKrakenService => {
    * - 15504: if the response doesn't include a valid series of tickers
    */
   const __getTickers = async (): Promise<[string, IKrakenCoinTicker][]> => {
-    const res = await sendGET(
+    const res = await sendGET<IKrakenAPIResponse<IKrakenCoinTickers>>(
       'https://api.kraken.com/0/public/Ticker',
       { skipStatusCodeValidation: true },
     );
     validateTickersResponse(res);
-    const tickers = Object.entries(<IKrakenCoinTickers>res.data.result);
+    const tickers = Object.entries(res.data.result);
     tickers.sort(tickersSortFunc);
     return tickers;
   };

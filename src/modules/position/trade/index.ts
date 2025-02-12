@@ -91,8 +91,7 @@ const tradeServiceFactory = (): ITradeService => {
    */
   const __getNewTrades = async (startTime: number): Promise<ITrade[]> => {
     const trades = await retryAsyncFunction(
-      ExchangeService.listTrades,
-      [startTime],
+      () => ExchangeService.listTrades(startTime),
       [2, 3, 7],
     );
     let filtered = __filterTrades(trades);

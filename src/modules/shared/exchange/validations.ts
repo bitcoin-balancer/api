@@ -15,7 +15,7 @@ import { extractErrorPayload } from './utils.js';
  * @throws
  * - 12500: if the HTTP response code is not in the acceptedCodes
  */
-const validateResponse = (res: IRequestResponse, acceptedCodes: number[] = [200]): void => {
+const validateResponse = <T>(res: IRequestResponse<T>, acceptedCodes: number[] = [200]): void => {
   if (!acceptedCodes.includes(res.code)) {
     console.log(res);
     throw new Error(encodeError(`The exchange returned an invalid HTTP response code '${res.code}'. ${extractErrorPayload(res.data)}`, 12500));

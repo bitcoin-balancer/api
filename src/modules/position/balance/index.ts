@@ -49,7 +49,7 @@ const balanceServiceFactory = (): IBalanceService => {
    * - 13751: if the balance for the quote asset is not in the response object (binance)
    */
   const getBalances = async (): Promise<IBalances> => {
-    __balances = await retryAsyncFunction(ExchangeService.getBalances, undefined, __DELAYS);
+    __balances = await retryAsyncFunction(() => ExchangeService.getBalances(), __DELAYS);
     return __balances;
   };
 

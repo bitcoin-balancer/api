@@ -191,7 +191,7 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
    */
   const __on = async (): Promise<void> => {
     // fetch and sync the order book
-    await retryAsyncFunction(__fetchSnapshot, undefined, [3, 5, 7]);
+    await retryAsyncFunction(() => __fetchSnapshot(), [3, 5, 7]);
 
     // subscribe to the stream
     __streamSub = ExchangeService.getOrderBookStream().subscribe(__onOrderBookChanges);

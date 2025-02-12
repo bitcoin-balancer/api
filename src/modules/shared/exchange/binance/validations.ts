@@ -15,7 +15,7 @@ import { validateResponse } from '../validations.js';
  * - 12500: if the HTTP response code is not in the acceptedCodes
  * - 13500: if the response doesn't include a valid series of candlesticks
  */
-const validateCandlesticksResponse = (res: IRequestResponse): void => {
+const validateCandlesticksResponse = <T>(res: IRequestResponse<T>): void => {
   validateResponse(res);
   if (!isArrayValid(res.data)) {
     console.log(res);
@@ -30,7 +30,7 @@ const validateCandlesticksResponse = (res: IRequestResponse): void => {
  * - 12500: if the HTTP response code is not in the acceptedCodes
  * - 13501: if the response doesn't include a valid series of tickers
  */
-const validateTickersResponse = (res: IRequestResponse): void => {
+const validateTickersResponse = <T>(res: IRequestResponse<T>): void => {
   validateResponse(res);
   if (!isArrayValid(res.data)) {
     console.log(res);
@@ -45,7 +45,7 @@ const validateTickersResponse = (res: IRequestResponse): void => {
  * - 12500: if the HTTP response code is not in the acceptedCodes
  * - 13502: if the order book object is invalid
  */
-const validateOrderBookResponse = (res: IRequestResponse): void => {
+const validateOrderBookResponse = <T>(res: IRequestResponse<T>): void => {
   validateResponse(res);
   if (!isObjectValid(res.data)) {
     console.log(res.data);
@@ -69,7 +69,7 @@ const validateOrderBookResponse = (res: IRequestResponse): void => {
  * - 13503: if the response didn't include a valid object
  * - 13504: if the response didn't include a valid list of balances
  */
-const validateBalancesResponse = (res: IRequestResponse): void => {
+const validateBalancesResponse = <T>(res: IRequestResponse<T>): void => {
   validateResponse(res);
   if (!isObjectValid(res.data)) {
     console.log(res);
@@ -88,7 +88,7 @@ const validateBalancesResponse = (res: IRequestResponse): void => {
  * - 12500: if the HTTP response code is not in the acceptedCodes
  * - 13505: if the response is not an array
  */
-const validateTradesResponse = (res: IRequestResponse): void => {
+const validateTradesResponse = <T>(res: IRequestResponse<T>): void => {
   validateResponse(res);
   if (!isArrayValid(res.data, true)) {
     console.log(res);
@@ -103,7 +103,7 @@ const validateTradesResponse = (res: IRequestResponse): void => {
  * - 12500: if the HTTP response code is not in the acceptedCodes
  * - 13506: if the response is not a valid payload object
  */
-const validateOrderExecutionResponse = (res: IRequestResponse): void => {
+const validateOrderExecutionResponse = <T>(res: IRequestResponse<T>): void => {
   validateResponse(res);
   if (!isObjectValid(res.data)) {
     console.log(res);

@@ -353,8 +353,7 @@ const coinsServiceFactory = (): ICoinsService => {
    * @returns Promise<string[]>
    */
   const __getTopSymbols = (): Promise<string[]> => retryAsyncFunction(
-    ExchangeService.getTopSymbols,
-    [__config.value.whitelistedSymbols, __config.value.limit],
+    () => ExchangeService.getTopSymbols(__config.value.whitelistedSymbols, __config.value.limit),
     [3, 5, 15, 60],
   );
 

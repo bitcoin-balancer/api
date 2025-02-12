@@ -309,8 +309,7 @@ const toCompact = (position: IPosition): ICompactPosition => ({
  * - 13751: if the balance for the quote asset is not in the response object (binance)
  */
 const getBalances = async (): Promise<IBalances> => retryAsyncFunction(
-  BalanceService.getBalances,
-  undefined,
+  () => BalanceService.getBalances(),
   [5, 15, 30, 60, 180],
 );
 

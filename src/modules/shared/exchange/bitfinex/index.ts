@@ -36,6 +36,8 @@ import {
   IBitfinexWebSocketMessage,
   IBitfinexOrderBookLevel,
   IBitfinexCoinTicker,
+  IBitfinexCandlestick,
+  IBitfinexOrderBook,
 } from './types.js';
 
 
@@ -96,7 +98,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
     limit: number,
     startTime?: number,
   ): Promise<ICompactCandlestickRecords> => {
-    const res = await sendGET(
+    const res = await sendGET<IBitfinexCandlestick[]>(
       buildGetCandlesticksURL(__SYMBOL, __CANDLESTICK_INTERVALS[interval], limit, startTime),
       { skipStatusCodeValidation: true },
     );
@@ -116,7 +118,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
    * - 14502: if the response does not include a valid order book snapshot
    */
   const getOrderBook = async (): Promise<IOrderBook> => {
-    const res = await sendGET(
+    const res = await sendGET<IBitfinexOrderBook>(
       `https://api-pub.bitfinex.com/v2/book/${__SYMBOL}/P0?len=250`,
       { skipStatusCodeValidation: true },
     );
@@ -165,7 +167,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
    * - 14501: if the response doesn't include a valid series of tickers
    */
   const __getTickers = async (): Promise<IBitfinexCoinTicker[]> => {
-    const res = await sendGET(
+    const res = await sendGET<IBitfinexCoinTicker[]>(
       'https://api-pub.bitfinex.com/v2/tickers?symbols=ALL',
       { skipStatusCodeValidation: true },
     );

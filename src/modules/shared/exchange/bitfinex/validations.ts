@@ -15,7 +15,7 @@ import { validateResponse } from '../validations.js';
  * - 12500: if the HTTP response code is not in the acceptedCodes
  * - 14500: if the response doesn't include a valid series of candlesticks
  */
-const validateCandlesticksResponse = (res: IRequestResponse): void => {
+const validateCandlesticksResponse = <T>(res: IRequestResponse<T>): void => {
   validateResponse(res);
   if (!isArrayValid(res.data)) {
     console.log(res);
@@ -30,7 +30,7 @@ const validateCandlesticksResponse = (res: IRequestResponse): void => {
  * - 12500: if the HTTP response code is not in the acceptedCodes
  * - 14502: if the response does not include a valid order book snapshot
  */
-const validateOrderBookResponse = (res: IRequestResponse): void => {
+const validateOrderBookResponse = <T>(res: IRequestResponse<T>): void => {
   validateResponse(res);
   if (!isArrayValid(res.data)) {
     console.log(res);
@@ -45,7 +45,7 @@ const validateOrderBookResponse = (res: IRequestResponse): void => {
  * - 12500: if the HTTP response code is not in the acceptedCodes
  * - 14501: if the response doesn't include a valid series of tickers
  */
-const validateTickersResponse = (res: IRequestResponse): void => {
+const validateTickersResponse = <T>(res: IRequestResponse<T>): void => {
   validateResponse(res);
   if (!isArrayValid(res.data)) {
     console.log(res);

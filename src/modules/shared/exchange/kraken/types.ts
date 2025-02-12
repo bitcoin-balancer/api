@@ -47,12 +47,12 @@ type IKrakenService = {
  * both, result and error (it may include warnings in successful requests).
  * https://docs.kraken.com/rest/#section/General-Usage
  */
-type IKrakenAPIResponse = {
+type IKrakenAPIResponse<T> = {
   // the list of errors or warnings
   error: string[];
 
   // the data retrieved from the API
-  result: any;
+  result: T;
 };
 
 

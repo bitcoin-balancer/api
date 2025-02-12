@@ -231,7 +231,7 @@ const windowServiceFactory = (): IWindowService => {
     __config = await recordStoreFactory('WINDOW', buildDefaultConfig());
 
     // fetch the candlesticks
-    await retryAsyncFunction(__fetchCandlesticks, undefined, [3, 5, 15, 45, 120]);
+    await retryAsyncFunction(() => __fetchCandlesticks(), [3, 5, 15, 45, 120]);
 
     // initialize the refetch interval
     __initializeRefetchInterval();
@@ -279,7 +279,7 @@ const windowServiceFactory = (): IWindowService => {
       }
     } else if (shouldFetchInitialCandlesticks) {
       try {
-        await retryAsyncFunction(__fetchCandlesticks, undefined, [3, 5, 15, 45, 120]);
+        await retryAsyncFunction(() => __fetchCandlesticks(), [3, 5, 15, 45, 120]);
       } catch (e) {
         APIErrorService.save(
           'WindowService.updateConfiguration.shouldFetchInitialCandlesticks',

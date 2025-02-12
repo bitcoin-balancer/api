@@ -41,6 +41,10 @@ import {
   IBinanceCoinTicker,
   IBinanceTickerWebSocketMessage,
   IBinanceOrderExecutionResponse,
+  IBinanceCandlestick,
+  IBinanceOrderBook,
+  IBinanceAccountInformation,
+  IBinanceAccountTrade,
 } from './types.js';
 
 /* ************************************************************************************************
@@ -93,7 +97,7 @@ const binanceServiceFactory = (): IBinanceService => {
     limit: number,
     startTime?: number,
   ): Promise<ICompactCandlestickRecords> => {
-    const res = await sendGET(
+    const res = await sendGET<IBinanceCandlestick[]>(
       buildGetCandlesticksURL(__SYMBOL, interval, limit, startTime),
       { skipStatusCodeValidation: true },
     );
@@ -113,7 +117,7 @@ const binanceServiceFactory = (): IBinanceService => {
    * - 13502: if the order book object is invalid
    */
   const getOrderBook = async (): Promise<IOrderBook> => {
-    const res = await sendGET(
+    const res = await sendGET<IBinanceOrderBook>(
       `https://data-api.binance.vision/api/v3/depth?symbol=${__SYMBOL}&limit=5000`,
       { skipStatusCodeValidation: true },
     );
@@ -150,7 +154,7 @@ const binanceServiceFactory = (): IBinanceService => {
    * - 13501: if the response doesn't include a valid series of tickers
    */
   const __getTickers = async (): Promise<IBinanceCoinTicker[]> => {
-    const res = await sendGET(
+    const res = await sendGET<IBinanceCoinTicker[]>(
       'https://data-api.binance.vision/api/v3/ticker/24hr?type=MINI',
       { skipStatusCodeValidation: true },
     );
@@ -233,7 +237,7 @@ const binanceServiceFactory = (): IBinanceService => {
    * - 13751: if the balance for the quote asset is not in the response object
    */
   const getBalances = async (): Promise<IBalances> => {
-    const res = await sendGET(
+    const res = await sendGET<IBinanceAccountInformation>(
       `https://api.binance.com/api/v3/account?${signParams(__CREDENTIALS.secret)}`,
       { requestOptions: { headers: __AUTH_HEADERS }, skipStatusCodeValidation: true },
     );
@@ -250,7 +254,7 @@ const binanceServiceFactory = (): IBinanceService => {
    * - 13505: if the response is not an array
    */
   const listTrades = async (startAt: number): Promise<ITrade[]> => {
-    const res = await sendGET(
+    const res = await sendGET<IBinanceAccountTrade[]>(
       `https://api.binance.com/api/v3/myTrades?${signParams(__CREDENTIALS.secret, {
         symbol: __SYMBOL,
         startTime: startAt,
@@ -283,7 +287,7 @@ const binanceServiceFactory = (): IBinanceService => {
     side: IBinanceSide,
     amount: number,
   ): Promise<IBinanceOrderExecutionResponse> => {
-    const res = await sendPOST(
+    const res = await sendPOST<IBinanceOrderExecutionResponse>(
       `https://api.binance.com/api/v3/order?${signParams(__CREDENTIALS.secret, {
         symbol: __SYMBOL,
         side,

@@ -3,7 +3,12 @@ import { encodeError } from 'error-message-utils';
 import { isArrayValid, isObjectValid } from 'web-utils-kit';
 import { IRequestResponse } from 'fetch-request-node';
 import { validateResponse } from '../validations.js';
-import { IKrakenAPIResponse } from './types.js';
+import {
+  IKrakenAPIResponse,
+  IKrakenCandlestick,
+  IKrakenCoinTickers,
+  IKrakenOrderBook,
+} from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -17,7 +22,7 @@ import { IKrakenAPIResponse } from './types.js';
  * - 15501: if the response contains errors
  * - 15502: if the response does not contain a valid result property
  */
-const validateAPIResponse = (res: IKrakenAPIResponse): void => {
+const validateAPIResponse = <T>(res: IKrakenAPIResponse<T>): void => {
   if (!isObjectValid(res) || !isArrayValid(res.error, true)) {
     console.log(res);
     throw new Error(encodeError('The Kraken API returned an invalid response object.', 15500));
@@ -42,7 +47,10 @@ const validateAPIResponse = (res: IKrakenAPIResponse): void => {
  * - 15502: if the response does not contain a valid result property
  * - 15503: if the response doesn't include a valid series of candlesticks
  */
-const validateCandlesticksResponse = (res: IRequestResponse, resultKey: string): void => {
+const validateCandlesticksResponse = (
+  res: IRequestResponse<IKrakenAPIResponse<{ [resultKey: string]: IKrakenCandlestick[] }>>,
+  resultKey: string,
+): void => {
   validateResponse(res);
   validateAPIResponse(res.data);
   if (!isArrayValid(res.data.result[resultKey])) {
@@ -62,7 +70,10 @@ const validateCandlesticksResponse = (res: IRequestResponse, resultKey: string):
  * - 15502: if the response does not contain a valid result property
  * - 15505: if the response doesn't include a valid order book object
  */
-const validateOrderBookResponse = (res: IRequestResponse, resultKey: string): void => {
+const validateOrderBookResponse = (
+  res: IRequestResponse<IKrakenAPIResponse<{ [resultKey: string]: IKrakenOrderBook }>>,
+  resultKey: string,
+): void => {
   validateResponse(res);
   validateAPIResponse(res.data);
   if (!isObjectValid(res.data.result[resultKey])) {
@@ -89,7 +100,9 @@ const validateOrderBookResponse = (res: IRequestResponse, resultKey: string): vo
  * - 15502: if the response does not contain a valid result property
  * - 15504: if the response doesn't include a valid series of tickers
  */
-const validateTickersResponse = (res: IRequestResponse): void => {
+const validateTickersResponse = (
+  res: IRequestResponse<IKrakenAPIResponse<IKrakenCoinTickers>>,
+): void => {
   validateResponse(res);
   validateAPIResponse(res.data);
   if (!isArrayValid(Object.keys(res.data.result))) {
