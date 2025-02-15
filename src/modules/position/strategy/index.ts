@@ -4,6 +4,7 @@ import { buildDefaultConfig } from './utils.js';
 import { canConfigBeUpdated } from './validations.js';
 import {
   IStrategyService,
+  IIncreaseIdleMode,
   IDecreaseLevelID,
   IStrategy,
   IDecreaseLevel,
@@ -176,6 +177,7 @@ export {
 
   // types
   type IStrategy,
+  type IIncreaseIdleMode,
   type IDecreaseLevelID,
   type IDecreaseLevel,
   type IDecreaseLevels,

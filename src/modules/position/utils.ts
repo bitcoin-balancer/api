@@ -10,8 +10,9 @@ import {
   adjustByPercentage,
   calculateExchange,
 } from 'bignumber-utils';
+import { fromHoursToMinutes } from '../shared/utils/index.js';
 import { IBalances, ITrade } from '../shared/exchange/index.js';
-import { IDecreaseLevels } from './strategy/index.js';
+import { IDecreaseLevels, IIncreaseIdleMode } from './strategy/index.js';
 import { BalanceService } from './balance/index.js';
 import { TransactionService } from './transaction/index.js';
 import {
@@ -23,7 +24,6 @@ import {
   IPosition,
   ICompactPosition,
 } from './types.js';
-import { fromHoursToMinutes } from '../shared/utils/index.js';
 
 /* ************************************************************************************************
  *                                          CALCULATORS                                           *
@@ -93,6 +93,24 @@ const calculateDecreaseAmount = (
   return decreaseAmount.isGreaterThanOrEqualTo(minOrderSize)
     ? decreaseAmount
     : getBigNumber(minOrderSize);
+};
+
+/**
+ * Calculates the total number of minutes a position will be idle before it can be increased again.
+ * @param increaseIdleDuration
+ * @param increaseIdleMode
+ * @param numberOfIncreases
+ * @returns number
+ */
+const calculateIncreaseIdleDuration = (
+  increaseIdleDuration: number,
+  increaseIdleMode: IIncreaseIdleMode,
+  numberOfIncreases: number,
+): number => {
+  if (increaseIdleMode === 'incremental') {
+    return fromHoursToMinutes(increaseIdleDuration * numberOfIncreases);
+  }
+  return fromHoursToMinutes(increaseIdleDuration);
 };
 
 
@@ -249,6 +267,7 @@ const buildNewPosition = async (
   trades: ITradesAnalysis,
   currentPrice: number,
   increaseIdleDuration: number,
+  increaseIdleMode: IIncreaseIdleMode,
 ): Promise<IPosition> => {
   const lastTranctionID = await TransactionService.getLastBuyTransactionID();
   return {
@@ -263,7 +282,10 @@ const buildNewPosition = async (
     ...trades,
     archived: false,
     increase_actions: [
-      buildPositionAction(lastTranctionID, fromHoursToMinutes(increaseIdleDuration)),
+      buildPositionAction(
+        lastTranctionID,
+        calculateIncreaseIdleDuration(increaseIdleDuration, increaseIdleMode, 1),
+      ),
     ],
     decrease_actions: [[], [], [], [], []],
   };
@@ -326,6 +348,7 @@ export {
   toQuoteAsset,
   toBaseAsset,
   calculateDecreaseAmount,
+  calculateIncreaseIdleDuration,
 
   // position changes handling
   calculateMarketStateDependantProps,

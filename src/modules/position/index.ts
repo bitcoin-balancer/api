@@ -2,7 +2,6 @@
 import { addMinutes } from 'date-fns';
 import { Subscription } from 'rxjs';
 import { encodeError, extractMessage } from 'error-message-utils';
-import { fromHoursToMinutes } from '../shared/utils/index.js';
 import { ENVIRONMENT } from '../shared/environment/index.js';
 import { APIErrorService } from '../api-error/index.js';
 import { NotificationService } from '../notification/index.js';
@@ -26,6 +25,7 @@ import {
   toQuoteAsset,
   toBaseAsset,
   calculateDecreaseAmount,
+  calculateIncreaseIdleDuration,
   calculateMarketStateDependantProps,
   analyzeTrades,
   buildNewPosition,
@@ -196,10 +196,15 @@ const positionServiceFactory = (): IPositionService => {
         // initialize the tx and update the position (if any)
         const txID = await TransactionService.buy(amount, balances);
         if (__active) {
-          __active.increase_actions.push(buildPositionAction(
+          const action = buildPositionAction(
             txID,
-            fromHoursToMinutes(StrategyService.config.increaseIdleDuration),
-          ));
+            calculateIncreaseIdleDuration(
+              StrategyService.config.increaseIdleDuration,
+              StrategyService.config.increaseIdleMode,
+              __active.increase_actions.length + 1,
+            ),
+          );
+          __active.increase_actions.push(action);
           await updatePositionRecord(__active);
         }
       }
@@ -449,6 +454,7 @@ const positionServiceFactory = (): IPositionService => {
         __trades!,
         __price,
         StrategyService.config.increaseIdleDuration,
+        StrategyService.config.increaseIdleMode,
       );
       await createPositionRecord(__active);
       NotificationService.onNewPosition(__active.amount, __active.amount_quote, __price);
