@@ -12,8 +12,9 @@ const buildDefaultConfig = (): IStrategy => ({
   canIncrease: true,
   canDecrease: true,
   increaseAmountQuote: 100,
-  increaseIdleDuration: 72,
   increaseGainRequirement: -3,
+  increaseIdleDuration: 48,
+  increaseIdleMode: 'incremental',
   decreaseLevels: [
     { gainRequirement: 0.50, percentage: 5.00, frequency: 240 },
     { gainRequirement: 1.50, percentage: 10.00, frequency: 120 },
