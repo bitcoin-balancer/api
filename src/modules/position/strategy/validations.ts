@@ -48,6 +48,7 @@ const __MIN_INCREASE_AMOUNT_QUOTE = ENVIRONMENT.NODE_ENV === 'production' ? 100 
  * - 31508: if any of the price levels' gainRequirement property is invalid
  * - 31509: if any of the price levels' percentage property is invalid
  * - 31510: if any of the price levels' frequency property is invalid
+ * - 31511: if the increaseIdleMode property is not supported
  */
 const canConfigBeUpdated = (newConfig: IStrategy): void => {
   if (!isObjectValid(newConfig)) {
@@ -67,11 +68,14 @@ const canConfigBeUpdated = (newConfig: IStrategy): void => {
   )) {
     throw new Error(encodeError(`The increaseAmountQuote '${newConfig.increaseAmountQuote}' is invalid as it must be a valid number ranging ${__MIN_INCREASE_AMOUNT_QUOTE} and ${Number.MAX_SAFE_INTEGER}.`, 31503));
   }
+  if (!isNumberValid(newConfig.increaseGainRequirement, -99, 0)) {
+    throw new Error(encodeError(`The increaseGainRequirement '${newConfig.increaseGainRequirement}' is invalid as it must be a valid number ranging -99 and 0.`, 31506));
+  }
   if (!isNumberValid(newConfig.increaseIdleDuration, 1, 1440)) {
     throw new Error(encodeError(`The increaseIdleDuration '${newConfig.increaseIdleDuration}' is invalid as it must be a valid number ranging 1 and 1440.`, 31505));
   }
-  if (!isNumberValid(newConfig.increaseGainRequirement, -99, 0)) {
-    throw new Error(encodeError(`The increaseGainRequirement '${newConfig.increaseGainRequirement}' is invalid as it must be a valid number ranging -99 and 0.`, 31506));
+  if (newConfig.increaseIdleMode !== 'incremental' && newConfig.increaseIdleMode !== 'fixed') {
+    throw new Error(encodeError(`The increaseIdleMode '${newConfig.increaseIdleMode}' is invalid as it must be either 'incremental' or 'fixed'.`, 31511));
   }
   if (!isArrayValid(newConfig.decreaseLevels) || newConfig.decreaseLevels.length !== 5) {
     throw new Error(encodeError('The decreaseLevels property doesn\'t contain a valid tuple with 5 items.', 31507));

@@ -643,6 +643,7 @@ This file contains all the errors by code that can be thrown by the API. Each mo
 - **31508:** `The gainRequirement for level ${i} '${newConfig.increaseGainRequirement}' is invalid as it must be a valid number ranging 0.1 and 1000000.`
 - **31509:** `The percentage for level ${i} '${level.percentage}' is invalid as it must be a valid number ranging ${minPercentage} and 100.`
 - **31510:** `The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid integer ranging 3 and ${maxFrequency}.`
+- **31511:** `The increaseIdleMode '${newConfig.increaseIdleMode}' is invalid as it must be either 'incremental' or 'fixed'.`
 
 
 

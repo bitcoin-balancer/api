@@ -36,9 +36,9 @@ type IStrategyService = {
  * Increase Idle Mode
  * The mode that will be used to calculate when a position can be increased again.
  * - incremental: the increaseIdleDuration value is multiplied by the number of increases
- * - static: the increaseIdleDuration value is used as is, regardless of the number of increases
+ * - fixed: the increaseIdleDuration value is used as is, regardless of the number of increases
  */
-type IIncreaseIdleMode = 'incremental' | 'static';
+type IIncreaseIdleMode = 'incremental' | 'fixed';
 
 /**
  * Decrease Level ID

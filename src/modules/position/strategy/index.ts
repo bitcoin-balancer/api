@@ -121,6 +121,7 @@ const strategyServiceFactory = (): IStrategyService => {
    * - 31508: if any of the price levels' gainRequirement property is invalid
    * - 31509: if any of the price levels' percentage property is invalid
    * - 31510: if any of the price levels' frequency property is invalid
+   * - 31511: if the increaseIdleMode property is not supported
    */
   const updateConfiguration = async (newConfig: IStrategy): Promise<void> => {
     canConfigBeUpdated(newConfig);
