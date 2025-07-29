@@ -18,17 +18,16 @@ import { extractErrorPayload } from './utils.js';
 const validateResponse = <T>(res: IRequestResponse<T>, acceptedCodes: number[] = [200]): void => {
   if (!acceptedCodes.includes(res.code)) {
     console.log(res);
-    throw new Error(encodeError(`The exchange returned an invalid HTTP response code '${res.code}'. ${extractErrorPayload(res.data)}`, 12500));
+    throw new Error(
+      encodeError(
+        `The exchange returned an invalid HTTP response code '${res.code}'. ${extractErrorPayload(res.data)}`,
+        12500,
+      ),
+    );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  validateResponse,
-};
+export { validateResponse };

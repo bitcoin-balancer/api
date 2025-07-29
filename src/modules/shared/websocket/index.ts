@@ -45,10 +45,6 @@ const websocketFactory: IWebSocketFactory = <T>(
   const __IDLE_LIMIT = 60; // seconds
   let __lastMessage: number;
 
-
-
-
-
   /* **********************************************************************************************
    *                                          CONNECTION                                          *
    ********************************************************************************************** */
@@ -81,7 +77,10 @@ const websocketFactory: IWebSocketFactory = <T>(
     // fires whenever the connection is closed by the data origin server
     __ws.on('close', async (code: number, reason: Buffer) => {
       const payload = formatConnectionClosePayload(code, reason);
-      NotificationService.websocketError(__id, `The connection has been closed by the origin server. ${payload}`);
+      NotificationService.websocketError(
+        __id,
+        `The connection has been closed by the origin server. ${payload}`,
+      );
       APIErrorService.save(`WebSocket.${__id}.close`, payload);
 
       // attempt to reconnect
@@ -109,10 +108,6 @@ const websocketFactory: IWebSocketFactory = <T>(
     });
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         HEALTH CHECK                                         *
    ********************************************************************************************** */
@@ -122,22 +117,21 @@ const websocketFactory: IWebSocketFactory = <T>(
    * __HEALTH_CHECK_FREQUENCY seconds. If there is an issue with the connection, it will notify
    * users and try to repair it.
    */
-  setInterval(async () => {
-    if (__ws && exceededIdleLimit(__lastMessage, __IDLE_LIMIT)) {
-      NotificationService.websocketConnectionIssue(__id);
-      try {
-        off();
-        await delay(__RESTART_DELAY);
-        __on();
-      } catch (e) {
-        APIErrorService.save('WebSocket.HealthCheck', e);
+  setInterval(
+    async () => {
+      if (__ws && exceededIdleLimit(__lastMessage, __IDLE_LIMIT)) {
+        NotificationService.websocketConnectionIssue(__id);
+        try {
+          off();
+          await delay(__RESTART_DELAY);
+          __on();
+        } catch (e) {
+          APIErrorService.save('WebSocket.HealthCheck', e);
+        }
       }
-    }
-  }, ms(`${__HEALTH_CHECK_FREQUENCY} seconds`));
-
-
-
-
+    },
+    ms(`${__HEALTH_CHECK_FREQUENCY} seconds`),
+  );
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -153,10 +147,6 @@ const websocketFactory: IWebSocketFactory = <T>(
     off,
   });
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

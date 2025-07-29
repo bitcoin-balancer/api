@@ -72,9 +72,6 @@ const binanceServiceFactory = (): IBinanceService => {
     'X-MBX-APIKEY': __CREDENTIALS === undefined ? '' : __CREDENTIALS.key,
   });
 
-
-
-
   /* **********************************************************************************************
    *                                          MARKET DATA                                         *
    ********************************************************************************************** */
@@ -129,7 +126,7 @@ const binanceServiceFactory = (): IBinanceService => {
    * Retrieves the stream for the order book updates.
    * @returns Observable<IOrderBookWebSocketMessage>
    */
-  const getOrderBookStream = (): Observable<IOrderBookWebSocketMessage> => (
+  const getOrderBookStream = (): Observable<IOrderBookWebSocketMessage> =>
     new Observable<IOrderBookWebSocketMessage>((subscriber) => {
       const ws = websocketFactory<IBinanceOrderBookWebSocketMessage>(
         'LIQUIDITY',
@@ -139,8 +136,7 @@ const binanceServiceFactory = (): IBinanceService => {
       return function unsubscribe() {
         ws.off();
       };
-    })
-  );
+    });
 
   /**
    * Tickers
@@ -201,7 +197,7 @@ const binanceServiceFactory = (): IBinanceService => {
    * @param topSymbols
    * @returns Observable<ITickerWebSocketMessage>
    */
-  const getTickersStream = (topSymbols: string[]): Observable<ITickerWebSocketMessage> => (
+  const getTickersStream = (topSymbols: string[]): Observable<ITickerWebSocketMessage> =>
     new Observable<ITickerWebSocketMessage>((subscriber) => {
       // build the pairs object
       const topPairs = buildTopPairsObject(topSymbols);
@@ -215,12 +211,7 @@ const binanceServiceFactory = (): IBinanceService => {
       return function unsubscribe() {
         ws.off();
       };
-    })
-  );
-
-
-
-
+    });
 
   /* **********************************************************************************************
    *                                         ACCOUNT DATA                                         *
@@ -265,10 +256,6 @@ const binanceServiceFactory = (): IBinanceService => {
     validateTradesResponse(res);
     return transformTrades(res.data);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                       ACCOUNT ACTIONS                                        *
@@ -320,10 +307,6 @@ const binanceServiceFactory = (): IBinanceService => {
    */
   const sell = (amount: number): Promise<IBinanceOrderExecutionResponse> => __order('SELL', amount);
 
-
-
-
-
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
@@ -348,22 +331,12 @@ const binanceServiceFactory = (): IBinanceService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const BinanceService = binanceServiceFactory();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  BinanceService,
-};
+export { BinanceService };

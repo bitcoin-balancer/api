@@ -31,10 +31,6 @@ pg.types.setTypeParser(20, (val) => parseInt(val, 10));
 // Numeric Parsing
 pg.types.setTypeParser(1700, (val) => parseFloat(val));
 
-
-
-
-
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
@@ -72,10 +68,6 @@ const databaseServiceFactory = (): IDatabaseService => {
   // the table names object
   const __tn = buildTableNames(RAW_TABLES);
 
-
-
-
-
   /* **********************************************************************************************
    *                                      DATABASE MANAGEMENT                                     *
    ********************************************************************************************** */
@@ -102,13 +94,8 @@ const databaseServiceFactory = (): IDatabaseService => {
    * Drops all the tables and indexes in a single query execution.
    * @returns Promise<IQueryResult>
    */
-  const dropTables = (): Promise<IQueryResult> => (
-    __pool!.query(`DROP TABLE IF EXISTS ${getTableNamesForQuery(__tables)};`)
-  );
-
-
-
-
+  const dropTables = (): Promise<IQueryResult> =>
+    __pool!.query(`DROP TABLE IF EXISTS ${getTableNamesForQuery(__tables)};`);
 
   /* **********************************************************************************************
    *                                          INITIALIZER                                         *
@@ -144,10 +131,6 @@ const databaseServiceFactory = (): IDatabaseService => {
 
     // ...
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                       DATABASE SUMMARY                                       *
@@ -195,11 +178,8 @@ const databaseServiceFactory = (): IDatabaseService => {
    * @param client
    * @returns Promise<IDatabaseSummaryTable[]>
    */
-  const __getAllSummaryTables = (
-    client: IPoolClient,
-  ): Promise<IDatabaseSummaryTable[]> => Promise.all(
-    __tables.map((table) => __getSummaryTable(table.name, client)),
-  );
+  const __getAllSummaryTables = (client: IPoolClient): Promise<IDatabaseSummaryTable[]> =>
+    Promise.all(__tables.map((table) => __getSummaryTable(table.name, client)));
 
   /**
    * Retrieves the essential database info to get an idea of how things are going from the GUI.
@@ -230,10 +210,6 @@ const databaseServiceFactory = (): IDatabaseService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
@@ -259,18 +235,10 @@ const databaseServiceFactory = (): IDatabaseService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const DatabaseService = databaseServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

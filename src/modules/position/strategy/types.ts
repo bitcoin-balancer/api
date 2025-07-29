@@ -1,5 +1,3 @@
-
-
 /* ************************************************************************************************
  *                                            SERVICE                                             *
  ************************************************************************************************ */
@@ -23,10 +21,6 @@ type IStrategyService = {
   // configuration
   updateConfiguration: (newConfig: IStrategy) => Promise<void>;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TYPES                                              *
@@ -103,10 +97,6 @@ type IStrategy = {
   // the tuple containing the decrease levels that will be activated based on the position's gain%
   decreaseLevels: IDecreaseLevels;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

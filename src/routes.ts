@@ -36,17 +36,15 @@ const mountRoutes = (app: Express): void => {
 
   // custom 404
   app.use((req, res) => {
-    res.status(404).send('The route you are looking for could not be matched. Please review the docs before trying again.');
+    res
+      .status(404)
+      .send(
+        'The route you are looking for could not be matched. Please review the docs before trying again.',
+      );
   });
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  mountRoutes,
-};
+export { mountRoutes };

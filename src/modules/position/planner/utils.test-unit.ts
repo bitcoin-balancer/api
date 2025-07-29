@@ -11,10 +11,6 @@ import { ENVIRONMENT } from '../../shared/environment/index.js';
 const BASE_ASSET = ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset;
 const QUOTE_ASSET = ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset;
 
-
-
-
-
 /* ************************************************************************************************
  *                                            HELPERS                                             *
  ************************************************************************************************ */
@@ -26,10 +22,6 @@ const b = (balances: Partial<IBalances>): IBalances => ({
   refetchTime: Date.now(),
   ...balances,
 });
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TESTS                                              *

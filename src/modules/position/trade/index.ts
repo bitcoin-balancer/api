@@ -39,10 +39,6 @@ const tradeServiceFactory = (): ITradeService => {
   let __syncStartTime: number;
   let __syncInterval: NodeJS.Timeout;
 
-
-
-
-
   /* **********************************************************************************************
    *                                            STREAM                                            *
    ********************************************************************************************** */
@@ -52,13 +48,8 @@ const tradeServiceFactory = (): ITradeService => {
    * @param callback
    * @returns Subscription
    */
-  const subscribe = (callback: (value: ITrade[]) => any): Subscription => (
-    __stream.subscribe(callback)
-  );
-
-
-
-
+  const subscribe = (callback: (value: ITrade[]) => any): Subscription =>
+    __stream.subscribe(callback);
 
   /* **********************************************************************************************
    *                                             SYNC                                             *
@@ -73,11 +64,7 @@ const tradeServiceFactory = (): ITradeService => {
    * @returns ITrade[]
    */
   const __filterTrades = (trades: ITrade[]): ITrade[] => {
-    if (
-      __stream.value.length === 0
-      && trades.length > 0
-      && trades[0].side === 'SELL'
-    ) {
+    if (__stream.value.length === 0 && trades.length > 0 && trades[0].side === 'SELL') {
       return __filterTrades(trades.slice(1));
     }
     return trades;
@@ -90,10 +77,7 @@ const tradeServiceFactory = (): ITradeService => {
    * @returns Promise<ITrade[]>
    */
   const __getNewTrades = async (startTime: number): Promise<ITrade[]> => {
-    const trades = await retryAsyncFunction(
-      () => ExchangeService.listTrades(startTime),
-      [2, 3, 7],
-    );
+    const trades = await retryAsyncFunction(() => ExchangeService.listTrades(startTime), [2, 3, 7]);
     let filtered = __filterTrades(trades);
     if (filtered.length) {
       const ids = await saveTradeRecords(filtered);
@@ -133,10 +117,6 @@ const tradeServiceFactory = (): ITradeService => {
    */
   const onPositionClose = (): void => __stream.next([]);
 
-
-
-
-
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
@@ -155,10 +135,6 @@ const tradeServiceFactory = (): ITradeService => {
    * @returns Promise<ITrade[]>
    */
   const listTrades = listTradeRecords;
-
-
-
-
 
   /* **********************************************************************************************
    *                                           ACTIONS                                            *
@@ -183,12 +159,14 @@ const tradeServiceFactory = (): ITradeService => {
   const updateTrade = async (trade: ITrade): Promise<void> => {
     await updateTradeRecord(trade);
     __stream.next(
-      __stream.value.map((record) => {
-        if (record.id === trade.id) {
-          return trade;
-        }
-        return record;
-      }).sort(sortRecords('event_time', 'asc')),
+      __stream.value
+        .map((record) => {
+          if (record.id === trade.id) {
+            return trade;
+          }
+          return record;
+        })
+        .sort(sortRecords('event_time', 'asc')),
     );
   };
 
@@ -201,10 +179,6 @@ const tradeServiceFactory = (): ITradeService => {
     await deleteTradeRecord(id);
     __stream.next(__stream.value.filter((trade) => trade.id !== id));
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                           HELPERS                                            *
@@ -240,10 +214,6 @@ const tradeServiceFactory = (): ITradeService => {
    */
   const validateManualTrade = validateManualTradeRecord;
 
-
-
-
-
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
@@ -260,13 +230,16 @@ const tradeServiceFactory = (): ITradeService => {
 
     // sync the trades and initialize the interval
     await syncTrades(positionOpenTime);
-    __syncInterval = setInterval(async () => {
-      try {
-        await syncTrades();
-      } catch (e) {
-        APIErrorService.save('TradeService.__syncInterval', e);
-      }
-    }, ms(`${__SYNC_FREQUENCY} seconds`));
+    __syncInterval = setInterval(
+      async () => {
+        try {
+          await syncTrades();
+        } catch (e) {
+          APIErrorService.save('TradeService.__syncInterval', e);
+        }
+      },
+      ms(`${__SYNC_FREQUENCY} seconds`),
+    );
   };
 
   /**
@@ -276,10 +249,6 @@ const tradeServiceFactory = (): ITradeService => {
   const teardown = async (): Promise<void> => {
     clearInterval(__syncInterval);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -312,18 +281,10 @@ const tradeServiceFactory = (): ITradeService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const TradeService = tradeServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

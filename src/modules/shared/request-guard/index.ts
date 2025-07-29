@@ -37,12 +37,19 @@ const checkPublicRequest = (
 
   // ensure the API is not running on RESTORE_MODE
   if (ENVIRONMENT.RESTORE_MODE) {
-    throw new Error(encodeError('The API cannot accept requests when RESTORE_MODE is enabled.', 6001));
+    throw new Error(
+      encodeError('The API cannot accept requests when RESTORE_MODE is enabled.', 6001),
+    );
   }
 
   // ensure the API has been initialized
   if (!APIService.initialized) {
-    throw new Error(encodeError('The API cannot accept requests because it has not yet been initialized. Please try again in a few minutes.', 6002));
+    throw new Error(
+      encodeError(
+        'The API cannot accept requests because it has not yet been initialized. Please try again in a few minutes.',
+        6002,
+      ),
+    );
   }
 
   // ensure the IP Address is valid and is not Blacklisted
@@ -106,14 +113,7 @@ const checkRequest = async (
   return uid;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  checkPublicRequest,
-  checkRequest,
-};
+export { checkPublicRequest, checkRequest };

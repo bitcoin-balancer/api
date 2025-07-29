@@ -56,27 +56,32 @@ UserRouter.route('/:uid/otp-secret').get(mediumRiskLimit, async (req: Request, r
  * @requirements
  * - authority: 5
  */
-UserRouter.route('/:uid/password-updates').get(mediumRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 5, ['limit'], req.query);
-    res.json(buildResponse(await UserService.listUserPasswordUpdates(
-      req.params.uid,
-      Number(req.query.limit),
-      typeof req.query.startAtEventTime === 'string' ? Number(req.query.startAtEventTime) : undefined,
-    )));
-  } catch (e) {
-    APIErrorService.save('UserRouter.get.password-updates', e, reqUid, req.ip, {
-      ...req.params,
-      ...req.query,
-    });
-    res.json(buildResponse(undefined, e));
-  }
-});
-
-
-
-
+UserRouter.route('/:uid/password-updates').get(
+  mediumRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 5, ['limit'], req.query);
+      res.json(
+        buildResponse(
+          await UserService.listUserPasswordUpdates(
+            req.params.uid,
+            Number(req.query.limit),
+            typeof req.query.startAtEventTime === 'string'
+              ? Number(req.query.startAtEventTime)
+              : undefined,
+          ),
+        ),
+      );
+    } catch (e) {
+      APIErrorService.save('UserRouter.get.password-updates', e, reqUid, req.ip, {
+        ...req.params,
+        ...req.query,
+      });
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /* ************************************************************************************************
  *                                     USER RECORD MANAGEMENT                                     *
@@ -132,7 +137,10 @@ UserRouter.route('/:uid/nickname').patch(veryHighRiskLimit, async (req: Request,
     await UserService.updateNickname(req.params.uid, req.body.newNickname);
     res.json(buildResponse());
   } catch (e) {
-    APIErrorService.save('UserRouter.patch.nickname', e, reqUid, req.ip, { ...req.params, ...req.body });
+    APIErrorService.save('UserRouter.patch.nickname', e, reqUid, req.ip, {
+      ...req.params,
+      ...req.body,
+    });
     res.json(buildResponse(undefined, e));
   }
 });
@@ -145,24 +153,30 @@ UserRouter.route('/:uid/nickname').patch(veryHighRiskLimit, async (req: Request,
  * - authority: 5
  * - otp-token
  */
-UserRouter.route('/:uid/authority').patch(veryHighRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(
-      req.get('authorization'),
-      req.ip,
-      5,
-      ['newAuthority'],
-      req.body,
-      req.get('otp-token') || '',
-    );
-    await UserService.updateAuthority(req.params.uid, req.body.newAuthority);
-    res.json(buildResponse());
-  } catch (e) {
-    APIErrorService.save('UserRouter.patch.authority', e, reqUid, req.ip, { ...req.params, ...req.body });
-    res.json(buildResponse(undefined, e));
-  }
-});
+UserRouter.route('/:uid/authority').patch(
+  veryHighRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(
+        req.get('authorization'),
+        req.ip,
+        5,
+        ['newAuthority'],
+        req.body,
+        req.get('otp-token') || '',
+      );
+      await UserService.updateAuthority(req.params.uid, req.body.newAuthority);
+      res.json(buildResponse());
+    } catch (e) {
+      APIErrorService.save('UserRouter.patch.authority', e, reqUid, req.ip, {
+        ...req.params,
+        ...req.body,
+      });
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Validates and updates a nonroot user's password hash.
@@ -195,23 +209,26 @@ UserRouter.route('/password').patch(veryHighRiskLimit, async (req: Request, res:
  * - authority: 5
  * - otp-token
  */
-UserRouter.route('/:uid/otp-secret').patch(veryHighRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(
-      req.get('authorization'),
-      req.ip,
-      5,
-      undefined,
-      undefined,
-      req.get('otp-token') || '',
-    );
-    res.json(buildResponse(await UserService.updateOTPSecret(req.params.uid)));
-  } catch (e) {
-    APIErrorService.save('UserRouter.patch.otpSecret', e, reqUid, req.ip, req.params);
-    res.json(buildResponse(undefined, e));
-  }
-});
+UserRouter.route('/:uid/otp-secret').patch(
+  veryHighRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(
+        req.get('authorization'),
+        req.ip,
+        5,
+        undefined,
+        undefined,
+        req.get('otp-token') || '',
+      );
+      res.json(buildResponse(await UserService.updateOTPSecret(req.params.uid)));
+    } catch (e) {
+      APIErrorService.save('UserRouter.patch.otpSecret', e, reqUid, req.ip, req.params);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Validates and deletes a nonroot user account.
@@ -239,13 +256,7 @@ UserRouter.route('/:uid').delete(veryHighRiskLimit, async (req: Request, res: Re
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  UserRouter,
-};
+export { UserRouter };

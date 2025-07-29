@@ -18,12 +18,13 @@ import {
 
 // list of mock ip addresses
 const IPs: string[] = [
-  '192.168.0.1', '192.168.0.12', '199.115.195.106', 'ffff:192.168.0.1', '172.16.20.65', '127.0.0.1',
+  '192.168.0.1',
+  '192.168.0.12',
+  '199.115.195.106',
+  'ffff:192.168.0.1',
+  '172.16.20.65',
+  '127.0.0.1',
 ];
-
-
-
-
 
 /* ************************************************************************************************
  *                                            HELPERS                                             *
@@ -37,9 +38,6 @@ const createRecords = async (ips: string[]): Promise<number[]> => {
   }
   return ids;
 };
-
-
-
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
@@ -62,10 +60,6 @@ describe('IP Blacklist Model', () => {
       });
     });
   });
-
-
-
-
 
   describe('__listRecords', () => {
     test('can list the stored records in the correct order', async () => {
@@ -129,10 +123,6 @@ describe('IP Blacklist Model', () => {
     });
   });
 
-
-
-
-
   /* **********************************************************************************************
    *                                       RECORD MANAGEMENT                                      *
    ********************************************************************************************** */
@@ -194,10 +184,6 @@ describe('IP Blacklist Model', () => {
     });
   });
 
-
-
-
-
   describe('updateRecord', () => {
     test('can create a record and update it', async () => {
       const id = await createRecord(IPs[0], 'Some Cool Note', Date.now());
@@ -224,7 +210,7 @@ describe('IP Blacklist Model', () => {
     });
   });
 
-  test('can update a record that didn\'t have a note initially', async () => {
+  test("can update a record that didn't have a note initially", async () => {
     const id = await createRecord(IPs[0], undefined, Date.now());
     await updateRecord(id, IPs[0], 'Add this sweet note');
     const record = await getRecord(id);

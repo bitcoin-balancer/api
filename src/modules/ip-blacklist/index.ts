@@ -33,10 +33,6 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
   // the object containing all blacklisted IP Addresses
   let __blacklist: { [ip: string]: boolean } = {};
 
-
-
-
-
   /* **********************************************************************************************
    *                                           IP STATUS                                          *
    ********************************************************************************************** */
@@ -50,13 +46,11 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
   const isBlacklisted = (ip: string): void => {
     const sip = sanitizeIP(ip);
     if (__blacklist[sip]) {
-      throw new Error(encodeError(`The ip '${sip}' is blacklisted and should not be served.`, 5000));
+      throw new Error(
+        encodeError(`The ip '${sip}' is blacklisted and should not be served.`, 5000),
+      );
     }
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                           RETRIEVERS                                         *
@@ -76,10 +70,6 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
     canBlacklistBeListed(limit, startAtID);
     return listRecords(limit, startAtID);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                        RECORD MANAGEMENT                                     *
@@ -144,7 +134,6 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
     __blacklist[sanitizedIP] = true;
   };
 
-
   /**
    * Unregisters an IP Address from the Blacklist.
    * @param id
@@ -163,10 +152,6 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
     await deleteRecord(id);
     delete __blacklist[record!.ip];
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
@@ -194,10 +179,6 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
     __blacklist = {};
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
@@ -222,22 +203,12 @@ const ipBlacklistServiceFactory = (): IIPBlacklistService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const IPBlacklistService = ipBlacklistServiceFactory();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  IPBlacklistService,
-};
+export { IPBlacklistService };

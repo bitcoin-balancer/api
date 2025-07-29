@@ -31,10 +31,6 @@ type IKrakenService = {
   getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         API RESPONSE                                           *
  ************************************************************************************************ */
@@ -54,10 +50,6 @@ type IKrakenAPIResponse<T> = {
   // the data retrieved from the API
   result: T;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                           WEBSOCKET                                            *
@@ -89,11 +81,11 @@ type IKrakenWebSocketMessageType = 'snapshot' | 'update';
  * The object sent when a subscription is attempted. If success is true, the connection is live.
  */
 type IKrakenWebSocketSubscriptionResult = {
-  'method': IKrakenWebSocketMethod,
-  'result': IKrakenTickerWebSocketSubscriptionParams, // params used to subscribe to channel
-  'success': boolean; // e.g. true
-  'time_in': string; // e.g. '2024-08-24T13:54:49.279970Z'
-  'time_out': string; // e.g. '2024-08-24T13:54:49.280032Z'
+  method: IKrakenWebSocketMethod;
+  result: IKrakenTickerWebSocketSubscriptionParams; // params used to subscribe to channel
+  success: boolean; // e.g. true
+  time_in: string; // e.g. '2024-08-24T13:54:49.279970Z'
+  time_out: string; // e.g. '2024-08-24T13:54:49.280032Z'
 };
 
 /**
@@ -104,8 +96,8 @@ type IKrakenWebSocketMessage = {
   channel: IKrakenWebSocketChannel;
 } & (
   | {
-    channel: 'heartbeat';
-  }
+      channel: 'heartbeat';
+    }
   | IKrakenStatusWebSocketMessage
   | IKrakenOrderBookWebSocketMessage
   | IKrakenTickerWebSocketMessage
@@ -125,13 +117,9 @@ type IKrakenStatusWebSocketMessage = {
       system: string; // e.g. 'online'
       version: string; // e.g. '2.0.8'
     },
-  ],
+  ];
   type: IKrakenWebSocketMessageType; // e.g. 'update'
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                          CANDLESTICK                                           *
@@ -142,10 +130,15 @@ type IKrakenStatusWebSocketMessage = {
  * The candlestick intervals supported by Kraken.
  */
 type IKrakenCandlestickInterval =
-1 | 5 | 15 | 30 | // minutes
-60 | 240 | // hours
-1440 | // days
-10080 | 21600; // weeks
+  | 1
+  | 5
+  | 15
+  | 30 // minutes
+  | 60
+  | 240 // hours
+  | 1440 // days
+  | 10080
+  | 21600; // weeks
 
 /**
  * Kraken Candlestick
@@ -170,10 +163,6 @@ type IKrakenCandlestick = [
 type ISupportedCandlestickIntervals = {
   [key in ICandlestickInterval]: IKrakenCandlestickInterval;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                           ORDER BOOK                                           *
@@ -235,13 +224,9 @@ type IKrakenOrderBookWebSocketMessageData = {
 };
 type IKrakenOrderBookWebSocketMessage = {
   channel: 'book';
-  data: [IKrakenOrderBookWebSocketMessageData],
+  data: [IKrakenOrderBookWebSocketMessageData];
   type: IKrakenWebSocketMessageType; // e.g. 'update'
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TICKER                                             *
@@ -304,13 +289,9 @@ type IKrakenTickerWebSocketMessageData = {
 };
 type IKrakenTickerWebSocketMessage = {
   channel: 'ticker';
-  data: [IKrakenTickerWebSocketMessageData],
+  data: [IKrakenTickerWebSocketMessageData];
   type: IKrakenWebSocketMessageType; // e.g. 'snapshot'
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

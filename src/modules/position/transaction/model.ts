@@ -71,11 +71,10 @@ const __listNextTransactionRecords = async (
  * @param startAtID?
  * @returns Promise<ITransaction[]>
  */
-const listTransactionRecords = (limit: number, startAtID?: number): Promise<ITransaction[]> => (
+const listTransactionRecords = (limit: number, startAtID?: number): Promise<ITransaction[]> =>
   typeof startAtID === 'number'
     ? __listNextTransactionRecords(limit, startAtID)
-    : __listTransactionRecords(limit)
-);
+    : __listTransactionRecords(limit);
 
 /**
  * Retrieves a list of Transactions that are between a date range.
@@ -128,10 +127,6 @@ const getLastBuyTransactionRecordID = async (): Promise<number | undefined> => {
   return rows[0]?.id;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                            ACTIONS                                             *
  ************************************************************************************************ */
@@ -168,10 +163,6 @@ const updateTransactionRecord = async (tx: ITransaction): Promise<void> => {
     values: [tx.status, JSON.stringify(tx.logs), tx.id],
   });
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

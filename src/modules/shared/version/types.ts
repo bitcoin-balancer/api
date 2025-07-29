@@ -1,5 +1,3 @@
-
-
 /* ************************************************************************************************
  *                                            SERVICE                                             *
  ************************************************************************************************ */
@@ -16,10 +14,6 @@ type IVersionService = {
   initialize: (runningVersion: string) => Promise<void>;
   teardown: () => Promise<void>;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TYPES                                              *
@@ -57,7 +51,7 @@ type ICommitRecord = {
     tree: object;
     url: string;
     comment_count: number;
-    verification: object
+    verification: object;
   };
   url: string;
   html_url: string;
@@ -108,10 +102,6 @@ type IVersion = {
   // the timestamp in ms of the last time the version was fetched
   refetchTime: number;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

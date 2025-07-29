@@ -3,11 +3,7 @@ import {
   ICompactCandlestickRecords,
   buildPristineCompactCandlestickRecords,
 } from '../../candlestick/index.js';
-import {
-  IOrderBook,
-  IOrderBookWebSocketMessage,
-  ITickerWebSocketMessage,
-} from '../types.js';
+import { IOrderBook, IOrderBookWebSocketMessage, ITickerWebSocketMessage } from '../types.js';
 import {
   IKrakenCandlestick,
   IKrakenOrderBookLevel,
@@ -25,28 +21,25 @@ import {
  * @param source
  * @returns ICompactCandlestickRecords
  */
-const transformCandlesticks = (source: IKrakenCandlestick[]): ICompactCandlestickRecords => (
-  source.reduce(
-    (prev, current) => {
-      prev.id.push(ms(`${current[0]} seconds`));
-      prev.open.push(Number(current[1]));
-      prev.high.push(Number(current[2]));
-      prev.low.push(Number(current[3]));
-      prev.close.push(Number(current[4]));
-      return prev;
-    },
-    buildPristineCompactCandlestickRecords(),
-  )
-);
+const transformCandlesticks = (source: IKrakenCandlestick[]): ICompactCandlestickRecords =>
+  source.reduce((prev, current) => {
+    prev.id.push(ms(`${current[0]} seconds`));
+    prev.open.push(Number(current[1]));
+    prev.high.push(Number(current[2]));
+    prev.low.push(Number(current[3]));
+    prev.close.push(Number(current[4]));
+    return prev;
+  }, buildPristineCompactCandlestickRecords());
 
 /**
  * Converts a string tuple into a numeric one.
  * @param order
  * @returns [number, number]
  */
-const __transformOrder = (order: IKrakenOrderBookLevel): [number, number] => (
-  [Number(order[0]), Number(order[1])]
-);
+const __transformOrder = (order: IKrakenOrderBookLevel): [number, number] => [
+  Number(order[0]),
+  Number(order[1]),
+];
 
 /**
  * Transforms a raw Kraken Order Book into the object required by the Exchange.
@@ -83,16 +76,7 @@ const transformTicker = (
   ticker: IKrakenTickerWebSocketMessageData,
 ): ITickerWebSocketMessage => ({ [symbol]: ticker.last });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  transformCandlesticks,
-  transformOrderBook,
-  transformOrderBookMessage,
-  transformTicker,
-};
+export { transformCandlesticks, transformOrderBook, transformOrderBookMessage, transformTicker };

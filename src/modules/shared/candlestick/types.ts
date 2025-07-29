@@ -1,4 +1,3 @@
-
 /* ************************************************************************************************
  *                                            SERVICE                                             *
  ************************************************************************************************ */
@@ -14,10 +13,6 @@ type ICandlestickService = {
   // retrievers
   getEventHistory: (id: string) => Promise<IEventHistoryRecord>;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                            FACTORY                                             *
@@ -38,10 +33,6 @@ type IEventHistory = {
   complete: () => Promise<void>;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
@@ -51,9 +42,18 @@ type IEventHistory = {
  * The identifier of the interval that will be used to build the candlesticks.
  */
 type ICandlestickIntervalID =
-'1m' | '3m' | '5m' | '15m' | '30m' | // minutes
-'1h' | '2h' | '4h' | '6h' | '8h' | '12h' | // hours
-'1d'; // days
+  | '1m'
+  | '3m'
+  | '5m'
+  | '15m'
+  | '30m' // minutes
+  | '1h'
+  | '2h'
+  | '4h'
+  | '6h'
+  | '8h'
+  | '12h' // hours
+  | '1d'; // days
 
 /**
  * Event Name
@@ -127,10 +127,6 @@ type IEventHistoryRecord = {
   // the timestamp (in ms) when the event first started
   event_time: number;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

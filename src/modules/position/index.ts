@@ -77,10 +77,6 @@ import {
  * - OKX:       0.00001 BTC ~1$   - https://www.okx.com/trade-market/info/spot
  */
 
-
-
-
-
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
@@ -132,10 +128,6 @@ const positionServiceFactory = (): IPositionService => {
   let __trades: ITradesAnalysis | undefined;
   let __tradesSub: Subscription;
 
-
-
-
-
   /* **********************************************************************************************
    *                                       GENERAL HELPERS                                        *
    ********************************************************************************************** */
@@ -147,10 +139,6 @@ const positionServiceFactory = (): IPositionService => {
   const __updatePositionHistory = (): void => {
     __activeHist?.handleNewData([__price, __active!.gain, __active!.entry_price, __active!.amount]);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                     INCREASE TRANSACTION                                     *
@@ -177,7 +165,11 @@ const positionServiceFactory = (): IPositionService => {
     }
 
     // otherwise, the position cannot be opened or increased
-    NotificationService.insufficientBalance('BUY', balance, StrategyService.config.increaseAmountQuote);
+    NotificationService.insufficientBalance(
+      'BUY',
+      balance,
+      StrategyService.config.increaseAmountQuote,
+    );
     return 0;
   };
 
@@ -215,10 +207,6 @@ const positionServiceFactory = (): IPositionService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                     DECREASE TRANSACTION                                     *
    ********************************************************************************************** */
@@ -245,9 +233,8 @@ const positionServiceFactory = (): IPositionService => {
     if (balance >= __MIN_ORDER_SIZE) {
       // if the amount is smaller than or equals to the min. amount quote, close the position
       if (
-        __active.amount_quote <= StrategyService.calculateMinPositionAmountQuote(
-          __MIN_POSITION_AMOUNT_PERCENTAGE,
-        )
+        __active.amount_quote <=
+        StrategyService.calculateMinPositionAmountQuote(__MIN_POSITION_AMOUNT_PERCENTAGE)
       ) {
         if (__active.amount > balance) {
           NotificationService.lowBalance('SELL', balance, __active.amount);
@@ -301,10 +288,9 @@ const positionServiceFactory = (): IPositionService => {
         // initialize the tx and update the position (if any)
         const txID = await TransactionService.sell(amount, balances);
         if (typeof activeLevel === 'number') {
-          __active!.decrease_actions[activeLevel].push(buildPositionAction(
-            txID,
-            StrategyService.config.decreaseLevels[activeLevel].frequency,
-          ));
+          __active!.decrease_actions[activeLevel].push(
+            buildPositionAction(txID, StrategyService.config.decreaseLevels[activeLevel].frequency),
+          );
           await updatePositionRecord(__active!);
         }
       }
@@ -314,10 +300,6 @@ const positionServiceFactory = (): IPositionService => {
       NotificationService.failedToInitializeTransaction(msg);
     }
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                 MARKET STATE EVENT HANDLERS                                  *
@@ -353,17 +335,12 @@ const positionServiceFactory = (): IPositionService => {
    */
   const __handleNewReversalEvent = async (): Promise<void> => {
     if (
-      StrategyService.config.canIncrease
-      && (
-        !__active
-        || (
-          Date.now() > __active.increase_actions[__active.increase_actions.length - 1].nextEventTime
-          && (
-            StrategyService.config.increaseGainRequirement === 0
-            || __active.gain <= StrategyService.config.increaseGainRequirement
-          )
-        )
-      )
+      StrategyService.config.canIncrease &&
+      (!__active ||
+        (Date.now() >
+          __active.increase_actions[__active.increase_actions.length - 1].nextEventTime &&
+          (StrategyService.config.increaseGainRequirement === 0 ||
+            __active.gain <= StrategyService.config.increaseGainRequirement)))
     ) {
       await __increase();
     }
@@ -379,25 +356,19 @@ const positionServiceFactory = (): IPositionService => {
       const currentTS = Date.now();
       const lvl = StrategyService.getActiveDecreaseLevel(__active.gain);
       if (
-        lvl !== undefined
-        && (
-          __active.decrease_actions[lvl].length === 0
+        lvl !== undefined &&
+        (__active.decrease_actions[lvl].length === 0 ||
           // eslint-disable-next-line max-len
-          || currentTS > __active.decrease_actions[lvl][__active.decrease_actions[lvl].length - 1].nextEventTime
-        )
-        && (
-          __nextSell === undefined || currentTS > __nextSell
-        )
+          currentTS >
+            __active.decrease_actions[lvl][__active.decrease_actions[lvl].length - 1]
+              .nextEventTime) &&
+        (__nextSell === undefined || currentTS > __nextSell)
       ) {
         __nextSell = addMinutes(currentTS, 1).getTime();
         await __decrease(StrategyService.config.decreaseLevels[lvl].percentage, lvl);
       }
     }
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                    TRADES EVENT HANDLERS                                     *
@@ -499,10 +470,6 @@ const positionServiceFactory = (): IPositionService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                           STREAMS                                            *
    ********************************************************************************************** */
@@ -524,9 +491,9 @@ const positionServiceFactory = (): IPositionService => {
 
     // handle a new reversal event if it has been issued
     if (
-      nextState.reversalState !== undefined
-      && typeof nextState.reversalState.reversalEventTime === 'number'
-      && nextState.reversalState.reversalEventTime > __lastReversalEventTime
+      nextState.reversalState !== undefined &&
+      typeof nextState.reversalState.reversalEventTime === 'number' &&
+      nextState.reversalState.reversalEventTime > __lastReversalEventTime
     ) {
       __lastReversalEventTime = nextState.reversalState!.reversalEventTime as number;
       __handleNewReversalEvent();
@@ -551,18 +518,14 @@ const positionServiceFactory = (): IPositionService => {
       __trades = newAnalysis;
       __handleNewPosition();
     } else if (
-      __trades !== undefined
-      && newAnalysis !== undefined
-      && __trades.amount !== newAnalysis.amount
+      __trades !== undefined &&
+      newAnalysis !== undefined &&
+      __trades.amount !== newAnalysis.amount
     ) {
       __trades = newAnalysis;
       __handlePositionChanges();
     }
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                           ACTIONS                                            *
@@ -621,10 +584,6 @@ const positionServiceFactory = (): IPositionService => {
     record!.archived = false;
     await updatePositionRecord(record!);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
@@ -713,9 +672,8 @@ const positionServiceFactory = (): IPositionService => {
    * - 11000: if the id has an invalid format
    * - 11001: if the record was not found in the database
    */
-  const getPositionHistory = (id: string): Promise<IEventHistoryRecord> => (
-    CandlestickService.getEventHistory(id)
-  );
+  const getPositionHistory = (id: string): Promise<IEventHistoryRecord> =>
+    CandlestickService.getEventHistory(id);
 
   /**
    * Retrieves all the trades that were executed in a position.
@@ -750,10 +708,6 @@ const positionServiceFactory = (): IPositionService => {
     }
     return TransactionService.listTransactionsByRange(record.open, record.close);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                       TRADE MANAGEMENT                                       *
@@ -842,10 +796,6 @@ const positionServiceFactory = (): IPositionService => {
     await TradeService.deleteTrade(id);
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
@@ -924,10 +874,6 @@ const positionServiceFactory = (): IPositionService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
@@ -961,18 +907,10 @@ const positionServiceFactory = (): IPositionService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const PositionService = positionServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

@@ -1,15 +1,7 @@
 import ms from 'ms';
 import { buildPristineEventHistory, isActive } from './utils.js';
-import {
-  createEventHistory,
-  getEventHistoryRecord,
-  updateRecords,
-} from './model.js';
-import {
-  IEventHistory,
-  ICandlestickIntervalID,
-  IEventName,
-} from './types.js';
+import { createEventHistory, getEventHistoryRecord, updateRecords } from './model.js';
+import { IEventHistory, ICandlestickIntervalID, IEventName } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -39,10 +31,6 @@ const eventHistoryFactory = async (
   // the records will be updated every UPDATE_FREQUENCY seconds
   let __updateInterval: NodeJS.Timeout;
   const __UPDATE_FREQUENCY = 60;
-
-
-
-
 
   /* **********************************************************************************************
    *                                         DATA HANDLER                                         *
@@ -83,17 +71,12 @@ const eventHistoryFactory = async (
         const close: number[] = [];
         data.forEach((item, i) => {
           // update the high
-          high.push(
-            item > __hist.records.high[idx][i]
-              ? item
-              : __hist.records.high[idx][i],
-          );
+          high.push(item > __hist.records.high[idx][i] ? item : __hist.records.high[idx][i]);
 
           // update the low
           low.push(
-            __hist.records.low[idx][i] = item < __hist.records.low[idx][i]
-              ? item
-              : __hist.records.low[idx][i],
+            (__hist.records.low[idx][i] =
+              item < __hist.records.low[idx][i] ? item : __hist.records.low[idx][i]),
           );
 
           // update the close
@@ -109,10 +92,6 @@ const eventHistoryFactory = async (
       __onNewCandlestick(currentTime, data);
     }
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                          INITIALIZER                                         *
@@ -130,13 +109,12 @@ const eventHistoryFactory = async (
   /**
    * Starts the interval that will update the records every __UPDATE_FREQUENCY seconds.
    */
-  __updateInterval = setInterval(() => {
-    updateRecords(__hist.id, __hist.records);
-  }, ms(`${__UPDATE_FREQUENCY} seconds`));
-
-
-
-
+  __updateInterval = setInterval(
+    () => {
+      updateRecords(__hist.id, __hist.records);
+    },
+    ms(`${__UPDATE_FREQUENCY} seconds`),
+  );
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -153,13 +131,7 @@ const eventHistoryFactory = async (
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  eventHistoryFactory,
-};
+export { eventHistoryFactory };

@@ -55,10 +55,6 @@ const versionServiceFactory = (): IVersionService => {
   const __REFETCH_FREQUENCY: number = 6;
   let __refetchInterval: NodeJS.Timeout;
 
-
-
-
-
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
@@ -75,7 +71,12 @@ const versionServiceFactory = (): IVersionService => {
       },
     });
     if (!isObjectValid(data) || !isSemverValid(data.version)) {
-      throw new Error(encodeError(`The package.json file retrieved from ${url} does not contain a valid version.`, 7000));
+      throw new Error(
+        encodeError(
+          `The package.json file retrieved from ${url} does not contain a valid version.`,
+          7000,
+        ),
+      );
     }
     return data.version;
   };
@@ -88,15 +89,15 @@ const versionServiceFactory = (): IVersionService => {
    */
   const __getLatestServiceCommit = async (
     url: string,
-  ): Promise<{ sha: string, eventTime: number }> => {
+  ): Promise<{ sha: string; eventTime: number }> => {
     const { data } = await sendGET(url);
     if (
-      !isArrayValid(data)
-      || !isObjectValid(data[0])
-      || !isStringValid(data[0].sha)
-      || !isObjectValid(data[0].commit)
-      || !isObjectValid(data[0].commit.committer)
-      || !isStringValid(data[0].commit.committer.date)
+      !isArrayValid(data) ||
+      !isObjectValid(data[0]) ||
+      !isStringValid(data[0].sha) ||
+      !isObjectValid(data[0].commit) ||
+      !isObjectValid(data[0].commit.committer) ||
+      !isStringValid(data[0].commit.committer.date)
     ) {
       console.log(data);
       throw new Error(encodeError(`The list of commits retrieved from ${url} are invalid.`, 7001));
@@ -116,10 +117,6 @@ const versionServiceFactory = (): IVersionService => {
     ]);
     return { version, sha, eventTime };
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                            BUILDER                                           *
@@ -157,9 +154,6 @@ const versionServiceFactory = (): IVersionService => {
     }
   };
 
-
-
-
   /* **********************************************************************************************
    *                                          INITIALIZER                                         *
    ********************************************************************************************** */
@@ -174,13 +168,16 @@ const versionServiceFactory = (): IVersionService => {
     await __buildVersion(runningVersion);
 
     // initialize the refresh interval
-    __refetchInterval = setInterval(async () => {
-      try {
-        await __buildVersion();
-      } catch (e) {
-        APIErrorService.save('VersionService.initialize.__buildVersion', e);
-      }
-    }, ms(`${__REFETCH_FREQUENCY} hours`));
+    __refetchInterval = setInterval(
+      async () => {
+        try {
+          await __buildVersion();
+        } catch (e) {
+          APIErrorService.save('VersionService.initialize.__buildVersion', e);
+        }
+      },
+      ms(`${__REFETCH_FREQUENCY} hours`),
+    );
   };
 
   /**
@@ -192,10 +189,6 @@ const versionServiceFactory = (): IVersionService => {
       clearInterval(__refetchInterval);
     }
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -212,18 +205,10 @@ const versionServiceFactory = (): IVersionService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const VersionService = versionServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

@@ -29,7 +29,7 @@ const getPositionRecord = async (id: string): Promise<IPosition | undefined> => 
  */
 const getPositionRecordTimes = async (
   id: string,
-): Promise<{ open: number, close: number | null } | undefined> => {
+): Promise<{ open: number; close: number | null } | undefined> => {
   const { rows } = await DatabaseService.pool.query({
     text: `
       SELECT open, close
@@ -85,9 +85,21 @@ const createPositionRecord = async ({
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);
     `,
     values: [
-      id, open, close, archived, entry_price, gain, amount, amount_quote, amount_quote_in,
-      amount_quote_out, pnl, roi, JSON.stringify(decrease_price_levels),
-      JSON.stringify(increase_actions), JSON.stringify(decrease_actions),
+      id,
+      open,
+      close,
+      archived,
+      entry_price,
+      gain,
+      amount,
+      amount_quote,
+      amount_quote_in,
+      amount_quote_out,
+      pnl,
+      roi,
+      JSON.stringify(decrease_price_levels),
+      JSON.stringify(increase_actions),
+      JSON.stringify(decrease_actions),
     ],
   });
 };
@@ -120,9 +132,20 @@ const updatePositionRecord = async ({
       WHERE id = $14;
     `,
     values: [
-      close, archived, entry_price, gain, amount, amount_quote, amount_quote_in, amount_quote_out,
-      pnl, roi, JSON.stringify(decrease_price_levels), JSON.stringify(increase_actions),
-      JSON.stringify(decrease_actions), id,
+      close,
+      archived,
+      entry_price,
+      gain,
+      amount,
+      amount_quote,
+      amount_quote_in,
+      amount_quote_out,
+      pnl,
+      roi,
+      JSON.stringify(decrease_price_levels),
+      JSON.stringify(increase_actions),
+      JSON.stringify(decrease_actions),
+      id,
     ],
   });
 };
@@ -137,10 +160,6 @@ const deleteAllPositionRecords = async (): Promise<void> => {
     text: `DELETE FROM ${DatabaseService.tn.positions};`,
   });
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                        COMPACT POSITION                                        *
@@ -198,11 +217,10 @@ const __listNextCompactPositionRecords = async (
 const listCompactPositionRecords = (
   limit: number,
   startAtOpenTime?: number,
-): Promise<ICompactPosition[]> => (
+): Promise<ICompactPosition[]> =>
   typeof startAtOpenTime === 'number'
     ? __listNextCompactPositionRecords(limit, startAtOpenTime)
-    : __listCompactPositionRecords(limit)
-);
+    : __listCompactPositionRecords(limit);
 
 /**
  * Retrieves a list of compact positions that are between a date range.
@@ -235,9 +253,6 @@ const listCompactPositionRecordsByRange = async (
   const { rows } = await DatabaseService.pool.query({ text, values });
   return rows;
 };
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

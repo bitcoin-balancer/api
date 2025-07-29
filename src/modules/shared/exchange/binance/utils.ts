@@ -54,9 +54,8 @@ const buildGetCandlesticksURL = (
  * @param b
  * @returns number
  */
-const tickersSortFunc = (a: IBinanceCoinTicker, b: IBinanceCoinTicker): number => (
-  Number(b.quoteVolume) - Number(a.quoteVolume)
-);
+const tickersSortFunc = (a: IBinanceCoinTicker, b: IBinanceCoinTicker): number =>
+  Number(b.quoteVolume) - Number(a.quoteVolume);
 
 /**
  * Builds the whitelist object from a list of symbols.
@@ -64,32 +63,25 @@ const tickersSortFunc = (a: IBinanceCoinTicker, b: IBinanceCoinTicker): number =
  * @param quoteAsset
  * @returns Record<string ,string>
  */
-const buildWhitelist = (
-  whitelistedSymbols: string[],
-  quoteAsset: string,
-): Record<string, string> => (
+const buildWhitelist = (whitelistedSymbols: string[], quoteAsset: string): Record<string, string> =>
   whitelistedSymbols.reduce(
     (previous, current) => ({ ...previous, [`${current}${quoteAsset}`]: current }),
     {},
-  )
-);
+  );
 
 /**
  * Builds the pairs object based on the top symbols.
  * @param topSymbols
  * @returns Record<string, string>
  */
-const buildTopPairsObject = (topSymbols: string[]): Record<string, string> => topSymbols.reduce(
-  (previous, current) => ({
-    ...previous,
-    [`${current}${ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset}`]: current,
-  }),
-  <Record<string, string>>{},
-);
-
-
-
-
+const buildTopPairsObject = (topSymbols: string[]): Record<string, string> =>
+  topSymbols.reduce(
+    (previous, current) => ({
+      ...previous,
+      [`${current}${ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset}`]: current,
+    }),
+    <Record<string, string>>{},
+  );
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

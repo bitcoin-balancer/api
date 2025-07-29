@@ -33,14 +33,7 @@ const broadcastState = (state: 2 | -2, price: number, change: number): void => {
  */
 const broadcastInvalidWindowIntegrity = (): void => NotificationService.onInvalidWindowIntegrity();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  broadcastState,
-  broadcastInvalidWindowIntegrity,
-};
+export { broadcastState, broadcastInvalidWindowIntegrity };

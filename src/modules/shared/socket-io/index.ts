@@ -41,10 +41,6 @@ const socketIOServiceFactory = (): ISocketIOService => {
   // the instance of the server
   let __io: Server;
 
-
-
-
-
   /* **********************************************************************************************
    *                                        EVENT EMITTERS                                        *
    ********************************************************************************************** */
@@ -69,13 +65,8 @@ const socketIOServiceFactory = (): ISocketIOService => {
    * @throws
    * - 9000: if the event cannot be emitted for any reason
    */
-  const emitCompactAppEssentials = (payload: ICompactAppEssentials): void => (
-    __emit('compact_app_essentials', payload)
-  );
-
-
-
-
+  const emitCompactAppEssentials = (payload: ICompactAppEssentials): void =>
+    __emit('compact_app_essentials', payload);
 
   /* **********************************************************************************************
    *                                          MIDDLEWARES                                         *
@@ -103,10 +94,6 @@ const socketIOServiceFactory = (): ISocketIOService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                          INITIALIZER                                         *
    ********************************************************************************************** */
@@ -118,10 +105,10 @@ const socketIOServiceFactory = (): ISocketIOService => {
   const initialize = async (server: IHTTPServer): Promise<void> => {
     // initialize the server
     __io = new Server<
-    IClientToServerEvents,
-    IServerToClientEvents,
-    IInterServerEvents,
-    ISocketData
+      IClientToServerEvents,
+      IServerToClientEvents,
+      IInterServerEvents,
+      ISocketData
     >(server, __SERVER_OPTIONS);
 
     // install the authentication middleware
@@ -148,10 +135,6 @@ const socketIOServiceFactory = (): ISocketIOService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
@@ -168,22 +151,12 @@ const socketIOServiceFactory = (): ISocketIOService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const SocketIOService = socketIOServiceFactory();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  SocketIOService,
-};
+export { SocketIOService };

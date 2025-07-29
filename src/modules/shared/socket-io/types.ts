@@ -21,10 +21,6 @@ type ISocketIOService = {
   teardown: () => Promise<void>;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
@@ -47,9 +43,7 @@ type IServerToClientEvents = {
  * Client To Server Events
  * Events that are broadcasted only from the client.
  */
-type IClientToServerEvents = {
-
-};
+type IClientToServerEvents = {};
 
 /**
  * Inter Server Events
@@ -63,13 +57,7 @@ type IInterServerEvents = {
  * Socket Data
  * Metadata that can be included in a connected socket.
  */
-type ISocketData = {
-
-};
-
-
-
-
+type ISocketData = {};
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

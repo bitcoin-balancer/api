@@ -43,33 +43,53 @@ const validateManualTradeRecord = (record: IManualTrade): void => {
     throw new Error(encodeError('The trade record is not a valid object.', 33500));
   }
   if (!isTimestampValid(record.event_time)) {
-    throw new Error(encodeError(`The event_time '${record.event_time}' is not a valid timestamp.`, 33501));
+    throw new Error(
+      encodeError(`The event_time '${record.event_time}' is not a valid timestamp.`, 33501),
+    );
   }
   if (record.event_time > Date.now()) {
-    throw new Error(encodeError(`The event_time '${record.event_time}' is invalid as it cannot be set ahead of time.`, 33502));
+    throw new Error(
+      encodeError(
+        `The event_time '${record.event_time}' is invalid as it cannot be set ahead of time.`,
+        33502,
+      ),
+    );
   }
   if (record.side !== 'BUY' && record.side !== 'SELL') {
-    throw new Error(encodeError(`The side '${record.side}' is invalid. Only 'BUY' and 'SELL' are accepted.`, 33503));
+    throw new Error(
+      encodeError(
+        `The side '${record.side}' is invalid. Only 'BUY' and 'SELL' are accepted.`,
+        33503,
+      ),
+    );
   }
   if (!isStringValid(record.notes, 10, 49999)) {
-    throw new Error(encodeError('The notes must be a valid string ranging 10 and 49,999 characters in length.', 33504));
+    throw new Error(
+      encodeError(
+        'The notes must be a valid string ranging 10 and 49,999 characters in length.',
+        33504,
+      ),
+    );
   }
   if (!isNumberValid(record.price, 0.01, Number.MAX_SAFE_INTEGER)) {
-    throw new Error(encodeError(`The price '${record.price}' is invalid as it must be a valid number ranging 0.01 - ${Number.MAX_SAFE_INTEGER}.`, 33505));
+    throw new Error(
+      encodeError(
+        `The price '${record.price}' is invalid as it must be a valid number ranging 0.01 - ${Number.MAX_SAFE_INTEGER}.`,
+        33505,
+      ),
+    );
   }
   if (!isNumberValid(record.amount, 0.00000001, Number.MAX_SAFE_INTEGER)) {
-    throw new Error(encodeError(`The amount '${record.amount}' is invalid as it must be a valid number ranging 0.00000001 - ${Number.MAX_SAFE_INTEGER}.`, 33506));
+    throw new Error(
+      encodeError(
+        `The amount '${record.amount}' is invalid as it must be a valid number ranging 0.00000001 - ${Number.MAX_SAFE_INTEGER}.`,
+        33506,
+      ),
+    );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  validateTradeRecordID,
-  validateManualTradeRecord,
-};
+export { validateTradeRecordID, validateManualTradeRecord };

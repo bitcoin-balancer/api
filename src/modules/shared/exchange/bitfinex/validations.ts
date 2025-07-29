@@ -53,15 +53,7 @@ const validateTickersResponse = <T>(res: IRequestResponse<T>): void => {
   }
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  validateCandlesticksResponse,
-  validateOrderBookResponse,
-  validateTickersResponse,
-};
+export { validateCandlesticksResponse, validateOrderBookResponse, validateTickersResponse };

@@ -14,7 +14,12 @@ import { isIPValid } from '../validations/index.js';
  */
 const validateIP = (ip: string | undefined): void => {
   if (!isIPValid(ip)) {
-    throw new Error(encodeError(`The request's IP Address '${ip}' is invalid and therefore cannot be served.`, 6250));
+    throw new Error(
+      encodeError(
+        `The request's IP Address '${ip}' is invalid and therefore cannot be served.`,
+        6250,
+      ),
+    );
   }
 };
 
@@ -32,16 +37,23 @@ const validateArgs = (
 ): void => {
   if (isArrayValid(requiredArgs)) {
     if (!isObjectValid(args)) {
-      throw new Error(encodeError('The request cannot be served because the required arguments were not sent.', 6251));
+      throw new Error(
+        encodeError(
+          'The request cannot be served because the required arguments were not sent.',
+          6251,
+        ),
+      );
     }
     requiredArgs.forEach((argKey) => {
       if (
-        args[argKey] === undefined
-        || args[argKey] === null
-        || args[argKey] === ''
-        || Number.isNaN(args[argKey])
+        args[argKey] === undefined ||
+        args[argKey] === null ||
+        args[argKey] === '' ||
+        Number.isNaN(args[argKey])
       ) {
-        throw new Error(encodeError(`The arg '${argKey}' is required but it was not sent in the request.`, 6252));
+        throw new Error(
+          encodeError(`The arg '${argKey}' is required but it was not sent in the request.`, 6252),
+        );
       }
     });
   }
@@ -55,19 +67,16 @@ const validateArgs = (
  */
 const validateAuthorizationHeader = (authorization: string | undefined): void => {
   if (!isAuthorizationHeaderValid(authorization)) {
-    throw new Error(encodeError('The Authorization Header is invalid. Please review the docs and try again.', 6253));
+    throw new Error(
+      encodeError(
+        'The Authorization Header is invalid. Please review the docs and try again.',
+        6253,
+      ),
+    );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  validateIP,
-  validateArgs,
-  validateAuthorizationHeader,
-};
+export { validateIP, validateArgs, validateAuthorizationHeader };

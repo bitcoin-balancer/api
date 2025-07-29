@@ -1,10 +1,6 @@
 import { extractMessage } from 'error-message-utils';
 import { ISide, IBalances } from '../../shared/exchange/index.js';
-import {
-  ITransaction,
-  ITransactionActionName,
-  ITransactionLog,
-} from './types.js';
+import { ITransaction, ITransactionActionName, ITransactionLog } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -36,11 +32,7 @@ const buildLog = (
  * @param balances
  * @returns Omit<ITransaction, 'id'>
  */
-const buildTX = (
-  side: ISide,
-  amount: number,
-  balances: IBalances,
-): Omit<ITransaction, 'id'> => {
+const buildTX = (side: ISide, amount: number, balances: IBalances): Omit<ITransaction, 'id'> => {
   const eventTime = Date.now();
   return {
     event_time: eventTime,
@@ -51,14 +43,7 @@ const buildTX = (
   };
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  buildLog,
-  buildTX,
-};
+export { buildLog, buildTX };

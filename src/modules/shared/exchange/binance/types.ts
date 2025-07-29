@@ -41,10 +41,6 @@ type IBinanceService = {
   sell: (amount: number) => Promise<IBinanceOrderExecutionResponse>;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                           WEBSOCKET                                            *
  ************************************************************************************************ */
@@ -54,10 +50,6 @@ type IBinanceService = {
  * The possible objects that are sent when subscribing to the on('message') event.
  */
 type IBinanceWebSocketMessage = IBinanceTickerWebSocketMessage;
-
-
-
-
 
 /* ************************************************************************************************
  *                                            GENERAL                                             *
@@ -71,10 +63,6 @@ type IBinanceWebSocketMessage = IBinanceTickerWebSocketMessage;
  */
 type IBinanceSide = 'BUY' | 'SELL';
 
-
-
-
-
 /* ************************************************************************************************
  *                                          CANDLESTICK                                           *
  ************************************************************************************************ */
@@ -84,12 +72,22 @@ type IBinanceSide = 'BUY' | 'SELL';
  * The candlestick intervals supported by Binance.
  */
 type IBinanceCandlestickInterval =
-'1s' | // seconds
-'1m' | '3m' | '5m' | '15m' | '30m' | // minutes
-'1h' | '2h' | '4h' | '6h' | '8h' | '12h' | // hours
-'1d' | '3d' | // days
-'1w' | // weeks
-'1m'; // months
+  | '1s' // seconds
+  | '1m'
+  | '3m'
+  | '5m'
+  | '15m'
+  | '30m' // minutes
+  | '1h'
+  | '2h'
+  | '4h'
+  | '6h'
+  | '8h'
+  | '12h' // hours
+  | '1d'
+  | '3d' // days
+  | '1w' // weeks
+  | '1m'; // months
 
 /**
  * Binance Candlestick
@@ -111,10 +109,6 @@ type IBinanceCandlestick = [
   string, // 11 = unused field, ignore
 ];
 
-
-
-
-
 /* ************************************************************************************************
  *                                           ORDER BOOK                                           *
  ************************************************************************************************ */
@@ -126,16 +120,20 @@ type IBinanceCandlestick = [
  */
 type IBinanceOrderBook = {
   // asks (sell orders)
-  asks: Array<[
-    string, // price
-    string, // quantity
-  ]>;
+  asks: Array<
+    [
+      string, // price
+      string, // quantity
+    ]
+  >;
 
   // bids (buy orders)
-  bids: Array<[
-    string, // price
-    string, // quantity
-  ]>;
+  bids: Array<
+    [
+      string, // price
+      string, // quantity
+    ]
+  >;
 
   // binance internals
   lastUpdateId: number;
@@ -163,21 +161,21 @@ type IBinanceOrderBookWebSocketMessage = {
   u: number; // 51044631864
 
   // asks to be updated
-  a: Array<[
-    string, // price level to be updated
-    string, // quantity
-  ]>; // [["59177.00000000", "5.25143000"], ...]
+  a: Array<
+    [
+      string, // price level to be updated
+      string, // quantity
+    ]
+  >; // [["59177.00000000", "5.25143000"], ...]
 
   // bids to be updated
-  b: Array<[
-    string, // price level to be updated
-    string, // quantity
-  ]>; // [["59164.28000000", "0.00000000"], ...]
+  b: Array<
+    [
+      string, // price level to be updated
+      string, // quantity
+    ]
+  >; // [["59164.28000000", "0.00000000"], ...]
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TICKER                                             *
@@ -219,10 +217,6 @@ type IBinanceTickerWebSocketMessageData = {
   q: string; // total traded quote asset volume. e.g. '923325368.12662400'
 };
 type IBinanceTickerWebSocketMessage = IBinanceTickerWebSocketMessageData[];
-
-
-
-
 
 /* ************************************************************************************************
  *                                          ACCOUNT DATA                                          *
@@ -288,10 +282,6 @@ type IBinanceAccountTrade = {
   isBestMatch: boolean; // true
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        ACCOUNT ACTIONS                                         *
  ************************************************************************************************ */
@@ -325,10 +315,6 @@ type IBinanceOrderExecutionResponse = {
     tradeId: number; // 56
   }>;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

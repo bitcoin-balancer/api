@@ -42,10 +42,6 @@ const jwtServiceFactory = (): IJWTService => {
   // the name of the property that will contain the user's Refresh JWT
   const __REFRESH_JWT_COOKIE_NAME = 'refreshJWT';
 
-
-
-
-
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
@@ -62,9 +58,6 @@ const jwtServiceFactory = (): IJWTService => {
     return listRecordsByUID(uid);
   };
 
-
-
-
   /* **********************************************************************************************
    *                                        JWT GENERATORS                                        *
    ********************************************************************************************** */
@@ -77,11 +70,8 @@ const jwtServiceFactory = (): IJWTService => {
    * - 4250: if the jsonwebtoken lib fails to sign the token
    * - 4251: if the signed token has an invalid format
    */
-  const __generateAccessToken = (uid: string): Promise<string> => sign(
-    uid,
-    addMinutes(Date.now(), __ACCESS_JWT_DURATION),
-    __SECRET.access,
-  );
+  const __generateAccessToken = (uid: string): Promise<string> =>
+    sign(uid, addMinutes(Date.now(), __ACCESS_JWT_DURATION), __SECRET.access);
 
   /**
    * Generates a Refresh JWT for an uid.
@@ -91,15 +81,8 @@ const jwtServiceFactory = (): IJWTService => {
    * - 4250: if the jsonwebtoken lib fails to sign the token
    * - 4251: if the signed token has an invalid format
    */
-  const __generateRefreshToken = (uid: string): Promise<string> => sign(
-    uid,
-    addDays(Date.now(), __REFRESH_JWT_DURATION),
-    __SECRET.refresh,
-  );
-
-
-
-
+  const __generateRefreshToken = (uid: string): Promise<string> =>
+    sign(uid, addDays(Date.now(), __REFRESH_JWT_DURATION), __SECRET.refresh);
 
   /* **********************************************************************************************
    *                                         AUTH ACTIONS                                         *
@@ -128,7 +111,7 @@ const jwtServiceFactory = (): IJWTService => {
     password: string,
     otpToken: string,
     altchaPayload: string,
-  ): Promise<{ access: string, refresh: string }> => {
+  ): Promise<{ access: string; refresh: string }> => {
     // verify the credentials
     const uid = await UserService.verifySignInCredentials(
       nickname,
@@ -158,9 +141,8 @@ const jwtServiceFactory = (): IJWTService => {
    * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
    * - 4253: if the decoded data is an invalid object or does not contain the uid
    */
-  const verifyAccessToken = (accessJWT: string): Promise<string> => (
-    verify(accessJWT, __SECRET.access)
-  );
+  const verifyAccessToken = (accessJWT: string): Promise<string> =>
+    verify(accessJWT, __SECRET.access);
 
   /**
    * Decodes a Refresh JWT and returns the UID.
@@ -170,9 +152,8 @@ const jwtServiceFactory = (): IJWTService => {
    * - 4252: if the lib fails to verify the JWT for any reason (most likely, the token expired)
    * - 4253: if the decoded data is an invalid object or does not contain the uid
    */
-  const verifyRefreshToken = (refreshJWT: string): Promise<string> => (
-    verify(refreshJWT, __SECRET.refresh)
-  );
+  const verifyRefreshToken = (refreshJWT: string): Promise<string> =>
+    verify(refreshJWT, __SECRET.refresh);
 
   /**
    * Retrieves the hashed representation of a Refresh JWT if it is currently active. Otherwise, it
@@ -220,8 +201,10 @@ const jwtServiceFactory = (): IJWTService => {
     const decodedUID = await verifyRefreshToken(refreshJWT);
 
     // ensure the token is active
-    if (await __toRefreshTokenHash(decodedUID, refreshJWT) === undefined) {
-      throw new Error(encodeError(`The provided Refresh JWT has not been assigned to uid '${decodedUID}'.`, 4000));
+    if ((await __toRefreshTokenHash(decodedUID, refreshJWT)) === undefined) {
+      throw new Error(
+        encodeError(`The provided Refresh JWT has not been assigned to uid '${decodedUID}'.`, 4000),
+      );
     }
 
     // finally, generate the token and return it
@@ -250,10 +233,6 @@ const jwtServiceFactory = (): IJWTService => {
     );
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         MAINTENANCE                                          *
    ********************************************************************************************** */
@@ -268,10 +247,6 @@ const jwtServiceFactory = (): IJWTService => {
 
     // ...
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
@@ -292,10 +267,6 @@ const jwtServiceFactory = (): IJWTService => {
   const teardown = async (): Promise<void> => {
     await __runMaintenance();
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -325,22 +296,12 @@ const jwtServiceFactory = (): IJWTService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const JWTService = jwtServiceFactory();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  JWTService,
-};
+export { JWTService };

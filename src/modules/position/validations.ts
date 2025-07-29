@@ -25,10 +25,6 @@ const __QUERY_LIMIT = 30;
 // the maximum difference between the startAt and the endAt properties in milliseconds
 const __DATE_RANGE_LIMIT = ms('6 years');
 
-
-
-
-
 /* ************************************************************************************************
  *                                            ACTIONS                                             *
  ************************************************************************************************ */
@@ -43,10 +39,17 @@ const __DATE_RANGE_LIMIT = ms('6 years');
  */
 const canPositionBeDecreased = (active: IPosition | undefined, percentage: number): void => {
   if (active === undefined) {
-    throw new Error(encodeError('A decrease action can only be performed if there is an active position.', 30507));
+    throw new Error(
+      encodeError('A decrease action can only be performed if there is an active position.', 30507),
+    );
   }
   if (!isNumberValid(percentage, 1, 100)) {
-    throw new Error(encodeError(`The decrease percentage must be a valid number ranging 1 - 100. Received: ${percentage}`, 30508));
+    throw new Error(
+      encodeError(
+        `The decrease percentage must be a valid number ranging 1 - 100. Received: ${percentage}`,
+        30508,
+      ),
+    );
   }
 };
 
@@ -66,13 +69,19 @@ const canPositionBeArchived = (
   position: IPosition | undefined,
 ): void => {
   if (position === undefined) {
-    throw new Error(encodeError(`The position '${id}' cannot be archived because it doesn't exist.`, 30509));
+    throw new Error(
+      encodeError(`The position '${id}' cannot be archived because it doesn't exist.`, 30509),
+    );
   }
   if (position.archived) {
-    throw new Error(encodeError(`The position '${id}' cannot be archived because it has already been.`, 30510));
+    throw new Error(
+      encodeError(`The position '${id}' cannot be archived because it has already been.`, 30510),
+    );
   }
   if (active && active.id === id) {
-    throw new Error(encodeError(`The position '${id}' cannot be archived because it is active.`, 30512));
+    throw new Error(
+      encodeError(`The position '${id}' cannot be archived because it is active.`, 30512),
+    );
   }
 };
 
@@ -86,16 +95,16 @@ const canPositionBeArchived = (
  */
 const canPositionBeUnarchived = (id: string, position: IPosition | undefined): void => {
   if (position === undefined) {
-    throw new Error(encodeError(`The position '${id}' cannot be archived because it doesn't exist.`, 30509));
+    throw new Error(
+      encodeError(`The position '${id}' cannot be archived because it doesn't exist.`, 30509),
+    );
   }
   if (!position.archived) {
-    throw new Error(encodeError(`The position '${id}' cannot be unarchived because it is not archived.`, 30511));
+    throw new Error(
+      encodeError(`The position '${id}' cannot be unarchived because it is not archived.`, 30511),
+    );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                           RETRIEVERS                                           *
@@ -109,7 +118,9 @@ const canPositionBeUnarchived = (id: string, position: IPosition | undefined): v
  */
 const canPositionRecordBeRetrieved = (id: string): void => {
   if (!isUUIDValid(id, 4)) {
-    throw new Error(encodeError(`The position record cannot be retrieved for an invalid ID '${id}'.`, 30500));
+    throw new Error(
+      encodeError(`The position record cannot be retrieved for an invalid ID '${id}'.`, 30500),
+    );
   }
 };
 
@@ -126,10 +137,20 @@ const canCompactPositionRecordsBeListed = (
   startAtOpenTime: number | undefined,
 ): void => {
   if (!isIntegerValid(limit, 1, __QUERY_LIMIT)) {
-    throw new Error(encodeError(`The maximum number of compact position records that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`, 30501));
+    throw new Error(
+      encodeError(
+        `The maximum number of compact position records that can be retrieved at a time is ${__QUERY_LIMIT}. Received: ${limit}`,
+        30501,
+      ),
+    );
   }
   if (startAtOpenTime !== undefined && !isTimestampValid(startAtOpenTime)) {
-    throw new Error(encodeError(`If the startAtOpenTime arg is provided, it must be a valid timestamp. Received: ${startAtOpenTime}`, 30502));
+    throw new Error(
+      encodeError(
+        `If the startAtOpenTime arg is provided, it must be a valid timestamp. Received: ${startAtOpenTime}`,
+        30502,
+      ),
+    );
   }
 };
 
@@ -151,19 +172,27 @@ const canCompactPositionRecordsBeListedByRange = (
     throw new Error(encodeError(`The startAt '${startAt}' is not a valid timestamp.`, 30503));
   }
   if (endAt !== undefined && !isTimestampValid(endAt)) {
-    throw new Error(encodeError(`If the endAt arg is provided, it must be a valid timestamp. Received: ${endAt}`, 30504));
+    throw new Error(
+      encodeError(
+        `If the endAt arg is provided, it must be a valid timestamp. Received: ${endAt}`,
+        30504,
+      ),
+    );
   }
   if (typeof endAt === 'number' && startAt >= endAt) {
-    throw new Error(encodeError(`If startAt '${startAt}' must be less than the endAt '${endAt}'.`, 30505));
+    throw new Error(
+      encodeError(`If startAt '${startAt}' must be less than the endAt '${endAt}'.`, 30505),
+    );
   }
-  if (((typeof endAt === 'number' ? endAt : Date.now()) - startAt) >= __DATE_RANGE_LIMIT) {
-    throw new Error(encodeError('The difference between the startAt and the endAt cannot be larger than 6 years.', 30506));
+  if ((typeof endAt === 'number' ? endAt : Date.now()) - startAt >= __DATE_RANGE_LIMIT) {
+    throw new Error(
+      encodeError(
+        'The difference between the startAt and the endAt cannot be larger than 6 years.',
+        30506,
+      ),
+    );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                        TRADE MANAGEMENT                                        *
@@ -189,7 +218,9 @@ const canInteractWithPositionTrades = (
   trade?: IManualTrade,
 ): void => {
   if (!isObjectValid(activePosition)) {
-    throw new Error(encodeError('There must be an active position to be able to interact with trades.', 30513));
+    throw new Error(
+      encodeError('There must be an active position to be able to interact with trades.', 30513),
+    );
   }
   if (trade !== undefined) {
     // validate the integrity of the trade object
@@ -197,7 +228,9 @@ const canInteractWithPositionTrades = (
 
     // ensure the timestamp took place after the position was opened
     if (trade.event_time < activePosition.open) {
-      throw new Error(encodeError('The time of the trade must be set after the position was opened.', 30517));
+      throw new Error(
+        encodeError('The time of the trade must be set after the position was opened.', 30517),
+      );
     }
   }
 };
@@ -214,13 +247,17 @@ const canInteractWithPositionTrades = (
 const __canTradesStateBeCommitted = (trades: ITrade[]): void => {
   // ensure there are trades
   if (trades.length === 0) {
-    throw new Error(encodeError('The trades\' state cannot be committed because the list is empty.', 30514));
+    throw new Error(
+      encodeError("The trades' state cannot be committed because the list is empty.", 30514),
+    );
   }
 
   // the first trade can never be a sell
   if (trades[0].side === 'SELL') {
     console.log(trades);
-    throw new Error(encodeError('The first trade from the list cannot be a SELL execution.', 30519));
+    throw new Error(
+      encodeError('The first trade from the list cannot be a SELL execution.', 30519),
+    );
   }
 
   // calculate the amounts based on the trades
@@ -228,13 +265,23 @@ const __canTradesStateBeCommitted = (trades: ITrade[]): void => {
 
   // the amount cannot be negative
   if (amount.isLessThan(0)) {
-    throw new Error(encodeError(`The trades' state cannot be committed because the amount of the position must be a positive number. The provided state resulted in: ${amount.toString()}`, 30515));
+    throw new Error(
+      encodeError(
+        `The trades' state cannot be committed because the amount of the position must be a positive number. The provided state resulted in: ${amount.toString()}`,
+        30515,
+      ),
+    );
   }
 
   // calculate the new entry price and validate it
   const entryPrice = calculateWeightedEntry(buyTrades);
   if (entryPrice <= 0) {
-    throw new Error(encodeError(`The trades' state cannot be committed because the entry price of the position must be greater than 0. The provided state resulted in: ${entryPrice}`, 30516));
+    throw new Error(
+      encodeError(
+        `The trades' state cannot be committed because the entry price of the position must be greater than 0. The provided state resulted in: ${entryPrice}`,
+        30516,
+      ),
+    );
   }
 };
 
@@ -248,10 +295,8 @@ const __canTradesStateBeCommitted = (trades: ITrade[]): void => {
  * - 30516: if the state causes the entry price to be less than or equals to 0
  * - 30519: if the first trade is a sell
  */
-const canTradeBeCreated = (
-  rawTrades: ITrade[],
-  trade: ITrade,
-): void => __canTradesStateBeCommitted([...rawTrades, trade].sort(sortRecords('event_time', 'asc')));
+const canTradeBeCreated = (rawTrades: ITrade[], trade: ITrade): void =>
+  __canTradesStateBeCommitted([...rawTrades, trade].sort(sortRecords('event_time', 'asc')));
 
 /**
  * Verifies if updating a trade maintains the integrity of the position.
@@ -266,25 +311,23 @@ const canTradeBeCreated = (
  * - 30516: if the state causes the entry price to be less than or equals to 0
  * - 30519: if the first trade is a sell
  */
-const canTradeBeUpdated = async (
-  rawTrades: ITrade[],
-  id: number,
-  trade: ITrade,
-): Promise<void> => {
+const canTradeBeUpdated = async (rawTrades: ITrade[], id: number, trade: ITrade): Promise<void> => {
   // make sure the trade exists
   TradeService.validateTradeID(id);
-  if (await TradeService.getTrade(id) === undefined) {
+  if ((await TradeService.getTrade(id)) === undefined) {
     throw new Error(encodeError(`The trade '${id}' was not found in the database.`, 30518));
   }
 
   // check if the state can be committed
   __canTradesStateBeCommitted(
-    rawTrades.map((record) => {
-      if (record.id === trade.id) {
-        return trade;
-      }
-      return record;
-    }).sort(sortRecords('event_time', 'asc')),
+    rawTrades
+      .map((record) => {
+        if (record.id === trade.id) {
+          return trade;
+        }
+        return record;
+      })
+      .sort(sortRecords('event_time', 'asc')),
   );
 };
 
@@ -300,23 +343,16 @@ const canTradeBeUpdated = async (
  * - 30516: if the state causes the entry price to be less than or equals to 0
  * - 30519: if the first trade is a sell
  */
-const canTradeBeDeleted = async (
-  rawTrades: ITrade[],
-  id: number,
-): Promise<void> => {
+const canTradeBeDeleted = async (rawTrades: ITrade[], id: number): Promise<void> => {
   // make sure the trade exists
   TradeService.validateTradeID(id);
-  if (await TradeService.getTrade(id) === undefined) {
+  if ((await TradeService.getTrade(id)) === undefined) {
     throw new Error(encodeError(`The trade '${id}' was not found in the database.`, 30518));
   }
 
   // check if the state can be committed
   __canTradesStateBeCommitted(rawTrades.filter((trade) => trade.id !== id));
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

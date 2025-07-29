@@ -19,7 +19,8 @@ const options: Partial<Options> = {
   standardHeaders: false, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   statusCode: 429,
-  message: 'You have exceeded your API request limit. Please wait for a few minutes before trying again.',
+  message:
+    'You have exceeded your API request limit. Please wait for a few minutes before trying again.',
 };
 
 /**
@@ -52,17 +53,7 @@ const highRiskLimit = rateLimit({ ...options, limit: 20 });
  */
 const veryHighRiskLimit = rateLimit({ ...options, limit: 10 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  veryLowRiskLimit,
-  lowRiskLimit,
-  mediumRiskLimit,
-  highRiskLimit,
-  veryHighRiskLimit,
-};
+export { veryLowRiskLimit, lowRiskLimit, mediumRiskLimit, highRiskLimit, veryHighRiskLimit };

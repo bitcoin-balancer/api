@@ -70,10 +70,6 @@ const krakenServiceFactory = (): IKrakenService => {
     '1w': 10080,
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                          MARKET DATA                                         *
    ********************************************************************************************** */
@@ -104,7 +100,7 @@ const krakenServiceFactory = (): IKrakenService => {
       { skipStatusCodeValidation: true },
     );
     validateCandlesticksResponse(res, 'XXBTZUSD');
-    return transformCandlesticks(res.data.result.XXBTZUSD.slice(-(limit)));
+    return transformCandlesticks(res.data.result.XXBTZUSD.slice(-limit));
   };
 
   /**
@@ -134,7 +130,7 @@ const krakenServiceFactory = (): IKrakenService => {
    * Retrieves the order book's stream for the base asset.
    * @returns Observable<IOrderBookWebSocketMessage>
    */
-  const getOrderBookStream = (): Observable<IOrderBookWebSocketMessage> => (
+  const getOrderBookStream = (): Observable<IOrderBookWebSocketMessage> =>
     new Observable<IOrderBookWebSocketMessage>((subscriber) => {
       const ws = websocketFactory<IKrakenWebSocketMessage>(
         'LIQUIDITY',
@@ -153,8 +149,7 @@ const krakenServiceFactory = (): IKrakenService => {
       return function unsubscribe() {
         ws.off();
       };
-    })
-  );
+    });
 
   /**
    * Tickers
@@ -219,7 +214,7 @@ const krakenServiceFactory = (): IKrakenService => {
    * @param topSymbols
    * @returns Observable<ITickerWebSocketMessage>
    */
-  const getTickersStream = (topSymbols: string[]): Observable<ITickerWebSocketMessage> => (
+  const getTickersStream = (topSymbols: string[]): Observable<ITickerWebSocketMessage> =>
     new Observable<ITickerWebSocketMessage>((subscriber) => {
       // init values
       const topPairs = buildTopPairsObject(topSymbols, 'USD');
@@ -242,11 +237,7 @@ const krakenServiceFactory = (): IKrakenService => {
       return function unsubscribe() {
         ws.off();
       };
-    })
-  );
-
-
-
+    });
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -264,22 +255,12 @@ const krakenServiceFactory = (): IKrakenService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const KrakenService = krakenServiceFactory();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  KrakenService,
-};
+export { KrakenService };

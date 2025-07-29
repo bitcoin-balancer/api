@@ -34,11 +34,15 @@ const exchangeServiceFactory = (): IExchangeService => {
    ********************************************************************************************** */
 
   // the list of intervals supported
-  const CANDLESTICK_INTERVALS: ICandlestickInterval[] = ['1m', '5m', '15m', '30m', '1h', '1d', '1w'];
-
-
-
-
+  const CANDLESTICK_INTERVALS: ICandlestickInterval[] = [
+    '1m',
+    '5m',
+    '15m',
+    '30m',
+    '1h',
+    '1d',
+    '1w',
+  ];
 
   /* **********************************************************************************************
    *                                          MARKET DATA                                         *
@@ -103,10 +107,6 @@ const exchangeServiceFactory = (): IExchangeService => {
    */
   const getTickersStream = assembleGetTickersStream();
 
-
-
-
-
   /* **********************************************************************************************
    *                                         ACCOUNT DATA                                         *
    ********************************************************************************************** */
@@ -133,10 +133,6 @@ const exchangeServiceFactory = (): IExchangeService => {
    */
   const listTrades = assembleListTrades();
 
-
-
-
-
   /* **********************************************************************************************
    *                                       ACCOUNT ACTIONS                                        *
    ********************************************************************************************** */
@@ -160,10 +156,6 @@ const exchangeServiceFactory = (): IExchangeService => {
    * - 13506: if the response is not a valid payload object (binance)
    */
   const sell = assembleSell();
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -189,18 +181,10 @@ const exchangeServiceFactory = (): IExchangeService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const ExchangeService = exchangeServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

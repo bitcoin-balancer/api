@@ -31,10 +31,6 @@ type IBitfinexService = {
   getTickersStream: (topSymbols: string[]) => Observable<ITickerWebSocketMessage>;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                           WEBSOCKET                                            *
  ************************************************************************************************ */
@@ -62,7 +58,7 @@ type IBitfinexWebSocketEvent = 'error' | 'info' | 'subscribe' | 'subscribed';
  * The object sent by the stream when the connection is established.
  */
 type IBitfinexInfoWebSocketMessage = {
-  event: 'info',
+  event: 'info';
   version: number; // e.g. 2
   serverId: string; // e.g. '517720c6-d168-4be6-b720-f44c7eb9877e'
   platform: Record<string, unknown>; // e.g. { status: 1 }
@@ -79,13 +75,12 @@ type IBitfinexHeartbeatWebSocketMessage = [IBitfinexChannelID, 'hb'];
  * Bitfinex WebSocket Message
  * The possible objects that are sent when subscribing to the on('message') event.
  */
-type IBitfinexWebSocketMessage = IBitfinexInfoWebSocketMessage | IBitfinexHeartbeatWebSocketMessage
-| IBitfinexTickerSubscriptionMessage | IBitfinexOrderBookWebSocketMessage
-| IBitfinexTickerWebSocketMessage;
-
-
-
-
+type IBitfinexWebSocketMessage =
+  | IBitfinexInfoWebSocketMessage
+  | IBitfinexHeartbeatWebSocketMessage
+  | IBitfinexTickerSubscriptionMessage
+  | IBitfinexOrderBookWebSocketMessage
+  | IBitfinexTickerWebSocketMessage;
 
 /* ************************************************************************************************
  *                                          CANDLESTICK                                           *
@@ -96,11 +91,18 @@ type IBitfinexWebSocketMessage = IBitfinexInfoWebSocketMessage | IBitfinexHeartb
  * The candlestick intervals supported by Bitfinex.
  */
 type IBitfinexCandlestickInterval =
-'1m' | '5m' | '15m' | '30m' | // minutes
-'1h' | '3h' | '6h' | '12h' | // hours
-'1D' | '14D' | // days
-'1W' | // weeks
-'1M'; // months
+  | '1m'
+  | '5m'
+  | '15m'
+  | '30m' // minutes
+  | '1h'
+  | '3h'
+  | '6h'
+  | '12h' // hours
+  | '1D'
+  | '14D' // days
+  | '1W' // weeks
+  | '1M'; // months
 
 /**
  * Bitfinex Candlestick
@@ -123,10 +125,6 @@ type IBitfinexCandlestick = [
 type ISupportedCandlestickIntervals = {
   [key in ICandlestickInterval]: IBitfinexCandlestickInterval;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                           ORDER BOOK                                           *
@@ -160,7 +158,7 @@ type IBitfinexOrderBookWebSocketSubscription = {
   symbol: string; // e.g. 'tBTCUSD'
   prec: string; // e.g. 'PO'
   len: number; // e.g. 250
-  freq: string, // 'FO'
+  freq: string; // 'FO'
 };
 
 /**
@@ -173,10 +171,6 @@ type IBitfinexOrderBookWebSocketMessage = [
   IBitfinexChannelID,
   Array<IBitfinexOrderBookLevel> | IBitfinexOrderBookLevel,
 ];
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TICKER                                             *
@@ -241,10 +235,6 @@ type IBitfinexTickerWebSocketMessageData = [
   number, // 9: daily low . e.g. 61472
 ];
 type IBitfinexTickerWebSocketMessage = [IBitfinexChannelID, IBitfinexTickerWebSocketMessageData];
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

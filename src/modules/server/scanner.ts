@@ -16,7 +16,8 @@ const __buildCPUState = (raw: Record<string, any>): ICPUState => ({
   avgLoad: typeof raw.avgLoad === 'number' ? processValue(raw.avgLoad) : 0,
   currentLoad: typeof raw.currentLoad === 'number' ? processValue(raw.currentLoad) : 0,
   currentLoadUser: typeof raw.currentLoadUser === 'number' ? processValue(raw.currentLoadUser) : 0,
-  currentLoadSystem: typeof raw.currentLoadSystem === 'number' ? processValue(raw.currentLoadSystem) : 0,
+  currentLoadSystem:
+    typeof raw.currentLoadSystem === 'number' ? processValue(raw.currentLoadSystem) : 0,
 });
 
 /**
@@ -51,13 +52,8 @@ const __buildFileSystemState = (raw: Record<string, any>): IFileSystemState => (
  * @param raw
  * @return IFileSystemState[]
  */
-const __buildFileSystemStates = (raw: Record<string, any>[]): IFileSystemState[] => (
-  raw.map(__buildFileSystemState).sort(sortRecords('use', 'desc'))
-);
-
-
-
-
+const __buildFileSystemStates = (raw: Record<string, any>[]): IFileSystemState[] =>
+  raw.map(__buildFileSystemState).sort(sortRecords('use', 'desc'));
 
 /* ************************************************************************************************
  *                                        RESOURCE SCANNER                                        *
@@ -68,16 +64,16 @@ const __buildFileSystemStates = (raw: Record<string, any>[]): IFileSystemState[]
  * @returns Promise<{...}>
  */
 const scanResources = async (): Promise<{
-  uptime: number,
-  cpu: ICPUState,
-  memory: IMemoryState,
-  fileSystem: IFileSystemState,
+  uptime: number;
+  cpu: ICPUState;
+  memory: IMemoryState;
+  fileSystem: IFileSystemState;
 }> => {
   const data: {
-    time: { uptime: number },
-    currentLoad: Record<string, any>,
-    mem: Record<string, any>,
-    fsSize: Record<string, any>[],
+    time: { uptime: number };
+    currentLoad: Record<string, any>;
+    mem: Record<string, any>;
+    fsSize: Record<string, any>[];
   } = await systeminformation.get({
     time: 'uptime',
     currentLoad: 'avgLoad, currentLoad, currentLoadUser, currentLoadSystem',
@@ -92,13 +88,7 @@ const scanResources = async (): Promise<{
   };
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  scanResources,
-};
+export { scanResources };

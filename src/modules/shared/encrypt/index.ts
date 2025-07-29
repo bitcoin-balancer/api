@@ -15,10 +15,8 @@ import { ENVIRONMENT } from '../environment/index.js';
  * - INVALID_ENCRYPTED_DATA: if the encrypted data decrypts to an invalid or empty string.
  * - WRONG_SECRET: if the data cannot be decrypted.
  */
-const decryptData = (encryptedData: string): Promise<string> => decrypt(
-  ENVIRONMENT.ENCRYPTING_SECRET,
-  encryptedData,
-);
+const decryptData = (encryptedData: string): Promise<string> =>
+  decrypt(ENVIRONMENT.ENCRYPTING_SECRET, encryptedData);
 
 /**
  * Encrypts the data and returns it in string format.
@@ -32,14 +30,7 @@ const decryptData = (encryptedData: string): Promise<string> => decrypt(
  */
 const encryptData = (data: string): Promise<string> => encrypt(ENVIRONMENT.ENCRYPTING_SECRET, data);
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  decryptData,
-  encryptData,
-};
+export { decryptData, encryptData };

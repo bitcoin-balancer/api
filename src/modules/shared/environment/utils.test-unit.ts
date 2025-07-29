@@ -18,21 +18,21 @@ describe('Environment Utilities', () => {
     });
 
     test('throws if the value is not in the env vars', () => {
-      expect(() => getString('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
+      expect(() => getString('SOME_KEY')).toThrowError("The environment property 'SOME_KEY'");
     });
 
     test('throws if the value is an empty string', () => {
       vi.stubEnv('SOME_KEY', '');
-      expect(() => getString('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
+      expect(() => getString('SOME_KEY')).toThrowError("The environment property 'SOME_KEY'");
     });
 
     test('throws if the value is not accepted', () => {
       vi.stubEnv('SOME_KEY', 'staging');
-      expect(() => getString('SOME_KEY', ['development', 'production'])).toThrowError('The environment property \'SOME_KEY\'');
+      expect(() => getString('SOME_KEY', ['development', 'production'])).toThrowError(
+        "The environment property 'SOME_KEY'",
+      );
     });
   });
-
-
 
   describe('getBoolean', () => {
     test('can extract a boolean value', () => {
@@ -43,16 +43,14 @@ describe('Environment Utilities', () => {
     });
 
     test('throws if the value is not in the env vars', () => {
-      expect(() => getBoolean('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
+      expect(() => getBoolean('SOME_KEY')).toThrowError("The environment property 'SOME_KEY'");
     });
 
     test('throws if the value is not true or false', () => {
       vi.stubEnv('SOME_KEY', 'something');
-      expect(() => getBoolean('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
+      expect(() => getBoolean('SOME_KEY')).toThrowError("The environment property 'SOME_KEY'");
     });
   });
-
-
 
   describe('getInteger', () => {
     test('can extract a boolean value', () => {
@@ -61,16 +59,14 @@ describe('Environment Utilities', () => {
     });
 
     test('throws if the value is not in the env vars', () => {
-      expect(() => getInteger('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
+      expect(() => getInteger('SOME_KEY')).toThrowError("The environment property 'SOME_KEY'");
     });
 
     test('throws if the value is not an integer', () => {
       vi.stubEnv('SOME_KEY', '100.55');
-      expect(() => getInteger('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
+      expect(() => getInteger('SOME_KEY')).toThrowError("The environment property 'SOME_KEY'");
     });
   });
-
-
 
   describe('getObject', () => {
     test('can extract an object value', () => {
@@ -80,17 +76,17 @@ describe('Environment Utilities', () => {
     });
 
     test('throws if the value is not in the env vars', () => {
-      expect(() => getObject('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
+      expect(() => getObject('SOME_KEY')).toThrowError("The environment property 'SOME_KEY'");
     });
 
     test('throws if the value is not an object (1)', () => {
       vi.stubEnv('SOME_KEY', '100.55');
-      expect(() => getObject('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
+      expect(() => getObject('SOME_KEY')).toThrowError("The environment property 'SOME_KEY'");
     });
 
     test('throws if the value is not an object (2)', () => {
       vi.stubEnv('SOME_KEY', '[1,2,3]');
-      expect(() => getObject('SOME_KEY')).toThrowError('The environment property \'SOME_KEY\'');
+      expect(() => getObject('SOME_KEY')).toThrowError("The environment property 'SOME_KEY'");
     });
   });
 });

@@ -30,10 +30,6 @@ type IExchangeService = {
   sell: ISell;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                            METHODS                                             *
  ************************************************************************************************ */
@@ -69,10 +65,6 @@ type IBuy = (amount: number) => Promise<Record<string, unknown>>;
 // sell
 type ISell = (amount: number) => Promise<Record<string, unknown>>;
 
-
-
-
-
 /* ************************************************************************************************
  *                                            GENERAL                                             *
  ************************************************************************************************ */
@@ -85,10 +77,6 @@ type ISell = (amount: number) => Promise<Record<string, unknown>>;
  */
 type ISide = 'BUY' | 'SELL';
 
-
-
-
-
 /* ************************************************************************************************
  *                                          CANDLESTICK                                           *
  ************************************************************************************************ */
@@ -98,14 +86,13 @@ type ISide = 'BUY' | 'SELL';
  * The duration of each candlestick period (supported by all exchanges).
  */
 type ICandlestickInterval =
-'1m' | '5m' | '15m' | '30m' | // minutes
-'1h' | // hours
-'1d' | // days
-'1w'; // weeks
-
-
-
-
+  | '1m'
+  | '5m'
+  | '15m'
+  | '30m' // minutes
+  | '1h' // hours
+  | '1d' // days
+  | '1w'; // weeks
 
 /* ************************************************************************************************
  *                                           ORDER BOOK                                           *
@@ -117,16 +104,20 @@ type ICandlestickInterval =
  */
 type IOrderBook = {
   // asks (sell orders)
-  asks: Array<[
-    number, // price
-    number, // quantity
-  ]>;
+  asks: Array<
+    [
+      number, // price
+      number, // quantity
+    ]
+  >;
 
   // bids (buy orders)
-  bids: Array<[
-    number, // price
-    number, // quantity
-  ]>;
+  bids: Array<
+    [
+      number, // price
+      number, // quantity
+    ]
+  >;
 
   // the identifier of the snapshot's state
   lastUpdateID: number;
@@ -140,24 +131,24 @@ type IOrderBook = {
  */
 type IOrderBookWebSocketMessage = {
   // asks (sell orders)
-  asks: Array<[
-    number, // price
-    number, // quantity
-  ]>;
+  asks: Array<
+    [
+      number, // price
+      number, // quantity
+    ]
+  >;
 
   // bids (buy orders)
-  bids: Array<[
-    number, // price
-    number, // quantity
-  ]>;
+  bids: Array<
+    [
+      number, // price
+      number, // quantity
+    ]
+  >;
 
   // the identifier of the last update in the event
   finalUpdateID: number;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TICKER                                             *
@@ -169,10 +160,6 @@ type IOrderBookWebSocketMessage = {
  * have experienced changes. e.g. { 'BTC': 61555.65, 'ETH': 2455.21 }
  */
 type ITickerWebSocketMessage = Record<string, number>;
-
-
-
-
 
 /* ************************************************************************************************
  *                                          ACCOUNT DATA                                          *
@@ -223,10 +210,6 @@ type ITrade = {
   // the total comission charged in base or quote asset (whichever asset was received)
   comission: number;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

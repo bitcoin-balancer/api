@@ -26,10 +26,6 @@ type IDatabaseService = {
   getDatabaseSummary: () => Promise<IDatabaseSummary>;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                            PG TYPES                                            *
  ************************************************************************************************ */
@@ -46,10 +42,6 @@ type IPoolClient = pg.PoolClient;
 // the result of a query execution
 type IQueryResult = pg.QueryResult;
 
-
-
-
-
 /* ************************************************************************************************
  *                                             TABLES                                             *
  ************************************************************************************************ */
@@ -59,9 +51,19 @@ type IQueryResult = pg.QueryResult;
  * Each table has a unique name. However, the API creates a test version of each table to be used in
  * unit and integration tests.
  */
-type ITableName = 'api_errors' | 'users' | 'password_updates' | 'refresh_tokens' | 'notifications'
-| 'ip_blacklist' | 'record_stores' | 'event_candlesticks' | 'price_crash_states' | 'trades'
-| 'positions' | 'transactions';
+type ITableName =
+  | 'api_errors'
+  | 'users'
+  | 'password_updates'
+  | 'refresh_tokens'
+  | 'notifications'
+  | 'ip_blacklist'
+  | 'record_stores'
+  | 'event_candlesticks'
+  | 'price_crash_states'
+  | 'trades'
+  | 'positions'
+  | 'transactions';
 type ITestTableName = `test_${ITableName}`;
 type ITableNames = {
   [key in ITableName]: ITableName | ITestTableName;
@@ -92,10 +94,6 @@ type ITable = {
   // the SQL that will create the table
   sql: string;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                        DATABASE SUMMARY                                        *
@@ -133,10 +131,6 @@ type IDatabaseSummary = {
   // the list of tables that comprise the database
   tables: IDatabaseSummaryTable[];
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

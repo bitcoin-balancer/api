@@ -28,11 +28,18 @@ const validateAPIResponse = <T>(res: IKrakenAPIResponse<T>): void => {
     throw new Error(encodeError('The Kraken API returned an invalid response object.', 15500));
   }
   if (res.error.length > 0) {
-    throw new Error(encodeError(`The Kraken API returned the following errors: ${res.error.join(' | ')}.`, 15501));
+    throw new Error(
+      encodeError(`The Kraken API returned the following errors: ${res.error.join(' | ')}.`, 15501),
+    );
   }
   if (!isObjectValid(res.result)) {
     console.log(res);
-    throw new Error(encodeError('The Kraken API returned a response object with an invalid \'result\' property.', 15502));
+    throw new Error(
+      encodeError(
+        "The Kraken API returned a response object with an invalid 'result' property.",
+        15502,
+      ),
+    );
   }
 };
 
@@ -82,11 +89,21 @@ const validateOrderBookResponse = (
   }
   if (!isArrayValid(res.data.result[resultKey].asks)) {
     console.log(res);
-    throw new Error(encodeError('Kraken returned an invalid order book object. The \'asks\' property is not a valid list.', 15505));
+    throw new Error(
+      encodeError(
+        "Kraken returned an invalid order book object. The 'asks' property is not a valid list.",
+        15505,
+      ),
+    );
   }
   if (!isArrayValid(res.data.result[resultKey].bids)) {
     console.log(res);
-    throw new Error(encodeError('Kraken returned an invalid order book object. The \'bids\' property is not a valid list.', 15505));
+    throw new Error(
+      encodeError(
+        "Kraken returned an invalid order book object. The 'bids' property is not a valid list.",
+        15505,
+      ),
+    );
   }
 };
 
@@ -111,15 +128,7 @@ const validateTickersResponse = (
   }
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  validateCandlesticksResponse,
-  validateOrderBookResponse,
-  validateTickersResponse,
-};
+export { validateCandlesticksResponse, validateOrderBookResponse, validateTickersResponse };

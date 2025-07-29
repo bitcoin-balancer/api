@@ -3,12 +3,7 @@ import { generateUUID, sortRecords } from 'web-utils-kit';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { decryptData, encryptData } from '../../shared/encrypt/index.js';
 import { hashData, verifyHashedData } from '../../shared/hash/index.js';
-import {
-  IUserService,
-  IAuthority,
-  IUser,
-  IPasswordUpdate,
-} from './types.js';
+import { IUserService, IAuthority, IUser, IPasswordUpdate } from './types.js';
 import { generateOTPSecret, checkOTPToken } from './otp.js';
 import {
   validateUserRecordExistance,
@@ -52,10 +47,6 @@ const userServiceFactory = (): IUserService => {
   // an object containing all the user records by uid and is built on start up
   let __users: { [uid: string]: IUser } = {};
 
-
-
-
-
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
@@ -79,7 +70,9 @@ const userServiceFactory = (): IUserService => {
    */
   const getUser = (uid: string): IUser => {
     if (!__users[uid]) {
-      throw new Error(encodeError(`The user '${uid}' could not be found in the local users' object.`, 3003));
+      throw new Error(
+        encodeError(`The user '${uid}' could not be found in the local users' object.`, 3003),
+      );
     }
     return __users[uid];
   };
@@ -121,10 +114,6 @@ const userServiceFactory = (): IUserService => {
     return listUserPasswordUpdateRecords(uid, limit, startAtEventTime);
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                    CREDENTIALS VERIFICATION                                  *
    ********************************************************************************************** */
@@ -142,7 +131,12 @@ const userServiceFactory = (): IUserService => {
       throw new Error(encodeError(`The uid '${uid}' was not found in the users object.`, 3001));
     }
     if (__users[uid].authority < requiredAuthority) {
-      throw new Error(encodeError(`The user '${uid}' is not authorized to perform the action. Has ${__users[uid].authority} and needs ${requiredAuthority}`, 3002));
+      throw new Error(
+        encodeError(
+          `The user '${uid}' is not authorized to perform the action. Has ${__users[uid].authority} and needs ${requiredAuthority}`,
+          3002,
+        ),
+      );
     }
   };
 
@@ -166,7 +160,9 @@ const userServiceFactory = (): IUserService => {
     canVerifyOTPToken(uid, otpToken);
     const secret = typeof otpSecret === 'string' ? otpSecret : await getUserOTPSecret(uid);
     if (!checkOTPToken(otpToken, await decryptData(secret))) {
-      throw new Error(encodeError(`The OTP Token '${otpToken}' for uid '${uid}' is invalid.`, 3000));
+      throw new Error(
+        encodeError(`The OTP Token '${otpToken}' for uid '${uid}' is invalid.`, 3000),
+      );
     }
   };
 
@@ -204,23 +200,29 @@ const userServiceFactory = (): IUserService => {
       await verifyOTPToken(uid, otpToken, otp_secret);
 
       // compare the password
-      if (!await verifyHashedData(password_hash, password)) {
-        throw new Error(encodeError('The password doesn\'t match the one stored in the database. Please double check it and try again.', 3004));
+      if (!(await verifyHashedData(password_hash, password))) {
+        throw new Error(
+          encodeError(
+            "The password doesn't match the one stored in the database. Please double check it and try again.",
+            3004,
+          ),
+        );
       }
 
       // finally, return the uid
       return uid;
     } catch (e) {
       if (ENVIRONMENT.NODE_ENV === 'production') {
-        throw new Error(encodeError('The provided credentials are invalid. Please double-check them and try again. If your account is new, you must set a password via the "Password Update" section before signing in.', 3005));
+        throw new Error(
+          encodeError(
+            'The provided credentials are invalid. Please double-check them and try again. If your account is new, you must set a password via the "Password Update" section before signing in.',
+            3005,
+          ),
+        );
       }
       throw e;
     }
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                    USER RECORD MANAGEMENT                                    *
@@ -235,14 +237,14 @@ const userServiceFactory = (): IUserService => {
    * @param password?
    * @param otpSecret?
    * @returns Promise<IUser>
-  * @throws
-  * - 3500: if the format of the nickname is invalid
-  * - 3501: if the nickname is already being used
-  * - 3502: if the root's authority is not the highest
-  * - 3503: if the root's password is invalid or weak
-  * - 3504: if a password is provided when creating a nonroot user
-  * - 3505: if the authority provided is not ranging 1 - 4
-  */
+   * @throws
+   * - 3500: if the format of the nickname is invalid
+   * - 3501: if the nickname is already being used
+   * - 3502: if the root's authority is not the highest
+   * - 3503: if the root's password is invalid or weak
+   * - 3504: if a password is provided when creating a nonroot user
+   * - 3505: if the authority provided is not ranging 1 - 4
+   */
   const createUser = async (
     nickname: string,
     authority: IAuthority,
@@ -383,10 +385,6 @@ const userServiceFactory = (): IUserService => {
     delete __users[uid];
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
@@ -396,7 +394,7 @@ const userServiceFactory = (): IUserService => {
    * @returns Promise<void>
    */
   const __initializeRootAccount = async (): Promise<void> => {
-    if (await getUserRecord(ENVIRONMENT.ROOT_ACCOUNT.uid) === undefined) {
+    if ((await getUserRecord(ENVIRONMENT.ROOT_ACCOUNT.uid)) === undefined) {
       await createUser(
         ENVIRONMENT.ROOT_ACCOUNT.nickname,
         5,
@@ -411,7 +409,7 @@ const userServiceFactory = (): IUserService => {
    * Retrieves all the existing users and builds the local user object.
    * @returns Promise<{ [uid: string]: IUser }>
    */
-  const __buildLocalUsersObject = async (): Promise<{ [uid: string]: IUser }> => (
+  const __buildLocalUsersObject = async (): Promise<{ [uid: string]: IUser }> =>
     (await listUserRecords()).reduce(
       (previous, current) => ({
         ...previous,
@@ -423,8 +421,7 @@ const userServiceFactory = (): IUserService => {
         },
       }),
       {},
-    )
-  );
+    );
 
   /**
    * Initializes the User Module.
@@ -445,10 +442,6 @@ const userServiceFactory = (): IUserService => {
   const teardown = async (): Promise<void> => {
     __users = {};
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -482,18 +475,10 @@ const userServiceFactory = (): IUserService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const UserService = userServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

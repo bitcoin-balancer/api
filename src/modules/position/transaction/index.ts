@@ -45,10 +45,6 @@ const transactionServiceFactory = (): ITransactionService => {
   // the number of seconds Balancer will wait before confirming the tx
   const __TX_CONFIRMATION_DELAY = 10;
 
-
-
-
-
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
@@ -103,10 +99,6 @@ const transactionServiceFactory = (): ITransactionService => {
    */
   const getLastBuyTransactionID = getLastBuyTransactionRecordID;
 
-
-
-
-
   /* **********************************************************************************************
    *                                           EXECUTION                                          *
    ********************************************************************************************** */
@@ -153,7 +145,8 @@ const transactionServiceFactory = (): ITransactionService => {
       if (initialBalances[__BASE_ASSET] !== balances[__BASE_ASSET]) {
         return { logs: [...logs, buildLog('CONFIRMATION', true, balances)] };
       }
-      const msg = 'The balance did not change after the transaction request was sent to the Exchange.';
+      const msg =
+        'The balance did not change after the transaction request was sent to the Exchange.';
       return { logs: [...logs, buildLog('CONFIRMATION', false, balances, msg)], error: msg };
     } catch (e) {
       const msg = extractMessage(e);
@@ -242,7 +235,13 @@ const transactionServiceFactory = (): ITransactionService => {
       const msg = extractMessage(e);
       tx.status = 'FAILED';
       await updateTransactionRecord(tx);
-      APIErrorService.save('TransactionService.__scheduleTransaction', msg, undefined, undefined, tx);
+      APIErrorService.save(
+        'TransactionService.__scheduleTransaction',
+        msg,
+        undefined,
+        undefined,
+        tx,
+      );
       NotificationService.failedToExecuteTX(tx.side, tx.amount, msg);
     }
   };
@@ -272,11 +271,8 @@ const transactionServiceFactory = (): ITransactionService => {
    * @param balances
    * @returns Promise<number>
    */
-  const buy = async (amount: number, balances: IBalances): Promise<number> => __execute(
-    'BUY',
-    amount,
-    balances,
-  );
+  const buy = async (amount: number, balances: IBalances): Promise<number> =>
+    __execute('BUY', amount, balances);
 
   /**
    * Starts the process that will try as hard as possible to execute a sell transaction.
@@ -284,15 +280,8 @@ const transactionServiceFactory = (): ITransactionService => {
    * @param balances
    * @returns Promise<number>
    */
-  const sell = async (amount: number, balances: IBalances): Promise<number> => __execute(
-    'SELL',
-    amount,
-    balances,
-  );
-
-
-
-
+  const sell = async (amount: number, balances: IBalances): Promise<number> =>
+    __execute('SELL', amount, balances);
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -313,18 +302,10 @@ const transactionServiceFactory = (): ITransactionService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const TransactionService = transactionServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

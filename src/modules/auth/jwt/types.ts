@@ -1,5 +1,3 @@
-
-
 /* ************************************************************************************************
  *                                            SERVICE                                             *
  ************************************************************************************************ */
@@ -22,7 +20,7 @@ type IJWTService = {
     password: string,
     otpToken: string,
     altchaPayload: string,
-  ) => Promise<{ access: string, refresh: string }>;
+  ) => Promise<{ access: string; refresh: string }>;
   verifyAccessToken: (accessJWT: string) => Promise<string>;
   verifyRefreshToken: (refreshJWT: string) => Promise<string>;
   refreshAccessJWT: (refreshJWT: string) => Promise<string>;
@@ -32,10 +30,6 @@ type IJWTService = {
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TYPES                                              *
@@ -55,10 +49,6 @@ type IRefreshTokenRecord = {
   // the time at which the token was issued
   event_time: string;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

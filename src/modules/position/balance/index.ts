@@ -30,10 +30,6 @@ const balanceServiceFactory = (): IBalanceService => {
   const __REFETCH_FREQUENCY = getRefetchFrequency();
   let __refetchInterval: NodeJS.Timeout;
 
-
-
-
-
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
@@ -53,10 +49,6 @@ const balanceServiceFactory = (): IBalanceService => {
     return __balances;
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
@@ -67,13 +59,16 @@ const balanceServiceFactory = (): IBalanceService => {
    */
   const initialize = async (): Promise<void> => {
     await getBalances();
-    __refetchInterval = setInterval(async () => {
-      try {
-        await getBalances();
-      } catch (e) {
-        APIErrorService.save('BalanceService.__refetchInterval', e);
-      }
-    }, ms(`${__REFETCH_FREQUENCY} seconds`));
+    __refetchInterval = setInterval(
+      async () => {
+        try {
+          await getBalances();
+        } catch (e) {
+          APIErrorService.save('BalanceService.__refetchInterval', e);
+        }
+      },
+      ms(`${__REFETCH_FREQUENCY} seconds`),
+    );
   };
 
   /**
@@ -83,10 +78,6 @@ const balanceServiceFactory = (): IBalanceService => {
   const teardown = async (): Promise<void> => {
     clearInterval(__refetchInterval);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -106,22 +97,12 @@ const balanceServiceFactory = (): IBalanceService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const BalanceService = balanceServiceFactory();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  BalanceService,
-};
+export { BalanceService };

@@ -4,11 +4,7 @@ import { Subscription } from 'rxjs';
 import { retryAsyncFunction } from 'web-utils-kit';
 import { APIErrorService } from '../../api-error/index.js';
 import { ExchangeService, IOrderBookWebSocketMessage } from '../../shared/exchange/index.js';
-import {
-  getOrderBookRefetchFrequency,
-  isOrderPriceInRange,
-  priceLevelSortFunc,
-} from './utils.js';
+import { getOrderBookRefetchFrequency, isOrderPriceInRange, priceLevelSortFunc } from './utils.js';
 import {
   ILiquidityPriceLevel,
   ILiquidityPriceRange,
@@ -50,10 +46,6 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
   // the subscription to the order book stream
   let __streamSub: Subscription;
 
-
-
-
-
   /* **********************************************************************************************
    *                                          RETRIEVER                                           *
    ********************************************************************************************** */
@@ -64,9 +56,10 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
    * @param liquidity
    * @returns [number, number]
    */
-  const __buildOrder = (price: string, liquidity: number): [number, number] => (
-    [Math.floor(Number(price)), liquidity]
-  );
+  const __buildOrder = (price: string, liquidity: number): [number, number] => [
+    Math.floor(Number(price)),
+    liquidity,
+  ];
 
   /**
    * Builds and sorts the order tuples by price ascendingly.
@@ -115,7 +108,6 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
     return { total, levels: levels.sort(priceLevelSortFunc(side)) };
   };
 
-
   /**
    * Builds the liquidity for both sides based on the existing orders. Note that the intensities
    * are not calculated at this stage.
@@ -124,14 +116,10 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
    */
   const getPreProcessedLiquiditySides = (
     range: ILiquidityPriceRange,
-  ): { asks: ILiquiditySide, bids: ILiquiditySide } => ({
+  ): { asks: ILiquiditySide; bids: ILiquiditySide } => ({
     asks: __buildSide('asks', range),
     bids: __buildSide('bids', range),
   });
-
-
-
-
 
   /* **********************************************************************************************
    *                                       SYNCHRONIZATION                                        *
@@ -177,10 +165,6 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
@@ -197,14 +181,17 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
     __streamSub = ExchangeService.getOrderBookStream().subscribe(__onOrderBookChanges);
 
     // init the refetch interval
-    __refetchInterval = setInterval(async () => {
-      try {
-        await __fetchSnapshot();
-      } catch (e) {
-        console.error(e);
-        APIErrorService.save('OrderBook.interval.refetch', e);
-      }
-    }, ms(`${__REFETCH_FREQUENCY} seconds`));
+    __refetchInterval = setInterval(
+      async () => {
+        try {
+          await __fetchSnapshot();
+        } catch (e) {
+          console.error(e);
+          APIErrorService.save('OrderBook.interval.refetch', e);
+        }
+      },
+      ms(`${__REFETCH_FREQUENCY} seconds`),
+    );
   };
 
   /**
@@ -216,10 +203,6 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
     }
     clearInterval(__refetchInterval);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -239,13 +222,7 @@ const orderBookServiceFactory = async (): Promise<IOrderBookService> => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  orderBookServiceFactory,
-};
+export { orderBookServiceFactory };

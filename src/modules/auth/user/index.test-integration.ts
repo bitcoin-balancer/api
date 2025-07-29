@@ -14,7 +14,7 @@ describe('isAuthorized', () => {
     expect(UserService.isAuthorized(user.uid, 4)).toBeUndefined();
   });
 
-  test('throws when checking the authorization state for a user that doesn\'t exist', () => {
+  test("throws when checking the authorization state for a user that doesn't exist", () => {
     expect(() => UserService.isAuthorized(generateUUID(4), 3)).toThrowError('3001');
   });
 

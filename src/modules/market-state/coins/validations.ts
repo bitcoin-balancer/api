@@ -1,18 +1,9 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
-import {
-  isNumberValid,
-  isIntegerValid,
-  isObjectValid,
-  isArrayValid,
-} from 'web-utils-kit';
+import { isNumberValid, isIntegerValid, isObjectValid, isArrayValid } from 'web-utils-kit';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { isSymbolValid } from '../../shared/validations/index.js';
-import {
-  ICoinsConfig,
-  ICoinState,
-  ICoinStateAsset,
-} from './types.js';
+import { ICoinsConfig, ICoinState, ICoinStateAsset } from './types.js';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -42,14 +33,15 @@ const validateStateAsset = (asset: ICoinStateAsset): void => {
 const validateSymbol = (
   symbol: string,
   asset: ICoinStateAsset,
-  statesBySymbol: { [symbol:string]: ICoinState },
+  statesBySymbol: { [symbol: string]: ICoinState },
 ): void => {
   validateStateAsset(asset);
   if (!statesBySymbol[symbol]) {
-    throw new Error(encodeError(`The symbol '${asset}' is not listed in the ${asset}'s symbols.`, 23510));
+    throw new Error(
+      encodeError(`The symbol '${asset}' is not listed in the ${asset}'s symbols.`, 23510),
+    );
   }
 };
-
 
 /**
  * Ensures the window configuration object can be updated.
@@ -72,22 +64,52 @@ const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
     throw new Error(encodeError('The provided coins configuration is not a valid object.', 23500));
   }
   if (!isNumberValid(newConfig.size, 128, 512)) {
-    throw new Error(encodeError(`The size '${newConfig.size}' is invalid as it must be a valid number ranging 128 and 512.`, 23501));
+    throw new Error(
+      encodeError(
+        `The size '${newConfig.size}' is invalid as it must be a valid number ranging 128 and 512.`,
+        23501,
+      ),
+    );
   }
   if (!isNumberValid(newConfig.interval, 5, 3600)) {
-    throw new Error(encodeError(`The interval '${newConfig.interval}' is invalid as it must be a valid number ranging 5 and 3600 seconds.`, 23502));
+    throw new Error(
+      encodeError(
+        `The interval '${newConfig.interval}' is invalid as it must be a valid number ranging 5 and 3600 seconds.`,
+        23502,
+      ),
+    );
   }
   if (!isNumberValid(newConfig.requirement, 0.01, 100)) {
-    throw new Error(encodeError(`The requirement '${newConfig.requirement}' is invalid as it must be a valid number ranging 1 and 100.`, 23503));
+    throw new Error(
+      encodeError(
+        `The requirement '${newConfig.requirement}' is invalid as it must be a valid number ranging 1 and 100.`,
+        23503,
+      ),
+    );
   }
   if (!isNumberValid(newConfig.strongRequirement, 0.01, 100)) {
-    throw new Error(encodeError(`The strongRequirement '${newConfig.strongRequirement}' is invalid as it must be a valid number ranging 1 and 100.`, 23504));
+    throw new Error(
+      encodeError(
+        `The strongRequirement '${newConfig.strongRequirement}' is invalid as it must be a valid number ranging 1 and 100.`,
+        23504,
+      ),
+    );
   }
   if (newConfig.requirement >= newConfig.strongRequirement) {
-    throw new Error(encodeError(`The requirement '${newConfig.requirement}' must be less than the strong requirement '${newConfig.strongRequirement}'.`, 23511));
+    throw new Error(
+      encodeError(
+        `The requirement '${newConfig.requirement}' must be less than the strong requirement '${newConfig.strongRequirement}'.`,
+        23511,
+      ),
+    );
   }
   if (!isIntegerValid(newConfig.limit, 1, 24)) {
-    throw new Error(encodeError(`The limit '${newConfig.limit}' is invalid as it must be a valid integer ranging 1 and 24.`, 23507));
+    throw new Error(
+      encodeError(
+        `The limit '${newConfig.limit}' is invalid as it must be a valid integer ranging 1 and 24.`,
+        23507,
+      ),
+    );
   }
   if (!isArrayValid(newConfig.whitelistedSymbols)) {
     console.log(newConfig.whitelistedSymbols);
@@ -95,23 +117,25 @@ const canConfigBeUpdated = (newConfig: ICoinsConfig): void => {
   }
   newConfig.whitelistedSymbols.forEach((symbol) => {
     if (!isSymbolValid(symbol)) {
-      throw new Error(encodeError(`The whitelisted symbol '${symbol}' is invalid as it must only contain uppercased letters and/or numbers.`, 23506));
+      throw new Error(
+        encodeError(
+          `The whitelisted symbol '${symbol}' is invalid as it must only contain uppercased letters and/or numbers.`,
+          23506,
+        ),
+      );
     }
   });
   if (!newConfig.whitelistedSymbols.includes(ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset)) {
-    throw new Error(encodeError(`The symbols whitelist does not include the base asset '${ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset}'.`, 23509));
+    throw new Error(
+      encodeError(
+        `The symbols whitelist does not include the base asset '${ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset}'.`,
+        23509,
+      ),
+    );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  validateStateAsset,
-  validateSymbol,
-  canConfigBeUpdated,
-};
+export { validateStateAsset, validateSymbol, canConfigBeUpdated };

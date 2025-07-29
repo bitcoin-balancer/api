@@ -15,9 +15,10 @@ describe('Database Summary', () => {
         version: expect.any(String),
         size: expect.any(Number),
         port: ENVIRONMENT.POSTGRES_PORT,
-        tables: Object.values(DatabaseService.tn).map(
-          (name) => ({ name, size: expect.any(Number) }),
-        ),
+        tables: Object.values(DatabaseService.tn).map((name) => ({
+          name,
+          size: expect.any(Number),
+        })),
       });
     });
   });

@@ -15,32 +15,17 @@ describe('canRecordsBeListed', () => {
     expect(canRecordsBeListed(1, Number.MAX_SAFE_INTEGER)).toBeUndefined();
   });
 
-  test.each([
-    null,
-    {},
-    [],
-    'someString',
-    '1',
-    0,
-    -100,
-    Number.MAX_SAFE_INTEGER + 1,
-    NaN,
-  ])('canRecordsBeListed(1, %s)', (a) => {
-    expect(() => canRecordsBeListed(1, <any>a)).toThrowError('1000');
-  });
+  test.each([null, {}, [], 'someString', '1', 0, -100, Number.MAX_SAFE_INTEGER + 1, NaN])(
+    'canRecordsBeListed(1, %s)',
+    (a) => {
+      expect(() => canRecordsBeListed(1, <any>a)).toThrowError('1000');
+    },
+  );
 
-  test.each([
-    null,
-    {},
-    [],
-    'someString',
-    '1',
-    0,
-    -100,
-    50,
-    Number.MAX_SAFE_INTEGER + 1,
-    NaN,
-  ])('canRecordsBeListed(%s, 1)', (a) => {
-    expect(() => canRecordsBeListed(<any>a, 1)).toThrowError('1001');
-  });
+  test.each([null, {}, [], 'someString', '1', 0, -100, 50, Number.MAX_SAFE_INTEGER + 1, NaN])(
+    'canRecordsBeListed(%s, 1)',
+    (a) => {
+      expect(() => canRecordsBeListed(<any>a, 1)).toThrowError('1001');
+    },
+  );
 });

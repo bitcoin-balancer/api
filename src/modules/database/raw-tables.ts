@@ -8,8 +8,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'api_errors',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('api_errors')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('api_errors')} (
         id          BIGSERIAL PRIMARY KEY,
         origin      VARCHAR(500) NOT NULL,
         error       VARCHAR(5000) NOT NULL,
@@ -26,8 +25,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'users',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('users')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('users')} (
         uid             UUID PRIMARY KEY,
         nickname        VARCHAR(20) NOT NULL UNIQUE,
         authority       SMALLINT NOT NULL,
@@ -44,8 +42,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'password_updates',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('password_updates')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('password_updates')} (
         uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
         event_time  BIGINT NOT NULL
       );
@@ -58,8 +55,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'refresh_tokens',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('refresh_tokens')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('refresh_tokens')} (
         uid         UUID REFERENCES ${getTableName('users')}(uid) ON DELETE CASCADE,
         token       TEXT NOT NULL UNIQUE,
         event_time  BIGINT NOT NULL
@@ -75,8 +71,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'notifications',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('notifications')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('notifications')} (
         id          BIGSERIAL PRIMARY KEY,
         sender      VARCHAR(500) NOT NULL,
         title       VARCHAR(500) NOT NULL,
@@ -91,8 +86,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'ip_blacklist',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('ip_blacklist')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('ip_blacklist')} (
         id          BIGSERIAL PRIMARY KEY,
         ip          VARCHAR(500) NOT NULL UNIQUE,
         notes       VARCHAR(25000) NULL,
@@ -107,8 +101,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'record_stores',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('record_stores')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('record_stores')} (
         id    VARCHAR(500) PRIMARY KEY,
         value JSONB NOT NULL
       );`,
@@ -120,8 +113,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'event_candlesticks',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('event_candlesticks')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('event_candlesticks')} (
         id          UUID PRIMARY KEY,
         event       VARCHAR(100) NOT NULL,
         interval    VARCHAR(10) NOT NULL,
@@ -136,8 +128,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'price_crash_states',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('price_crash_states')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('price_crash_states')} (
         id                    UUID PRIMARY KEY,
         highest_points        NUMERIC(5, 2) NOT NULL,
         final_points          NUMERIC(5, 2) NOT NULL,
@@ -154,8 +145,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'trades',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('trades')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('trades')} (
         id            BIGSERIAL PRIMARY KEY,
         id_alt        VARCHAR(500) NULL,
         notes         VARCHAR(50000) NULL,
@@ -176,8 +166,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'positions',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('positions')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('positions')} (
         id                      UUID PRIMARY KEY,
         open                    BIGINT NOT NULL,
         close                   BIGINT NULL,
@@ -205,8 +194,7 @@ export const RAW_TABLES: IRawTable[] = [
    */
   {
     name: 'transactions',
-    sql:
-      `CREATE TABLE IF NOT EXISTS ${getTableName('transactions')} (
+    sql: `CREATE TABLE IF NOT EXISTS ${getTableName('transactions')} (
         id          BIGSERIAL PRIMARY KEY,
         event_time  BIGINT NOT NULL,
         status      VARCHAR(100) NOT NULL,

@@ -12,9 +12,8 @@ import { JWTService } from '../../auth/jwt/index.js';
  * @param cookie
  * @returns string
  */
-const __decodeRefreshJWTCookie = (cookie: string): string => (
-  decodeURIComponent(cookie.replace(`${JWTService.REFRESH_JWT_COOKIE_NAME}=`, ''))
-);
+const __decodeRefreshJWTCookie = (cookie: string): string =>
+  decodeURIComponent(cookie.replace(`${JWTService.REFRESH_JWT_COOKIE_NAME}=`, ''));
 
 /**
  * Extracts the Refresh JWT from the request's cookie and unsigns it.
@@ -26,11 +25,18 @@ const __decodeRefreshJWTCookie = (cookie: string): string => (
  */
 const extractRefreshJWT = (cookie: string | undefined): string => {
   if (typeof cookie !== 'string' || !cookie.length) {
-    throw new Error(encodeError(`The socket's handshake doesn't contain cookies. Received: ${cookie}`, 9250));
+    throw new Error(
+      encodeError(`The socket's handshake doesn't contain cookies. Received: ${cookie}`, 9250),
+    );
   }
   const unsignedJWT = signedCookie(__decodeRefreshJWTCookie(cookie), ENVIRONMENT.COOKIE_SECRET);
   if (typeof unsignedJWT !== 'string') {
-    throw new Error(encodeError(`The Refresh JWT could not be extracted from the signed cookie. Received: ${unsignedJWT}`, 9251));
+    throw new Error(
+      encodeError(
+        `The Refresh JWT could not be extracted from the signed cookie. Received: ${unsignedJWT}`,
+        9251,
+      ),
+    );
   }
   return unsignedJWT;
 };
@@ -46,22 +52,10 @@ const extractRefreshJWT = (cookie: string | undefined): string => {
  */
 const shouldDisconnect = (error: Error): boolean => {
   const { code } = decodeError(error);
-  return (
-    code === 9250
-    || code === 9251
-    || code === 4252
-    || code === 4253
-  );
+  return code === 9250 || code === 9251 || code === 4252 || code === 4253;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  extractRefreshJWT,
-  shouldDisconnect,
-};
+export { extractRefreshJWT, shouldDisconnect };

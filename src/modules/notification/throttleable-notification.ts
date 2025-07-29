@@ -29,10 +29,6 @@ const throttleableNotificationFactory: IThrottleableNotificationFactory = (
   // the time in ms of the last broadcast
   let __lastBroadcastedNotification: number | undefined;
 
-
-
-
-
   /* **********************************************************************************************
    *                                            ACTIONS                                           *
    ********************************************************************************************** */
@@ -49,17 +45,13 @@ const throttleableNotificationFactory: IThrottleableNotificationFactory = (
    */
   const broadcast = (args?: any[]) => {
     if (
-      __lastBroadcastedNotification === undefined
-      || __lastBroadcastedNotification < subMinutes(Date.now(), __DURATION).getTime()
+      __lastBroadcastedNotification === undefined ||
+      __lastBroadcastedNotification < subMinutes(Date.now(), __DURATION).getTime()
     ) {
       __executeFunc(args);
       __lastBroadcastedNotification = Date.now();
     }
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -73,13 +65,7 @@ const throttleableNotificationFactory: IThrottleableNotificationFactory = (
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  throttleableNotificationFactory,
-};
+export { throttleableNotificationFactory };

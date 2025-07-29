@@ -9,7 +9,9 @@ import { DatabaseService } from './index.js';
 const __getSummaryTable = async (
   name: ITableName | ITestTableName,
 ): Promise<IDatabaseSummaryTable> => {
-  const { rows } = await DatabaseService.pool.query({ text: `SELECT pg_total_relation_size('${name}');` });
+  const { rows } = await DatabaseService.pool.query({
+    text: `SELECT pg_total_relation_size('${name}');`,
+  });
   return {
     name,
     size: rows[0].pg_total_relation_size,
@@ -41,7 +43,6 @@ const getDatabaseSummaryAlt = async (): Promise<IDatabaseSummary> => {
     client.release();
   }
 };
-
 
 describe.skip('Database Summary', () => {
   bench('using getDatabaseSummary()', async () => {

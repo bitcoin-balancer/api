@@ -80,14 +80,11 @@ const __calculateIncreasePlan = (
         );
 
         // if there is an active reversal state, the price requirement has been met
-        canIncreaseAtPriceChange = (
-          (
-            typeof strongWindowStateRequirement === 'number'
-            && gainDiff.isGreaterThan(strongWindowStateRequirement)
-          )
+        canIncreaseAtPriceChange =
+          typeof strongWindowStateRequirement === 'number' &&
+          gainDiff.isGreaterThan(strongWindowStateRequirement)
             ? strongWindowStateRequirement
-            : processValue(gainDiff)
-        );
+            : processValue(gainDiff);
       } else {
         canIncreaseAtPriceChange = strongWindowStateRequirement;
       }
@@ -132,10 +129,6 @@ const __calculateIncreasePlan = (
     missingQuoteAmount,
   };
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         DECREASE PLAN                                          *
@@ -201,9 +194,8 @@ const __calculateDecreasePlan = (
     // and pick whichever is higher: the strong window state requirement or the first decrease level
     if (level === undefined) {
       const diff = calculatePercentageChange(price, decreaseLevels[0].price);
-      canDecreaseAtPriceChange = (
-        strongWindowStateRequirement > diff ? strongWindowStateRequirement : diff
-      );
+      canDecreaseAtPriceChange =
+        strongWindowStateRequirement > diff ? strongWindowStateRequirement : diff;
     } else {
       canDecreaseAtPriceChange = strongWindowStateRequirement;
     }
@@ -238,10 +230,6 @@ const __calculateDecreasePlan = (
     decreaseLevels,
   };
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -285,13 +273,7 @@ const calculatePlan = (
   ),
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  calculatePlan,
-};
+export { calculatePlan };

@@ -10,10 +10,6 @@ import { fromMillisecondstoSeconds } from '../../shared/utils/index.js';
 // the algorithm that will be used to sign the JWT
 const ALG: jwt.Algorithm = 'HS256';
 
-
-
-
-
 /* ************************************************************************************************
  *                                            HELPERS                                             *
  ************************************************************************************************ */
@@ -30,10 +26,6 @@ const __buildPayload = (uid: string, expiry: Date): Record<string, string | numb
   exp: fromMillisecondstoSeconds(expiry.getTime()),
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
@@ -48,21 +40,20 @@ const __buildPayload = (uid: string, expiry: Date): Record<string, string | numb
  * - 4250: if the jsonwebtoken lib fails to sign the token
  * - 4251: if the signed token has an invalid format
  */
-const sign = (
-  uid: string,
-  expiry: Date,
-  secret: string,
-): Promise<string> => new Promise((resolve, reject) => {
-  jwt.sign(__buildPayload(uid, expiry), secret, { algorithm: ALG }, (err, token) => {
-    if (err) {
-      reject(new Error(encodeError(`Failed to sign the JWT. Error: ${extractMessage(err)}`, 4250)));
-    } else if (!isJWTValid(token)) {
-      reject(new Error(encodeError(`The signed JWT '${token}' has an invalid format.`, 4251)));
-    } else {
-      resolve(token);
-    }
+const sign = (uid: string, expiry: Date, secret: string): Promise<string> =>
+  new Promise((resolve, reject) => {
+    jwt.sign(__buildPayload(uid, expiry), secret, { algorithm: ALG }, (err, token) => {
+      if (err) {
+        reject(
+          new Error(encodeError(`Failed to sign the JWT. Error: ${extractMessage(err)}`, 4250)),
+        );
+      } else if (!isJWTValid(token)) {
+        reject(new Error(encodeError(`The signed JWT '${token}' has an invalid format.`, 4251)));
+      } else {
+        resolve(token);
+      }
+    });
   });
-});
 
 /**
  * Verifies a JWT, decodes its payload and returns it.
@@ -78,26 +69,29 @@ const verify = (
   token: string,
   secret: string,
   ignoreExpiration: boolean = false,
-): Promise<string> => new Promise((resolve, reject) => {
-  jwt.verify(token, secret, { algorithms: [ALG], ignoreExpiration }, (err, decodedData) => {
-    if (err) {
-      reject(new Error(encodeError(`Failed to verify the JWT. Error: ${extractMessage(err)}`, 4252)));
-    } else if (!isObjectValid(decodedData) || !isUUIDValid(decodedData.sub, 4)) {
-      reject(new Error(encodeError('The data decoded from the JWT is not a valid object or contains an invalid UUID.', 4253)));
-    } else {
-      resolve(decodedData.sub);
-    }
+): Promise<string> =>
+  new Promise((resolve, reject) => {
+    jwt.verify(token, secret, { algorithms: [ALG], ignoreExpiration }, (err, decodedData) => {
+      if (err) {
+        reject(
+          new Error(encodeError(`Failed to verify the JWT. Error: ${extractMessage(err)}`, 4252)),
+        );
+      } else if (!isObjectValid(decodedData) || !isUUIDValid(decodedData.sub, 4)) {
+        reject(
+          new Error(
+            encodeError(
+              'The data decoded from the JWT is not a valid object or contains an invalid UUID.',
+              4253,
+            ),
+          ),
+        );
+      } else {
+        resolve(decodedData.sub);
+      }
+    });
   });
-});
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  sign,
-  verify,
-};
+export { sign, verify };

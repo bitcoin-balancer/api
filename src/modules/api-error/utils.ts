@@ -14,25 +14,20 @@ import { isObjectValid } from 'web-utils-kit';
 const buildArgs = (
   args: Record<string, any> | undefined,
   sensitiveDataKeys: string[],
-): Record<string, any> | undefined => (
+): Record<string, any> | undefined =>
   isObjectValid(args)
     ? Object.keys(args).reduce(
-      (previous, current) => ({
-        ...previous,
-        [current]: sensitiveDataKeys.includes(current) ? '[SENSITIVE_DATA_HIDDEN]' : args[current],
-      }),
-      {},
-    )
-    : undefined
-);
-
-
-
-
+        (previous, current) => ({
+          ...previous,
+          [current]: sensitiveDataKeys.includes(current)
+            ? '[SENSITIVE_DATA_HIDDEN]'
+            : args[current],
+        }),
+        {},
+      )
+    : undefined;
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  buildArgs,
-};
+export { buildArgs };

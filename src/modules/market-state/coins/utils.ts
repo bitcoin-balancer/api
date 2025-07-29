@@ -21,9 +21,8 @@ import {
  * @param symbol
  * @returns boolean
  */
-const isBaseAsset = (symbol: string): boolean => (
-  symbol === ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset
-);
+const isBaseAsset = (symbol: string): boolean =>
+  symbol === ENVIRONMENT.EXCHANGE_CONFIGURATION.baseAsset;
 
 /**
  * Builds the default configuration object.
@@ -106,10 +105,8 @@ const calculateSymbolPriceInBaseAsset = (
  * @param currentTime
  * @returns boolean
  */
-const isIntervalActive = (startTime: number, duration: number, currentTime: number): boolean => (
-  typeof startTime === 'number'
-  && addSeconds(startTime, duration).getTime() >= currentTime
-);
+const isIntervalActive = (startTime: number, duration: number, currentTime: number): boolean =>
+  typeof startTime === 'number' && addSeconds(startTime, duration).getTime() >= currentTime;
 
 /**
  * Converts a state object into the semi-compact variant.
@@ -129,10 +126,6 @@ const toSemiCompact = (state: ICoinsState<ICoinState>): ICoinsState<ISemiCompact
     {},
   ),
 });
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

@@ -23,7 +23,9 @@ const getRefreshTokensByUID = async (uid: string): Promise<string[]> => {
     values: [uid],
   });
   if (!rows.length) {
-    throw new Error(encodeError(`The uid '${uid}' has no registered Refresh JWTs in the database.`, 4750));
+    throw new Error(
+      encodeError(`The uid '${uid}' has no registered Refresh JWTs in the database.`, 4750),
+    );
   }
   return rows.map((row) => row.token);
 };
@@ -47,10 +49,6 @@ const listRecordsByUID = async (uid: string): Promise<IRefreshTokenRecord[]> => 
   return rows;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                       RECORD MANAGEMENT                                        *
  ************************************************************************************************ */
@@ -61,15 +59,14 @@ const listRecordsByUID = async (uid: string): Promise<IRefreshTokenRecord[]> => 
  * @param refreshJWT
  * @returns Promise<IQueryResult>
  */
-const saveRecord = (uid: string, refreshJWT: string): Promise<IQueryResult> => (
+const saveRecord = (uid: string, refreshJWT: string): Promise<IQueryResult> =>
   DatabaseService.pool.query({
     text: `
       INSERT INTO ${DatabaseService.tn.refresh_tokens} (uid, token, event_time)
       VALUES ($1, $2, $3);
     `,
     values: [uid, refreshJWT, Date.now()],
-  })
-);
+  });
 
 /**
  * Deletes the refresh token records for a user. If the refreshJWT is provided, it will delete that
@@ -79,52 +76,47 @@ const saveRecord = (uid: string, refreshJWT: string): Promise<IQueryResult> => (
  * @param refreshJWT
  * @returns Promise<IQueryResult>
  */
-const deleteUserRecords = (uid: string, refreshJWT?: string) => (
+const deleteUserRecords = (uid: string, refreshJWT?: string) =>
   typeof refreshJWT === 'string'
     ? DatabaseService.pool.query({
-      text: `
+        text: `
         DELETE FROM ${DatabaseService.tn.refresh_tokens}
         WHERE uid = $1 AND token = $2;
       `,
-      values: [uid, refreshJWT],
-    })
+        values: [uid, refreshJWT],
+      })
     : DatabaseService.pool.query({
-      text: `
+        text: `
         DELETE FROM ${DatabaseService.tn.refresh_tokens}
         WHERE uid = $1;
       `,
-      values: [uid],
-    })
-);
+        values: [uid],
+      });
 
 /**
  * Deletes all the records containing Refresh JWTs that have expired.
  * @param startAtTimestamp
  * @returns Promise<IQueryResult>
  */
-const deleteExpiredRecords = (startAtTimestamp: number): Promise<IQueryResult> => (
+const deleteExpiredRecords = (startAtTimestamp: number): Promise<IQueryResult> =>
   DatabaseService.pool.query({
     text: `
       DELETE FROM ${DatabaseService.tn.refresh_tokens}
       WHERE event_time <= $1;
     `,
     values: [startAtTimestamp],
-  })
-);
+  });
 
 /**
  * Deletes all of the Refresh Token Records from the database. In other words, it signs out all of
  * the users.
  * @returns Promise<IQueryResult>
  */
-const deleteAllRecords = (): Promise<IQueryResult> => DatabaseService.pool.query({
-  text: `DELETE FROM ${DatabaseService.tn.refresh_tokens};`,
-  values: [],
-});
-
-
-
-
+const deleteAllRecords = (): Promise<IQueryResult> =>
+  DatabaseService.pool.query({
+    text: `DELETE FROM ${DatabaseService.tn.refresh_tokens};`,
+    values: [],
+  });
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

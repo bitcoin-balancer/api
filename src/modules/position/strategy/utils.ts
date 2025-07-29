@@ -16,21 +16,15 @@ const buildDefaultConfig = (): IStrategy => ({
   increaseIdleDuration: 48,
   increaseIdleMode: 'incremental',
   decreaseLevels: [
-    { gainRequirement: 0.50, percentage: 5.00, frequency: 240 },
-    { gainRequirement: 1.50, percentage: 10.00, frequency: 120 },
-    { gainRequirement: 2.50, percentage: 17.50, frequency: 80 },
-    { gainRequirement: 3.50, percentage: 25.00, frequency: 30 },
-    { gainRequirement: 5.00, percentage: 35.00, frequency: 10 },
+    { gainRequirement: 0.5, percentage: 5.0, frequency: 240 },
+    { gainRequirement: 1.5, percentage: 10.0, frequency: 120 },
+    { gainRequirement: 2.5, percentage: 17.5, frequency: 80 },
+    { gainRequirement: 3.5, percentage: 25.0, frequency: 30 },
+    { gainRequirement: 5.0, percentage: 35.0, frequency: 10 },
   ],
 });
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  buildDefaultConfig,
-};
+export { buildDefaultConfig };

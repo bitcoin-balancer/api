@@ -25,13 +25,7 @@ AltchaRouter.route('/').get(highRiskLimit, async (req: Request, res: Response) =
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  AltchaRouter,
-};
+export { AltchaRouter };

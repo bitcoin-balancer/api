@@ -70,10 +70,6 @@ const coinsServiceFactory = (): ICoinsService => {
   let __quote: ICoinsState<ICoinState>; // e.g. BTCUSDT
   let __base: ICoinsState<ICoinState>; // e.g. ETHBTC
 
-
-
-
-
   /* **********************************************************************************************
    *                                         RETRIEVERS                                           *
    ********************************************************************************************** */
@@ -109,10 +105,6 @@ const coinsServiceFactory = (): ICoinsService => {
     return toSemiCompact(asset === 'quote' ? __quote : __base);
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                      STATE CALCULATOR                                        *
    ********************************************************************************************** */
@@ -122,15 +114,14 @@ const coinsServiceFactory = (): ICoinsService => {
    * @param window
    * @returns IStateResult
    */
-  const __calculateStateForWindow = (window: ISplitStateItem[]): IStateResult => (
+  const __calculateStateForWindow = (window: ISplitStateItem[]): IStateResult =>
     window.length === __config.value.size
       ? calculateStateForSeries(
-        window,
-        __config.value.requirement,
-        __config.value.strongRequirement,
-      )
-      : { mean: 0, splits: buildPristineSplitStates() }
-  );
+          window,
+          __config.value.requirement,
+          __config.value.strongRequirement,
+        )
+      : { mean: 0, splits: buildPristineSplitStates() };
 
   /**
    * Calculates the state for a symbol, mutates the local copy and returns the new quote and base
@@ -140,7 +131,7 @@ const coinsServiceFactory = (): ICoinsService => {
    */
   const __calculateAndUpdateStateForSymbol = (
     symbol: string,
-  ): { quoteResult: IStateResult, baseResult: IStateResult | undefined } => {
+  ): { quoteResult: IStateResult; baseResult: IStateResult | undefined } => {
     // calculate the state for the quote pair
     const quoteResult = __calculateStateForWindow(__quote.statesBySymbol[symbol].window);
     __quote.statesBySymbol[symbol].state = quoteResult.mean;
@@ -229,10 +220,6 @@ const coinsServiceFactory = (): ICoinsService => {
    */
   const getPristineState = (): ICoinsStates<ICompactCoinState> => buildPristineCoinsStates();
 
-
-
-
-
   /* **********************************************************************************************
    *                                       STREAM HANDLERS                                        *
    ********************************************************************************************** */
@@ -256,11 +243,13 @@ const coinsServiceFactory = (): ICoinsService => {
   const __onPriceChanges = (symbol: string, newPrice: number, currentTime: number): void => {
     // if the interval is active, update the latest price. Otherwise, append it
     const lastIdx = __quote.statesBySymbol[symbol].window.length - 1;
-    if (isIntervalActive(
-      __quote.statesBySymbol[symbol].window[lastIdx]?.x,
-      __config.value.interval,
-      currentTime,
-    )) {
+    if (
+      isIntervalActive(
+        __quote.statesBySymbol[symbol].window[lastIdx]?.x,
+        __config.value.interval,
+        currentTime,
+      )
+    ) {
       __quote.statesBySymbol[symbol].window[lastIdx].y = newPrice;
       if (!isBaseAsset(symbol)) {
         __base.statesBySymbol[symbol].window[lastIdx].y = calculateSymbolPriceInBaseAsset(
@@ -282,11 +271,11 @@ const coinsServiceFactory = (): ICoinsService => {
     // make sure the size of the window is maintained
     if (__quote.statesBySymbol[symbol].window.length > __config.value.size) {
       __quote.statesBySymbol[symbol].window = __quote.statesBySymbol[symbol].window.slice(
-        -(__config.value.size),
+        -__config.value.size,
       );
       if (!isBaseAsset(symbol)) {
         __base.statesBySymbol[symbol].window = __base.statesBySymbol[symbol].window.slice(
-          -(__config.value.size),
+          -__config.value.size,
         );
       }
     }
@@ -306,10 +295,6 @@ const coinsServiceFactory = (): ICoinsService => {
     });
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                  INITIALIZATION EVALUATION                                   *
    ********************************************************************************************** */
@@ -326,10 +311,6 @@ const coinsServiceFactory = (): ICoinsService => {
       }
     });
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
@@ -352,10 +333,11 @@ const coinsServiceFactory = (): ICoinsService => {
    * Retrieves the top symbols based on the module's configuration.
    * @returns Promise<string[]>
    */
-  const __getTopSymbols = (): Promise<string[]> => retryAsyncFunction(
-    () => ExchangeService.getTopSymbols(__config.value.whitelistedSymbols, __config.value.limit),
-    [3, 5, 15, 60],
-  );
+  const __getTopSymbols = (): Promise<string[]> =>
+    retryAsyncFunction(
+      () => ExchangeService.getTopSymbols(__config.value.whitelistedSymbols, __config.value.limit),
+      [3, 5, 15, 60],
+    );
 
   /**
    * Initializes the Coins Module.
@@ -399,10 +381,6 @@ const coinsServiceFactory = (): ICoinsService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                        CONFIGURATION                                         *
    ********************************************************************************************** */
@@ -433,10 +411,6 @@ const coinsServiceFactory = (): ICoinsService => {
     await teardownAndInitializeModule();
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
@@ -464,18 +438,10 @@ const coinsServiceFactory = (): ICoinsService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const CoinsService = coinsServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

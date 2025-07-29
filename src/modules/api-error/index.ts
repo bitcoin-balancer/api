@@ -22,12 +22,7 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
    ********************************************************************************************** */
 
   // the keys of values that are confidential and should not be stored or logged
-  const __SENSITIVE_DATA_KEYS: string[] = [
-    'password',
-    'newPassword',
-    'otpToken',
-    'otpSecret',
-  ];
+  const __SENSITIVE_DATA_KEYS: string[] = ['password', 'newPassword', 'otpToken', 'otpSecret'];
 
   // the list of errors that are regular and shouldn't be stored
   const __OMIT_ERROR_CODES: number[] = [
@@ -41,10 +36,6 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
 
   // the number of API Errors that have not been yet read by users
   let __unreadCount: number = 0;
-
-
-
-
 
   /* **********************************************************************************************
    *                                            ACTIONS                                           *
@@ -113,10 +104,6 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
     __unreadCount = 0;
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
@@ -133,22 +120,12 @@ const apiErrorServiceFactory = (): IAPIErrorService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const APIErrorService = apiErrorServiceFactory();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  APIErrorService,
-};
+export { APIErrorService };

@@ -1,5 +1,3 @@
-
-
 /* ************************************************************************************************
  *                                            SERVICE                                             *
  ************************************************************************************************ */
@@ -24,10 +22,6 @@ type IAPIErrorService = {
   deleteAll: () => Promise<void>;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
@@ -36,32 +30,87 @@ type IAPIErrorService = {
  * API Error Origin
  * The invocation that triggered the error. It can be a specific function or a route.
  */
-type IAPIErrorOrigin = 'AutomatedTest' | 'Notification.broadcast' | 'APIErrorRouter.get'
-| 'APIErrorRouter.delete' | 'PingRouter.get' | 'AltchaRouter.get' | 'IPBlacklistRouter.get'
-| 'IPBlacklistRouter.post' | 'IPBlacklistRouter.put' | 'IPBlacklistRouter.delete'
-| 'UserRouter.get' | 'UserRouter.get.otp-secret' | 'UserRouter.get.password-updates'
-| 'UserRouter.post' | 'UserRouter.patch.nickname' | 'UserRouter.patch.authority'
-| 'UserRouter.patch.password' | 'UserRouter.patch.otpSecret' | 'UserRouter.delete' | 'JWTRouter.get'
-| 'JWTRouter.post.sign-in' | 'JWTRouter.post.refresh-jwt' | 'JWTRouter.post.sign-out'
-| 'VersionService.initialize.__buildVersion' | 'ServerRouter.get' | 'ServerRouter.get.alarms'
-| 'ServerRouter.put.alarms' | 'ServerService.initialize.__refetchState' | 'DatabaseRouter.get.summary'
-| 'DataJoinRouter.get.app-essentials' | 'DataJoinService.initialize.emitCompactAppEssentials'
-| 'NotificationRouter.get' | 'WindowService.__refetchInterval' | 'WindowService.updateConfiguration.shouldReInitialize'
-| 'WindowService.updateConfiguration.shouldFetchInitialCandlesticks' | 'MarketStateService.__onWindowChanges'
-| 'MarketStateRouter.get.window.config' | 'MarketStateRouter.put.window.config' | 'CoinsService.teardownAndInitializeModule'
-| 'MarketStateRouter.get.coins.config' | 'MarketStateRouter.put.coins.config' | 'WebSocket.COINS.error'
-| 'WebSocket.LIQUIDITY.error' | 'WebSocket.COINS.close' | 'WebSocket.LIQUIDITY.close' | 'WebSocket.HealthCheck'
-| 'MarketStateRouter.get.coins.state.asset.symbol' | 'MarketStateRouter.get.coins.state.asset'
-| 'MarketStateRouter.get.liquidity.state' | 'MarketStateRouter.get.liquidity.config' | 'MarketStateRouter.put.liquidity.config'
-| 'MarketStateRouter.get.reversal.config' | 'MarketStateRouter.put.reversal.config' | 'MarketStateRouter.get.reversal.record'
-| 'MarketStateRouter.get.reversal.records' | 'MarketStateRouter.get.reversal.event-history' | 'OrderBook.interval.refetch'
-| 'BalanceService.__refetchInterval' | 'PositionRouter.get.balances' | 'PositionRouter.get.strategy' | 'PositionRouter.put.strategy'
-| 'PositionRouter.get.record' | 'PositionRouter.get.records' | 'TradeService.__syncInterval' | 'TransactionService.__scheduleTransaction'
-| 'PositionRouter.get.transaction' | 'PositionRouter.get.transactions' | 'PositionRouter.get.records.range'
-| 'PositionRouter.get.event-history' | 'PositionService.__increase' | 'PositionService.__decrease'
-| 'PositionRouter.post.increase' | 'PositionRouter.post.decrease' | 'PositionRouter.patch.archive' | 'PositionRouter.patch.unarchive'
-| 'PositionRouter.get.record.trades' | 'PositionRouter.get.record.transactions' | 'PositionRouter.post.trade'
-| 'PositionRouter.put.trade' | 'PositionRouter.delete.trade';
+type IAPIErrorOrigin =
+  | 'AutomatedTest'
+  | 'Notification.broadcast'
+  | 'APIErrorRouter.get'
+  | 'APIErrorRouter.delete'
+  | 'PingRouter.get'
+  | 'AltchaRouter.get'
+  | 'IPBlacklistRouter.get'
+  | 'IPBlacklistRouter.post'
+  | 'IPBlacklistRouter.put'
+  | 'IPBlacklistRouter.delete'
+  | 'UserRouter.get'
+  | 'UserRouter.get.otp-secret'
+  | 'UserRouter.get.password-updates'
+  | 'UserRouter.post'
+  | 'UserRouter.patch.nickname'
+  | 'UserRouter.patch.authority'
+  | 'UserRouter.patch.password'
+  | 'UserRouter.patch.otpSecret'
+  | 'UserRouter.delete'
+  | 'JWTRouter.get'
+  | 'JWTRouter.post.sign-in'
+  | 'JWTRouter.post.refresh-jwt'
+  | 'JWTRouter.post.sign-out'
+  | 'VersionService.initialize.__buildVersion'
+  | 'ServerRouter.get'
+  | 'ServerRouter.get.alarms'
+  | 'ServerRouter.put.alarms'
+  | 'ServerService.initialize.__refetchState'
+  | 'DatabaseRouter.get.summary'
+  | 'DataJoinRouter.get.app-essentials'
+  | 'DataJoinService.initialize.emitCompactAppEssentials'
+  | 'NotificationRouter.get'
+  | 'WindowService.__refetchInterval'
+  | 'WindowService.updateConfiguration.shouldReInitialize'
+  | 'WindowService.updateConfiguration.shouldFetchInitialCandlesticks'
+  | 'MarketStateService.__onWindowChanges'
+  | 'MarketStateRouter.get.window.config'
+  | 'MarketStateRouter.put.window.config'
+  | 'CoinsService.teardownAndInitializeModule'
+  | 'MarketStateRouter.get.coins.config'
+  | 'MarketStateRouter.put.coins.config'
+  | 'WebSocket.COINS.error'
+  | 'WebSocket.LIQUIDITY.error'
+  | 'WebSocket.COINS.close'
+  | 'WebSocket.LIQUIDITY.close'
+  | 'WebSocket.HealthCheck'
+  | 'MarketStateRouter.get.coins.state.asset.symbol'
+  | 'MarketStateRouter.get.coins.state.asset'
+  | 'MarketStateRouter.get.liquidity.state'
+  | 'MarketStateRouter.get.liquidity.config'
+  | 'MarketStateRouter.put.liquidity.config'
+  | 'MarketStateRouter.get.reversal.config'
+  | 'MarketStateRouter.put.reversal.config'
+  | 'MarketStateRouter.get.reversal.record'
+  | 'MarketStateRouter.get.reversal.records'
+  | 'MarketStateRouter.get.reversal.event-history'
+  | 'OrderBook.interval.refetch'
+  | 'BalanceService.__refetchInterval'
+  | 'PositionRouter.get.balances'
+  | 'PositionRouter.get.strategy'
+  | 'PositionRouter.put.strategy'
+  | 'PositionRouter.get.record'
+  | 'PositionRouter.get.records'
+  | 'TradeService.__syncInterval'
+  | 'TransactionService.__scheduleTransaction'
+  | 'PositionRouter.get.transaction'
+  | 'PositionRouter.get.transactions'
+  | 'PositionRouter.get.records.range'
+  | 'PositionRouter.get.event-history'
+  | 'PositionService.__increase'
+  | 'PositionService.__decrease'
+  | 'PositionRouter.post.increase'
+  | 'PositionRouter.post.decrease'
+  | 'PositionRouter.patch.archive'
+  | 'PositionRouter.patch.unarchive'
+  | 'PositionRouter.get.record.trades'
+  | 'PositionRouter.get.record.transactions'
+  | 'PositionRouter.post.trade'
+  | 'PositionRouter.put.trade'
+  | 'PositionRouter.delete.trade';
 
 /**
  * API Error
@@ -89,10 +138,6 @@ type IAPIError = {
   // the arguments used when the error was thrown
   args: Record<string, any> | null;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

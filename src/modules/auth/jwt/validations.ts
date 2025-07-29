@@ -34,14 +34,7 @@ const canUserSignOut = (uid: string, refreshJWT: string): void => {
   }
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  canRecordsBeListed,
-  canUserSignOut,
-};
+export { canRecordsBeListed, canUserSignOut };

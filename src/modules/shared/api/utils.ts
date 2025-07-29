@@ -18,10 +18,6 @@ const readPackageFile = (): IPackageFile => {
   return packageFile;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         PRINT HELPERS                                          *
  ************************************************************************************************ */
@@ -55,10 +51,6 @@ const printInitializationFooter = (version: string): void => {
 const printTeardownHeader = (signal: ITerminationSignal | undefined): void => {
   console.log(`\n\n\n\nBALANCER API TEARDOWN${typeof signal === 'string' ? ` (${signal})` : ''}\n`);
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

@@ -68,9 +68,8 @@ const __listNextRecords = async (limit: number, startAtID: number): Promise<INot
  * @param startAtID?
  * @returns Promise<INotification[]>
  */
-const listRecords = (limit: number, startAtID?: number): Promise<INotification[]> => (
-  typeof startAtID === 'number' ? __listNextRecords(limit, startAtID) : __listRecords(limit)
-);
+const listRecords = (limit: number, startAtID?: number): Promise<INotification[]> =>
+  typeof startAtID === 'number' ? __listNextRecords(limit, startAtID) : __listRecords(limit);
 
 /**
  * Saves a record and returns its identifier.
@@ -118,17 +117,7 @@ const deleteAllRecords = async (): Promise<void> => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  getRecord,
-  listRecords,
-  saveRecord,
-  deleteOldRecords,
-  deleteAllRecords,
-};
+export { getRecord, listRecords, saveRecord, deleteOldRecords, deleteAllRecords };

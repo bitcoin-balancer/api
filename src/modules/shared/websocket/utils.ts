@@ -28,9 +28,8 @@ const __getConnectionCloseReason = (reason: unknown): string => {
  * @param reason
  * @returns string
  */
-const formatConnectionClosePayload = (code: unknown, reason: unknown): string => (
-  `Code: ${typeof code === 'number' ? code : 'unknown'} - Reason: ${__getConnectionCloseReason(reason)}`
-);
+const formatConnectionClosePayload = (code: unknown, reason: unknown): string =>
+  `Code: ${typeof code === 'number' ? code : 'unknown'} - Reason: ${__getConnectionCloseReason(reason)}`;
 
 /**
  * Checks if the connection's idle limit has been exceeded.
@@ -38,19 +37,10 @@ const formatConnectionClosePayload = (code: unknown, reason: unknown): string =>
  * @param limit
  * @returns boolean
  */
-const exceededIdleLimit = (lastMessage: number | undefined, limit: number): boolean => (
-  typeof lastMessage !== 'number'
-  || subSeconds(Date.now(), limit).getTime() > lastMessage
-);
-
-
-
-
+const exceededIdleLimit = (lastMessage: number | undefined, limit: number): boolean =>
+  typeof lastMessage !== 'number' || subSeconds(Date.now(), limit).getTime() > lastMessage;
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  formatConnectionClosePayload,
-  exceededIdleLimit,
-};
+export { formatConnectionClosePayload, exceededIdleLimit };

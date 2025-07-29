@@ -34,7 +34,7 @@ const calculatePriceRange = (
 ): ILiquidityPriceRange => ({
   current: currentPrice,
   upper: adjustByPercentage(currentPrice, maxDistanceFromPrice),
-  lower: adjustByPercentage(currentPrice, -(maxDistanceFromPrice)),
+  lower: adjustByPercentage(currentPrice, -maxDistanceFromPrice),
 });
 
 /**
@@ -111,10 +111,8 @@ const __calculateIntensity = (
 const __calculatePointsForSide = (
   levels: ILiquidityPriceLevel[],
   weights: ILiquidityIntensityWeights,
-): number => levels.reduce(
-  (previous, current) => previous + (current[2] === 0 ? 0 : weights[current[2]]),
-  0,
-);
+): number =>
+  levels.reduce((previous, current) => previous + (current[2] === 0 ? 0 : weights[current[2]]), 0);
 
 /**
  * Calculates the bid dominance based on the liq. peaks present in both sides of the order book.
@@ -130,12 +128,8 @@ const calculateBidDominance = (
 ): number => {
   const askPoints = __calculatePointsForSide(asks, weights);
   const bidPoints = __calculatePointsForSide(bids, weights);
-  return calculatePercentageRepresentation(bidPoints, (askPoints + bidPoints));
+  return calculatePercentageRepresentation(bidPoints, askPoints + bidPoints);
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         STATE HELPERS                                          *
@@ -159,10 +153,6 @@ const buildPristineState = (): ILiquidityState => ({
  * @returns ICompactLiquidityState
  */
 const buildPristineCompactState = (): ICompactLiquidityState => ({ bidDominance: 50 });
-
-
-
-
 
 /* ************************************************************************************************
  *                                         CONFIG HELPERS                                         *
@@ -199,10 +189,6 @@ const buildDefaultConfig = (): ILiquidityConfig => ({
   },
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                          MISC HELPERS                                          *
  ************************************************************************************************ */
@@ -213,15 +199,14 @@ const buildDefaultConfig = (): ILiquidityConfig => ({
  * @param side
  * @returns (a: ILiquidityPriceLevel, b: ILiquidityPriceLevel): number
  */
-const priceLevelSortFunc = (side: ILiquiditySideID) => (
-  a: ILiquidityPriceLevel,
-  b: ILiquidityPriceLevel,
-): number => {
-  if (side === 'asks') {
-    return a[0] - b[0];
-  }
-  return b[0] - a[0];
-};
+const priceLevelSortFunc =
+  (side: ILiquiditySideID) =>
+  (a: ILiquidityPriceLevel, b: ILiquidityPriceLevel): number => {
+    if (side === 'asks') {
+      return a[0] - b[0];
+    }
+    return b[0] - a[0];
+  };
 
 /**
  * Verifies if an order's price is within the price range.
@@ -234,10 +219,9 @@ const isOrderPriceInRange = (
   price: number,
   range: ILiquidityPriceRange,
   side: ILiquiditySideID,
-): boolean => (
-  (side === 'asks' && price > range.current && price <= range.upper)
-  || (side === 'bids' && price < range.current && price >= range.lower)
-);
+): boolean =>
+  (side === 'asks' && price > range.current && price <= range.upper) ||
+  (side === 'bids' && price < range.current && price >= range.lower);
 
 /**
  * Processes an individual price level by calculating its intensity based on the current
@@ -248,13 +232,7 @@ const isOrderPriceInRange = (
 const processPriceLevel = (
   level: ILiquidityPriceLevel,
   requirements: ILiquidityIntensityRequirements,
-): ILiquidityPriceLevel => (
-  [level[0], level[1], __calculateIntensity(level[1], requirements)]
-);
-
-
-
-
+): ILiquidityPriceLevel => [level[0], level[1], __calculateIntensity(level[1], requirements)];
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

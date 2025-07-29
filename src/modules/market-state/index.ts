@@ -42,10 +42,6 @@ const marketStateServiceFactory = (): IMarketStateService => {
     5,
   );
 
-
-
-
-
   /* **********************************************************************************************
    *                                            STREAM                                            *
    ********************************************************************************************** */
@@ -55,13 +51,8 @@ const marketStateServiceFactory = (): IMarketStateService => {
    * @param callback
    * @returns Subscription
    */
-  const subscribe = (callback: (value: IMarketState) => any): Subscription => (
-    __state.subscribe(callback)
-  );
-
-
-
-
+  const subscribe = (callback: (value: IMarketState) => any): Subscription =>
+    __state.subscribe(callback);
 
   /* **********************************************************************************************
    *                                       STATE CALCULATOR                                       *
@@ -106,10 +97,6 @@ const marketStateServiceFactory = (): IMarketStateService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
    ********************************************************************************************** */
@@ -119,11 +106,14 @@ const marketStateServiceFactory = (): IMarketStateService => {
    * if the requirements are met by the current market state.
    */
   const initializeCoinRotationInterval = (): void => {
-    __coinsRotationInterval = setInterval(async () => {
-      if (canCoinsBeRotated(__state.value.windowState, __state.value.reversalState)) {
-        await CoinsService.teardownAndInitializeModule();
-      }
-    }, ms(`${__COINS_ROTATION_FREQUENCY} days`));
+    __coinsRotationInterval = setInterval(
+      async () => {
+        if (canCoinsBeRotated(__state.value.windowState, __state.value.reversalState)) {
+          await CoinsService.teardownAndInitializeModule();
+        }
+      },
+      ms(`${__COINS_ROTATION_FREQUENCY} days`),
+    );
   };
 
   /**
@@ -205,10 +195,6 @@ const marketStateServiceFactory = (): IMarketStateService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
@@ -225,18 +211,10 @@ const marketStateServiceFactory = (): IMarketStateService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const MarketStateService = marketStateServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
