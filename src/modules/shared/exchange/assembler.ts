@@ -31,7 +31,9 @@ const assembleGetCandlesticks = (): IGetCandlesticks => {
     case 'kraken':
       return KrakenService.getCandlesticks;
     default:
-      throw new Error(`The function assembleGetCandlesticks could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.window}' is not supported.`);
+      throw new Error(
+        `The function assembleGetCandlesticks could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.window}' is not supported.`,
+      );
   }
 };
 
@@ -48,7 +50,9 @@ const assembleGetOrderBook = (): IGetOrderBook => {
     case 'kraken':
       return KrakenService.getOrderBook;
     default:
-      throw new Error(`The function assembleGetOrderBook could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity}' is not supported.`);
+      throw new Error(
+        `The function assembleGetOrderBook could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity}' is not supported.`,
+      );
   }
 };
 
@@ -65,7 +69,9 @@ const assembleGetOrderBookStream = (): IGetOrderBookStream => {
     case 'kraken':
       return KrakenService.getOrderBookStream;
     default:
-      throw new Error(`The function assembleGetOrderBookStream could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity}' is not supported.`);
+      throw new Error(
+        `The function assembleGetOrderBookStream could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.liquidity}' is not supported.`,
+      );
   }
 };
 
@@ -82,7 +88,9 @@ const assembleGetTopSymbols = (): IGetTopSymbols => {
     case 'kraken':
       return KrakenService.getTopSymbols;
     default:
-      throw new Error(`The function assembleGetTopSymbols could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`);
+      throw new Error(
+        `The function assembleGetTopSymbols could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`,
+      );
   }
 };
 
@@ -99,13 +107,11 @@ const assembleGetTickersStream = (): IGetTickersStream => {
     case 'kraken':
       return KrakenService.getTickersStream;
     default:
-      throw new Error(`The function assembleGetTickersStream could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`);
+      throw new Error(
+        `The function assembleGetTickersStream could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.coins}' is not supported.`,
+      );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         ACCOUNT DATA                                           *
@@ -120,7 +126,9 @@ const assembleGetBalances = (): IGetBalances => {
     case 'binance':
       return BinanceService.getBalances;
     default:
-      throw new Error(`The function assembleGetBalances could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`);
+      throw new Error(
+        `The function assembleGetBalances could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`,
+      );
   }
 };
 
@@ -133,13 +141,11 @@ const assembleListTrades = (): IListTrades => {
     case 'binance':
       return BinanceService.listTrades;
     default:
-      throw new Error(`The function assembleListTrades could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`);
+      throw new Error(
+        `The function assembleListTrades could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`,
+      );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                        ACCOUNT ACTIONS                                         *
@@ -154,7 +160,9 @@ const assembleBuy = (): IBuy => {
     case 'binance':
       return BinanceService.buy;
     default:
-      throw new Error(`The function assembleBuy could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`);
+      throw new Error(
+        `The function assembleBuy could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`,
+      );
   }
 };
 
@@ -167,13 +175,11 @@ const assembleSell = (): ISell => {
     case 'binance':
       return BinanceService.sell;
     default:
-      throw new Error(`The function assembleSell could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`);
+      throw new Error(
+        `The function assembleSell could not be assembled because the exchange '${ENVIRONMENT.EXCHANGE_CONFIGURATION.trading}' is not supported.`,
+      );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

@@ -20,10 +20,6 @@ import { getUserRecord, nicknameExists } from './model.js';
 // the maximum number of password update records that can be queried at a time
 const __PASSWORD_UPDATE_QUERY_LIMIT = 30;
 
-
-
-
-
 /* ************************************************************************************************
  *                                            HELPERS                                             *
  ************************************************************************************************ */
@@ -43,16 +39,19 @@ const validateUserRecordExistance = async (uid: string, allowRoot?: boolean): Pr
     throw new Error(encodeError(`The uid '${uid}' is invalid.`, 3506));
   }
   if (!allowRoot && isRoot(uid)) {
-    throw new Error(encodeError(`The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`, 3508));
+    throw new Error(
+      encodeError(
+        `The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`,
+        3508,
+      ),
+    );
   }
-  if (await getUserRecord(uid) === undefined) {
-    throw new Error(encodeError(`The record for uid '${uid}' could not be found in the database.`, 3507));
+  if ((await getUserRecord(uid)) === undefined) {
+    throw new Error(
+      encodeError(`The record for uid '${uid}' could not be found in the database.`, 3507),
+    );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                           RETRIEVERS                                           *
@@ -77,17 +76,23 @@ const canListUserPasswordUpdates = async (
   startAtEventTime: number | undefined,
 ): Promise<void> => {
   if (!isIntegerValid(limit, 1, __PASSWORD_UPDATE_QUERY_LIMIT)) {
-    throw new Error(encodeError(`The maximum number of password update records that can be retrieved at a time is ${__PASSWORD_UPDATE_QUERY_LIMIT}. Received: ${limit}`, 3512));
+    throw new Error(
+      encodeError(
+        `The maximum number of password update records that can be retrieved at a time is ${__PASSWORD_UPDATE_QUERY_LIMIT}. Received: ${limit}`,
+        3512,
+      ),
+    );
   }
   if (startAtEventTime !== undefined && !isTimestampValid(startAtEventTime)) {
-    throw new Error(encodeError(`If the startAtEventTime arg is provided, it must be a valid timestamp. Received: ${startAtEventTime}`, 3511));
+    throw new Error(
+      encodeError(
+        `If the startAtEventTime arg is provided, it must be a valid timestamp. Received: ${startAtEventTime}`,
+        3511,
+      ),
+    );
   }
   await validateUserRecordExistance(uid);
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                    CREDENTIALS VERIFICATION                                    *
@@ -134,17 +139,18 @@ const canVerifySignInCredentials = async (
     throw new Error(encodeError(`The nickname '${nickname}' is invalid.`, 3500));
   }
   if (!isPasswordValid(password)) {
-    throw new Error(encodeError('The password is invalid or too weak. Make sure the password meets the requirements and try again.', 3509));
+    throw new Error(
+      encodeError(
+        'The password is invalid or too weak. Make sure the password meets the requirements and try again.',
+        3509,
+      ),
+    );
   }
   if (!isOTPTokenValid(otpToken)) {
     throw new Error(encodeError(`The OTP Token '${otpToken}' is invalid.`, 3510));
   }
   await AltchaService.verify(altchaPayload);
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                     USER RECORD MANAGEMENT                                     *
@@ -163,7 +169,9 @@ const __canNicknameBeUsed = async (nickname: string): Promise<void> => {
     throw new Error(encodeError(`The nickname '${nickname}' is invalid.`, 3500));
   }
   if (await nicknameExists(nickname)) {
-    throw new Error(encodeError(`The nickname '${nickname}' is already being used by another user.`, 3501));
+    throw new Error(
+      encodeError(`The nickname '${nickname}' is already being used by another user.`, 3501),
+    );
   }
 };
 
@@ -195,14 +203,20 @@ const canUserBeCreated = async (
       throw new Error(encodeError(`The root's authority must be 5. Received: ${authority}`, 3502));
     }
     if (!isPasswordValid(password)) {
-      throw new Error(encodeError('The root account cannot be created with an invalid|weak password.', 3503));
+      throw new Error(
+        encodeError('The root account cannot be created with an invalid|weak password.', 3503),
+      );
     }
   } else {
     if (password !== undefined) {
-      throw new Error(encodeError('A password cannot be provided when creating a nonroot user.', 3504));
+      throw new Error(
+        encodeError('A password cannot be provided when creating a nonroot user.', 3504),
+      );
     }
     if (!isAuthorityValid(authority, 4)) {
-      throw new Error(encodeError(`The nonroot user's authority must range 1 - 4. Received: ${authority}`, 3505));
+      throw new Error(
+        encodeError(`The nonroot user's authority must range 1 - 4. Received: ${authority}`, 3505),
+      );
     }
   }
 };
@@ -237,7 +251,9 @@ const canNicknameBeUpdated = async (uid: string, newNickname: string): Promise<v
  */
 const canAuthorityBeUpdated = async (uid: string, newAuthority: IAuthority): Promise<void> => {
   if (!isAuthorityValid(newAuthority, 4)) {
-    throw new Error(encodeError(`The nonroot user's authority must range 1 - 4. Received: ${newAuthority}`, 3505));
+    throw new Error(
+      encodeError(`The nonroot user's authority must range 1 - 4. Received: ${newAuthority}`, 3505),
+    );
   }
   await validateUserRecordExistance(uid);
 };
@@ -260,17 +276,23 @@ const canPasswordBeUpdated = async (
   altchaPayload: string,
 ): Promise<void> => {
   if (isRoot(uid)) {
-    throw new Error(encodeError(`The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`, 3508));
+    throw new Error(
+      encodeError(
+        `The record for uid '${uid}' belongs to the root account and is not allowed for the requested action.`,
+        3508,
+      ),
+    );
   }
   if (!isPasswordValid(newPassword)) {
-    throw new Error(encodeError(`The password for uid '${uid}' is invalid or too weak. Make sure the password meets the requirements and try again.`, 3509));
+    throw new Error(
+      encodeError(
+        `The password for uid '${uid}' is invalid or too weak. Make sure the password meets the requirements and try again.`,
+        3509,
+      ),
+    );
   }
   await AltchaService.verify(altchaPayload);
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

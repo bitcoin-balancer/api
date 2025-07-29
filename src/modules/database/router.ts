@@ -28,13 +28,7 @@ DatabaseRouter.route('/summary').get(veryHighRiskLimit, async (req: Request, res
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  DatabaseRouter,
-};
+export { DatabaseRouter };

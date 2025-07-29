@@ -24,10 +24,14 @@ IPBlacklistRouter.route('/').get(veryLowRiskLimit, async (req: Request, res: Res
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 2, ['limit'], req.query);
-    res.json(buildResponse(await IPBlacklistService.list(
-      Number(req.query.limit),
-      typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
-    )));
+    res.json(
+      buildResponse(
+        await IPBlacklistService.list(
+          Number(req.query.limit),
+          typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
+        ),
+      ),
+    );
   } catch (e) {
     APIErrorService.save('IPBlacklistRouter.get', e, reqUid, req.ip, req.query);
     res.json(buildResponse(undefined, e));
@@ -89,7 +93,10 @@ IPBlacklistRouter.route('/:id').put(highRiskLimit, async (req: Request, res: Res
     );
     res.json(buildResponse());
   } catch (e) {
-    APIErrorService.save('IPBlacklistRouter.put', e, reqUid, req.ip, { ...req.params, ...req.body });
+    APIErrorService.save('IPBlacklistRouter.put', e, reqUid, req.ip, {
+      ...req.params,
+      ...req.body,
+    });
     res.json(buildResponse(undefined, e));
   }
 });
@@ -120,13 +127,7 @@ IPBlacklistRouter.route('/:id').delete(veryLowRiskLimit, async (req: Request, re
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  IPBlacklistRouter,
-};
+export { IPBlacklistRouter };

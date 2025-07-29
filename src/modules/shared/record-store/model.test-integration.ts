@@ -11,14 +11,14 @@ const ID: IStoreID[] = ['AUTOMATED_TESTS_01', 'AUTOMATED_TESTS_02'];
 
 // test records
 type ITestRecord = {
-  id: number,
-  name: string,
-  friends: string[],
+  id: number;
+  name: string;
+  friends: string[];
   job: {
-    name: string,
-    salary: number,
-    coworkers: { name: string, age: number }[]
-  }
+    name: string;
+    salary: number;
+    coworkers: { name: string; age: number }[];
+  };
 };
 const R: ITestRecord[] = [
   {
@@ -49,8 +49,6 @@ const R: ITestRecord[] = [
     },
   },
 ];
-
-
 
 /* ************************************************************************************************
  *                                             TESTS                                              *

@@ -31,8 +31,6 @@ type IWindowService = {
   updateConfiguration: (newConfig: IWindowConfig) => Promise<void>;
 };
 
-
-
 /* ************************************************************************************************
  *                                             STATE                                              *
  ************************************************************************************************ */
@@ -51,10 +49,6 @@ type IWindowState = {
   // the candlesticks that comprise the window
   window: ICompactCandlestickRecords; // the compact state only includes the last 2 records
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         CONFIGURATION                                          *
@@ -81,10 +75,6 @@ type IWindowConfig = {
   // the % change required for the window splits to have a strong state (2 | -2)
   strongRequirement: number;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

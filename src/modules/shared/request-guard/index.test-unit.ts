@@ -11,20 +11,13 @@ import { checkPublicRequest } from './index.js';
 // test ip address
 const IP = '216.24.219.18';
 
-
-
-
-
 /* ************************************************************************************************
  *                                             MOCKS                                              *
  ************************************************************************************************ */
 
 // mocks the environment file
-const mockEnvironment = (value: Partial<IEnvironment>) => vi.spyOn(
-  ENVIRONMENT,
-  'ENVIRONMENT',
-  'get',
-).mockReturnValue(<IEnvironment>value);
+const mockEnvironment = (value: Partial<IEnvironment>) =>
+  vi.spyOn(ENVIRONMENT, 'ENVIRONMENT', 'get').mockReturnValue(<IEnvironment>value);
 
 // mocks the initialized state of the API
 vi.mock('../api/index.js', () => ({
@@ -32,13 +25,8 @@ vi.mock('../api/index.js', () => ({
     initialized: false,
   },
 }));
-const mockInitializedState = (state: boolean) => (
-  vi.spyOn(APIService, 'initialized', 'get').mockReturnValue(state)
-);
-
-
-
-
+const mockInitializedState = (state: boolean) =>
+  vi.spyOn(APIService, 'initialized', 'get').mockReturnValue(state);
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
@@ -88,7 +76,9 @@ describe('RequestGuard', () => {
     test('throws if the required arg has an invalid value', () => {
       mockEnvironment({ TEST_MODE: false });
       mockInitializedState(true);
-      expect(() => checkPublicRequest(IP, ['someArg'], { someArg: undefined })).toThrowError('6252');
+      expect(() => checkPublicRequest(IP, ['someArg'], { someArg: undefined })).toThrowError(
+        '6252',
+      );
       expect(() => checkPublicRequest(IP, ['someArg'], { someArg: null })).toThrowError('6252');
       expect(() => checkPublicRequest(IP, ['someArg'], { someArg: '' })).toThrowError('6252');
       expect(() => checkPublicRequest(IP, ['someArg'], { someArg: NaN })).toThrowError('6252');

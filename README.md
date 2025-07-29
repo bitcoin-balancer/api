@@ -31,19 +31,6 @@ With the `api`, you can confidently execute a proven trading strategy, optimizin
 
 
 
-<br/>
-
-## Scripts
-
-Build the API
-
-```bash
-npm run build
-```
-
-
-
-
 
 <br/>
 

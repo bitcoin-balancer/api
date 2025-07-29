@@ -30,10 +30,6 @@ const saveRecords = async (errors: IAPIError[]): Promise<number[]> => {
   return ids;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
  ************************************************************************************************ */
@@ -50,10 +46,6 @@ const ERRORS: IAPIError[] = [
     args: { foo: 'bar', bar: 123, zac: true, fake: [1, 2, 3], nesty: { hello: 'World' } },
   }),
 ];
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
@@ -74,7 +66,7 @@ describe('APIError Model', () => {
         expect(id).toBeTypeOf('number');
         expect(id).toBeGreaterThan(0);
 
-        const savedRecord = <IAPIError> await getRecord(id);
+        const savedRecord = <IAPIError>await getRecord(id);
         expect(isObjectValid(savedRecord)).toBe(true);
         expect(savedRecord).toStrictEqual({ ...r, id, event_time: savedRecord.event_time });
 
@@ -88,8 +80,6 @@ describe('APIError Model', () => {
       expect(deletedRecords.every((rec) => rec === null)).toBe(true);
     });
   });
-
-
 
   describe('__listRecords', () => {
     test('can list stored records', async () => {
@@ -136,8 +126,6 @@ describe('APIError Model', () => {
       ]);
     });
   });
-
-
 
   describe('__listNextRecords', () => {
     test('can paginate through the records', async () => {

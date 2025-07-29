@@ -27,10 +27,6 @@ const __SPLIT_VALUES: { [key in ISplitStateID]: number } = {
   s2: 0.02,
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                            HELPERS                                             *
  ************************************************************************************************ */
@@ -44,9 +40,8 @@ const __SPLIT_VALUES: { [key in ISplitStateID]: number } = {
 const __applySplit = (
   series: number[] | ISplitStateItem[],
   splitID: ISplitStateID,
-): number[] | ISplitStateItem[] => (
-  series.slice(series.length - Math.ceil(series.length * __SPLIT_VALUES[splitID]))
-);
+): number[] | ISplitStateItem[] =>
+  series.slice(series.length - Math.ceil(series.length * __SPLIT_VALUES[splitID]));
 
 /**
  * Extracts the first and last values from a series of numbers or split state items.
@@ -55,7 +50,7 @@ const __applySplit = (
  */
 const __extractFirstAndLastValues = (
   series: number[] | ISplitStateItem[],
-): { first: number, last: number } => {
+): { first: number; last: number } => {
   const first = series[0];
   const last = series.at(-1)!;
   return {
@@ -82,18 +77,14 @@ const __calculateStateByPercentageChange = (
   if (change >= requirement) {
     return 1;
   }
-  if (change <= -(strongRequirement)) {
+  if (change <= -strongRequirement) {
     return -2;
   }
-  if (change <= -(requirement)) {
+  if (change <= -requirement) {
     return -1;
   }
   return 0;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                        STATE CALCULATORS                                       *
@@ -173,10 +164,6 @@ const calculateStateForSeries = (
     splits: states,
   };
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

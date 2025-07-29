@@ -18,8 +18,6 @@ import { APIService } from './modules/shared/api/index.js';
  */
 const app = express();
 
-
-
 /**
  * Helmet
  * Improves the security of the API by setting a series of HTTP Response Headers.
@@ -27,16 +25,12 @@ const app = express();
  */
 app.use(helmet());
 
-
-
 /**
  * Powered By Header
  * By default, Express sends the 'X-Powered-By' Header in every response. This allows anybody to
  * fingerprint the API and can become a vulnerability.
  */
 app.disable('x-powered-by');
-
-
 
 /**
  * Reverse Proxy
@@ -57,16 +51,12 @@ if (ENVIRONMENT.HAS_TUNNEL_TOKEN) {
   app.set('trust proxy', 1);
 }
 
-
-
 /**
  * HTTP Logger
  * Morgan handles the logging of HTTP Request details as well as the senders'.
  * https://github.com/expressjs/morgan
  */
 app.use(morgan('combined'));
-
-
 
 /**
  * Body Parser
@@ -75,8 +65,6 @@ app.use(morgan('combined'));
  * https://github.com/expressjs/body-parser
  */
 app.use(bodyParser.json({ type: 'application/json', limit: '100kb' }));
-
-
 
 /**
  * Cookie Parser
@@ -89,34 +77,26 @@ app.use(bodyParser.json({ type: 'application/json', limit: '100kb' }));
  */
 app.use(cookieParser(ENVIRONMENT.COOKIE_SECRET));
 
-
-
 /**
  * CORS
  * Enables Cross Origin Resource Sharing so the API's resources can be accessed and/or managed from
  * any origin.
  * https://github.com/expressjs/cors
  */
-app.use(cors({
-  origin: ENVIRONMENT.GUI_URL,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-}));
-
-
-
-
+app.use(
+  cors({
+    origin: ENVIRONMENT.GUI_URL,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  }),
+);
 
 /* ************************************************************************************************
  *                                             ROUTES                                             *
  ************************************************************************************************ */
 mountRoutes(app);
-
-
-
-
 
 /* ************************************************************************************************
  *                                       API INITIALIZATION                                       *

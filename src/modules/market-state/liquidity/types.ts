@@ -1,5 +1,3 @@
-
-
 /* ************************************************************************************************
  *                                           SERVICES                                             *
  ************************************************************************************************ */
@@ -35,17 +33,14 @@ type IOrderBookService = {
   lastRefetch: number;
 
   // retriever
-  getPreProcessedLiquiditySides: (
-    range: ILiquidityPriceRange,
-  ) => { asks: ILiquiditySide, bids: ILiquiditySide };
+  getPreProcessedLiquiditySides: (range: ILiquidityPriceRange) => {
+    asks: ILiquiditySide;
+    bids: ILiquiditySide;
+  };
 
   // initializer
   off: () => void;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TYPES                                              *
@@ -125,10 +120,6 @@ type ILiquiditySide = {
   levels: ILiquidityPriceLevel[];
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                             STATE                                              *
  ************************************************************************************************ */
@@ -163,10 +154,6 @@ type ICompactLiquidityState = {
   bidDominance: number;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         CONFIGURATION                                          *
  ************************************************************************************************ */
@@ -183,10 +170,6 @@ type ILiquidityConfig = {
   // the weights by intensity that will be used to calculate the state
   intensityWeights: ILiquidityIntensityWeights;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

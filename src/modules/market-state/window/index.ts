@@ -40,10 +40,6 @@ const windowServiceFactory = (): IWindowService => {
   // the candlesticks will be refetched every __config.refetchFrequency seconds
   let __refetchInterval: NodeJS.Timeout;
 
-
-
-
-
   /* **********************************************************************************************
    *                                            STREAM                                            *
    ********************************************************************************************** */
@@ -53,13 +49,8 @@ const windowServiceFactory = (): IWindowService => {
    * @param callback
    * @returns Subscription
    */
-  const subscribe = (callback: (value: ICompactCandlestickRecords) => any): Subscription => (
-    __window.subscribe(callback)
-  );
-
-
-
-
+  const subscribe = (callback: (value: ICompactCandlestickRecords) => any): Subscription =>
+    __window.subscribe(callback);
 
   /* **********************************************************************************************
    *                                           FETCHER                                            *
@@ -147,18 +138,15 @@ const windowServiceFactory = (): IWindowService => {
    * @param startTime?
    * @returns Promise<void>
    */
-  const __fetchCandlesticks = async (startTime?: number): Promise<void> => __onCandlestickChanges(
-    startTime,
-    await ExchangeService.getCandlesticks(
-      __config.value.interval,
-      __config.value.size,
+  const __fetchCandlesticks = async (startTime?: number): Promise<void> =>
+    __onCandlestickChanges(
       startTime,
-    ),
-  );
-
-
-
-
+      await ExchangeService.getCandlesticks(
+        __config.value.interval,
+        __config.value.size,
+        startTime,
+      ),
+    );
 
   /* **********************************************************************************************
    *                                       STATE CALCULATOR                                       *
@@ -194,16 +182,11 @@ const windowServiceFactory = (): IWindowService => {
     }
   };
 
-
   /**
    * Builds the default window state.
    * @returns IWindowState
    */
   const getPristineState = (): IWindowState => buildPristineState();
-
-
-
-
 
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
@@ -213,13 +196,16 @@ const windowServiceFactory = (): IWindowService => {
    * Initializes the refetch interval in order to keep the candlesticks in sync.
    */
   const __initializeRefetchInterval = (): void => {
-    __refetchInterval = setInterval(async () => {
-      try {
-        await __fetchCandlesticks(__windowVal.id.at(-1));
-      } catch (e) {
-        APIErrorService.save('WindowService.__refetchInterval', e);
-      }
-    }, ms(`${__config.value.refetchFrequency} seconds`));
+    __refetchInterval = setInterval(
+      async () => {
+        try {
+          await __fetchCandlesticks(__windowVal.id.at(-1));
+        } catch (e) {
+          APIErrorService.save('WindowService.__refetchInterval', e);
+        }
+      },
+      ms(`${__config.value.refetchFrequency} seconds`),
+    );
   };
 
   /**
@@ -244,10 +230,6 @@ const windowServiceFactory = (): IWindowService => {
   const teardown = async (): Promise<void> => {
     clearInterval(__refetchInterval);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                        CONFIGURATION                                         *
@@ -309,10 +291,10 @@ const windowServiceFactory = (): IWindowService => {
     canConfigBeUpdated(newConfig);
 
     // retrieve the post update actions
-    const {
-      shouldReInitialize,
-      shouldFetchInitialCandlesticks,
-    } = getConfigUpdatePostActions(__config.value, newConfig);
+    const { shouldReInitialize, shouldFetchInitialCandlesticks } = getConfigUpdatePostActions(
+      __config.value,
+      newConfig,
+    );
 
     // update the config
     await __config.update(newConfig);
@@ -320,10 +302,6 @@ const windowServiceFactory = (): IWindowService => {
     // execute post actions
     __onConfigChanges(shouldReInitialize, shouldFetchInitialCandlesticks);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -350,18 +328,10 @@ const windowServiceFactory = (): IWindowService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const WindowService = windowServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

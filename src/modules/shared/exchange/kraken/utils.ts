@@ -29,10 +29,6 @@ const buildGetCandlesticksURL = (
   return url;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                           ORDER BOOK                                           *
  ************************************************************************************************ */
@@ -42,7 +38,7 @@ const buildGetCandlesticksURL = (
  * @param topPairs
  * @returns string
  */
-const buildSubscriptionForOrderBook = (symbol: string): string => (
+const buildSubscriptionForOrderBook = (symbol: string): string =>
   JSON.stringify(<IKrakenOrderBookWebSocketSubscription>{
     method: 'subscribe',
     params: {
@@ -51,12 +47,7 @@ const buildSubscriptionForOrderBook = (symbol: string): string => (
       depth: 1000,
       snapshot: false,
     },
-  })
-);
-
-
-
-
+  });
 
 /* ************************************************************************************************
  *                                            TICKERS                                             *
@@ -68,12 +59,8 @@ const buildSubscriptionForOrderBook = (symbol: string): string => (
  * @param b
  * @returns number
  */
-const tickersSortFunc = (
-  a: [string, IKrakenCoinTicker],
-  b: [string, IKrakenCoinTicker],
-): number => (
-  (Number(b[1].v[1]) * Number(b[1].c[0])) - (Number(a[1].v[1]) * Number(a[1].c[0]))
-);
+const tickersSortFunc = (a: [string, IKrakenCoinTicker], b: [string, IKrakenCoinTicker]): number =>
+  Number(b[1].v[1]) * Number(b[1].c[0]) - Number(a[1].v[1]) * Number(a[1].c[0]);
 
 /**
  * Builds the whitelist object from a list of symbols.
@@ -81,7 +68,7 @@ const tickersSortFunc = (
  * @param quoteAsset
  * @returns Record<string, string>
  */
-const buildWhitelist = (whitelistedSymbols: string[]): Record<string, string> => (
+const buildWhitelist = (whitelistedSymbols: string[]): Record<string, string> =>
   whitelistedSymbols.reduce(
     (previous, current) => ({
       ...previous,
@@ -94,30 +81,28 @@ const buildWhitelist = (whitelistedSymbols: string[]): Record<string, string> =>
       XBTUSDT: 'BTC',
       XBTUSDC: 'BTC',
     },
-  )
-);
+  );
 
 /**
  * Builds the pairs object based on the top symbols.
  * @param topSymbols
  * @returns Record<string, string>
  */
-const buildTopPairsObject = (topSymbols: string[], quoteAsset: string): Record<string, string> => (
+const buildTopPairsObject = (topSymbols: string[], quoteAsset: string): Record<string, string> =>
   topSymbols.reduce(
     (previous, current) => ({
       ...previous,
       [`${current}/${quoteAsset}`]: current,
     }),
     <Record<string, string>>{},
-  )
-);
+  );
 
 /**
  * Builds the object that is used to subscribes to the tickers' stream for all top symbols.
  * @param topPairs
  * @returns string
  */
-const buildSubscriptionForTickers = (topPairs: string[]): string => (
+const buildSubscriptionForTickers = (topPairs: string[]): string =>
   JSON.stringify(<IKrakenTickerWebSocketSubscription>{
     method: 'subscribe',
     params: {
@@ -126,12 +111,7 @@ const buildSubscriptionForTickers = (topPairs: string[]): string => (
       event_trigger: 'trades',
       snapshot: true,
     },
-  })
-);
-
-
-
-
+  });
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

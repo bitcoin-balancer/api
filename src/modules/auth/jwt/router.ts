@@ -29,10 +29,6 @@ JWTRouter.route('/:uid').get(mediumRiskLimit, async (req: Request, res: Response
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                          AUTH ACTIONS                                          *
  ************************************************************************************************ */
@@ -83,9 +79,11 @@ JWTRouter.route('/sign-in').post(veryHighRiskLimit, async (req: Request, res: Re
 JWTRouter.route('/refresh-jwt').post(mediumRiskLimit, async (req: Request, res: Response) => {
   try {
     checkPublicRequest(req.ip);
-    res.json(buildResponse(
-      await JWTService.refreshAccessJWT(req.signedCookies[JWTService.REFRESH_JWT_COOKIE_NAME]),
-    ));
+    res.json(
+      buildResponse(
+        await JWTService.refreshAccessJWT(req.signedCookies[JWTService.REFRESH_JWT_COOKIE_NAME]),
+      ),
+    );
   } catch (e) {
     APIErrorService.save('JWTRouter.post.refresh-jwt', e, undefined, req.ip);
     res.json(buildResponse(undefined, e));
@@ -126,13 +124,7 @@ JWTRouter.route('/sign-out').post(veryHighRiskLimit, async (req: Request, res: R
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  JWTRouter,
-};
+export { JWTRouter };

@@ -29,7 +29,7 @@ const __calculateLiquidityPoints = (
   { bidDominance }: ICompactLiquidityState,
   weight: number,
 ): number => {
-  const score = Math.max(0.01, Math.min(1.00, (bidDominance - 2) / 98));
+  const score = Math.max(0.01, Math.min(1.0, (bidDominance - 2) / 98));
   return processValue(score * weight);
 };
 
@@ -62,17 +62,17 @@ const __calculateScoreForSplit = (splitState: IState): number => {
 const __calculateScoreForSymbols = (
   states: ISemiCompactCoinState[],
   stateSplits: ISplitStateID[],
-): number => states.reduce(
-  (previous, current) => (
-    previous + stateSplits.reduce(
-      (previousInner, currentInner) => (
-        previousInner + __calculateScoreForSplit(current.splitStates[currentInner].state)
+): number =>
+  states.reduce(
+    (previous, current) =>
+      previous +
+      stateSplits.reduce(
+        (previousInner, currentInner) =>
+          previousInner + __calculateScoreForSplit(current.splitStates[currentInner].state),
+        0,
       ),
-      0,
-    )
-  ),
-  0,
-);
+    0,
+  );
 
 /**
  * Calculates the state for the state of the coins (quote or base).
@@ -101,7 +101,6 @@ const __calculateCoinsPoints = (
   // finally, turn the score into reversal points and return it
   return processValue((received / 100) * weight);
 };
-
 
 /**
  * Calculates the points for each module as well as the total.
@@ -139,10 +138,6 @@ const calculatePoints = (
   };
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                          STATE HELPERS                                         *
  ************************************************************************************************ */
@@ -165,9 +160,8 @@ const buildPristinePriceCrashState = (): IPriceCrashStateRecord => ({
  * @param crashDuration
  * @returns number
  */
-const calculateCrashStateDuration = (currentTime: number, crashDuration: number): number => (
-  addMinutes(currentTime, crashDuration).getTime()
-);
+const calculateCrashStateDuration = (currentTime: number, crashDuration: number): number =>
+  addMinutes(currentTime, crashDuration).getTime();
 
 /**
  * Checks if the price has just crashed and a new state should be created.
@@ -175,9 +169,8 @@ const calculateCrashStateDuration = (currentTime: number, crashDuration: number)
  * @param activeUntil
  * @returns boolean
  */
-const isNewPriceCrashState = (window: IWindowState, activeUntil: number | undefined): boolean => (
-  activeUntil === undefined && window.state === -2
-);
+const isNewPriceCrashState = (window: IWindowState, activeUntil: number | undefined): boolean =>
+  activeUntil === undefined && window.state === -2;
 
 /**
  * Checks if the price crash state has ended and should be wrapped up.
@@ -202,9 +195,7 @@ const isPriceCrashStateActive = (
   currentTime: number,
   activeUntil: number | undefined,
   state: IPriceCrashStateRecord | undefined,
-): boolean => (
-  typeof activeUntil === 'number' && activeUntil > currentTime && state !== undefined
-);
+): boolean => typeof activeUntil === 'number' && activeUntil > currentTime && state !== undefined;
 
 /**
  * Transforms a price crash state record into a reversal state ready to be inserted into the
@@ -217,21 +208,15 @@ const toReversalState = (
   state: IPriceCrashStateRecord,
   pointsRequirement: number,
 ): IReversalState => {
-  const percentage = calculatePercentageRepresentation(
-    state.final_points,
-    pointsRequirement,
-    { roundingMode: 'ROUND_HALF_DOWN' },
-  );
+  const percentage = calculatePercentageRepresentation(state.final_points, pointsRequirement, {
+    roundingMode: 'ROUND_HALF_DOWN',
+  });
   return {
     id: state.id,
     points: percentage > 100 ? 100 : percentage,
     reversalEventTime: state.reversal_event_time,
   };
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         CONFIG HELPERS                                         *
@@ -250,10 +235,6 @@ const buildDefaultConfig = (): IReversalConfig => ({
     coinsBase: 32.5,
   },
 });
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

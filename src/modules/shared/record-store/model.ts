@@ -58,23 +58,16 @@ const writeRecord = async <T>(
  * @param id
  * @returns Promise<IQueryResult>
  */
-const deleteRecord = async (id: IStoreID): Promise<IQueryResult> => DatabaseService.pool.query({
-  text: `
+const deleteRecord = async (id: IStoreID): Promise<IQueryResult> =>
+  DatabaseService.pool.query({
+    text: `
     DELETE FROM ${DatabaseService.tn.record_stores}
     WHERE id = $1;
   `,
-  values: [id],
-});
-
-
-
-
+    values: [id],
+  });
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  readRecord,
-  writeRecord,
-  deleteRecord,
-};
+export { readRecord, writeRecord, deleteRecord };

@@ -20,9 +20,8 @@ import { IDecreaseLevels, ITargetState } from './types.js';
 const __sortSplitStates = (
   targetState: ITargetState,
   splitStates: ISplitStates,
-): ISplitStateResult[] => (
-  Object.values(splitStates).sort(sortRecords('change', targetState === 2 ? 'asc' : 'desc'))
-);
+): ISplitStateResult[] =>
+  Object.values(splitStates).sort(sortRecords('change', targetState === 2 ? 'asc' : 'desc'));
 
 /**
  * Calculates the percentage difference between the strong requirement and the second to last split
@@ -36,11 +35,10 @@ const __calculateDifferenceBetweenRequirementAndSplitChange = (
   targetState: ITargetState,
   splitChange: number,
   windowStrongRequirement: number,
-): number => (
+): number =>
   targetState === 2
     ? processValue(windowStrongRequirement - splitChange)
-    : -(processValue(splitChange - (-windowStrongRequirement)))
-);
+    : -processValue(splitChange - -windowStrongRequirement);
 
 /**
  * Calculates the amount of base asset needed in order to decrease the amount of the position.
@@ -79,10 +77,6 @@ const __getDecreaseLevelIdleUntil = (
     ? null
     : decreaseActions[decreaseActions.length - 1].nextEventTime;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -129,9 +123,8 @@ const calculateStrongWindowStateRequirement = (
  * @param increaseGainRequirement
  * @returns IBigNumber
  */
-const calculateGainDiff = (gain: number, increaseGainRequirement: number): IBigNumber => (
-  getBigNumber(gain).minus(increaseGainRequirement).times(-1)
-);
+const calculateGainDiff = (gain: number, increaseGainRequirement: number): IBigNumber =>
+  getBigNumber(gain).minus(increaseGainRequirement).times(-1);
 
 /**
  * Calculates the amount of quote asset needed in order to be able to open/increase a position. If
@@ -140,10 +133,7 @@ const calculateGainDiff = (gain: number, increaseGainRequirement: number): IBigN
  * @param balances
  * @returns number
  */
-const calculateMissingQuoteAmount = (
-  increaseAmountQuote: number,
-  balances: IBalances,
-): number => {
+const calculateMissingQuoteAmount = (increaseAmountQuote: number, balances: IBalances): number => {
   const quoteBalance = balances[ENVIRONMENT.EXCHANGE_CONFIGURATION.quoteAsset] as number;
   if (increaseAmountQuote > quoteBalance) {
     return processValue(getBigNumber(increaseAmountQuote).minus(quoteBalance));
@@ -183,16 +173,11 @@ const calculateMissingBaseAmount = (
  * @param position
  * @returns IDecreaseLevels
  */
-const buildDecreaseLevels = (currentTime: number, position: IPosition): IDecreaseLevels => (
+const buildDecreaseLevels = (currentTime: number, position: IPosition): IDecreaseLevels =>
   position.decrease_price_levels.map((price, idx) => ({
     price,
     idleUntil: __getDecreaseLevelIdleUntil(currentTime, position.decrease_actions[idx]),
-  })) as IDecreaseLevels
-);
-
-
-
-
+  })) as IDecreaseLevels;
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

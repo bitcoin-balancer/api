@@ -49,10 +49,6 @@ const apiServiceFactory = (): IAPIService => {
   // the package file's contents
   let __packageFile: IPackageFile;
 
-
-
-
-
   /* **********************************************************************************************
    *                                           TEARDOWN                                           *
    ********************************************************************************************** */
@@ -149,15 +145,16 @@ const apiServiceFactory = (): IAPIService => {
    * Closes the connection to the HTTP Server.
    * @returns Promise<void>
    */
-  const __closeServer = (): Promise<void> => new Promise((resolve, reject) => {
-    __server.close((error: Error | undefined) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
+  const __closeServer = (): Promise<void> =>
+    new Promise((resolve, reject) => {
+      __server.close((error: Error | undefined) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      });
     });
-  });
 
   /**
    * Kills the running modules and the server. This function is invoked when a termination signal
@@ -186,10 +183,6 @@ const apiServiceFactory = (): IAPIService => {
     }
     console.log('3/3) Close the HTTP Server: done');
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                        INITIALIZATION                                        *
@@ -378,10 +371,6 @@ const apiServiceFactory = (): IAPIService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                      INTERRUPT SIGNALS                                       *
    ********************************************************************************************** */
@@ -391,10 +380,6 @@ const apiServiceFactory = (): IAPIService => {
    */
   process.once('SIGINT', __teardown);
   process.once('SIGTERM', __teardown);
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -416,22 +401,12 @@ const apiServiceFactory = (): IAPIService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const APIService = apiServiceFactory();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  APIService,
-};
+export { APIService };

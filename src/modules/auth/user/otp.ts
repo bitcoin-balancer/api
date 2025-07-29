@@ -20,10 +20,6 @@ import { authenticator } from 'otplib';
  */
 authenticator.options = { window: 2, step: 30 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
@@ -58,14 +54,7 @@ const checkOTPToken = (token: string, secret: string): boolean => {
  */
 const generateOTPToken = (secret: string) => authenticator.generate(secret);
 
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  generateOTPSecret,
-  checkOTPToken,
-  generateOTPToken,
-};
+export { generateOTPSecret, checkOTPToken, generateOTPToken };

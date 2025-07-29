@@ -28,10 +28,6 @@ const saveRecords = async (records: INotification[]): Promise<number[]> => {
   return ids;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                           CONSTANTS                                            *
  ************************************************************************************************ */
@@ -47,10 +43,6 @@ const RECORDS: INotification[] = [
   buildRecord({ sender: 'AUTOMATED_TEST', title: 'Title 6', description: 'Description 6' }),
   buildRecord({ sender: 'AUTOMATED_TEST', title: 'Title 7', description: 'Description 7' }),
 ];
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
@@ -71,7 +63,7 @@ describe('Notification Model', () => {
         expect(id).toBeTypeOf('number');
         expect(id).toBeGreaterThan(0);
 
-        const savedRecord = <INotification> await getRecord(id);
+        const savedRecord = <INotification>await getRecord(id);
         expect(isObjectValid(savedRecord)).toBe(true);
         expect(savedRecord).toStrictEqual({ ...r, id });
 
@@ -85,8 +77,6 @@ describe('Notification Model', () => {
       expect(deletedRecords.every((rec) => rec === null)).toBe(true);
     });
   });
-
-
 
   describe('__listRecords', () => {
     test('can list stored records', async () => {
@@ -133,8 +123,6 @@ describe('Notification Model', () => {
     });
   });
 
-
-
   describe('__listNextRecords', () => {
     test('can paginate through the records', async () => {
       // save the test records in order
@@ -151,9 +139,7 @@ describe('Notification Model', () => {
       // list the next record
       const nextRecord = await listRecords(1, records.at(-1)!.id);
       expect(nextRecord).toHaveLength(1);
-      expect(nextRecord).toStrictEqual([
-        { ...RECORDS.at(-3), id: ids.at(-3) },
-      ]);
+      expect(nextRecord).toStrictEqual([{ ...RECORDS.at(-3), id: ids.at(-3) }]);
 
       // list the next two records
       const nextRecords = await listRecords(2, nextRecord[0].id);

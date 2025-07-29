@@ -29,10 +29,6 @@ const strategyServiceFactory = (): IStrategyService => {
   // the module's configuration
   let __config: IRecordStore<IStrategy>;
 
-
-
-
-
   /* **********************************************************************************************
    *                                         CALCULATORS                                          *
    ********************************************************************************************** */
@@ -67,15 +63,10 @@ const strategyServiceFactory = (): IStrategyService => {
    * @param minPositionAmountPercentage
    * @returns number
    */
-  const calculateMinPositionAmountQuote = (minPositionAmountPercentage: number): number => (
+  const calculateMinPositionAmountQuote = (minPositionAmountPercentage: number): number =>
     processValue(
       getBigNumber(__config.value.increaseAmountQuote).times(minPositionAmountPercentage / 100),
-    )
-  );
-
-
-
-
+    );
 
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
@@ -96,13 +87,7 @@ const strategyServiceFactory = (): IStrategyService => {
    * Tears down the Strategy Module.
    * @returns Promise<void>
    */
-  const teardown = async (): Promise<void> => {
-
-  };
-
-
-
-
+  const teardown = async (): Promise<void> => {};
 
   /* **********************************************************************************************
    *                                        CONFIGURATION                                         *
@@ -129,10 +114,6 @@ const strategyServiceFactory = (): IStrategyService => {
     await __config.update(newConfig);
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
    ********************************************************************************************** */
@@ -155,18 +136,10 @@ const strategyServiceFactory = (): IStrategyService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const StrategyService = strategyServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

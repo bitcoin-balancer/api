@@ -14,12 +14,7 @@ const buildDefaultAlarms = (): IAlarmsConfiguration => ({
   maxFileSystemUsage: 80,
 });
 
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  buildDefaultAlarms,
-};
+export { buildDefaultAlarms };

@@ -17,13 +17,7 @@ const sliceWindow = (window: ICompactCandlestickRecords): ICompactCandlestickRec
   close: [window.close[window.id.length - 2], window.close[window.id.length - 1]],
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  sliceWindow,
-};
+export { sliceWindow };

@@ -1,5 +1,3 @@
-
-
 /* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
@@ -19,31 +17,31 @@ type IIncreasePlan = {
   canIncrease: boolean;
 } & (
   | {
-    canIncrease: false;
-  }
+      canIncrease: false;
+    }
   | {
-    // StrategyService.config.canIncrease
-    canIncrease: true;
+      // StrategyService.config.canIncrease
+      canIncrease: true;
 
-    // true if the plan is for opening a position instead of increasing an existing one
-    isOpen: boolean;
+      // true if the plan is for opening a position instead of increasing an existing one
+      isOpen: boolean;
 
-    // the timestamp at which the position can be increased (null if it can be increased right away)
-    canIncreaseAtTime: number | null;
+      // the timestamp at which the position can be increased (null if it can be increased right away)
+      canIncreaseAtTime: number | null;
 
-    // the price at which the position can be increased
-    canIncreaseAtPrice: number | null;
+      // the price at which the position can be increased
+      canIncreaseAtPrice: number | null;
 
-    // the price percentage change at which the position can be increased (null if the current price
-    // is lower than the canIncreaseAtPrice)
-    canIncreaseAtPriceChange: number | null;
+      // the price percentage change at which the position can be increased (null if the current price
+      // is lower than the canIncreaseAtPrice)
+      canIncreaseAtPriceChange: number | null;
 
-    // the amount of quote asset that will be used to increase the position
-    increaseAmountQuote: number;
+      // the amount of quote asset that will be used to increase the position
+      increaseAmountQuote: number;
 
-    // the amount of quote asset that is missing from the balance (null if there is enough balance)
-    missingQuoteAmount: number;
-  }
+      // the amount of quote asset that is missing from the balance (null if there is enough balance)
+      missingQuoteAmount: number;
+    }
 );
 
 /**
@@ -76,32 +74,32 @@ type IDecreasePlan = {
   canDecrease: boolean;
 } & (
   | {
-    canDecrease: false;
-  }
+      canDecrease: false;
+    }
   | {
-    // StrategyService.config.canDecrease
-    canDecrease: true;
+      // StrategyService.config.canDecrease
+      canDecrease: true;
 
-    // the timestamp at which the position can be decreased, based on the active decrease level
-    // (null if it can be decreased right away)
-    canDecreaseAtTime: number | null;
+      // the timestamp at which the position can be decreased, based on the active decrease level
+      // (null if it can be decreased right away)
+      canDecreaseAtTime: number | null;
 
-    // the price at which the position can be decreased
-    canDecreaseAtPrice: number | null;
+      // the price at which the position can be decreased
+      canDecreaseAtPrice: number | null;
 
-    // the price percentage change at which the position can be decreased (null if the current price
-    // is higher than the canDecreaseAtPrice)
-    canDecreaseAtPriceChange: number | null;
+      // the price percentage change at which the position can be decreased (null if the current price
+      // is higher than the canDecreaseAtPrice)
+      canDecreaseAtPriceChange: number | null;
 
-    // the percentage of the position amount that will be decreased (based on the active level)
-    decreasePercentage: number;
+      // the percentage of the position amount that will be decreased (based on the active level)
+      decreasePercentage: number;
 
-    // the amount of base asset that is missing from the balance (null if there is enough balance)
-    missingBaseAmount: number;
+      // the amount of base asset that is missing from the balance (null if there is enough balance)
+      missingBaseAmount: number;
 
-    // the list of decrease level records
-    decreaseLevels: IDecreaseLevels;
-  }
+      // the list of decrease level records
+      decreaseLevels: IDecreaseLevels;
+    }
 );
 
 /**
@@ -114,17 +112,7 @@ type IPositionPlan = {
   decrease?: IDecreasePlan;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export type {
-  ITargetState,
-  IIncreasePlan,
-  IDecreaseLevels,
-  IDecreasePlan,
-  IPositionPlan,
-};
+export type { ITargetState, IIncreasePlan, IDecreaseLevels, IDecreasePlan, IPositionPlan };

@@ -48,10 +48,6 @@ const liquidityServiceFactory = (): ILiquidityService => {
   // the module's configuration
   let __config: IRecordStore<ILiquidityConfig>;
 
-
-
-
-
   /* **********************************************************************************************
    *                                       STATE CALCULATOR                                       *
    ********************************************************************************************** */
@@ -116,16 +112,11 @@ const liquidityServiceFactory = (): ILiquidityService => {
     return { bidDominance: __state.bidDominance };
   };
 
-
   /**
    * Builds the default liquidity state.
    * @returns ICompactLiquidityState
    */
   const getPristineState = (): ICompactLiquidityState => buildPristineCompactState();
-
-
-
-
 
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
@@ -151,10 +142,6 @@ const liquidityServiceFactory = (): ILiquidityService => {
     __orderBook?.off();
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                        CONFIGURATION                                         *
    ********************************************************************************************** */
@@ -172,10 +159,6 @@ const liquidityServiceFactory = (): ILiquidityService => {
     canConfigBeUpdated(newConfig);
     await __config.update(newConfig);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -202,18 +185,10 @@ const liquidityServiceFactory = (): ILiquidityService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const LiquidityService = liquidityServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

@@ -39,28 +39,27 @@ MarketStateRouter.route('/window/config').get(lowRiskLimit, async (req: Request,
  * - authority: 3
  * - otp-token
  */
-MarketStateRouter.route('/window/config').put(mediumRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(
-      req.get('authorization'),
-      req.ip,
-      3,
-      ['newConfig'],
-      req.body,
-      req.get('otp-token') || '',
-    );
-    await WindowService.updateConfiguration(req.body.newConfig);
-    res.json(buildResponse());
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.put.window.config', e, reqUid, req.ip, req.body);
-    res.json(buildResponse(undefined, e));
-  }
-});
-
-
-
-
+MarketStateRouter.route('/window/config').put(
+  mediumRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(
+        req.get('authorization'),
+        req.ip,
+        3,
+        ['newConfig'],
+        req.body,
+        req.get('otp-token') || '',
+      );
+      await WindowService.updateConfiguration(req.body.newConfig);
+      res.json(buildResponse());
+    } catch (e) {
+      APIErrorService.save('MarketStateRouter.put.window.config', e, reqUid, req.ip, req.body);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /* ************************************************************************************************
  *                                           LIQUIDITY                                            *
@@ -72,16 +71,19 @@ MarketStateRouter.route('/window/config').put(mediumRiskLimit, async (req: Reque
  * @requirements
  * - authority: 1
  */
-MarketStateRouter.route('/liquidity/state').get(lowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
-    res.json(buildResponse(LiquidityService.state));
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.get.liquidity.state', e, reqUid, req.ip);
-    res.json(buildResponse(undefined, e));
-  }
-});
+MarketStateRouter.route('/liquidity/state').get(
+  lowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+      res.json(buildResponse(LiquidityService.state));
+    } catch (e) {
+      APIErrorService.save('MarketStateRouter.get.liquidity.state', e, reqUid, req.ip);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Retrieves the liquidity module's configuration.
@@ -89,16 +91,19 @@ MarketStateRouter.route('/liquidity/state').get(lowRiskLimit, async (req: Reques
  * @requirements
  * - authority: 2
  */
-MarketStateRouter.route('/liquidity/config').get(lowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
-    res.json(buildResponse(LiquidityService.config));
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.get.liquidity.config', e, reqUid, req.ip);
-    res.json(buildResponse(undefined, e));
-  }
-});
+MarketStateRouter.route('/liquidity/config').get(
+  lowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
+      res.json(buildResponse(LiquidityService.config));
+    } catch (e) {
+      APIErrorService.save('MarketStateRouter.get.liquidity.config', e, reqUid, req.ip);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Updates the liquidity module's configuration.
@@ -108,28 +113,27 @@ MarketStateRouter.route('/liquidity/config').get(lowRiskLimit, async (req: Reque
  * - authority: 3
  * - otp-token
  */
-MarketStateRouter.route('/liquidity/config').put(mediumRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(
-      req.get('authorization'),
-      req.ip,
-      3,
-      ['newConfig'],
-      req.body,
-      req.get('otp-token') || '',
-    );
-    await LiquidityService.updateConfiguration(req.body.newConfig);
-    res.json(buildResponse());
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.put.liquidity.config', e, reqUid, req.ip, req.body);
-    res.json(buildResponse(undefined, e));
-  }
-});
-
-
-
-
+MarketStateRouter.route('/liquidity/config').put(
+  mediumRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(
+        req.get('authorization'),
+        req.ip,
+        3,
+        ['newConfig'],
+        req.body,
+        req.get('otp-token') || '',
+      );
+      await LiquidityService.updateConfiguration(req.body.newConfig);
+      res.json(buildResponse());
+    } catch (e) {
+      APIErrorService.save('MarketStateRouter.put.liquidity.config', e, reqUid, req.ip, req.body);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /* ************************************************************************************************
  *                                             COINS                                              *
@@ -141,19 +145,29 @@ MarketStateRouter.route('/liquidity/config').put(mediumRiskLimit, async (req: Re
  * @requirements
  * - authority: 1
  */
-MarketStateRouter.route('/coins/state/:asset/:symbol').get(lowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
-    res.json(buildResponse(CoinsService.getStateForSymbol(
-      <ICoinStateAsset>req.params.asset,
-      req.params.symbol,
-    )));
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.get.coins.state.asset.symbol', e, reqUid, req.ip, req.params);
-    res.json(buildResponse(undefined, e));
-  }
-});
+MarketStateRouter.route('/coins/state/:asset/:symbol').get(
+  lowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+      res.json(
+        buildResponse(
+          CoinsService.getStateForSymbol(<ICoinStateAsset>req.params.asset, req.params.symbol),
+        ),
+      );
+    } catch (e) {
+      APIErrorService.save(
+        'MarketStateRouter.get.coins.state.asset.symbol',
+        e,
+        reqUid,
+        req.ip,
+        req.params,
+      );
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Retrieves the semi-compact state for an asset.
@@ -161,18 +175,27 @@ MarketStateRouter.route('/coins/state/:asset/:symbol').get(lowRiskLimit, async (
  * @requirements
  * - authority: 1
  */
-MarketStateRouter.route('/coins/state/:asset').get(lowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
-    res.json(buildResponse(CoinsService.getSemiCompactStateForAsset(
-      <ICoinStateAsset>req.params.asset,
-    )));
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.get.coins.state.asset', e, reqUid, req.ip, req.params);
-    res.json(buildResponse(undefined, e));
-  }
-});
+MarketStateRouter.route('/coins/state/:asset').get(
+  lowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+      res.json(
+        buildResponse(CoinsService.getSemiCompactStateForAsset(<ICoinStateAsset>req.params.asset)),
+      );
+    } catch (e) {
+      APIErrorService.save(
+        'MarketStateRouter.get.coins.state.asset',
+        e,
+        reqUid,
+        req.ip,
+        req.params,
+      );
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Retrieves the coins module's configuration.
@@ -199,28 +222,27 @@ MarketStateRouter.route('/coins/config').get(lowRiskLimit, async (req: Request, 
  * - authority: 3
  * - otp-token
  */
-MarketStateRouter.route('/coins/config').put(mediumRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(
-      req.get('authorization'),
-      req.ip,
-      3,
-      ['newConfig'],
-      req.body,
-      req.get('otp-token') || '',
-    );
-    await CoinsService.updateConfiguration(req.body.newConfig);
-    res.json(buildResponse());
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.put.coins.config', e, reqUid, req.ip, req.body);
-    res.json(buildResponse(undefined, e));
-  }
-});
-
-
-
-
+MarketStateRouter.route('/coins/config').put(
+  mediumRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(
+        req.get('authorization'),
+        req.ip,
+        3,
+        ['newConfig'],
+        req.body,
+        req.get('otp-token') || '',
+      );
+      await CoinsService.updateConfiguration(req.body.newConfig);
+      res.json(buildResponse());
+    } catch (e) {
+      APIErrorService.save('MarketStateRouter.put.coins.config', e, reqUid, req.ip, req.body);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /* ************************************************************************************************
  *                                            REVERSAL                                            *
@@ -232,16 +254,19 @@ MarketStateRouter.route('/coins/config').put(mediumRiskLimit, async (req: Reques
  * @requirements
  * - authority: 1
  */
-MarketStateRouter.route('/reversal/record/:id').get(lowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
-    res.json(buildResponse(await ReversalService.getRecord(req.params.id)));
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.get.reversal.record', e, reqUid, req.ip);
-    res.json(buildResponse(undefined, e));
-  }
-});
+MarketStateRouter.route('/reversal/record/:id').get(
+  lowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+      res.json(buildResponse(await ReversalService.getRecord(req.params.id)));
+    } catch (e) {
+      APIErrorService.save('MarketStateRouter.get.reversal.record', e, reqUid, req.ip);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Validates and retrieves the list of price crash state records.
@@ -251,19 +276,28 @@ MarketStateRouter.route('/reversal/record/:id').get(lowRiskLimit, async (req: Re
  * @requirements
  * - authority: 1
  */
-MarketStateRouter.route('/reversal/records').get(lowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 1, ['limit'], req.query);
-    res.json(buildResponse(await ReversalService.listRecords(
-      Number(req.query.limit),
-      typeof req.query.startAtEventTime === 'string' ? Number(req.query.startAtEventTime) : undefined,
-    )));
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.get.reversal.records', e, reqUid, req.ip, req.query);
-    res.json(buildResponse(undefined, e));
-  }
-});
+MarketStateRouter.route('/reversal/records').get(
+  lowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 1, ['limit'], req.query);
+      res.json(
+        buildResponse(
+          await ReversalService.listRecords(
+            Number(req.query.limit),
+            typeof req.query.startAtEventTime === 'string'
+              ? Number(req.query.startAtEventTime)
+              : undefined,
+          ),
+        ),
+      );
+    } catch (e) {
+      APIErrorService.save('MarketStateRouter.get.reversal.records', e, reqUid, req.ip, req.query);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Retrieves the history for a price crash state based on its ID.
@@ -271,16 +305,25 @@ MarketStateRouter.route('/reversal/records').get(lowRiskLimit, async (req: Reque
  * @requirements
  * - authority: 1
  */
-MarketStateRouter.route('/reversal/event-history/:id').get(lowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
-    res.json(buildResponse(await ReversalService.getEventHistory(req.params.id)));
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.get.reversal.event-history', e, reqUid, req.ip, req.params);
-    res.json(buildResponse(undefined, e));
-  }
-});
+MarketStateRouter.route('/reversal/event-history/:id').get(
+  lowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+      res.json(buildResponse(await ReversalService.getEventHistory(req.params.id)));
+    } catch (e) {
+      APIErrorService.save(
+        'MarketStateRouter.get.reversal.event-history',
+        e,
+        reqUid,
+        req.ip,
+        req.params,
+      );
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Retrieves the reversal module's configuration.
@@ -288,16 +331,19 @@ MarketStateRouter.route('/reversal/event-history/:id').get(lowRiskLimit, async (
  * @requirements
  * - authority: 2
  */
-MarketStateRouter.route('/reversal/config').get(lowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
-    res.json(buildResponse(ReversalService.config));
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.get.reversal.config', e, reqUid, req.ip);
-    res.json(buildResponse(undefined, e));
-  }
-});
+MarketStateRouter.route('/reversal/config').get(
+  lowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
+      res.json(buildResponse(ReversalService.config));
+    } catch (e) {
+      APIErrorService.save('MarketStateRouter.get.reversal.config', e, reqUid, req.ip);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Updates the reversal module's configuration.
@@ -307,32 +353,29 @@ MarketStateRouter.route('/reversal/config').get(lowRiskLimit, async (req: Reques
  * - authority: 3
  * - otp-token
  */
-MarketStateRouter.route('/reversal/config').put(mediumRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(
-      req.get('authorization'),
-      req.ip,
-      3,
-      ['newConfig'],
-      req.body,
-      req.get('otp-token') || '',
-    );
-    await ReversalService.updateConfiguration(req.body.newConfig);
-    res.json(buildResponse());
-  } catch (e) {
-    APIErrorService.save('MarketStateRouter.put.reversal.config', e, reqUid, req.ip, req.body);
-    res.json(buildResponse(undefined, e));
-  }
-});
-
-
-
-
+MarketStateRouter.route('/reversal/config').put(
+  mediumRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(
+        req.get('authorization'),
+        req.ip,
+        3,
+        ['newConfig'],
+        req.body,
+        req.get('otp-token') || '',
+      );
+      await ReversalService.updateConfiguration(req.body.newConfig);
+      res.json(buildResponse());
+    } catch (e) {
+      APIErrorService.save('MarketStateRouter.put.reversal.config', e, reqUid, req.ip, req.body);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  MarketStateRouter,
-};
+export { MarketStateRouter };

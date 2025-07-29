@@ -33,10 +33,6 @@ const buildGetCandlesticksURL = (
   return url;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                           ORDER BOOK                                           *
  ************************************************************************************************ */
@@ -46,7 +42,7 @@ const buildGetCandlesticksURL = (
  * @param symbol
  * @returns string
  */
-const buildSubscriptionForOrderBook = (symbol: string): string => (
+const buildSubscriptionForOrderBook = (symbol: string): string =>
   JSON.stringify(<IBitfinexOrderBookWebSocketSubscription>{
     event: 'subscribe',
     symbol,
@@ -54,8 +50,7 @@ const buildSubscriptionForOrderBook = (symbol: string): string => (
     prec: 'P0',
     len: 250,
     freq: 'F0',
-  })
-);
+  });
 
 /**
  * Checks if a WebSocket message belongs to an order book update.
@@ -64,13 +59,8 @@ const buildSubscriptionForOrderBook = (symbol: string): string => (
  */
 const isOrderBookWebSocketMessage = (
   msg: IBitfinexWebSocketMessage,
-): msg is IBitfinexOrderBookWebSocketMessage => (
-  Array.isArray(msg) && Array.isArray(msg[1]) && typeof msg[1][0] === 'number'
-);
-
-
-
-
+): msg is IBitfinexOrderBookWebSocketMessage =>
+  Array.isArray(msg) && Array.isArray(msg[1]) && typeof msg[1][0] === 'number';
 
 /* ************************************************************************************************
  *                                            TICKERS                                             *
@@ -82,9 +72,8 @@ const isOrderBookWebSocketMessage = (
  * @param b
  * @returns number
  */
-const tickersSortFunc = (a: IBitfinexCoinTicker, b: IBitfinexCoinTicker): number => (
-  (b[8] * b[7]) - (a[8] * a[7])
-);
+const tickersSortFunc = (a: IBitfinexCoinTicker, b: IBitfinexCoinTicker): number =>
+  b[8] * b[7] - a[8] * a[7];
 
 /**
  * Builds the whitelist object from a list of symbols.
@@ -92,56 +81,45 @@ const tickersSortFunc = (a: IBitfinexCoinTicker, b: IBitfinexCoinTicker): number
  * @param quoteAsset
  * @returns Record<string, string>
  */
-const buildWhitelist = (
-  whitelistedSymbols: string[],
-  quoteAsset: string,
-): Record<string, string> => (
+const buildWhitelist = (whitelistedSymbols: string[], quoteAsset: string): Record<string, string> =>
   whitelistedSymbols.reduce(
     (previous, current) => ({ ...previous, [`t${current}${quoteAsset}`]: current }),
     {},
-  )
-);
+  );
 
 /**
  * Builds the pairs object based on the top symbols.
  * @param topSymbols
  * @returns Record<string, string>
  */
-const buildTopPairsObject = (topSymbols: string[], quoteAsset: string): Record<string, string> => (
+const buildTopPairsObject = (topSymbols: string[], quoteAsset: string): Record<string, string> =>
   topSymbols.reduce(
     (previous, current) => ({
       ...previous,
       [`t${current}${quoteAsset}`]: current,
     }),
     <Record<string, string>>{},
-  )
-);
+  );
 
 /**
  * Builds the object used to subscribe to a symbol's ticker stream.
  * @param symbol
  * @returns string
  */
-const buildSubscriptionForTicker = (symbol: string): string => (
+const buildSubscriptionForTicker = (symbol: string): string =>
   JSON.stringify(<IBitfinexTickerWebSocketSubscription>{
     event: 'subscribe',
     channel: 'ticker',
     symbol,
-  })
-);
+  });
 
 /**
  * Checks if a websocket message belongs to a ticker.
  * @param value
  * @returns boolean
  */
-const isTickerWebsocketMessage = (value: unknown): value is IBitfinexTickerWebSocketMessageData => (
-  Array.isArray(value)
-);
-
-
-
-
+const isTickerWebsocketMessage = (value: unknown): value is IBitfinexTickerWebSocketMessageData =>
+  Array.isArray(value);
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

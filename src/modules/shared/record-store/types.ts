@@ -1,5 +1,3 @@
-
-
 /* ************************************************************************************************
  *                                            FACTORY                                             *
  ************************************************************************************************ */
@@ -8,10 +6,7 @@
  * Record Store Factory
  * Function in charge of generating RecordStore objects.
  */
-type IRecordStoreFactory = <T>(
-  storeID: IStoreID,
-  defaultValue: T,
-) => Promise<IRecordStore<T>>;
+type IRecordStoreFactory = <T>(storeID: IStoreID, defaultValue: T) => Promise<IRecordStore<T>>;
 
 /**
  * Record Store
@@ -26,8 +21,6 @@ type IRecordStore<T> = {
   update: (newValue: T) => Promise<void>;
 };
 
-
-
 /* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
@@ -36,12 +29,15 @@ type IRecordStore<T> = {
  * Store ID
  * Every store has a unique identifier that is use to differentiate them in the db.
  */
-type IStoreID = 'AUTOMATED_TESTS_01' | 'AUTOMATED_TESTS_02' | 'SERVER_ALARMS' | 'WINDOW'
-| 'LIQUIDITY' | 'COINS' | 'REVERSAL' | 'STRATEGY';
-
-
-
-
+type IStoreID =
+  | 'AUTOMATED_TESTS_01'
+  | 'AUTOMATED_TESTS_02'
+  | 'SERVER_ALARMS'
+  | 'WINDOW'
+  | 'LIQUIDITY'
+  | 'COINS'
+  | 'REVERSAL'
+  | 'STRATEGY';
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

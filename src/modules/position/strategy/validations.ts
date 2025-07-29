@@ -1,11 +1,6 @@
 /* eslint-disable no-console */
 import { encodeError } from 'error-message-utils';
-import {
-  isNumberValid,
-  isIntegerValid,
-  isObjectValid,
-  isArrayValid,
-} from 'web-utils-kit';
+import { isNumberValid, isIntegerValid, isObjectValid, isArrayValid } from 'web-utils-kit';
 import { ENVIRONMENT } from '../../shared/environment/index.js';
 import { IDecreaseLevel, IStrategy } from './types.js';
 
@@ -25,10 +20,6 @@ const __MAX_FREQUENCY = 43200;
 // For example, a __MIN_INCREASE_AMOUNT_QUOTE will only work until BTC is worth $500,000.
 // 0.0002 * 500000 = 100
 const __MIN_INCREASE_AMOUNT_QUOTE = ENVIRONMENT.NODE_ENV === 'production' ? 100 : 25;
-
-
-
-
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -56,29 +47,57 @@ const canConfigBeUpdated = (newConfig: IStrategy): void => {
     throw new Error(encodeError('The provided strategy is not a valid object.', 31500));
   }
   if (typeof newConfig.canIncrease !== 'boolean') {
-    throw new Error(encodeError(`The canIncrease '${newConfig.canIncrease}' must be a boolean value.`, 31501));
+    throw new Error(
+      encodeError(`The canIncrease '${newConfig.canIncrease}' must be a boolean value.`, 31501),
+    );
   }
   if (typeof newConfig.canDecrease !== 'boolean') {
-    throw new Error(encodeError(`The canDecrease '${newConfig.canDecrease}' must be a boolean value.`, 31502));
+    throw new Error(
+      encodeError(`The canDecrease '${newConfig.canDecrease}' must be a boolean value.`, 31502),
+    );
   }
-  if (!isNumberValid(
-    newConfig.increaseAmountQuote,
-    __MIN_INCREASE_AMOUNT_QUOTE,
-    Number.MAX_SAFE_INTEGER,
-  )) {
-    throw new Error(encodeError(`The increaseAmountQuote '${newConfig.increaseAmountQuote}' is invalid as it must be a valid number ranging ${__MIN_INCREASE_AMOUNT_QUOTE} and ${Number.MAX_SAFE_INTEGER}.`, 31503));
+  if (
+    !isNumberValid(
+      newConfig.increaseAmountQuote,
+      __MIN_INCREASE_AMOUNT_QUOTE,
+      Number.MAX_SAFE_INTEGER,
+    )
+  ) {
+    throw new Error(
+      encodeError(
+        `The increaseAmountQuote '${newConfig.increaseAmountQuote}' is invalid as it must be a valid number ranging ${__MIN_INCREASE_AMOUNT_QUOTE} and ${Number.MAX_SAFE_INTEGER}.`,
+        31503,
+      ),
+    );
   }
   if (!isNumberValid(newConfig.increaseGainRequirement, -99, 0)) {
-    throw new Error(encodeError(`The increaseGainRequirement '${newConfig.increaseGainRequirement}' is invalid as it must be a valid number ranging -99 and 0.`, 31506));
+    throw new Error(
+      encodeError(
+        `The increaseGainRequirement '${newConfig.increaseGainRequirement}' is invalid as it must be a valid number ranging -99 and 0.`,
+        31506,
+      ),
+    );
   }
   if (!isNumberValid(newConfig.increaseIdleDuration, 1, 1440)) {
-    throw new Error(encodeError(`The increaseIdleDuration '${newConfig.increaseIdleDuration}' is invalid as it must be a valid number ranging 1 and 1440.`, 31505));
+    throw new Error(
+      encodeError(
+        `The increaseIdleDuration '${newConfig.increaseIdleDuration}' is invalid as it must be a valid number ranging 1 and 1440.`,
+        31505,
+      ),
+    );
   }
   if (newConfig.increaseIdleMode !== 'incremental' && newConfig.increaseIdleMode !== 'fixed') {
-    throw new Error(encodeError(`The increaseIdleMode '${newConfig.increaseIdleMode}' is invalid as it must be either 'incremental' or 'fixed'.`, 31511));
+    throw new Error(
+      encodeError(
+        `The increaseIdleMode '${newConfig.increaseIdleMode}' is invalid as it must be either 'incremental' or 'fixed'.`,
+        31511,
+      ),
+    );
   }
   if (!isArrayValid(newConfig.decreaseLevels) || newConfig.decreaseLevels.length !== 5) {
-    throw new Error(encodeError('The decreaseLevels property doesn\'t contain a valid tuple with 5 items.', 31507));
+    throw new Error(
+      encodeError("The decreaseLevels property doesn't contain a valid tuple with 5 items.", 31507),
+    );
   }
   let previous: IDecreaseLevel | undefined;
   newConfig.decreaseLevels.forEach((level, i) => {
@@ -86,25 +105,34 @@ const canConfigBeUpdated = (newConfig: IStrategy): void => {
     const minPercentage = previous === undefined ? 1 : previous.percentage;
     const maxFrequency = previous === undefined ? __MAX_FREQUENCY : previous.frequency;
     if (!isNumberValid(level.gainRequirement, minGainRequirement, __MAX_GAIN_REQUIREMENT)) {
-      throw new Error(encodeError(`The gainRequirement for level ${i} '${level.gainRequirement}' is invalid as it must be a valid number ranging ${minGainRequirement} and ${__MAX_GAIN_REQUIREMENT}.`, 31508));
+      throw new Error(
+        encodeError(
+          `The gainRequirement for level ${i} '${level.gainRequirement}' is invalid as it must be a valid number ranging ${minGainRequirement} and ${__MAX_GAIN_REQUIREMENT}.`,
+          31508,
+        ),
+      );
     }
     if (!isNumberValid(level.percentage, minPercentage, 100)) {
-      throw new Error(encodeError(`The percentage for level ${i} '${level.percentage}' is invalid as it must be a valid number ranging ${minPercentage} and 100.`, 31509));
+      throw new Error(
+        encodeError(
+          `The percentage for level ${i} '${level.percentage}' is invalid as it must be a valid number ranging ${minPercentage} and 100.`,
+          31509,
+        ),
+      );
     }
     if (!isIntegerValid(level.frequency, 3, maxFrequency)) {
-      throw new Error(encodeError(`The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid integer ranging 3 and ${maxFrequency}.`, 31510));
+      throw new Error(
+        encodeError(
+          `The frequency for level ${i} '${level.frequency}' is invalid as it must be a valid integer ranging 3 and ${maxFrequency}.`,
+          31510,
+        ),
+      );
     }
     previous = level;
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  canConfigBeUpdated,
-};
+export { canConfigBeUpdated };

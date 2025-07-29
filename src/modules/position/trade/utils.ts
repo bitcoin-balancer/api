@@ -26,10 +26,8 @@ const getSyncFrequency = (): number => {
  * @param price
  * @returns number
  */
-const __calculateAmountQuote = (amount: number, price: number): number => processValue(
-  getBigNumber(amount).times(price),
-  { roundingMode: 'ROUND_DOWN' },
-);
+const __calculateAmountQuote = (amount: number, price: number): number =>
+  processValue(getBigNumber(amount).times(price), { roundingMode: 'ROUND_DOWN' });
 
 /**
  * Converts a manual trade into a full trade object.
@@ -49,14 +47,7 @@ const toTradeRecord = (trade: IManualTrade, id?: number): ITrade => ({
   comission: 0,
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  getSyncFrequency,
-  toTradeRecord,
-};
+export { getSyncFrequency, toTradeRecord };

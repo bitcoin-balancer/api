@@ -53,11 +53,21 @@ const validateOrderBookResponse = <T>(res: IRequestResponse<T>): void => {
   }
   if (!isArrayValid(res.data.asks)) {
     console.log(res.data);
-    throw new Error(encodeError('Binance returned an invalid order book object. The \'asks\' property is not a valid array of tuples.', 13502));
+    throw new Error(
+      encodeError(
+        "Binance returned an invalid order book object. The 'asks' property is not a valid array of tuples.",
+        13502,
+      ),
+    );
   }
   if (!isArrayValid(res.data.bids)) {
     console.log(res.data);
-    throw new Error(encodeError('Binance returned an invalid order book object. The \'bids\' property is not a valid array of tuples.', 13502));
+    throw new Error(
+      encodeError(
+        "Binance returned an invalid order book object. The 'bids' property is not a valid array of tuples.",
+        13502,
+      ),
+    );
   }
 };
 
@@ -110,10 +120,6 @@ const validateOrderExecutionResponse = <T>(res: IRequestResponse<T>): void => {
     throw new Error(encodeError('Binance returned an invalid order execution payload.', 13506));
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

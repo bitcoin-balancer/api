@@ -23,15 +23,11 @@ type ICoinsService = {
   // initializer
   initialize: () => Promise<void>;
   teardown: () => Promise<void>;
-  teardownAndInitializeModule: () => Promise<void>
+  teardownAndInitializeModule: () => Promise<void>;
 
   // configuration
   updateConfiguration: (newConfig: ICoinsConfig) => Promise<void>;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             STATE                                              *
@@ -86,7 +82,7 @@ type ICoinsState<T> = {
   state: IState;
 
   // the state for each of the coins
-  statesBySymbol: { [symbol:string]: T };
+  statesBySymbol: { [symbol: string]: T };
 };
 
 /**
@@ -102,8 +98,8 @@ type ICoinsStates<T> = {
  * Utility type used to build the state calculation payload that will be passed to the market state.
  */
 type IStatesBySymbol = {
-  compact: { [symbol:string]: ICompactCoinState },
-  semiCompact: { [symbol:string]: ISemiCompactCoinState },
+  compact: { [symbol: string]: ICompactCoinState };
+  semiCompact: { [symbol: string]: ISemiCompactCoinState };
 };
 
 /**
@@ -115,10 +111,6 @@ type ICoinsStatesCalculationPayload = {
   compact: ICoinsStates<ICompactCoinState>;
   semiCompact: ICoinsStates<ISemiCompactCoinState>;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         CONFIGURATION                                          *
@@ -148,10 +140,6 @@ type ICoinsConfig = {
   // the list of symbols that can be selected
   whitelistedSymbols: string[];
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

@@ -28,13 +28,7 @@ DataJoinRouter.route('/app-essentials').get(lowRiskLimit, async (req: Request, r
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  DataJoinRouter,
-};
+export { DataJoinRouter };

@@ -9,11 +9,11 @@ import { calculateSplitState, calculateStateForSeries, calculateStateMean } from
 // fake list of numbers for state calculations
 const SERIES: number[] = [
   7, 73, 24, 37, 41, 66, 109, 45, 120, 84, 2, 102, 97, 86, 94, 105, 74, 77, 64, 14, 62, 6, 124, 56,
-  29, 81, 89, 22, 65, 17, 4, 48, 87, 119, 12, 51, 23, 39, 112, 93, 69, 98, 54, 8, 43, 78, 31, 1,
-  34, 104, 13, 38, 71, 25, 11, 68, 40, 88, 52, 122, 3, 80, 58, 92, 20, 106, 15, 60, 46, 53, 91, 10,
-  79, 82, 35, 27, 21, 42, 108, 101, 16, 126, 85, 75, 76, 5, 110, 30, 70, 61, 99, 125, 28, 55, 19,
-  95, 18, 113, 117, 47, 2, 58, 121, 105, 81, 18, 34, 69, 75, 65, 4, 74, 24, 123, 8, 53, 9, 116,
-  120, 97, 115, 13, 400, 71, 25, 11, 68, 40,
+  29, 81, 89, 22, 65, 17, 4, 48, 87, 119, 12, 51, 23, 39, 112, 93, 69, 98, 54, 8, 43, 78, 31, 1, 34,
+  104, 13, 38, 71, 25, 11, 68, 40, 88, 52, 122, 3, 80, 58, 92, 20, 106, 15, 60, 46, 53, 91, 10, 79,
+  82, 35, 27, 21, 42, 108, 101, 16, 126, 85, 75, 76, 5, 110, 30, 70, 61, 99, 125, 28, 55, 19, 95,
+  18, 113, 117, 47, 2, 58, 121, 105, 81, 18, 34, 69, 75, 65, 4, 74, 24, 123, 8, 53, 9, 116, 120, 97,
+  115, 13, 400, 71, 25, 11, 68, 40,
 ];
 
 // fake stat result based on the values in SERIES
@@ -31,10 +31,6 @@ const STATE_RESULT: IStateResult = {
   },
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                             TESTS                                              *
  ************************************************************************************************ */
@@ -50,10 +46,6 @@ describe('calculateSplitState', () => {
   });
 });
 
-
-
-
-
 describe('calculateStateMean', () => {
   test.each<[IState[], IState]>([
     [[2, 2, 2, 2, 2, 2, 2, 2], 2],
@@ -66,10 +58,6 @@ describe('calculateStateMean', () => {
   });
 });
 
-
-
-
-
 describe('calculateStateForSeries', () => {
   test('can calculate the state of a list of numeric values', () => {
     expect(calculateStateForSeries(SERIES, 40, 55)).toStrictEqual(STATE_RESULT);
@@ -78,7 +66,7 @@ describe('calculateStateForSeries', () => {
   test('can calculate the state of a list of split state items', () => {
     expect(
       calculateStateForSeries(
-        SERIES.map((value, i) => ({ x: Date.now() + (i * 60000), y: value })),
+        SERIES.map((value, i) => ({ x: Date.now() + i * 60000, y: value })),
         40,
         55,
       ),

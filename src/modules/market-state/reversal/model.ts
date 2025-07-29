@@ -95,21 +95,12 @@ const __listNextRecords = async (
 const listStateRecords = async (
   limit: number,
   startAtEventTime?: number,
-): Promise<IPriceCrashStateRecord[]> => (
+): Promise<IPriceCrashStateRecord[]> =>
   typeof startAtEventTime === 'number'
     ? __listNextRecords(limit, startAtEventTime)
-    : __listRecords(limit)
-);
-
-
-
-
+    : __listRecords(limit);
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  getStateRecord,
-  createStateRecord,
-  listStateRecords,
-};
+export { getStateRecord, createStateRecord, listStateRecords };

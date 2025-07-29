@@ -22,10 +22,14 @@ APIErrorRouter.route('/').get(veryLowRiskLimit, async (req: Request, res: Respon
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 2, ['limit'], req.query);
-    res.json(buildResponse(await APIErrorService.list(
-      Number(req.query.limit),
-      typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
-    )));
+    res.json(
+      buildResponse(
+        await APIErrorService.list(
+          Number(req.query.limit),
+          typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
+        ),
+      ),
+    );
   } catch (e) {
     APIErrorService.save('APIErrorRouter.get', e, reqUid, req.ip, req.query);
     res.json(buildResponse(undefined, e));
@@ -58,13 +62,7 @@ APIErrorRouter.route('/').delete(veryHighRiskLimit, async (req: Request, res: Re
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  APIErrorRouter,
-};
+export { APIErrorRouter };

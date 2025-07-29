@@ -72,13 +72,7 @@ ServerRouter.route('/alarms').put(veryHighRiskLimit, async (req: Request, res: R
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  ServerRouter,
-};
+export { ServerRouter };

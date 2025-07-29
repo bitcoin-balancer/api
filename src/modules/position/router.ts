@@ -63,10 +63,6 @@ PositionRouter.route('/strategy').put(mediumRiskLimit, async (req: Request, res:
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                            BALANCE                                             *
  ************************************************************************************************ */
@@ -87,10 +83,6 @@ PositionRouter.route('/balances').get(lowRiskLimit, async (req: Request, res: Re
     res.json(buildResponse(undefined, e));
   }
 });
-
-
-
-
 
 /* ************************************************************************************************
  *                                          TRANSACTION                                           *
@@ -125,19 +117,19 @@ PositionRouter.route('/transactions').get(veryLowRiskLimit, async (req: Request,
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 2, ['limit'], req.query);
-    res.json(buildResponse(await TransactionService.listTransactions(
-      Number(req.query.limit),
-      typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
-    )));
+    res.json(
+      buildResponse(
+        await TransactionService.listTransactions(
+          Number(req.query.limit),
+          typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
+        ),
+      ),
+    );
   } catch (e) {
     APIErrorService.save('PositionRouter.get.transactions', e, reqUid, req.ip, req.query);
     res.json(buildResponse(undefined, e));
   }
 });
-
-
-
-
 
 /* ************************************************************************************************
  *                                            POSITION                                            *
@@ -220,17 +212,20 @@ PositionRouter.route('/archive/:id').patch(mediumRiskLimit, async (req: Request,
  * @requirements
  * - authority: 4
  */
-PositionRouter.route('/unarchive/:id').patch(mediumRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 4);
-    await PositionService.unarchivePosition(req.params.id);
-    res.json(buildResponse());
-  } catch (e) {
-    APIErrorService.save('PositionRouter.patch.unarchive', e, reqUid, req.ip, req.params);
-    res.json(buildResponse(undefined, e));
-  }
-});
+PositionRouter.route('/unarchive/:id').patch(
+  mediumRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 4);
+      await PositionService.unarchivePosition(req.params.id);
+      res.json(buildResponse());
+    } catch (e) {
+      APIErrorService.save('PositionRouter.patch.unarchive', e, reqUid, req.ip, req.params);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Retrieves a position record from the local property or from the database by ID.
@@ -261,10 +256,16 @@ PositionRouter.route('/records').get(lowRiskLimit, async (req: Request, res: Res
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 2, ['limit'], req.query);
-    res.json(buildResponse(await PositionService.listCompactPositions(
-      Number(req.query.limit),
-      typeof req.query.startAtOpenTime === 'string' ? Number(req.query.startAtOpenTime) : undefined,
-    )));
+    res.json(
+      buildResponse(
+        await PositionService.listCompactPositions(
+          Number(req.query.limit),
+          typeof req.query.startAtOpenTime === 'string'
+            ? Number(req.query.startAtOpenTime)
+            : undefined,
+        ),
+      ),
+    );
   } catch (e) {
     APIErrorService.save('PositionRouter.get.records', e, reqUid, req.ip, req.query);
     res.json(buildResponse(undefined, e));
@@ -283,10 +284,14 @@ PositionRouter.route('/records/range').get(lowRiskLimit, async (req: Request, re
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 2, ['startAt'], req.query);
-    res.json(buildResponse(await PositionService.listCompactPositionsByRange(
-      Number(req.query.startAt),
-      typeof req.query.endAt === 'string' ? Number(req.query.endAt) : undefined,
-    )));
+    res.json(
+      buildResponse(
+        await PositionService.listCompactPositionsByRange(
+          Number(req.query.startAt),
+          typeof req.query.endAt === 'string' ? Number(req.query.endAt) : undefined,
+        ),
+      ),
+    );
   } catch (e) {
     APIErrorService.save('PositionRouter.get.records.range', e, reqUid, req.ip, req.query);
     res.json(buildResponse(undefined, e));
@@ -299,16 +304,19 @@ PositionRouter.route('/records/range').get(lowRiskLimit, async (req: Request, re
  * @requirements
  * - authority: 1
  */
-PositionRouter.route('/event-history/:id').get(lowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
-    res.json(buildResponse(await PositionService.getPositionHistory(req.params.id)));
-  } catch (e) {
-    APIErrorService.save('PositionRouter.get.event-history', e, reqUid, req.ip, req.params);
-    res.json(buildResponse(undefined, e));
-  }
-});
+PositionRouter.route('/event-history/:id').get(
+  lowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 1);
+      res.json(buildResponse(await PositionService.getPositionHistory(req.params.id)));
+    } catch (e) {
+      APIErrorService.save('PositionRouter.get.event-history', e, reqUid, req.ip, req.params);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Retrieves all the trades that were executed in a position.
@@ -316,16 +324,19 @@ PositionRouter.route('/event-history/:id').get(lowRiskLimit, async (req: Request
  * @requirements
  * - authority: 2
  */
-PositionRouter.route('/record/trades/:id').get(veryLowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
-    res.json(buildResponse(await PositionService.listPositionTrades(req.params.id)));
-  } catch (e) {
-    APIErrorService.save('PositionRouter.get.record.trades', e, reqUid, req.ip, req.params);
-    res.json(buildResponse(undefined, e));
-  }
-});
+PositionRouter.route('/record/trades/:id').get(
+  veryLowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
+      res.json(buildResponse(await PositionService.listPositionTrades(req.params.id)));
+    } catch (e) {
+      APIErrorService.save('PositionRouter.get.record.trades', e, reqUid, req.ip, req.params);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /**
  * Retrieves all the transactions that were executed in a position.
@@ -333,20 +344,19 @@ PositionRouter.route('/record/trades/:id').get(veryLowRiskLimit, async (req: Req
  * @requirements
  * - authority: 2
  */
-PositionRouter.route('/record/transactions/:id').get(veryLowRiskLimit, async (req: Request, res: Response) => {
-  let reqUid: string | undefined;
-  try {
-    reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
-    res.json(buildResponse(await PositionService.listPositionTransactions(req.params.id)));
-  } catch (e) {
-    APIErrorService.save('PositionRouter.get.record.transactions', e, reqUid, req.ip, req.params);
-    res.json(buildResponse(undefined, e));
-  }
-});
-
-
-
-
+PositionRouter.route('/record/transactions/:id').get(
+  veryLowRiskLimit,
+  async (req: Request, res: Response) => {
+    let reqUid: string | undefined;
+    try {
+      reqUid = await checkRequest(req.get('authorization'), req.ip, 2);
+      res.json(buildResponse(await PositionService.listPositionTransactions(req.params.id)));
+    } catch (e) {
+      APIErrorService.save('PositionRouter.get.record.transactions', e, reqUid, req.ip, req.params);
+      res.json(buildResponse(undefined, e));
+    }
+  },
+);
 
 /* ************************************************************************************************
  *                                        TRADE MANAGEMENT                                        *
@@ -397,9 +407,9 @@ PositionRouter.route('/trade/:id').put(mediumRiskLimit, async (req: Request, res
       req.body,
       req.get('otp-token') || '',
     );
-    res.json(buildResponse(
-      await PositionService.updateTrade(Number(req.params.id), req.body.trade),
-    ));
+    res.json(
+      buildResponse(await PositionService.updateTrade(Number(req.params.id), req.body.trade)),
+    );
   } catch (e) {
     APIErrorService.save('PositionRouter.put.trade', e, reqUid, req.ip, {
       ...req.body,
@@ -435,13 +445,7 @@ PositionRouter.route('/trade/:id').delete(mediumRiskLimit, async (req: Request, 
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  PositionRouter,
-};
+export { PositionRouter };

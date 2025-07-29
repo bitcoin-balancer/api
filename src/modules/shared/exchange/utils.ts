@@ -16,15 +16,8 @@ const __isBinanceError = (payload: Record<string, any>): boolean => typeof paylo
  * @param payload
  * @returns boolean
  */
-const __isBitfinexError = (payload: any[]): boolean => (
-  payload[0] === 'error'
-  && typeof payload[1] === 'number'
-  && typeof payload[2] === 'string'
-);
-
-
-
-
+const __isBitfinexError = (payload: any[]): boolean =>
+  payload[0] === 'error' && typeof payload[1] === 'number' && typeof payload[2] === 'string';
 
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
@@ -60,13 +53,7 @@ const extractErrorPayload = (payload: unknown): string => {
   return `Error Payload: ${JSON.stringify(payload)}`;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  extractErrorPayload,
-};
+export { extractErrorPayload };

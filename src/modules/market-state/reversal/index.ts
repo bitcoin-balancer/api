@@ -21,16 +21,8 @@ import {
   toReversalState,
   buildDefaultConfig,
 } from './utils.js';
-import {
-  canRecordBeRetrieved,
-  canRecordsBeListed,
-  canConfigBeUpdated,
-} from './validations.js';
-import {
-  getStateRecord,
-  createStateRecord,
-  listStateRecords,
-} from './model.js';
+import { canRecordBeRetrieved, canRecordsBeListed, canConfigBeUpdated } from './validations.js';
+import { getStateRecord, createStateRecord, listStateRecords } from './model.js';
 import {
   IReversalService,
   IPriceCrashStateRecord,
@@ -67,10 +59,6 @@ const reversalServiceFactory = (): IReversalService => {
   // the module's configuration
   let __config: IRecordStore<IReversalConfig>;
 
-
-
-
-
   /* **********************************************************************************************
    *                                       STATE CALCULATOR                                       *
    ********************************************************************************************** */
@@ -105,12 +93,12 @@ const reversalServiceFactory = (): IReversalService => {
     coinsStates: ICoinsStates<ISemiCompactCoinState>,
   ): void => {
     // calculate the market state points
-    const {
-      total,
-      liquidity,
-      coinsQuote,
-      coinsBase,
-    } = calculatePoints(liquidityState, coinsStates, __STATE_SPLITS, __config.value.weights);
+    const { total, liquidity, coinsQuote, coinsBase } = calculatePoints(
+      liquidityState,
+      coinsStates,
+      __STATE_SPLITS,
+      __config.value.weights,
+    );
 
     // update the state
     __state.highest_points = total > __state.highest_points ? total : __state.highest_points;
@@ -121,10 +109,7 @@ const reversalServiceFactory = (): IReversalService => {
 
     // if an event hasn't been issued, check if the current points meet the requirements. If so,
     // issue a reversal event.
-    if (
-      __state.reversal_event_time === null
-      && total >= __config.value.pointsRequirement
-    ) {
+    if (__state.reversal_event_time === null && total >= __config.value.pointsRequirement) {
       __state.reversal_event_time = currentTime;
       NotificationService.onReversalEvent(total);
     }
@@ -141,10 +126,7 @@ const reversalServiceFactory = (): IReversalService => {
     __activeUntil = undefined;
 
     // save the state & complete the event history instance
-    await Promise.all([
-      createStateRecord(__state),
-      __eventHist.complete(),
-    ]);
+    await Promise.all([createStateRecord(__state), __eventHist.complete()]);
   };
 
   /**
@@ -172,14 +154,10 @@ const reversalServiceFactory = (): IReversalService => {
     }
 
     // finally, return the state (if any)
-    return (__state && __activeUntil !== undefined)
+    return __state && __activeUntil !== undefined
       ? toReversalState(__state, __config.value.pointsRequirement)
       : undefined;
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
@@ -203,7 +181,9 @@ const reversalServiceFactory = (): IReversalService => {
     }
     const record = await getStateRecord(id);
     if (!record) {
-      throw new Error(encodeError(`The record for ID '${id}' was not found in the database.`, 24000));
+      throw new Error(
+        encodeError(`The record for ID '${id}' was not found in the database.`, 24000),
+      );
     }
     return record;
   };
@@ -233,13 +213,8 @@ const reversalServiceFactory = (): IReversalService => {
    * - 11000: if the id has an invalid format
    * - 11001: if the record was not found in the database
    */
-  const getEventHistory = (id: string): Promise<IEventHistoryRecord> => (
-    CandlestickService.getEventHistory(id)
-  );
-
-
-
-
+  const getEventHistory = (id: string): Promise<IEventHistoryRecord> =>
+    CandlestickService.getEventHistory(id);
 
   /* **********************************************************************************************
    *                                         INITIALIZER                                          *
@@ -260,13 +235,7 @@ const reversalServiceFactory = (): IReversalService => {
    * Tears down the Reversal Module.
    * @returns Promise<void>
    */
-  const teardown = async (): Promise<void> => {
-
-  };
-
-
-
-
+  const teardown = async (): Promise<void> => {};
 
   /* **********************************************************************************************
    *                                        CONFIGURATION                                         *
@@ -290,10 +259,6 @@ const reversalServiceFactory = (): IReversalService => {
     canConfigBeUpdated(newConfig);
     await __config.update(newConfig);
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -321,18 +286,10 @@ const reversalServiceFactory = (): IReversalService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const ReversalService = reversalServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

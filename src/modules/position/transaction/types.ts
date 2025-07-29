@@ -14,21 +14,14 @@ type ITransactionService = {
 
   // retrievers
   getTransaction: (id: number) => Promise<ITransaction>;
-  listTransactions: (
-    limit: number,
-    startAtID: number | undefined,
-  ) => Promise<ITransaction[]>;
+  listTransactions: (limit: number, startAtID: number | undefined) => Promise<ITransaction[]>;
   listTransactionsByRange: (startAt: number, endAt?: number | null) => Promise<ITransaction[]>;
   getLastBuyTransactionID: () => Promise<number | undefined>;
 
   // execution
-  buy (amount: number, balances: IBalances): Promise<number>;
-  sell (amount: number, balances: IBalances): Promise<number>;
+  buy(amount: number, balances: IBalances): Promise<number>;
+  sell(amount: number, balances: IBalances): Promise<number>;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TYPES                                              *
@@ -102,10 +95,6 @@ type ITransactionActionResult = {
   // if it exists, the action failed to execute
   error?: string;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

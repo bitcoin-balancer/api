@@ -14,7 +14,11 @@ describe('buildArgs', () => {
     [
       { nickname: 'jess', password: '123456', newPassword: '987654' },
       ['password', 'newPassword'],
-      { nickname: 'jess', password: '[SENSITIVE_DATA_HIDDEN]', newPassword: '[SENSITIVE_DATA_HIDDEN]' },
+      {
+        nickname: 'jess',
+        password: '[SENSITIVE_DATA_HIDDEN]',
+        newPassword: '[SENSITIVE_DATA_HIDDEN]',
+      },
     ],
 
     // different data types

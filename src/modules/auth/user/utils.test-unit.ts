@@ -2,12 +2,11 @@ import { describe, test, expect } from 'vitest';
 import { IUser } from './types.js';
 import { isRoot } from './utils.js';
 
-
 /* ************************************************************************************************
  *                                             TESTS                                              *
  ************************************************************************************************ */
 describe('isRoot', () => {
-  test.each(<Array<[(string | IUser), boolean]>>[
+  test.each(<Array<[string | IUser, boolean]>>[
     // valid root values
     ['eb0d3b94-6a92-4a3d-a176-98163d1b9e5a', true],
     ['root', true],

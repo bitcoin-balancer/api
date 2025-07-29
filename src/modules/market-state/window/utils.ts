@@ -51,11 +51,10 @@ const buildPristineState = (): IWindowState => ({
 const getConfigUpdatePostActions = (
   oldConfig: IWindowConfig,
   newConfig: IWindowConfig,
-): { shouldReInitialize: boolean, shouldFetchInitialCandlesticks: boolean } => ({
-  shouldReInitialize: (
-    oldConfig.refetchFrequency !== newConfig.refetchFrequency
-    || oldConfig.interval !== newConfig.interval
-  ),
+): { shouldReInitialize: boolean; shouldFetchInitialCandlesticks: boolean } => ({
+  shouldReInitialize:
+    oldConfig.refetchFrequency !== newConfig.refetchFrequency ||
+    oldConfig.interval !== newConfig.interval,
   shouldFetchInitialCandlesticks: oldConfig.size !== newConfig.size,
 });
 
@@ -71,15 +70,7 @@ const buildDefaultConfig = (): IWindowConfig => ({
   strongRequirement: 0.85,
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  buildPristineState,
-  getConfigUpdatePostActions,
-  buildDefaultConfig,
-};
+export { buildPristineState, getConfigUpdatePostActions, buildDefaultConfig };

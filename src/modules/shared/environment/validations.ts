@@ -28,10 +28,6 @@ const QUOTE_ASSETS = ['USDT', 'USDC', 'DAI', 'FDUSD', 'PYUSD', 'USDD', 'TUSD'];
 // the list of exchange ids supported by Balancer
 const EXCHANGE_IDS: IExchangeID[] = ['binance', 'bitfinex', 'coinbase', 'kraken', 'okx'];
 
-
-
-
-
 /* ************************************************************************************************
  *                                          ROOT ACCOUNT                                          *
  ************************************************************************************************ */
@@ -43,16 +39,27 @@ const EXCHANGE_IDS: IExchangeID[] = ['binance', 'bitfinex', 'coinbase', 'kraken'
  * - if any of the configuration properties is invalid
  */
 const validateRootAccountConfig = (config: IRootAccountConfig): void => {
-  if (!isObjectValid(config)) throw new Error(`The environment property ROOT_ACCOUNT is not a valid object. Received: ${JSON.stringify(config)}`);
-  if (!isUUIDValid(config.uid, 4)) throw new Error(`The environment property ROOT_ACCOUNT.uid is not a valid UUID. Received: ${config.uid}`);
-  if (!isSlugValid(config.nickname)) throw new Error(`The environment property ROOT_ACCOUNT.nickname is not a valid nickname. Received: ${config.nickname}`);
-  if (!isPasswordValid(config.password)) throw new Error(`The environment property ROOT_ACCOUNT.password is not a valid password. Received: ${config.password}`);
-  if (!isOTPSecretValid(config.otpSecret)) throw new Error(`The environment property ROOT_ACCOUNT.otpSecret is not a valid secret. Received: ${config.otpSecret}`);
+  if (!isObjectValid(config))
+    throw new Error(
+      `The environment property ROOT_ACCOUNT is not a valid object. Received: ${JSON.stringify(config)}`,
+    );
+  if (!isUUIDValid(config.uid, 4))
+    throw new Error(
+      `The environment property ROOT_ACCOUNT.uid is not a valid UUID. Received: ${config.uid}`,
+    );
+  if (!isSlugValid(config.nickname))
+    throw new Error(
+      `The environment property ROOT_ACCOUNT.nickname is not a valid nickname. Received: ${config.nickname}`,
+    );
+  if (!isPasswordValid(config.password))
+    throw new Error(
+      `The environment property ROOT_ACCOUNT.password is not a valid password. Received: ${config.password}`,
+    );
+  if (!isOTPSecretValid(config.otpSecret))
+    throw new Error(
+      `The environment property ROOT_ACCOUNT.otpSecret is not a valid secret. Received: ${config.otpSecret}`,
+    );
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                            TELEGRAM                                            *
@@ -65,14 +72,19 @@ const validateRootAccountConfig = (config: IRootAccountConfig): void => {
  * - if any of the configuration properties is invalid
  */
 const validateTelegramConfig = (config: ITelegramConfig): void => {
-  if (!isObjectValid(config)) throw new Error(`The environment property TELEGRAM is not a valid object. Received: ${JSON.stringify(config)}`);
-  if (typeof config.token !== 'string') throw new Error(`The environment property TELEGRAM.token is not a valid string. Received: ${config.token}`);
-  if (typeof config.chatID !== 'number') throw new Error(`The environment property TELEGRAM.chatID is not a valid number. Received: ${config.chatID}`);
+  if (!isObjectValid(config))
+    throw new Error(
+      `The environment property TELEGRAM is not a valid object. Received: ${JSON.stringify(config)}`,
+    );
+  if (typeof config.token !== 'string')
+    throw new Error(
+      `The environment property TELEGRAM.token is not a valid string. Received: ${config.token}`,
+    );
+  if (typeof config.chatID !== 'number')
+    throw new Error(
+      `The environment property TELEGRAM.chatID is not a valid number. Received: ${config.chatID}`,
+    );
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                           JWT SECRET                                           *
@@ -85,14 +97,19 @@ const validateTelegramConfig = (config: ITelegramConfig): void => {
  * - if any of the configuration properties is invalid
  */
 const validateJWTSecretConfig = (config: IJWTSecretConfig): void => {
-  if (!isObjectValid(config)) throw new Error(`The environment property JWT_SECRET is not a valid object. Received: ${JSON.stringify(config)}`);
-  if (!isStringValid(config.refresh, 1)) throw new Error(`The environment property JWT_SECRET.refresh is not a valid string. Received: ${config.refresh}`);
-  if (!isStringValid(config.access, 1)) throw new Error(`The environment property JWT_SECRET.access is not a valid string. Received: ${config.access}`);
+  if (!isObjectValid(config))
+    throw new Error(
+      `The environment property JWT_SECRET is not a valid object. Received: ${JSON.stringify(config)}`,
+    );
+  if (!isStringValid(config.refresh, 1))
+    throw new Error(
+      `The environment property JWT_SECRET.refresh is not a valid string. Received: ${config.refresh}`,
+    );
+  if (!isStringValid(config.access, 1))
+    throw new Error(
+      `The environment property JWT_SECRET.access is not a valid string. Received: ${config.access}`,
+    );
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                            EXCHANGE                                            *
@@ -116,11 +133,13 @@ const __validateExchangeCredentials = (
     throw new Error(`The Exchange ID '${id}' (${module}) is not supported by Balancer.`);
   }
   if (
-    !isObjectValid(credentials[id])
-    || !isStringValid(credentials[id].key, 1)
-    || !isStringValid(credentials[id].secret, 1)
+    !isObjectValid(credentials[id]) ||
+    !isStringValid(credentials[id].key, 1) ||
+    !isStringValid(credentials[id].secret, 1)
   ) {
-    throw new Error(`The credentials for the exchange '${id}' (${module}) are invalid or were not provided.`);
+    throw new Error(
+      `The credentials for the exchange '${id}' (${module}) are invalid or were not provided.`,
+    );
   }
 };
 
@@ -140,7 +159,9 @@ const validateExchangesConfigAndCreds = (
 ): void => {
   // ensure the config and the credentials are valid objects
   if (!isObjectValid(config)) {
-    throw new Error(`The environment property EXCHANGES_CONFIGURATION is not a valid object. Received: ${JSON.stringify(config)}`);
+    throw new Error(
+      `The environment property EXCHANGES_CONFIGURATION is not a valid object. Received: ${JSON.stringify(config)}`,
+    );
   }
   if (!isObjectValid(credentials)) {
     throw new Error('The environment property EXCHANGES_CREDENTIALS is not a valid object.');
@@ -148,10 +169,14 @@ const validateExchangesConfigAndCreds = (
 
   // ensure the base and quote assets were provided
   if (!isStringValid(config.baseAsset) || !BASE_ASSETS.includes(config.baseAsset)) {
-    throw new Error(`The base asset '${config.baseAsset}' is invalid. Supported base assets are: ${JSON.stringify(BASE_ASSETS)}`);
+    throw new Error(
+      `The base asset '${config.baseAsset}' is invalid. Supported base assets are: ${JSON.stringify(BASE_ASSETS)}`,
+    );
   }
   if (!isStringValid(config.quoteAsset) || !QUOTE_ASSETS.includes(config.quoteAsset)) {
-    throw new Error(`The quote asset '${config.quoteAsset}' is invalid. Supported quote assets are: ${JSON.stringify(QUOTE_ASSETS)}`);
+    throw new Error(
+      `The quote asset '${config.quoteAsset}' is invalid. Supported quote assets are: ${JSON.stringify(QUOTE_ASSETS)}`,
+    );
   }
 
   // ensure all the credentials were provided
@@ -160,10 +185,6 @@ const validateExchangesConfigAndCreds = (
   __validateExchangeCredentials('coins', config.coins, credentials);
   __validateExchangeCredentials('trading', config.trading, credentials);
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

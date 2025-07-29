@@ -27,10 +27,6 @@ const __INTERVAL_VALUES: Record<ICandlestickIntervalID, number> = {
   '1d': ms('1 days'),
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         BUILD HELPERS                                          *
  ************************************************************************************************ */
@@ -72,10 +68,6 @@ const buildPristineEventHistory = (
   event_time: Date.now(),
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                      CANDLESTICK HELPERS                                       *
  ************************************************************************************************ */
@@ -87,13 +79,8 @@ const buildPristineEventHistory = (
  * @param current
  * @returns boolean
  */
-const isActive = (open: number, interval: ICandlestickIntervalID, current: number): boolean => (
-  addMilliseconds(open, __INTERVAL_VALUES[interval]).getTime() >= current
-);
-
-
-
-
+const isActive = (open: number, interval: ICandlestickIntervalID, current: number): boolean =>
+  addMilliseconds(open, __INTERVAL_VALUES[interval]).getTime() >= current;
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

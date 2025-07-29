@@ -16,10 +16,6 @@ type IHTTPServer = Server<typeof IncomingMessage, typeof ServerResponse>;
  */
 type ITerminationSignal = 'SIGINT' | 'SIGTERM';
 
-
-
-
-
 /* ************************************************************************************************
  *                                         UTILITY TYPES                                          *
  ************************************************************************************************ */
@@ -54,10 +50,6 @@ type IPackageFile = {
   devDependencies: { [key: string]: string };
   dependencies: { [key: string]: string };
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

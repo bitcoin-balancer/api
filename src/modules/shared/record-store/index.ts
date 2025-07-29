@@ -24,15 +24,11 @@ const recordStoreFactory: IRecordStoreFactory = async <T>(
   const __id: IStoreID = storeID;
 
   // the store's current value - initialize it in case it hasn't been
-  let __value = <T> await readRecord(__id);
+  let __value = <T>await readRecord(__id);
   if (__value === null) {
     await writeRecord(__id, defaultValue, true);
     __value = defaultValue;
   }
-
-
-
-
 
   /* **********************************************************************************************
    *                                            ACTIONS                                           *
@@ -47,10 +43,6 @@ const recordStoreFactory: IRecordStoreFactory = async <T>(
     await writeRecord(__id, newValue);
     __value = newValue;
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -68,10 +60,6 @@ const recordStoreFactory: IRecordStoreFactory = async <T>(
     update,
   });
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

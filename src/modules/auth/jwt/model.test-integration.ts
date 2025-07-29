@@ -27,16 +27,34 @@ const TIME_INCREMENT: number = ms('1 hours');
 // list of mock users
 const __encrypt = (data: string): string => encryptSync(ENVIRONMENT.ENCRYPTING_SECRET, data);
 const U: IUser[] = [
-  { uid: 'a44a6414-7d7a-4b32-8bc1-a5ce7ab96b2e', nickname: 'user-1', authority: 1, password_hash: '$ome_password', otp_secret: __encrypt('NFDCMADPEVFEMSIC'), event_time: Date.now() + TIME_INCREMENT },
-  { uid: '99720f31-d944-4e21-a402-b420ed413fed', nickname: 'user-2', authority: 2, password_hash: '$ome_password', otp_secret: __encrypt('L5IFQI2EHAYAODTF'), event_time: Date.now() + (TIME_INCREMENT * 2) },
-  { uid: 'e9a214bb-c4da-4af7-a514-d57bfd91e94e', nickname: 'user-3', authority: 3, password_hash: '$ome_password', otp_secret: __encrypt('DEVC63QFD4OS2UKY'), event_time: Date.now() + (TIME_INCREMENT * 3) },
+  {
+    uid: 'a44a6414-7d7a-4b32-8bc1-a5ce7ab96b2e',
+    nickname: 'user-1',
+    authority: 1,
+    password_hash: '$ome_password',
+    otp_secret: __encrypt('NFDCMADPEVFEMSIC'),
+    event_time: Date.now() + TIME_INCREMENT,
+  },
+  {
+    uid: '99720f31-d944-4e21-a402-b420ed413fed',
+    nickname: 'user-2',
+    authority: 2,
+    password_hash: '$ome_password',
+    otp_secret: __encrypt('L5IFQI2EHAYAODTF'),
+    event_time: Date.now() + TIME_INCREMENT * 2,
+  },
+  {
+    uid: 'e9a214bb-c4da-4af7-a514-d57bfd91e94e',
+    nickname: 'user-3',
+    authority: 3,
+    password_hash: '$ome_password',
+    otp_secret: __encrypt('DEVC63QFD4OS2UKY'),
+    event_time: Date.now() + TIME_INCREMENT * 3,
+  },
 ];
 
 // mock secret key used to sign and verify tokens
 const S = '$some_mock_secret_key';
-
-
-
 
 /* ************************************************************************************************
  *                                            HELPERS                                             *
@@ -50,12 +68,8 @@ const createUser: (user: IUser) => Promise<IQueryResult> = ({
   password_hash,
   otp_secret,
   event_time,
-}: IUser): Promise<IQueryResult> => (
-  createUserRecord(uid, nickname, authority, password_hash, otp_secret!, event_time)
-);
-
-
-
+}: IUser): Promise<IQueryResult> =>
+  createUserRecord(uid, nickname, authority, password_hash, otp_secret!, event_time);
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
@@ -79,10 +93,6 @@ describe('JWT Model', () => {
       }
     });
   });
-
-
-
-
 
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
@@ -115,13 +125,11 @@ describe('JWT Model', () => {
     });
 
     test('throws if the user does not have a Refresh JWT', async () => {
-      await expect(getRefreshTokensByUID('27d6ed25-c001-4d35-a1e6-a735d844a581')).rejects.toThrowError('4750');
+      await expect(
+        getRefreshTokensByUID('27d6ed25-c001-4d35-a1e6-a735d844a581'),
+      ).rejects.toThrowError('4750');
     });
   });
-
-
-
-
 
   describe('listRecordsByUID', () => {
     test('can retrieve a list of records by uid in descending order', async () => {
@@ -152,10 +160,6 @@ describe('JWT Model', () => {
     });
   });
 
-
-
-
-
   /* **********************************************************************************************
    *                                      RECORD MANAGEMENT                                       *
    ********************************************************************************************** */
@@ -169,18 +173,16 @@ describe('JWT Model', () => {
 
         const records = await listRecordsByUID(user.uid);
         expect(records).toHaveLength(1);
-        expect(records).toStrictEqual([{
-          uid: user.uid,
-          token: refreshToken,
-          event_time: records[0].event_time,
-        }]);
+        expect(records).toStrictEqual([
+          {
+            uid: user.uid,
+            token: refreshToken,
+            event_time: records[0].event_time,
+          },
+        ]);
       }
     });
   });
-
-
-
-
 
   describe('deleteUserRecords', () => {
     test('can delete one or all records for a user', async () => {
@@ -206,10 +208,6 @@ describe('JWT Model', () => {
       expect(records).toHaveLength(0);
     });
   });
-
-
-
-
 
   describe('deleteExpiredRecords', async () => {
     test('can delete all the expired records based on a custom time', async () => {

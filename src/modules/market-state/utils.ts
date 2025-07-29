@@ -25,17 +25,10 @@ const buildPristineState = (): IMarketState => ({
  * @param reversal
  * @returns boolean
  */
-const canCoinsBeRotated = (window: IWindowState, reversal: IReversalState | undefined): boolean => (
-  window.state >= 0 && reversal === undefined
-);
-
-
-
+const canCoinsBeRotated = (window: IWindowState, reversal: IReversalState | undefined): boolean =>
+  window.state >= 0 && reversal === undefined;
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  buildPristineState,
-  canCoinsBeRotated,
-};
+export { buildPristineState, canCoinsBeRotated };

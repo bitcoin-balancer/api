@@ -1,11 +1,5 @@
 import { ENVIRONMENT } from '../shared/environment/index.js';
-import {
-  ITableName,
-  ITestTableName,
-  ITable,
-  IRawTable,
-  ITableNames,
-} from './types.js';
+import { ITableName, ITestTableName, ITable, IRawTable, ITableNames } from './types.js';
 
 /* ************************************************************************************************
  *                                       TABLE NAME HELPERS                                       *
@@ -16,28 +10,24 @@ import {
  * @param name
  * @returns boolean
  */
-const isTestTableName = (name: any): name is ITestTableName => (
-  typeof name === 'string'
-  && /^test_[a-z_]+$/.test(name)
-);
+const isTestTableName = (name: any): name is ITestTableName =>
+  typeof name === 'string' && /^test_[a-z_]+$/.test(name);
 
 /**
  * Converts a table name into the test version. For example: 'my_table' -> 'test_my_table'.
  * @param name
  * @returns ITestTableName
  */
-const toTestTableName = (name: ITableName): ITestTableName => (
-  isTestTableName(name) ? name : `test_${name}`
-);
+const toTestTableName = (name: ITableName): ITestTableName =>
+  isTestTableName(name) ? name : `test_${name}`;
 
 /**
  * Returns the name of a table that will be used in database queries based on the TEST_MODE.
  * @param name
  * @returns ITableName | ITestTableName
  */
-const getTableName = (name: ITableName): ITableName | ITestTableName => (
-  ENVIRONMENT.TEST_MODE ? toTestTableName(name) : name
-);
+const getTableName = (name: ITableName): ITableName | ITestTableName =>
+  ENVIRONMENT.TEST_MODE ? toTestTableName(name) : name;
 
 /**
  * Joins all of the table names so they can be placed in a SQL Query (e.g. DROP ...)).
@@ -45,16 +35,12 @@ const getTableName = (name: ITableName): ITableName | ITestTableName => (
  * @param tables
  * @returns string
  */
-const getTableNamesForQuery = (tables: ITable[]): string => tables.reduce(
-  (previous, current, index) => (
-    previous + (index === tables.length - 1 ? `${current.name}` : `${current.name}, `)
-  ),
-  '',
-);
-
-
-
-
+const getTableNamesForQuery = (tables: ITable[]): string =>
+  tables.reduce(
+    (previous, current, index) =>
+      previous + (index === tables.length - 1 ? `${current.name}` : `${current.name}, `),
+    '',
+  );
 
 /* ************************************************************************************************
  *                                         TABLE BUILDERS                                         *
@@ -84,16 +70,12 @@ const buildTables = (rawTables: IRawTable[]): ITable[] => rawTables.map(__proces
  * @returns ITableNames
  */
 const buildTableNames = (rawTables: IRawTable[]): ITableNames => <ITableNames>rawTables.reduce(
-  (previous, current) => ({
-    ...previous,
-    [current.name]: getTableName(current.name),
-  }),
-  {},
-);
-
-
-
-
+    (previous, current) => ({
+      ...previous,
+      [current.name]: getTableName(current.name),
+    }),
+    {},
+  );
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

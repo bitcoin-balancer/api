@@ -48,10 +48,6 @@ type IPositionService = {
   teardown: () => Promise<void>;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
@@ -94,10 +90,10 @@ type IDecreaseActions = [
  * The properties that should be recalculated every time the market state changes.
  */
 type IMarketStateDependantProps = {
-  gain: number,
-  amount_quote: number,
-  pnl: number,
-  roi: number,
+  gain: number;
+  amount_quote: number;
+  pnl: number;
+  roi: number;
 };
 
 /**
@@ -127,10 +123,6 @@ type ITradesAnalysis = {
   roi: number;
   decrease_price_levels: IDecreasePriceLevels;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                            POSITION                                            *
@@ -218,10 +210,6 @@ type IPositionState = {
   // the plan based on the active position, strategy and the state of the market
   plan: IPositionPlan;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

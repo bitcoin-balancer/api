@@ -14,7 +14,6 @@ describe('Time Converters', () => {
     });
   });
 
-
   describe('fromHoursToMinutes', () => {
     test('can convert any number of hours into minutes', () => {
       expect(fromHoursToMinutes(1)).toBe(60);

@@ -23,23 +23,21 @@ NotificationRouter.route('/').get(veryLowRiskLimit, async (req: Request, res: Re
   let reqUid: string | undefined;
   try {
     reqUid = await checkRequest(req.get('authorization'), req.ip, 1, ['limit'], req.query);
-    res.json(buildResponse(await NotificationService.list(
-      Number(req.query.limit),
-      typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
-    )));
+    res.json(
+      buildResponse(
+        await NotificationService.list(
+          Number(req.query.limit),
+          typeof req.query.startAtID === 'string' ? Number(req.query.startAtID) : undefined,
+        ),
+      ),
+    );
   } catch (e) {
     APIErrorService.save('NotificationRouter.get', e, reqUid, req.ip, req.query);
     res.json(buildResponse(undefined, e));
   }
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  NotificationRouter,
-};
+export { NotificationRouter };

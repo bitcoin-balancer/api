@@ -69,16 +69,7 @@ const deleteAllRecords = async (): Promise<void> => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  getEventHistoryRecord,
-  createEventHistory,
-  updateRecords,
-  deleteAllRecords,
-};
+export { getEventHistoryRecord, createEventHistory, updateRecords, deleteAllRecords };

@@ -27,10 +27,6 @@ const candlestickServiceFactory = (): ICandlestickService => {
 
   // ...
 
-
-
-
-
   /* **********************************************************************************************
    *                                          RETRIEVERS                                          *
    ********************************************************************************************** */
@@ -49,14 +45,12 @@ const candlestickServiceFactory = (): ICandlestickService => {
     }
     const record = await getEventHistoryRecord(id);
     if (!record) {
-      throw new Error(encodeError(`The event history ID '${id}' was not found in the database.`, 11001));
+      throw new Error(
+        encodeError(`The event history ID '${id}' was not found in the database.`, 11001),
+      );
     }
     return record;
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -70,18 +64,10 @@ const candlestickServiceFactory = (): ICandlestickService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const CandlestickService = candlestickServiceFactory();
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

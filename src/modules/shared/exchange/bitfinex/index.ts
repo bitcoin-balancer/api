@@ -40,7 +40,6 @@ import {
   IBitfinexOrderBook,
 } from './types.js';
 
-
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
@@ -71,10 +70,6 @@ const bitfinexServiceFactory = (): IBitfinexService => {
     '1d': '1D',
     '1w': '1W',
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                          MARKET DATA                                         *
@@ -130,7 +125,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
    * Retrieves the order book' stream for the base asset.
    * @returns Observable<IOrderBookWebSocketMessage>
    */
-  const getOrderBookStream = (): Observable<IOrderBookWebSocketMessage> => (
+  const getOrderBookStream = (): Observable<IOrderBookWebSocketMessage> =>
     new Observable<IOrderBookWebSocketMessage>((subscriber) => {
       const ws = websocketFactory<IBitfinexWebSocketMessage>(
         'LIQUIDITY',
@@ -152,8 +147,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
       return function unsubscribe() {
         ws.off();
       };
-    })
-  );
+    });
 
   /**
    * Tickers
@@ -211,7 +205,7 @@ const bitfinexServiceFactory = (): IBitfinexService => {
    * @param topSymbols
    * @returns Observable<ITickerWebSocketMessage>
    */
-  const getTickersStream = (topSymbols: string[]): Observable<ITickerWebSocketMessage> => (
+  const getTickersStream = (topSymbols: string[]): Observable<ITickerWebSocketMessage> =>
     new Observable<ITickerWebSocketMessage>((subscriber) => {
       // init values
       const topPairs = buildTopPairsObject(topSymbols, 'USD');
@@ -240,19 +234,13 @@ const bitfinexServiceFactory = (): IBitfinexService => {
         },
 
         // onOpen: subscribe to every symbol's stream
-        (__ws) => Object.keys(topPairs).forEach(
-          (symbol) => __ws.send(buildSubscriptionForTicker(symbol)),
-        ),
+        (__ws) =>
+          Object.keys(topPairs).forEach((symbol) => __ws.send(buildSubscriptionForTicker(symbol))),
       );
       return function unsubscribe() {
         ws.off();
       };
-    })
-  );
-
-
-
-
+    });
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -270,22 +258,12 @@ const bitfinexServiceFactory = (): IBitfinexService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const BitfinexService = bitfinexServiceFactory();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  BitfinexService,
-};
+export { BitfinexService };

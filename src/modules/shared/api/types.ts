@@ -13,26 +13,18 @@ import { IHTTPServer, IPackageFile } from '../types.js';
 type IAPIService = {
   // properties
   server: IHTTPServer;
-  initialized: boolean,
-  packageFile: IPackageFile,
+  initialized: boolean;
+  packageFile: IPackageFile;
 
   // initialization
-  initialize: (app: Express, retryDelaySchedule?: number[]) => Promise<void>,
+  initialize: (app: Express, retryDelaySchedule?: number[]) => Promise<void>;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
 
 // ...
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

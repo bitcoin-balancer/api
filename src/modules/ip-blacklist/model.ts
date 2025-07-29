@@ -100,13 +100,8 @@ const __listNextRecords = async (
  * @param startAtID?
  * @returns Promise<IIPBlacklistRecord[]>
  */
-const listRecords = (limit: number, startAtID?: number): Promise<IIPBlacklistRecord[]> => (
-  typeof startAtID === 'number' ? __listNextRecords(limit, startAtID) : __listRecords(limit)
-);
-
-
-
-
+const listRecords = (limit: number, startAtID?: number): Promise<IIPBlacklistRecord[]> =>
+  typeof startAtID === 'number' ? __listNextRecords(limit, startAtID) : __listRecords(limit);
 
 /* ************************************************************************************************
  *                                        RECORD MANAGEMENT                                       *
@@ -142,7 +137,7 @@ const createRecord = async (
  * @param notes
  * @returns Promise<IQueryResult>
  */
-const updateRecord = (id: number, ip: string, notes: string | undefined): Promise<IQueryResult> => (
+const updateRecord = (id: number, ip: string, notes: string | undefined): Promise<IQueryResult> =>
   DatabaseService.pool.query({
     text: `
       UPDATE ${DatabaseService.tn.ip_blacklist}
@@ -150,32 +145,29 @@ const updateRecord = (id: number, ip: string, notes: string | undefined): Promis
       WHERE id = $3;
     `,
     values: [ip, notes, id],
-  })
-);
+  });
 
 /**
  * Deletes an IP Blacklist record.
  * @param id
  * @returns Promise<IQueryResult>
  */
-const deleteRecord = (id: number): Promise<IQueryResult> => DatabaseService.pool.query({
-  text: `DELETE FROM ${DatabaseService.tn.ip_blacklist} WHERE id = $1;`,
-  values: [id],
-});
+const deleteRecord = (id: number): Promise<IQueryResult> =>
+  DatabaseService.pool.query({
+    text: `DELETE FROM ${DatabaseService.tn.ip_blacklist} WHERE id = $1;`,
+    values: [id],
+  });
 
 /**
  * Deletes all of the IP Blacklist records from the database. This function is to be invoked by
  * automated tests only.
  * @returns Promise<IQueryResult>
  */
-const deleteAllRecords = (): Promise<IQueryResult> => DatabaseService.pool.query({
-  text: `DELETE FROM ${DatabaseService.tn.ip_blacklist};`,
-  values: [],
-});
-
-
-
-
+const deleteAllRecords = (): Promise<IQueryResult> =>
+  DatabaseService.pool.query({
+    text: `DELETE FROM ${DatabaseService.tn.ip_blacklist};`,
+    values: [],
+  });
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

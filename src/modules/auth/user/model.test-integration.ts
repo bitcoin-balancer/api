@@ -38,14 +38,31 @@ const TIME_INCREMENT: number = ms('1 hours');
 // list of mock users
 const __encrypt = (data: string): string => encryptSync(ENVIRONMENT.ENCRYPTING_SECRET, data);
 const U: IUser[] = [
-  { uid: 'a44a6414-7d7a-4b32-8bc1-a5ce7ab96b2e', nickname: 'user-1', authority: 1, password_hash: '$ome_password', otp_secret: __encrypt('NFDCMADPEVFEMSIC'), event_time: Date.now() + TIME_INCREMENT },
-  { uid: '99720f31-d944-4e21-a402-b420ed413fed', nickname: 'user-2', authority: 2, password_hash: '$ome_password', otp_secret: __encrypt('L5IFQI2EHAYAODTF'), event_time: Date.now() + (TIME_INCREMENT * 2) },
-  { uid: 'e9a214bb-c4da-4af7-a514-d57bfd91e94e', nickname: 'user-3', authority: 3, password_hash: '$ome_password', otp_secret: __encrypt('DEVC63QFD4OS2UKY'), event_time: Date.now() + (TIME_INCREMENT * 3) },
+  {
+    uid: 'a44a6414-7d7a-4b32-8bc1-a5ce7ab96b2e',
+    nickname: 'user-1',
+    authority: 1,
+    password_hash: '$ome_password',
+    otp_secret: __encrypt('NFDCMADPEVFEMSIC'),
+    event_time: Date.now() + TIME_INCREMENT,
+  },
+  {
+    uid: '99720f31-d944-4e21-a402-b420ed413fed',
+    nickname: 'user-2',
+    authority: 2,
+    password_hash: '$ome_password',
+    otp_secret: __encrypt('L5IFQI2EHAYAODTF'),
+    event_time: Date.now() + TIME_INCREMENT * 2,
+  },
+  {
+    uid: 'e9a214bb-c4da-4af7-a514-d57bfd91e94e',
+    nickname: 'user-3',
+    authority: 3,
+    password_hash: '$ome_password',
+    otp_secret: __encrypt('DEVC63QFD4OS2UKY'),
+    event_time: Date.now() + TIME_INCREMENT * 3,
+  },
 ];
-
-
-
-
 
 /* ************************************************************************************************
  *                                            HELPERS                                             *
@@ -59,9 +76,8 @@ const create: (user: IUser) => Promise<IQueryResult> = ({
   password_hash,
   otp_secret,
   event_time,
-}: IUser): Promise<IQueryResult> => (
-  createUserRecord(uid, nickname, authority, password_hash, otp_secret!, event_time)
-);
+}: IUser): Promise<IQueryResult> =>
+  createUserRecord(uid, nickname, authority, password_hash, otp_secret!, event_time);
 
 // compares a record that was extracted from the database versus the one used to create it
 const compareRecords = (expectFunc: Function, dbRecord: IUser, localRecord: IUser) => {
@@ -72,10 +88,6 @@ const compareRecords = (expectFunc: Function, dbRecord: IUser, localRecord: IUse
     event_time: dbRecord.event_time,
   });
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             TESTS                                              *
@@ -110,10 +122,6 @@ describe('User Model', () => {
     });
   });
 
-
-
-
-
   describe('getUserRecordByNickname', () => {
     test('can retrieve a record by nickname', async () => {
       await create(U[0]);
@@ -135,14 +143,10 @@ describe('User Model', () => {
       });
     });
 
-    test('throws if the nickname doesn\'t exist', async () => {
+    test("throws if the nickname doesn't exist", async () => {
       await expect(() => getUserRecordByNickname(U[0].nickname)).rejects.toThrowError('3252');
     });
   });
-
-
-
-
 
   describe('nicknameExists', () => {
     test('can check if a nickname is being used', async () => {
@@ -157,10 +161,6 @@ describe('User Model', () => {
     });
   });
 
-
-
-
-
   describe('getUserSignInDataByNickname', () => {
     test('can retrieve the sign in data for a user', async () => {
       await create(U[0]);
@@ -171,11 +171,11 @@ describe('User Model', () => {
       });
     });
 
-    test('throws when attemting to retrieve the sign in data for a uid that doesn\'t exist', async () => {
+    test("throws when attemting to retrieve the sign in data for a uid that doesn't exist", async () => {
       await expect(() => getUserSignInDataByNickname(U[0].nickname)).rejects.toThrowError('3253');
     });
 
-    test('throws when attemting to retrieve the sign in data for a uid that hasn\'t set a password', async () => {
+    test("throws when attemting to retrieve the sign in data for a uid that hasn't set a password", async () => {
       await createUserRecord(
         U[0].uid,
         U[0].nickname,
@@ -188,9 +188,6 @@ describe('User Model', () => {
     });
   });
 
-
-
-
   describe('getUserOTPSecret', () => {
     test('can retrieve the OTP Secret for a user', async () => {
       await create(U[0]);
@@ -201,10 +198,6 @@ describe('User Model', () => {
       await expect(() => getUserOTPSecret(U[0].uid)).rejects.toThrowError('3250');
     });
   });
-
-
-
-
 
   /* **********************************************************************************************
    *                                  PASSWORD UPDATE RETRIEVERS                                  *
@@ -272,10 +265,6 @@ describe('User Model', () => {
     });
   });
 
-
-
-
-
   /* **********************************************************************************************
    *                                    USER RECORD MANAGEMENT                                    *
    ********************************************************************************************** */
@@ -327,11 +316,8 @@ describe('User Model', () => {
     });
   });
 
-
-
-
   describe('updateUserNickname', async () => {
-    test('can update the user\'s nickname', async () => {
+    test("can update the user's nickname", async () => {
       await create(U[0]);
       await updateUserNickname(U[0].uid, 'NewNickname');
       const record = await getUserRecord(U[0].uid);
@@ -340,11 +326,8 @@ describe('User Model', () => {
     });
   });
 
-
-
-
   describe('updateUserAuthority', async () => {
-    test('can update the user\'s authority', async () => {
+    test("can update the user's authority", async () => {
       await create(U[0]);
       await updateUserAuthority(U[0].uid, 5);
       const record = await getUserRecord(U[0].uid);
@@ -353,11 +336,8 @@ describe('User Model', () => {
     });
   });
 
-
-
-
   describe('updateUserPasswordHash', async () => {
-    test('can update the user\'s password', async () => {
+    test("can update the user's password", async () => {
       await create(U[0]);
       await updateUserPasswordHash(U[0].uid, 'NewSecretPasswordHash');
       await expect(getUserSignInDataByNickname(U[0].nickname)).resolves.toStrictEqual({
@@ -371,20 +351,13 @@ describe('User Model', () => {
     });
   });
 
-
-
-
   describe('updateUserOTPSecret', async () => {
-    test('can update the user\'s  OTP Secret', async () => {
+    test("can update the user's  OTP Secret", async () => {
       await create(U[0]);
       await updateUserOTPSecret(U[0].uid, 'NEWSECRET');
       await expect(getUserOTPSecret(U[0].uid)).resolves.toBe('NEWSECRET');
     });
   });
-
-
-
-
 
   describe('deleteUserRecord', () => {
     test('when an user is deleted, it also deletes the password_updates & refresh_tokens records', async () => {

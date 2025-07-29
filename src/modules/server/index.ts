@@ -9,7 +9,8 @@ import { scanResources } from './scanner.js';
 import {
   IServerService,
   IAlarmsConfiguration,
-  IServerState, ICPUState,
+  IServerState,
+  ICPUState,
   IMemoryState,
   IFileSystemState,
 } from './types.js';
@@ -39,10 +40,6 @@ const serverServiceFactory = (): IServerService => {
   const __REFETCH_FREQUENCY = 60;
   let __refetchInterval: NodeJS.Timeout;
 
-
-
-
-
   /* **********************************************************************************************
    *                                       STATE PROCESSING                                       *
    ********************************************************************************************** */
@@ -53,8 +50,8 @@ const serverServiceFactory = (): IServerService => {
    */
   const __checkCPUState = (state: ICPUState): void => {
     if (
-      state.avgLoad > __alarms.value.maxCPULoad
-      || state.currentLoad > __alarms.value.maxCPULoad
+      state.avgLoad > __alarms.value.maxCPULoad ||
+      state.currentLoad > __alarms.value.maxCPULoad
     ) {
       NotificationService.highCPULoad(
         state.avgLoad > state.currentLoad ? state.avgLoad : state.currentLoad,
@@ -117,10 +114,6 @@ const serverServiceFactory = (): IServerService => {
     }
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                     ALARMS CONFIGURATION                                     *
    ********************************************************************************************** */
@@ -139,10 +132,6 @@ const serverServiceFactory = (): IServerService => {
     await __alarms.update(newConfig);
   };
 
-
-
-
-
   /* **********************************************************************************************
    *                                          INITIALIZER                                         *
    ********************************************************************************************** */
@@ -160,13 +149,16 @@ const serverServiceFactory = (): IServerService => {
     await __refetchState(runningVersion);
 
     // initialize the refetch interval
-    __refetchInterval = setInterval(async () => {
-      try {
-        await __refetchState();
-      } catch (e) {
-        APIErrorService.save('ServerService.initialize.__refetchState', e);
-      }
-    }, ms(`${__REFETCH_FREQUENCY} seconds`));
+    __refetchInterval = setInterval(
+      async () => {
+        try {
+          await __refetchState();
+        } catch (e) {
+          APIErrorService.save('ServerService.initialize.__refetchState', e);
+        }
+      },
+      ms(`${__REFETCH_FREQUENCY} seconds`),
+    );
   };
 
   /**
@@ -178,10 +170,6 @@ const serverServiceFactory = (): IServerService => {
       clearInterval(__refetchInterval);
     }
   };
-
-
-
-
 
   /* **********************************************************************************************
    *                                         MODULE BUILD                                         *
@@ -204,22 +192,12 @@ const serverServiceFactory = (): IServerService => {
   });
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                        GLOBAL INSTANCE                                         *
  ************************************************************************************************ */
 const ServerService = serverServiceFactory();
 
-
-
-
-
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  ServerService,
-};
+export { ServerService };

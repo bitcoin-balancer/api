@@ -27,9 +27,8 @@ const toMessage = (notification: IPreSaveNotification): string => {
  * @param messsage
  * @returns IRequestInput
  */
-const buildRequestInput = (token: string, chatID: number, message: string): IRequestInput => (
-  `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatID}&text=${message}`
-);
+const buildRequestInput = (token: string, chatID: number, message: string): IRequestInput =>
+  `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatID}&text=${message}`;
 
 /**
  * Formats a timestamp into a human readable datetime.
@@ -43,29 +42,18 @@ const prettifyDate = (date: string | number | Date): string => format(date, 'PPp
  * @param value
  * @returns string
  */
-const prettifyDollarValue = (value: number): string => (
-  prettifyValue(value, { processing: { decimalPlaces: 2 }, format: { prefix: '$' } })
-);
+const prettifyDollarValue = (value: number): string =>
+  prettifyValue(value, { processing: { decimalPlaces: 2 }, format: { prefix: '$' } });
 
 /**
  * Prettifies a btc value so it can be easily read by users.
  * @param value
  * @returns string
  */
-const prettifyBitcoinValue = (value: number): string => (
-  prettifyValue(value, { processing: { decimalPlaces: 8 }, format: { prefix: '₿' } })
-);
-
-
-
+const prettifyBitcoinValue = (value: number): string =>
+  prettifyValue(value, { processing: { decimalPlaces: 8 }, format: { prefix: '₿' } });
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  toMessage,
-  buildRequestInput,
-  prettifyDate,
-  prettifyDollarValue,
-  prettifyBitcoinValue,
-};
+export { toMessage, buildRequestInput, prettifyDate, prettifyDollarValue, prettifyBitcoinValue };

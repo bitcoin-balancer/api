@@ -13,7 +13,7 @@ import { ICoinsStates, ISemiCompactCoinState } from '../coins/index.js';
  */
 type IReversalService = {
   // properties
-  config: IReversalConfig,
+  config: IReversalConfig;
 
   // state calculator
   calculateState: (
@@ -38,10 +38,6 @@ type IReversalService = {
   updateConfiguration: (newConfig: IReversalConfig) => Promise<void>;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                             TYPES                                              *
  ************************************************************************************************ */
@@ -56,10 +52,6 @@ type IReversalPoints = {
   coinsQuote: number;
   coinsBase: number;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                             STATE                                              *
@@ -103,10 +95,6 @@ type IReversalState = {
   reversalEventTime: number | null;
 };
 
-
-
-
-
 /* ************************************************************************************************
  *                                         CONFIGURATION                                          *
  ************************************************************************************************ */
@@ -143,10 +131,6 @@ type IReversalConfig = {
   // the weights by module used to calculate the points
   weights: IReversalPointWeights;
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *

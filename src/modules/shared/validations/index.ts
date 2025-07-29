@@ -11,9 +11,8 @@ import { IAuthority } from '../../auth/user/types.js';
  * @param max?
  * @returns boolean
  */
-const isAuthorityValid = (value: unknown, max?: IAuthority): value is IAuthority => (
-  isNumberValid(value, 1, max ?? 5)
-);
+const isAuthorityValid = (value: unknown, max?: IAuthority): value is IAuthority =>
+  isNumberValid(value, 1, max ?? 5);
 
 /**
  * Verifies if a value is (or could be) an Altcha Payload.
@@ -41,22 +40,10 @@ const isIPNotesValid = (value: unknown): value is string => isStringValid(value,
  * @param value
  * @returns boolean
  */
-const isSymbolValid = (value: unknown): value is string => (
-  typeof value === 'string'
-  && /^[A-Z0-9]{1,20}$/.test(value)
-);
-
-
-
-
+const isSymbolValid = (value: unknown): value is string =>
+  typeof value === 'string' && /^[A-Z0-9]{1,20}$/.test(value);
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  isAuthorityValid,
-  isAltchaPayloadValid,
-  isIPValid,
-  isIPNotesValid,
-  isSymbolValid,
-};
+export { isAuthorityValid, isAltchaPayloadValid, isIPValid, isIPNotesValid, isSymbolValid };

@@ -11,10 +11,6 @@ import { getRecordByIP } from './model.js';
 // the maximum number of records that can be queried at a time
 const __BLACKLIST_QUERY_LIMIT = 30;
 
-
-
-
-
 /* ************************************************************************************************
  *                                         IMPLEMENTATION                                         *
  ************************************************************************************************ */
@@ -29,10 +25,20 @@ const __BLACKLIST_QUERY_LIMIT = 30;
  */
 const canBlacklistBeListed = (limit: number, startAtID: number | undefined): void => {
   if (!isIntegerValid(limit, 1, __BLACKLIST_QUERY_LIMIT)) {
-    throw new Error(encodeError(`The maximum number of IP Blacklist records that can be retrieved at a time is ${__BLACKLIST_QUERY_LIMIT}. Received: ${limit}`, 5256));
+    throw new Error(
+      encodeError(
+        `The maximum number of IP Blacklist records that can be retrieved at a time is ${__BLACKLIST_QUERY_LIMIT}. Received: ${limit}`,
+        5256,
+      ),
+    );
   }
   if (startAtID !== undefined && !isIntegerValid(startAtID, 1)) {
-    throw new Error(encodeError(`The IP Blacklist Records cannot be listed with an invalid startAtID. Received: ${startAtID}.`, 5255));
+    throw new Error(
+      encodeError(
+        `The IP Blacklist Records cannot be listed with an invalid startAtID. Received: ${startAtID}.`,
+        5255,
+      ),
+    );
   }
 };
 
@@ -51,9 +57,11 @@ const canIPBeRegistered = async (ip: string, notes: string | undefined): Promise
     throw new Error(encodeError(`The IP Address '${ip}' is invalid.`, 5250));
   }
   if (notes !== undefined && !isIPNotesValid(notes)) {
-    throw new Error(encodeError(`The IP Address Blacklisting notes are invalid. Received '${notes}'`, 5251));
+    throw new Error(
+      encodeError(`The IP Address Blacklisting notes are invalid. Received '${notes}'`, 5251),
+    );
   }
-  if (await getRecordByIP(ip) !== undefined) {
+  if ((await getRecordByIP(ip)) !== undefined) {
     throw new Error(encodeError(`The IP Address '${ip}' has already been registered.`, 5252));
   }
 };
@@ -79,16 +87,22 @@ const canIPRegistrationBeUpdated = async (
     throw new Error(encodeError(`The IP Address '${ip}' is invalid.`, 5250));
   }
   if (notes !== undefined && !isIPNotesValid(notes)) {
-    throw new Error(encodeError(`The IP Address Blacklisting notes are invalid. Received '${notes}'`, 5251));
+    throw new Error(
+      encodeError(`The IP Address Blacklisting notes are invalid. Received '${notes}'`, 5251),
+    );
   }
   if (!isIntegerValid(id, 1)) {
-    throw new Error(encodeError(`The identifier '${id}' for the IP Blacklist Record is invalid.`, 5252));
+    throw new Error(
+      encodeError(`The identifier '${id}' for the IP Blacklist Record is invalid.`, 5252),
+    );
   }
 
   // make sure the IP hasn't been blacklisted by a different record
   const record = await getRecordByIP(ip);
   if (record !== undefined && record.id !== id) {
-    throw new Error(encodeError(`The IP Address '${ip}' has already been blacklisted by another record.`, 5253));
+    throw new Error(
+      encodeError(`The IP Address '${ip}' has already been blacklisted by another record.`, 5253),
+    );
   }
 };
 
@@ -101,20 +115,16 @@ const canIPRegistrationBeUpdated = async (
  */
 const canIPBeUnregistered = (id: number, record: IIPBlacklistRecord | undefined): void => {
   if (record === undefined) {
-    throw new Error(encodeError(`The registration '${id}' cannot be unregistered because it doesn't exist.`, 5254));
+    throw new Error(
+      encodeError(
+        `The registration '${id}' cannot be unregistered because it doesn't exist.`,
+        5254,
+      ),
+    );
   }
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
  ************************************************************************************************ */
-export {
-  canBlacklistBeListed,
-  canIPBeRegistered,
-  canIPRegistrationBeUpdated,
-  canIPBeUnregistered,
-};
+export { canBlacklistBeListed, canIPBeRegistered, canIPRegistrationBeUpdated, canIPBeUnregistered };

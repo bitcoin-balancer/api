@@ -35,9 +35,8 @@ import {
  * @param decimalPlaces
  * @returns number
  */
-const processTXAmount = (amount: IBigNumberValue, decimalPlaces: number): number => (
-  processValue(amount, { decimalPlaces, roundingMode: 'ROUND_DOWN' })
-);
+const processTXAmount = (amount: IBigNumberValue, decimalPlaces: number): number =>
+  processValue(amount, { decimalPlaces, roundingMode: 'ROUND_DOWN' });
 
 /**
  * Converts a base asset value into quote asset.
@@ -45,10 +44,8 @@ const processTXAmount = (amount: IBigNumberValue, decimalPlaces: number): number
  * @param rate
  * @returns number
  */
-const toQuoteAsset = (value: IBigNumberValue, rate: IBigNumberValue): number => processValue(
-  getBigNumber(value).times(rate),
-  { roundingMode: 'ROUND_DOWN' },
-);
+const toQuoteAsset = (value: IBigNumberValue, rate: IBigNumberValue): number =>
+  processValue(getBigNumber(value).times(rate), { roundingMode: 'ROUND_DOWN' });
 
 /**
  * Converts a quote asset value into base asset. This value is ready to be sent to the exchange.
@@ -72,9 +69,10 @@ const toBaseAsset = (
 const __calculateDecreasePriceLevels = (
   entryPrice: number,
   decreaseLevels: IDecreaseLevels,
-): IDecreasePriceLevels => decreaseLevels.map(
-  (lvl) => adjustByPercentage(entryPrice, lvl.gainRequirement),
-) as IDecreasePriceLevels;
+): IDecreasePriceLevels =>
+  decreaseLevels.map((lvl) =>
+    adjustByPercentage(entryPrice, lvl.gainRequirement),
+  ) as IDecreasePriceLevels;
 
 /**
  * Calculates the amount that will be decreased from a position. If this amount is lower than the
@@ -112,10 +110,6 @@ const calculateIncreaseIdleDuration = (
   }
   return fromHoursToMinutes(increaseIdleDuration);
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                   POSITION CHANGES HANDLING                                    *
@@ -199,12 +193,8 @@ const analyzeTrades = (
   }
 
   // calculate the amounts based on the trades
-  const {
-    amount,
-    amountQuoteIn,
-    amountQuoteOut,
-    buyTrades,
-  } = calculateTradesAnalysisAmounts(trades);
+  const { amount, amountQuoteIn, amountQuoteOut, buyTrades } =
+    calculateTradesAnalysisAmounts(trades);
 
   // calculate the new entry price - if there are no buy trades, the entryPrice will be 0
   const entryPrice = calculateWeightedEntry(buyTrades);
@@ -232,10 +222,6 @@ const analyzeTrades = (
     decrease_price_levels: __calculateDecreasePriceLevels(entryPrice, decreaseLevels),
   };
 };
-
-
-
-
 
 /* ************************************************************************************************
  *                                         BUILD HELPERS                                          *
@@ -311,10 +297,6 @@ const toCompact = (position: IPosition): ICompactPosition => ({
   roi: position.roi,
 });
 
-
-
-
-
 /* ************************************************************************************************
  *                                           RETRIEVERS                                           *
  ************************************************************************************************ */
@@ -330,14 +312,8 @@ const toCompact = (position: IPosition): ICompactPosition => ({
  * - 13750: if the balance for the base asset is not in the response object (binance)
  * - 13751: if the balance for the quote asset is not in the response object (binance)
  */
-const getBalances = async (): Promise<IBalances> => retryAsyncFunction(
-  () => BalanceService.getBalances(),
-  [5, 15, 30, 60, 180],
-);
-
-
-
-
+const getBalances = async (): Promise<IBalances> =>
+  retryAsyncFunction(() => BalanceService.getBalances(), [5, 15, 30, 60, 180]);
 
 /* ************************************************************************************************
  *                                         MODULE EXPORTS                                         *
